@@ -10,3 +10,29 @@ In 2000 he started Makehuman Project, a free and open source software for the mo
 
 He is the author of Manuel Bastioni Laboratory, a free and open source add-on for Blender to create 3d humanoids. It includes the results of years of prototyping and studies realized by him during the development of his 3d graphics projects.
 
+
+Release notes for ManuelBastioniLAB 1.6.1
+
+The version 1.6.1 of ManuelbastioniLAB, the free and open source character editor for Blender, is ready for download.
+
+New features
+
+    Assets library, with four hair models
+    Automatic transfer of rigging weights from body to proxy
+    Improvement of human base models
+    Improvement of proxy fitting process using a subset of polygons
+    Human hair shader for Cycles
+    Toon hair shader for Cycles
+    Custom name for finalized characters
+    Expressions parameter for eyes rotations
+
+Bug fixed
+
+    Less restrictive version check to run in Blender vers. > 2.79.0
+    Fixed bug in hidden IK control
+    Fixed bug in save custom poses
+    Fixed bug in rest pose loading
+    Fixed bug in proxy reset
+    Fixed "red eyes" bug
+    Fixed a bug in expressions with multiple characters in the same scene
+
