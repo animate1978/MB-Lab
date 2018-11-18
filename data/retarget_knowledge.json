@@ -1,0 +1,616 @@
+{   
+    "local_rotation_bones": ["clavicle_R","clavicle_L","spine01,","spine02","spine03","head","index00_R","middle00_R","ring00_R","pinky00_R","index00_L","middle00_L","ring00_L","pinky00_L"],
+    "NECK":
+        {
+        "main_IDs":["neck"],
+        "children_IDs":["head"],
+        "parent_IDs": [],
+        "side":"CENTER",
+        "chain_ID":  "head_bones_names",
+        "position_in_chain": ["None"]
+        },    
+    "LCLAVICLE":
+        {
+        "main_IDs":["clavicle","collar"],
+        "children_IDs":["upperarm"],
+        "parent_IDs": [],
+        "side": "LEFT",
+        "chain_ID":  "larm_bones_names",
+        "position_in_chain": [-1]
+        },
+    "RCLAVICLE":
+        {
+        "main_IDs":["clavicle","collar"],
+        "children_IDs":["upperarm"],
+        "parent_IDs":[],
+        "side":"RIGHT",
+        "chain_ID": "rarm_bones_names",
+        "position_in_chain":[-1]
+        },
+    "LUPPERARM":
+        {
+        "main_IDs":["upperarm","shldr","shoulder"],
+        "children_IDs":["forearm","elbow","lowerarm"],
+        "parent_IDs":[],
+        "side":"LEFT",
+        "chain_ID": "larm_bones_names",
+        "position_in_chain":["None"]
+        },
+    "LUPPERARM_TWIST":
+        {
+        "main_IDs":["upperarm_twist"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"LEFT",
+        "chain_ID": "all_chains",
+        "position_in_chain":["None"]
+        },
+    "RUPPERARM":
+        {
+        "main_IDs":["upperarm","shldr","shoulder"],
+        "children_IDs":["forearm","elbow","lowerarm"],
+        "parent_IDs":[],
+        "side":"RIGHT",
+        "chain_ID": "rarm_bones_names",
+        "position_in_chain":["None"]
+        },
+    "RUPPERARM_TWIST":
+        {
+        "main_IDs":["upperarm_twist"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"RIGHT",
+        "chain_ID": "all_chains",
+        "position_in_chain":["None"]
+        },
+    "LFOREARM":
+        {
+        "main_IDs":["forearm","elbow","lowerarm"],
+        "children_IDs":["hand","wrist"],
+        "parent_IDs":[],
+        "side":"LEFT",
+        "chain_ID": "larm_bones_names",
+        "position_in_chain":["None"]
+        },
+    "LFOREARM_TWIST":
+        {
+        "main_IDs":["lowerarm_twist"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"LEFT",
+        "chain_ID": "all_chains",
+        "position_in_chain":["None"]
+        },
+    "RFOREARM":
+        {
+        "main_IDs":["forearm","elbow","lowerarm"],
+        "children_IDs":["hand","wrist"],
+        "parent_IDs":[],
+        "side":"RIGHT",
+        "chain_ID": "rarm_bones_names",
+        "position_in_chain":["None"]
+        },
+    "RFOREARM_TWIST":
+        {
+        "main_IDs":["lowerarm_twist"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"RIGHT",
+        "chain_ID": "all_chains",
+        "position_in_chain":["None"]
+        },
+    "LUPPERLEG":
+        {
+        "main_IDs":["thigh","upperleg","upper_leg"],
+        "children_IDs":["knee","shin","calf"],
+        "parent_IDs":[],
+        "side":"LEFT",
+        "chain_ID": "lleg_bones_names",
+        "position_in_chain":[-1]
+        },
+    "LUPPERLEG_TWIST":
+        {
+        "main_IDs":["thigh_twist"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"LEFT",
+        "chain_ID": "all_chains",
+        "position_in_chain":["None"]
+        },
+    "RUPPERLEG":
+        {
+        "main_IDs":["thigh","upperleg","upper_leg"],
+        "children_IDs":["knee","shin","calf"],
+        "parent_IDs":[],
+        "side":"RIGHT",
+        "chain_ID": "rleg_bones_names",
+        "position_in_chain":[-1]
+        },
+    "RUPPERLEG_TWIST":
+        {
+        "main_IDs":["thigh_twist"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"RIGHT",
+        "chain_ID": "all_chains",
+        "position_in_chain":["None"]
+        },
+    "LCALF":
+        {
+        "main_IDs":["knee","shin","calf"],
+        "children_IDs":["foot","ankle"],
+        "parent_IDs":["thigh","upperleg","upper_leg"],
+        "side":"LEFT",
+        "chain_ID": "lleg_bones_names",
+        "position_in_chain":[3,1,"None"]
+        },
+    "LCALF_TWIST":
+        {
+        "main_IDs":["calf_twist"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"LEFT",
+        "chain_ID": "all_chains",
+        "position_in_chain":["None"]
+        },
+    "RCALF":
+        {
+        "main_IDs":["knee","shin","calf"],
+        "children_IDs":["foot","ankle"],
+        "parent_IDs":["thigh","upperleg","upper_leg"],
+        "side":"RIGHT",
+        "chain_ID": "rleg_bones_names",
+        "position_in_chain":[3,1,"None"]
+        },
+    "RCALF_TWIST":
+        {
+        "main_IDs":["calf_twist"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"RIGHT",
+        "chain_ID": "all_chains",
+        "position_in_chain":["None"]
+        },
+    "LHAND":
+        {
+        "main_IDs":["hand","wrist"],
+        "children_IDs":["finger","thumb","index","ring","pink"],
+        "parent_IDs":["forearm","elbow","lowerarm"],
+        "side":"LEFT",
+        "chain_ID": "larm_bones_names",
+        "position_in_chain": ["None"]
+        },
+    "RHAND":
+        {
+        "main_IDs":["hand","wrist"],
+        "children_IDs":["finger","thumb","index","ring","pink"],
+        "parent_IDs":["forearm","elbow","lowerarm"],
+        "side":"RIGHT",
+        "chain_ID": "rarm_bones_names",
+        "position_in_chain":["None"]
+        },
+    "LFOOT":
+        {
+        "main_IDs":["foot","ankle","metatars"],
+        "children_IDs":["toe","ball"],
+        "parent_IDs":["leg","knee","shin","calf"],
+        "side":"LEFT",
+        "chain_ID": "lleg_bones_names",
+        "position_in_chain":[3,0,"None"]
+        },
+    "RFOOT":
+        {
+        "main_IDs":["foot","ankle","metatars"],
+        "children_IDs":["toe","ball"],
+        "parent_IDs":["leg","knee","shin","calf"],
+        "side":"RIGHT",
+        "chain_ID": "rleg_bones_names",
+        "position_in_chain":[3,0,"None"]
+        },
+    "PELVIS":
+        {
+        "main_IDs":["hip","pelvis"],
+        "children_IDs":["hip","leg","thigh","butt"],
+        "parent_IDs":[],
+        "side":"CENTER",
+        "chain_ID":"spine_bones_names",
+        "position_in_chain":["LAST"]
+        },
+    "HEAD":
+        {
+        "main_IDs":["head"],
+        "children_IDs":["eye"],
+        "parent_IDs":["neck"],
+        "side":"CENTER",
+        "chain_ID":"head_bones_names",
+        "position_in_chain":["None"]
+        },
+    "RTOE":
+        {
+        "main_IDs":["toe","ball"],
+        "children_IDs":[],
+        "parent_IDs":["foot","ankle"],
+        "side":"RIGHT",
+        "chain_ID": "rtoe_and_leg_names",
+        "position_in_chain":[4,0,"None"]
+        },
+    "LTOE":
+        {
+        "main_IDs":["toe","ball"],
+        "children_IDs":[],
+        "parent_IDs":["foot","ankle"],
+        "side":"LEFT",
+        "chain_ID": "ltoe_and_leg_names",
+        "position_in_chain":[4,0,"None"]
+        },
+    "CHEST":
+        {
+        "main_IDs":["chest","spine","torso","trunk"],
+        "children_IDs":["neck","clavicle","shoulder"],
+        "parent_IDs":[],
+        "side":"CENTER",
+        "chain_ID":"spine_bones_names",
+        "position_in_chain":[0]
+        },
+    "RTHUMB03":
+        {
+        "main_IDs":["thumb","finger"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"RIGHT",
+        "chain_ID": "rfinger0_bones_names",
+        "position_in_chain":[0]
+        },
+    "RTHUMB02":
+        {
+        "main_IDs":["thumb","finger"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"RIGHT",
+        "chain_ID": "rfinger0_bones_names",
+        "position_in_chain":[1]
+        },
+    "RTHUMB01":
+        {
+        "main_IDs":["thumb","finger"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"RIGHT",
+        "chain_ID": "rfinger0_bones_names",
+        "position_in_chain":[2]
+        },
+    "RINDEX03":
+        {
+        "main_IDs":["index","finger"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"RIGHT",
+        "chain_ID": "rfinger1_bones_names",
+        "position_in_chain":[0]
+        },
+    "RINDEX02":
+        {
+        "main_IDs":["index","finger"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"RIGHT",
+        "chain_ID": "rfinger1_bones_names",
+        "position_in_chain":[1]
+        },
+    "RINDEX01":
+        {
+        "main_IDs":["index","finger"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"RIGHT",
+        "chain_ID": "rfinger1_bones_names",
+        "position_in_chain":[2]
+        },
+    "RINDEX00":
+        {
+        "main_IDs":["index00"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"RIGHT",
+        "chain_ID": "rfinger1_bones_names",
+        "position_in_chain":[3]
+        },
+    "RMIDDLE03":
+        {
+        "main_IDs":["mid","finger"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"RIGHT",
+        "chain_ID": "rfinger2_bones_names",
+        "position_in_chain":[0]
+        },
+    "RMIDDLE02":
+        {
+        "main_IDs":["mid","finger"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"RIGHT",
+        "chain_ID": "rfinger2_bones_names",
+        "position_in_chain":[1]
+        },
+    "RMIDDLE01":
+        {
+        "main_IDs":["mid","finger"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"RIGHT",
+        "chain_ID": "rfinger2_bones_names",
+        "position_in_chain":[2]
+        },
+    "RMIDDLE00":
+        {
+        "main_IDs":["middle00"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"RIGHT",
+        "chain_ID": "rfinger2_bones_names",
+        "position_in_chain":[3]
+        },
+    "RRING03":
+        {
+        "main_IDs":["ring","finger"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"RIGHT",
+        "chain_ID": "rfinger3_bones_names",
+        "position_in_chain":[0]
+        },
+    "RRING02":
+        {
+        "main_IDs":["ring","finger"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"RIGHT",
+        "chain_ID": "rfinger3_bones_names",
+        "position_in_chain":[1]
+        },
+    "RRING01":
+        {
+        "main_IDs":["ring","finger"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"RIGHT",
+        "chain_ID": "rfinger3_bones_names",
+        "position_in_chain":[2]
+        },
+    "RRING00":
+        {
+        "main_IDs":["ring00"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"RIGHT",
+        "chain_ID": "rfinger3_bones_names",
+        "position_in_chain":[3]
+        },
+    "RPINKY03":
+        {
+        "main_IDs":["pink","finger"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"RIGHT",
+        "chain_ID": "rfinger4_bones_names",
+        "position_in_chain":[0]
+        },
+    "RPINKY02":
+        {
+        "main_IDs":["pink","finger"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"RIGHT",
+        "chain_ID": "rfinger4_bones_names",
+        "position_in_chain":[1]
+        },
+    "RPINKY01":
+        {
+        "main_IDs":["pink","finger"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"RIGHT",
+        "chain_ID": "rfinger4_bones_names",
+        "position_in_chain":[2]
+        },
+    "RPINKY00":
+        {
+        "main_IDs":["pinky00"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"RIGHT",
+        "chain_ID": "rfinger4_bones_names",
+        "position_in_chain":[3]
+        },
+    "LTHUMB03":
+        {
+        "main_IDs":["thumb","finger"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"LEFT",
+        "chain_ID": "lfinger0_bones_names",
+        "position_in_chain":[0]
+        },
+    "LTHUMB02":
+        {
+        "main_IDs":["thumb","finger"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"LEFT",
+        "chain_ID": "lfinger0_bones_names",
+        "position_in_chain":[1]
+        },
+    "LTHUMB01":
+        {
+        "main_IDs":["thumb","finger"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"LEFT",
+        "chain_ID": "lfinger0_bones_names",
+        "position_in_chain":[2]
+        },
+    "LINDEX03":
+        {
+        "main_IDs":["index","finger"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"LEFT",
+        "chain_ID": "lfinger1_bones_names",
+        "position_in_chain":[0]
+        },
+    "LINDEX02":
+        {
+        "main_IDs":["index","finger"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"LEFT",
+        "chain_ID": "lfinger1_bones_names",
+        "position_in_chain":[1]
+        },
+    "LINDEX01":
+        {
+        "main_IDs":["index","finger"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"LEFT",
+        "chain_ID": "lfinger1_bones_names",
+        "position_in_chain":[2]
+        },
+    "LINDEX00":
+        {
+        "main_IDs":["index00"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"LEFT",
+        "chain_ID": "lfinger1_bones_names",
+        "position_in_chain":[3]
+        },
+    "LMIDDLE03":
+        {
+        "main_IDs":["mid","finger"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"LEFT",
+        "chain_ID": "lfinger2_bones_names",
+        "position_in_chain":[0]
+        },
+    "LMIDDLE02":
+        {
+        "main_IDs":["mid","finger"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"LEFT",
+        "chain_ID": "lfinger2_bones_names",
+        "position_in_chain":[1]
+        },
+    "LMIDDLE01":
+        {
+        "main_IDs":["mid","finger"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"LEFT",
+        "chain_ID": "lfinger2_bones_names",
+        "position_in_chain":[2]
+        },
+    "LMIDDLE00":
+        {
+        "main_IDs":["middle00"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"LEFT",
+        "chain_ID": "lfinger2_bones_names",
+        "position_in_chain":[3]
+        },
+    "LRING03":
+        {
+        "main_IDs":["ring","finger"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"LEFT",
+        "chain_ID": "lfinger3_bones_names",
+        "position_in_chain":[0]
+        },
+    "LRING02":
+        {
+        "main_IDs":["ring","finger"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"LEFT",
+        "chain_ID": "lfinger3_bones_names",
+        "position_in_chain":[1]
+        },
+    "LRING01":
+        {
+        "main_IDs":["ring","finger"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"LEFT",
+        "chain_ID": "lfinger3_bones_names",
+        "position_in_chain":[2]
+        },
+    "LRING00":
+        {
+        "main_IDs":["ring00"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"LEFT",
+        "chain_ID": "lfinger3_bones_names",
+        "position_in_chain":[3]
+        },
+    "LPINKY03":
+        {
+        "main_IDs":["pink","finger"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"LEFT",
+        "chain_ID": "lfinger4_bones_names",
+        "position_in_chain":[0]
+        },
+    "LPINKY02":
+        {
+        "main_IDs":["pink","finger"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"LEFT",
+        "chain_ID": "lfinger4_bones_names",
+        "position_in_chain":[1]
+        },
+    "LPINKY01":
+        {
+        "main_IDs":["pink","finger"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"LEFT",
+        "chain_ID": "lfinger4_bones_names",
+        "position_in_chain":[2]
+        },
+    "LPINKY00":
+        {
+        "main_IDs":["pinky00"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"LEFT",
+        "chain_ID": "lfinger4_bones_names",
+        "position_in_chain":[3]
+        },
+    "RBREAST":
+        {
+        "main_IDs":["breast","pectoral"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"RIGHT",
+        "chain_ID": "all_chains",
+        "position_in_chain":["None"]
+        },
+    "LBREAST":
+        {
+        "main_IDs":["breast","pectoral"],
+        "children_IDs":[],
+        "parent_IDs":[],
+        "side":"LEFT",
+        "chain_ID": "all_chains",
+        "position_in_chain":["None"]
+        }
+
+}
