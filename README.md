@@ -1,5 +1,8 @@
 # MB-Lab
 
+MB-Lab is an attempt to keep the ManuelBastioniLAB Blender addon alive through community efforts.
+
+
 Manuel Bastioni is active in open source projects since 1999.
 
 Member of Blender Artist community since 2002.
