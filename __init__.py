@@ -23,7 +23,8 @@ bl_info = {
     "description": "A complete lab for characters creation",
     "warning": "",
     'wiki_url': "https://github.com/animate1978/MB-Lab/wiki",
-    "category": "Characters"}
+    "category": "Characters"
+}
 
 import bpy
 import os
