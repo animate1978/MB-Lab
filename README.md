@@ -2,7 +2,7 @@
 
 MB-Lab is an attempt to keep the ManuelBastioniLAB Blender addon alive through community efforts.
 
-Contributors wanted! Python programmers needed!
+## Contributors wanted! Python programmers needed!
 
 Manuel Bastioni is active in open source projects since 1999.
 
@@ -14,8 +14,14 @@ In 2000 he started Makehuman Project, a free and open source software for the mo
 
 He is the author of Manuel Bastioni Laboratory, a free and open source add-on for Blender to create 3d humanoids. It includes the results of years of prototyping and studies realized by him during the development of his 3d graphics projects.
 
+## MB-Lab 1.6.2 Notes
 
-Release notes for ManuelBastioniLAB 1.6.1
+    Skin shader changes - added another layer of SSS
+    Grouped shader nodes into easy to edit skin and eye shaders
+    Removed nodes from eye shader to solve red fireflies visual artifact
+    Changed wiki website address
+
+## Release notes for ManuelBastioniLAB 1.6.1
 
 The version 1.6.1 of ManuelbastioniLAB, the free and open source character editor for Blender, is ready for download.
 
