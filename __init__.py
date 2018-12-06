@@ -656,7 +656,7 @@ bpy.types.Scene.mblab_random_engine = bpy.props.EnumProperty(
 
 class ButtonParametersOff(bpy.types.Operator):
 
-    bl_label = 'Body, face and measure parameters'
+    bl_label = 'Body Measures'
     bl_idname = 'mbast.button_parameters_off'
     bl_description = 'Close details panel'
     bl_context = 'objectmode'
@@ -668,7 +668,7 @@ class ButtonParametersOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonParametersOn(bpy.types.Operator):
-    bl_label = 'Body. face and measure parameters'
+    bl_label = 'Body Measures'
     bl_idname = 'mbast.button_parameters_on'
     bl_description = 'Open details panel (head,nose,hands, measures etc...)'
     bl_context = 'objectmode'
@@ -731,7 +731,7 @@ class ButtonExpressionOn(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonRandomOff(bpy.types.Operator):
-    bl_label = 'Random generator'
+    bl_label = 'Random Generator'
     bl_idname = 'mbast.button_random_off'
     bl_description = 'Close random generator panel'
     bl_context = 'objectmode'
@@ -743,7 +743,7 @@ class ButtonRandomOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonRandomOn(bpy.types.Operator):
-    bl_label = 'Random generator'
+    bl_label = 'Random Generator'
     bl_idname = 'mbast.button_random_on'
     bl_description = 'Open random generator panel'
     bl_context = 'objectmode'
@@ -758,7 +758,7 @@ class ButtonRandomOn(bpy.types.Operator):
 
 class ButtonAutomodellingOff(bpy.types.Operator):
 
-    bl_label = 'Automodelling tools'
+    bl_label = 'Automodelling Tools'
     bl_idname = 'mbast.button_automodelling_off'
     bl_description = 'Close automodelling panel'
     bl_context = 'objectmode'
@@ -770,7 +770,7 @@ class ButtonAutomodellingOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonAutomodellingOn(bpy.types.Operator):
-    bl_label = 'Automodelling tools'
+    bl_label = 'Automodelling Tools'
     bl_idname = 'mbast.button_automodelling_on'
     bl_description = 'Open automodelling panel'
     bl_context = 'objectmode'
@@ -782,7 +782,7 @@ class ButtonAutomodellingOn(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtoRestPoseOff(bpy.types.Operator):
-    bl_label = 'Rest pose'
+    bl_label = 'Rest Pose'
     bl_idname = 'mbast.button_rest_pose_off'
     bl_description = 'Close rest pose panel'
     bl_context = 'objectmode'
@@ -794,7 +794,7 @@ class ButtoRestPoseOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonRestPoseOn(bpy.types.Operator):
-    bl_label = 'Rest pose'
+    bl_label = 'Rest Pose'
     bl_idname = 'mbast.button_rest_pose_on'
     bl_description = 'Open rest pose panel'
     bl_context = 'objectmode'
@@ -857,7 +857,7 @@ class ButtonPoseOn(bpy.types.Operator):
 
 
 class ButtonSkinOff(bpy.types.Operator):
-    bl_label = 'Skin editor'
+    bl_label = 'Skin Editor'
     bl_idname = 'mbast.button_skin_off'
     bl_description = 'Close skin editor panel'
     bl_context = 'objectmode'
@@ -869,7 +869,7 @@ class ButtonSkinOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonSkinOn(bpy.types.Operator):
-    bl_label = 'Skin editor'
+    bl_label = 'Skin Editor'
     bl_idname = 'mbast.button_skin_on'
     bl_description = 'Open skin editor panel'
     bl_context = 'objectmode'
@@ -881,7 +881,7 @@ class ButtonSkinOn(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonViewOptOff(bpy.types.Operator):
-    bl_label = 'Display options'
+    bl_label = 'Display Options'
     bl_idname = 'mbast.button_display_off'
     bl_description = 'Close skin editor panel'
     bl_context = 'objectmode'
@@ -893,7 +893,7 @@ class ButtonViewOptOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonViewOptOn(bpy.types.Operator):
-    bl_label = 'Display options'
+    bl_label = 'Display Options'
     bl_idname = 'mbast.button_display_on'
     bl_description = 'Open skin editor panel'
     bl_context = 'objectmode'
@@ -932,7 +932,7 @@ class ButtonProxyFitOn(bpy.types.Operator):
 
 
 class ButtonFilesOff(bpy.types.Operator):
-    bl_label = 'File tools'
+    bl_label = 'File Tools'
     bl_idname = 'mbast.button_file_off'
     bl_description = 'Close file panel'
     bl_context = 'objectmode'
@@ -944,7 +944,7 @@ class ButtonFilesOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonFilesOn(bpy.types.Operator):
-    bl_label = 'File tools'
+    bl_label = 'File Tools'
     bl_idname = 'mbast.button_file_on'
     bl_description = 'Open file panel'
     bl_context = 'objectmode'
@@ -957,7 +957,7 @@ class ButtonFilesOn(bpy.types.Operator):
 
 
 class ButtonFinalizeOff(bpy.types.Operator):
-    bl_label = 'Finalize tools'
+    bl_label = 'Finalize Tools'
     bl_idname = 'mbast.button_finalize_off'
     bl_description = 'Close finalize panel'
     bl_context = 'objectmode'
@@ -969,7 +969,7 @@ class ButtonFinalizeOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonFinalizeOn(bpy.types.Operator):
-    bl_label = 'Finalize tools'
+    bl_label = 'Finalize Tools'
     bl_idname = 'mbast.button_finalize_on'
     bl_description = 'Open finalize panel'
     bl_context = 'objectmode'
@@ -981,7 +981,7 @@ class ButtonFinalizeOn(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonLibraryOff(bpy.types.Operator):
-    bl_label = 'Character library'
+    bl_label = 'Character Library'
     bl_idname = 'mbast.button_library_off'
     bl_description = 'Close character library panel'
     bl_context = 'objectmode'
@@ -993,7 +993,7 @@ class ButtonLibraryOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonLibraryOn(bpy.types.Operator):
-    bl_label = 'Character library'
+    bl_label = 'Character Library'
     bl_idname = 'mbast.button_library_on'
     bl_description = 'Open character library panel'
     bl_context = 'objectmode'
@@ -1698,7 +1698,7 @@ class LoadBvh(bpy.types.Operator, ImportHelper):
 
 class StartSession(bpy.types.Operator):
     bl_idname = "mbast.init_character"
-    bl_label = "Init character"
+    bl_label = "Create character"
     bl_description = 'Create the character selected above'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL','UNDO'}
