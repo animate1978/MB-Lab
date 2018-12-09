@@ -14,6 +14,12 @@ In 2000 he started Makehuman Project, a free and open source software for the mo
 
 He is the author of Manuel Bastioni Laboratory, a free and open source add-on for Blender to create 3d humanoids. It includes the results of years of prototyping and studies realized by him during the development of his 3d graphics projects.
 
+## MB-Lab 1.6.3 Notes
+
+    Third layer of SSS added to simulate sub-dermal tissue
+    Basic procedural pore and skin cell bump map added
+    Edited button labels
+
 ## MB-Lab 1.6.2 Notes
 
     Skin shader changes - added another layer of SSS
@@ -23,7 +29,7 @@ He is the author of Manuel Bastioni Laboratory, a free and open source add-on fo
 
 ## Release notes for ManuelBastioniLAB 1.6.1
 
-The version 1.6.1 of ManuelbastioniLAB, the free and open source character editor for Blender, is ready for download.
+The version 1.6.1 of ManuelbastioniLAB, the free and open source character editor for Blender, is still available for download at http://www.manuelbastioni.com
 
 New features
 
