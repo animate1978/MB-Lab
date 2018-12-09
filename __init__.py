@@ -17,13 +17,15 @@
 bl_info = {
     "name": "MB-Lab",
     "author": "Manuel Bastioni",
-    "version": (1, 6, 2),
+    "version": (1, 6, 3),
     "blender": (2, 79, 0),
     "location": "View3D > Tools > MB-Lab",
     "description": "A complete lab for characters creation",
     "warning": "",
     'wiki_url': "https://github.com/animate1978/MB-Lab/wiki",
-    "category": "Characters"}
+    'tracker_url': 'https://github.com/animate1978/MB-Lab/issues',
+    "category": "Characters"
+	}
 
 import bpy
 import os

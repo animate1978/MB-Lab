@@ -1,6 +1,18 @@
 # CHANGE LOG
 
-All signifigant changes will be documented here
+All significant changes will be documented here
+
+# MB-Lab 1.6.3
+
+## Changed
+
+- Changed button labels to be more uniform
+- Minor edits to shader networks
+
+## Added
+
+- Basic procedural pore and skin cell bump mapping
+- Third layer of SSS added to simulate sub-dermal tissue
 
 # MB-Lab 1.6.2
 

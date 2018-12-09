@@ -23,10 +23,10 @@ import json
 import array
 
 
-debug_level = 3
+debug_level = 0
 
 def print_log_report(level, text_to_write):
-    l = 0
+    l = 3
     levels = {"INFO":0, "DEBUG":1, "WARNING":2, "ERROR":3, "CRITICAL":4, }
     if level in levels:
         l = levels[level]        
