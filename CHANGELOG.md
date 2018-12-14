@@ -2,6 +2,18 @@
 
 All significant changes will be documented here
 
+# MB-Lab 1.6.4
+
+## Changed
+
+ - Minor edits to skin bump mapping
+ - Eye shader node tweek
+
+## Added
+
+ - Procedural freckle generator, basic functionality
+ - Freckles editable in Skin Editor
+
 # MB-Lab 1.6.3
 
 ## Changed
