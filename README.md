@@ -23,23 +23,6 @@ He is the author of Manuel Bastioni Laboratory, a free and open source add-on fo
     Changed Skin Editor values to reflect new PBR shading network
 
 
-## MB-Lab 1.6.4 Notes
-
-    Added Freckles generator, basic functionality
-
-## MB-Lab 1.6.3 Notes
-
-    Third layer of SSS added to simulate sub-dermal tissue
-    Basic procedural pore and skin cell bump map added
-    Edited button labels
-
-## MB-Lab 1.6.2 Notes
-
-    Skin shader changes - added another layer of SSS
-    Grouped shader nodes into easy to edit skin and eye shaders
-    Removed nodes from eye shader to solve red fireflies visual artifact
-    Changed wiki website address
-
 ## Release notes for ManuelBastioniLAB 1.6.1
 
 The version 1.6.1 of ManuelbastioniLAB, the free and open source character editor for Blender, is still available for download at http://www.manuelbastioni.com
