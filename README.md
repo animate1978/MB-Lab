@@ -14,6 +14,15 @@ In 2000 he started Makehuman Project, a free and open source software for the mo
 
 He is the author of Manuel Bastioni Laboratory, a free and open source add-on for Blender to create 3d humanoids. It includes the results of years of prototyping and studies realized by him during the development of his 3d graphics projects.
 
+## MB-Lab 1.6.5 Notes
+
+    New shader network based on Principled BSDF for skin, eyes and teeth
+    New texture maps for specular and sub dermal
+    Additional code to load new texture maps into right image texture node
+    Added references to new texture maps in the character config JSON file for all character types
+    Changed Skin Editor values to reflect new PBR shading network
+
+
 ## MB-Lab 1.6.4 Notes
 
     Added Freckles generator, basic functionality

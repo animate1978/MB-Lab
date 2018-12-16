@@ -1,6 +1,14 @@
 # CHANGE LOG
 
-All significant changes will be documented here
+All changes will be documented here
+
+# MB-Lab 1.6.5
+
+ - New shading network based on Principled BSDF for skin, eyes and teeth
+ - New texture maps for specular and subdermal
+ - Additional code to load new texture maps into the right image texture node
+ - Added references to new texture maps for all character types
+ - Changed Skin Editor values to reflect new PBR shading network
 
 # MB-Lab 1.6.4
 
