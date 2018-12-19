@@ -1,6 +1,38 @@
 # CHANGE LOG
 
-All signifigant changes will be documented here
+All changes will be documented here
+
+# MB-Lab 1.6.5
+
+ - New shading network based on Principled BSDF for skin, eyes and teeth
+ - New texture maps for specular and subdermal
+ - Additional code to load new texture maps into the right image texture node
+ - Added references to new texture maps for all character types
+ - Changed Skin Editor values to reflect new PBR shading network
+
+# MB-Lab 1.6.4
+
+## Changed
+
+ - Minor edits to skin bump mapping
+ - Eye shader node tweek
+
+## Added
+
+ - Procedural freckle generator, basic functionality
+ - Freckles editable in Skin Editor
+
+# MB-Lab 1.6.3
+
+## Changed
+
+- Changed button labels to be more uniform
+- Minor edits to shader networks
+
+## Added
+
+- Basic procedural pore and skin cell bump mapping
+- Third layer of SSS added to simulate sub-dermal tissue
 
 # MB-Lab 1.6.2
 

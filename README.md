@@ -14,18 +14,20 @@ In 2000 he started Makehuman Project, a free and open source software for the mo
 
 He is the author of Manuel Bastioni Laboratory, a free and open source add-on for Blender to create 3d humanoids. It includes the results of years of prototyping and studies realized by him during the development of his 3d graphics projects.
 
-## MB-Lab 1.6.2 Notes
+## MB-Lab 1.6.5 Notes
 
-    Skin shader changes - added another layer of SSS
-    Grouped shader nodes into easy to edit skin and eye shaders
-    Removed nodes from eye shader to solve red fireflies visual artifact
-    Changed wiki website address
+    New shader network based on Principled BSDF for skin, eyes and teeth
+    New texture maps for specular and sub dermal
+    Additional code to load new texture maps into right image texture node
+    Added references to new texture maps in the character config JSON file for all character types
+    Changed Skin Editor values to reflect new PBR shading network
+
 
 ## Release notes for ManuelBastioniLAB 1.6.1
 
-The version 1.6.1 of ManuelbastioniLAB, the free and open source character editor for Blender, is ready for download.
+The version 1.6.1 of ManuelbastioniLAB, the free and open source character editor for Blender, is still available for download at http://www.manuelbastioni.com
 
-New features
+## New features
 
     Assets library, with four hair models
     Automatic transfer of rigging weights from body to proxy
@@ -36,7 +38,7 @@ New features
     Custom name for finalized characters
     Expressions parameter for eyes rotations
 
-Bug fixed
+## Bug fixed
 
     Less restrictive version check to run in Blender vers. > 2.79.0
     Fixed bug in hidden IK control

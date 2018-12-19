@@ -1,30 +1,32 @@
-#ManuelbastioniLAB - Copyright (C) 2015-2018 Manuel Bastioni
-#Official site: www.manuelbastioni.com
-#This program is free software: you can redistribute it and/or modify
-#it under the terms of the GNU General Public License as published by
-#the Free Software Foundation, either version 3 of the License, or
-#(at your option) any later version.
+# ManuelbastioniLAB - Copyright (C) 2015-2018 Manuel Bastioni
+# Official site: www.manuelbastioni.com
+# MB-Lab fork website : https://github.com/animate1978/MB-Lab
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 
-#This program is distributed in the hope that it will be useful,
-#but WITHOUT ANY WARRANTY; without even the implied warranty of
-#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 
-#You should have received a copy of the GNU General Public License
-#along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 bl_info = {
     "name": "MB-Lab",
     "author": "Manuel Bastioni",
-    "version": (1, 6, 2),
+    "version": (1, 6, 5),
     "blender": (2, 79, 0),
     "location": "View3D > Tools > MB-Lab",
-    "description": "A complete lab for characters creation",
+    "description": "A complete lab for character creation",
     "warning": "",
     'wiki_url': "https://github.com/animate1978/MB-Lab/wiki",
+    'tracker_url': 'https://github.com/animate1978/MB-Lab/issues',
     "category": "Characters"
-}
+	}
 
 import bpy
 import os
@@ -657,7 +659,7 @@ bpy.types.Scene.mblab_random_engine = bpy.props.EnumProperty(
 
 class ButtonParametersOff(bpy.types.Operator):
 
-    bl_label = 'Body, face and measure parameters'
+    bl_label = 'Body Measures'
     bl_idname = 'mbast.button_parameters_off'
     bl_description = 'Close details panel'
     bl_context = 'objectmode'
@@ -669,7 +671,7 @@ class ButtonParametersOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonParametersOn(bpy.types.Operator):
-    bl_label = 'Body. face and measure parameters'
+    bl_label = 'Body Measures'
     bl_idname = 'mbast.button_parameters_on'
     bl_description = 'Open details panel (head,nose,hands, measures etc...)'
     bl_context = 'objectmode'
@@ -732,7 +734,7 @@ class ButtonExpressionOn(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonRandomOff(bpy.types.Operator):
-    bl_label = 'Random generator'
+    bl_label = 'Random Generator'
     bl_idname = 'mbast.button_random_off'
     bl_description = 'Close random generator panel'
     bl_context = 'objectmode'
@@ -744,7 +746,7 @@ class ButtonRandomOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonRandomOn(bpy.types.Operator):
-    bl_label = 'Random generator'
+    bl_label = 'Random Generator'
     bl_idname = 'mbast.button_random_on'
     bl_description = 'Open random generator panel'
     bl_context = 'objectmode'
@@ -759,7 +761,7 @@ class ButtonRandomOn(bpy.types.Operator):
 
 class ButtonAutomodellingOff(bpy.types.Operator):
 
-    bl_label = 'Automodelling tools'
+    bl_label = 'Automodelling Tools'
     bl_idname = 'mbast.button_automodelling_off'
     bl_description = 'Close automodelling panel'
     bl_context = 'objectmode'
@@ -771,7 +773,7 @@ class ButtonAutomodellingOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonAutomodellingOn(bpy.types.Operator):
-    bl_label = 'Automodelling tools'
+    bl_label = 'Automodelling Tools'
     bl_idname = 'mbast.button_automodelling_on'
     bl_description = 'Open automodelling panel'
     bl_context = 'objectmode'
@@ -783,7 +785,7 @@ class ButtonAutomodellingOn(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtoRestPoseOff(bpy.types.Operator):
-    bl_label = 'Rest pose'
+    bl_label = 'Rest Pose'
     bl_idname = 'mbast.button_rest_pose_off'
     bl_description = 'Close rest pose panel'
     bl_context = 'objectmode'
@@ -795,7 +797,7 @@ class ButtoRestPoseOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonRestPoseOn(bpy.types.Operator):
-    bl_label = 'Rest pose'
+    bl_label = 'Rest Pose'
     bl_idname = 'mbast.button_rest_pose_on'
     bl_description = 'Open rest pose panel'
     bl_context = 'objectmode'
@@ -858,7 +860,7 @@ class ButtonPoseOn(bpy.types.Operator):
 
 
 class ButtonSkinOff(bpy.types.Operator):
-    bl_label = 'Skin editor'
+    bl_label = 'Skin Editor'
     bl_idname = 'mbast.button_skin_off'
     bl_description = 'Close skin editor panel'
     bl_context = 'objectmode'
@@ -870,7 +872,7 @@ class ButtonSkinOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonSkinOn(bpy.types.Operator):
-    bl_label = 'Skin editor'
+    bl_label = 'Skin Editor'
     bl_idname = 'mbast.button_skin_on'
     bl_description = 'Open skin editor panel'
     bl_context = 'objectmode'
@@ -882,7 +884,7 @@ class ButtonSkinOn(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonViewOptOff(bpy.types.Operator):
-    bl_label = 'Display options'
+    bl_label = 'Display Options'
     bl_idname = 'mbast.button_display_off'
     bl_description = 'Close skin editor panel'
     bl_context = 'objectmode'
@@ -894,7 +896,7 @@ class ButtonViewOptOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonViewOptOn(bpy.types.Operator):
-    bl_label = 'Display options'
+    bl_label = 'Display Options'
     bl_idname = 'mbast.button_display_on'
     bl_description = 'Open skin editor panel'
     bl_context = 'objectmode'
@@ -933,7 +935,7 @@ class ButtonProxyFitOn(bpy.types.Operator):
 
 
 class ButtonFilesOff(bpy.types.Operator):
-    bl_label = 'File tools'
+    bl_label = 'File Tools'
     bl_idname = 'mbast.button_file_off'
     bl_description = 'Close file panel'
     bl_context = 'objectmode'
@@ -945,7 +947,7 @@ class ButtonFilesOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonFilesOn(bpy.types.Operator):
-    bl_label = 'File tools'
+    bl_label = 'File Tools'
     bl_idname = 'mbast.button_file_on'
     bl_description = 'Open file panel'
     bl_context = 'objectmode'
@@ -958,7 +960,7 @@ class ButtonFilesOn(bpy.types.Operator):
 
 
 class ButtonFinalizeOff(bpy.types.Operator):
-    bl_label = 'Finalize tools'
+    bl_label = 'Finalize Tools'
     bl_idname = 'mbast.button_finalize_off'
     bl_description = 'Close finalize panel'
     bl_context = 'objectmode'
@@ -970,7 +972,7 @@ class ButtonFinalizeOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonFinalizeOn(bpy.types.Operator):
-    bl_label = 'Finalize tools'
+    bl_label = 'Finalize Tools'
     bl_idname = 'mbast.button_finalize_on'
     bl_description = 'Open finalize panel'
     bl_context = 'objectmode'
@@ -982,7 +984,7 @@ class ButtonFinalizeOn(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonLibraryOff(bpy.types.Operator):
-    bl_label = 'Character library'
+    bl_label = 'Character Library'
     bl_idname = 'mbast.button_library_off'
     bl_description = 'Close character library panel'
     bl_context = 'objectmode'
@@ -994,7 +996,7 @@ class ButtonLibraryOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonLibraryOn(bpy.types.Operator):
-    bl_label = 'Character library'
+    bl_label = 'Character Library'
     bl_idname = 'mbast.button_library_on'
     bl_description = 'Open character library panel'
     bl_context = 'objectmode'
@@ -1699,7 +1701,7 @@ class LoadBvh(bpy.types.Operator, ImportHelper):
 
 class StartSession(bpy.types.Operator):
     bl_idname = "mbast.init_character"
-    bl_label = "Init character"
+    bl_label = "Create character"
     bl_description = 'Create the character selected above'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL','UNDO'}
@@ -2134,8 +2136,3 @@ def unregister():
 
 if __name__ == "__main__":
     register()
-
-
-
-
-
