@@ -1,17 +1,18 @@
-#ManuelbastioniLAB - Copyright (C) 2015-2018 Manuel Bastioni
-#Official site: www.manuelbastioni.com
-#This program is free software: you can redistribute it and/or modify
-#it under the terms of the GNU General Public License as published by
-#the Free Software Foundation, either version 3 of the License, or
-#(at your option) any later version.
+# ManuelbastioniLAB - Copyright (C) 2015-2018 Manuel Bastioni
+# Official site: www.manuelbastioni.com
+# MB-Lab fork website : https://github.com/animate1978/MB-Lab
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 
-#This program is distributed in the hope that it will be useful,
-#but WITHOUT ANY WARRANTY; without even the implied warranty of
-#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 
-#You should have received a copy of the GNU General Public License
-#along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import math
 import array
@@ -29,6 +30,8 @@ class MaterialEngine:
         self.obj_name = obj_name
         self.displacement_data_file = character_config["texture_displacement"]
         self.image_diffuse_file = character_config["texture_diffuse"]
+        self.image_specular_file = character_config["texture_specular"]
+        self.image_subdermal_file = character_config["texture_subdermal"]
         self.image_displacement_file = character_config["name"]+"_displ.png"
         
 
@@ -45,6 +48,8 @@ class MaterialEngine:
         self.image_file_names["body_displ"] = self.image_displacement_file
         self.image_file_names["displ_data"] = self.displacement_data_file
         self.image_file_names["body_derm"] = self.image_diffuse_file
+        self.image_file_names["body_spec"] = self.image_specular_file
+        self.image_file_names["body_subd"] = self.image_subdermal_file
 
         self.image_file_paths = {}
         for img_id in self.image_file_names.keys():
@@ -55,6 +60,12 @@ class MaterialEngine:
         self.parameter_identifiers = ["skin_", "eyes_"]
 
         if os.path.isfile(self.image_file_paths["body_derm"]):
+            self.texture_dermal_exist = True
+
+        if os.path.isfile(self.image_file_paths["body_spec"]):
+            self.texture_dermal_exist = True
+        
+        if os.path.isfile(self.image_file_paths["body_subd"]):
             self.texture_dermal_exist = True
 
         if os.path.isfile(self.image_file_paths["displ_data"]):
@@ -177,6 +188,10 @@ class MaterialEngine:
 
                             if "_skn_diffuse" in node.name:
                                 self.assign_image_to_node(material.name, node.name, self.image_file_names["body_derm"])
+                            if "_skn_specular" in node.name:
+                                self.assign_image_to_node(material.name, node.name, self.image_file_names["body_spec"])
+                            if "_skn_subdermal" in node.name:
+                                self.assign_image_to_node(material.name, node.name, self.image_file_names["body_subd"])
                             if "_eys_diffuse" in node.name:
                                 self.assign_image_to_node(material.name, node.name, self.image_file_names["body_derm"])
                             if "_eylsh_diffuse" in node.name:
