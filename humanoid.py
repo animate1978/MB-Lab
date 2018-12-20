@@ -434,7 +434,7 @@ class Humanoid:
         self.mat_engine.save_texture(filepath,"body_derm")
 
     def save_all_textures(self, filepath):
-        targets = ["body_displ","body_derm"]
+        targets = ["body_displ","body_derm","body_spec","body_subd"]
         for target in targets:
             dir_path = os.path.dirname(filepath)
             filename = os.path.basename(filepath)
