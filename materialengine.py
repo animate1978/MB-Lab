@@ -63,10 +63,10 @@ class MaterialEngine:
             self.texture_dermal_exist = True
 
         if os.path.isfile(self.image_file_paths["body_spec"]):
-            self.texture_dermal_exist = True
+            self.texture_spec_exist = True
         
         if os.path.isfile(self.image_file_paths["body_subd"]):
-            self.texture_dermal_exist = True
+            self.texture_subd_exist = True
 
         if os.path.isfile(self.image_file_paths["displ_data"]):
             self.texture_displace_exist = True
