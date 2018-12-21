@@ -31,6 +31,7 @@ class MaterialEngine:
         self.displacement_data_file = character_config["texture_displacement"]
         self.image_diffuse_file = character_config["texture_diffuse"]
         self.image_specular_file = character_config["texture_specular"]
+        self.image_roughness_file = character_config["texture_roughness"]
         self.image_subdermal_file = character_config["texture_subdermal"]
         self.image_displacement_file = character_config["name"]+"_displ.png"
         
@@ -49,6 +50,7 @@ class MaterialEngine:
         self.image_file_names["displ_data"] = self.displacement_data_file
         self.image_file_names["body_derm"] = self.image_diffuse_file
         self.image_file_names["body_spec"] = self.image_specular_file
+        self.image_file_names["body_rough"] = self.image_roughness_file
         self.image_file_names["body_subd"] = self.image_subdermal_file
 
         self.image_file_paths = {}
@@ -64,6 +66,9 @@ class MaterialEngine:
 
         if os.path.isfile(self.image_file_paths["body_spec"]):
             self.texture_spec_exist = True
+        
+        if os.path.isfile(self.image_file_paths["body_rough"]):
+            self.texture_rough_exist = True
         
         if os.path.isfile(self.image_file_paths["body_subd"]):
             self.texture_subd_exist = True
@@ -190,6 +195,8 @@ class MaterialEngine:
                                 self.assign_image_to_node(material.name, node.name, self.image_file_names["body_derm"])
                             if "_skn_specular" in node.name:
                                 self.assign_image_to_node(material.name, node.name, self.image_file_names["body_spec"])
+                            if "_skn_roughness" in node.name:
+                                self.assign_image_to_node(material.name, node.name, self.image_file_names["body_rough"])
                             if "_skn_subdermal" in node.name:
                                 self.assign_image_to_node(material.name, node.name, self.image_file_names["body_subd"])
                             if "_eys_diffuse" in node.name:

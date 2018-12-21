@@ -71,6 +71,7 @@
         "label": "Caucasian female (F_CA01)",        
         "texture_diffuse": "human_female_diffuse.png",
         "texture_specular": "human_female_specular.png",
+        "texture_roughness": "human_female_roughness.png",
         "texture_subdermal": "human_female_subdermal.png",
         "texture_displacement": "human_female_displacement.png",
         "morphs_extra_file":"",        

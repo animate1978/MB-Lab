@@ -1169,7 +1169,7 @@ class FinalizeCharacterAndImages(bpy.types.Operator,ExportHelper):
         default="*.png",
         options={'HIDDEN'},
         )
-    bl_description = 'Finalize, saving all the textures and converting the parameters in shapekeys. Warning: after the conversion the character will be no longer modifiable using ManuelbastioniLAB tools'
+    bl_description = 'Finalize, saving all the textures and converting the parameters in shapekeys. Warning: after the conversion the character will be no longer modifiable using MB-Lab tools'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -1209,7 +1209,7 @@ class FinalizeCharacter(bpy.types.Operator):
     """
     bl_label = 'Finalize'
     bl_idname = 'mbast.finalize_character'
-    bl_description = 'Finalize converting the parameters in shapekeys. Warning: after the conversion the character will be no longer modifiable using ManuelbastioniLAB tools'
+    bl_description = 'Finalize converting the parameters in shapekeys. Warning: after the conversion the character will be no longer modifiable using MB-Lab Tools'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
