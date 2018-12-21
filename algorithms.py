@@ -23,39 +23,76 @@ import os
 import bpy
 import json
 import array
-
-debug_level = 0
-
-
-def print_log_report(level, text_to_write):
-    log_level = 0
-    levels = {"INFO": 0, "DEBUG": 1, "WARNING": 2, "ERROR": 3, "CRITICAL": 4, }
-    if level in levels:
-        log_level = levels[level]
-    if log_level >= debug_level:
-        print(level + ": " + text_to_write)
+from . import settings
 
 
-def is_writeable(filepath):
+def print_log_report(level_in = -1, text_to_write = "An Error occur"):
+    levels = ["INFO", "DEBUG", "WARNING", "ERROR", "CRITICAL"]
+    if type(level_in) is str:
+        log_level = levels.index(level_in)
+        level_mess = level_in
+    # Rewritten to allow use of int control. What's the point of a print log function if you're
+    # just going to rewrite the control code all the time?!
+    if type(level_in) is int and -1 <= level_in <= levels.__len__():
+        if level_in == -1:
+            level_in = 3;
+        log_level = level_in
+        level_mess = levels[level_in]
+
+    if log_level >= settings.debug_level:
+        print(level_mess + ": " + text_to_write)
+
+    # log_level = 0
+    # levels = {"INFO": 0, "DEBUG": 1, "WARNING": 2, "ERROR": 3, "CRITICAL": 4, }
+    # if level in levels:
+    #     log_level = levels[level]
+    # if log_level >= settings.debug_level:
+    #     print(level + ": " + text_to_write)
+
+
+def is_writeable(filepath, set_write=True):
     writeable = False
     try:
         test_writing = open(filepath, 'w')
         test_writing.close()
-        writeable = True
+        if set_write:
+            writeable = True
     except:
         print("WARNING: Writing permission denied for {0}".format(filepath))
     return writeable
 
-
+# TODO Make
 def get_data_path():
-    addon_directory = os.path.dirname(os.path.realpath(__file__))
-    data_dir = os.path.join(addon_directory, "data")
-    print_log_report("INFO", "Looking for the retarget data in the folder {0}...".format(simple_path(data_dir)))
-    if os.path.isdir(data_dir):
-        return data_dir
+    print_log_report("INFO", "Looking for the retarget data in the folder {0}...".format(settings.data_path))
+    if os.path.isdir(settings.data_path):
+        return settings.data_path
     else:
         print_log_report("CRITICAL", "Tools data not found. Please check your Blender addons directory.")
         return None
+    # global data_path
+    # if data_path:
+    #     print_log_report("INFO", "Looking for the retarget data in the folder {0}...".format(simple_path(data_path)))
+    #     return data_path
+    # else:
+    #     addon_directory = os.path.dirname(os.path.realpath(__file__))
+    #     data_dir = os.path.join(addon_directory, "data")
+    #     print_log_report("INFO", "Looking for the retarget data in the folder {0}...".format(simple_path(data_dir)))
+    #     if os.path.isdir(data_dir):
+    #         data_path = data_dir
+    #         return data_dir
+    #     else:
+    #         print_log_report("CRITICAL", "Tools data not found. Please check your Blender addons directory.")
+    #         return None
+
+# def get_data_path():
+#     addon_directory = os.path.dirname(os.path.realpath(__file__))
+#     data_dir = os.path.join(addon_directory, "data")
+#     print_log_report("INFO", "Looking for the retarget data in the folder {0}...".format(simple_path(data_dir)))
+#     if os.path.isdir(data_dir):
+#         return data_dir
+#     else:
+#         print_log_report("CRITICAL", "Tools data not found. Please check your Blender addons directory.")
+#         return None
 
 
 def get_configuration():
@@ -79,17 +116,17 @@ def get_blendlibrary_path():
         return None
 
 
-def simple_path(input_path, use_basename=True, max_len=50):
+def simple_path(input_path, use_basename=False, max_len=5000):
     """
     Return the last part of long paths
     """
-    if use_basename == True:
+    if use_basename:
         return os.path.basename(input_path)
     else:
         if len(input_path) > max_len:
-            return ("[Trunked].." + input_path[len(input_path) - max_len:])
+            return "[Trunked].." + input_path[len(input_path) - max_len:]
         else:
-            return input_path
+            return os.path.relpath(input_path, os.path.dirname(os.path.realpath(__file__)))
 
 
 def json_booleans_to_python(value):
@@ -127,7 +164,7 @@ def exists_database(lib_path):
                     if "json" in extension or "bvh" in extension:
                         result = True
                     else:
-                        print_log_report("WARNING", "Unknow file extension in {0}".format(simple_path(lib_path)))
+                        print_log_report("WARNING", "Unknown file extension in {0}".format(simple_path(lib_path)))
 
         else:
             print_log_report("WARNING", "data path {0} not found".format(simple_path(lib_path)))
@@ -774,13 +811,13 @@ def new_modifier(obj, name, modifier_type, parameters):
     return new_modifier
 
 
-def set_modifier_parameter(modifier, parameter, value):
-    if hasattr(modifier, parameter):
-        try:
-            setattr(modifier, parameter, value)
-        except AttributeError:
-            print_log_report("INFO",
-                             "Setattr failed for attribute '{0}' of modifier {1}".format(parameter, modifier_name))
+# def set_modifier_parameter(modifier, parameter, value):  # UNUSED
+#     if hasattr(modifier, parameter):
+#         try:
+#             setattr(modifier, parameter, value)
+#         except AttributeError:
+#             print_log_report("INFO",
+#                              "Setattr failed for attribute '{0}' of modifier {1}".format(parameter, modifier_name))
 
 
 def get_object_materials(obj):
@@ -1244,7 +1281,7 @@ def set_node_image(mat_node, mat_image):
     if mat_node:
         mat_node.image = mat_image
     else:
-        print_log_report("WARNING", "Node assignment failed. Image not found: {0}".format(image_name))
+        print_log_report("WARNING", "Node assignment failed. Image not found: {0}".format(mat_image.filepath_raw))
 
 
 def get_material(material_name):
