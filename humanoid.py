@@ -233,14 +233,14 @@ class Humanoid:
 
         algorithms.print_log_report("INFO","Loaded {0} categories from morph database".format(
             len(self.categories)))
-        bpy.context.scene.objects.active = obj
+        bpy.context.view_layer.objects.active = obj
         self.measures = self.morph_engine.measures
         self.delta_measures = {}
         self.init_delta_measures()
         self.load_transformation_database()
         self.add_corrective_smooth_modifier()
         self.add_subdivision_modifier()
-        self.add_displacement_modifier()        
+        self.add_displacement_modifier()
         self.has_data = True
 
     def add_subdivision_modifier(self):

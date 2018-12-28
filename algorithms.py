@@ -391,14 +391,14 @@ def looking_for_humanoid_obj():
             print_log_report("WARNING",msg)
             return("ERROR",msg)
 
-        if bpy.app.version >= (2,80,0):
-            msg = "Sorry, this version of lab does no work with Blender 2.8"
-            print_log_report("WARNING",msg)
-            return("ERROR",msg)
+#        if bpy.app.version >= (2,80,0):
+#            msg = "Sorry, this version of lab does no work with Blender 2.8"
+#            print_log_report("WARNING",msg)
+#            return("ERROR",msg)
 
-        if bpy.app.version > (2,79,0):
-            msg = "The lab is not designed to work with unstable Blender build {0}".format(str(bpy.app.version))
-            print_log_report("WARNING",msg)
+#       if bpy.app.version > (2,79,0):
+#            msg = "The lab is not designed to work with unstable Blender build {0}".format(str(bpy.app.version))
+#            print_log_report("WARNING",msg)
             #return("ERROR",msg)
 
         human_obj = None
@@ -751,7 +751,7 @@ def get_object_materials(obj):
 def select_and_change_mode(obj,obj_mode):
     deselect_all_objects()
     if obj:
-        obj.select = True
+        obj.select_set(True)
         set_active_object(obj)
         set_object_visible(obj)
         try:
@@ -766,23 +766,23 @@ def get_selected_objs_names():
 def select_object_by_name(name):
     obj = get_object_by_name(name)
     if obj:
-        obj.select = True
+        obj.select_set(True)
 
 def set_selected_objs_by_name(names):
     for name in names:
         if name in bpy.data.objects:
-            bpy.data.objects[name].select = True
+            bpy.data.objects[name].select_set(True)
 
 def get_active_object():
-    return bpy.context.scene.objects.active
+    return bpy.context.view_layer.objects.active
 
 def deselect_all_objects():
     for obj in  bpy.data.objects:
-        obj.select = False
+        obj.select_set(False)
 
 def set_active_object(obj):
     if obj:
-        bpy.context.scene.objects.active = obj
+        bpy.context.view_layer.objects.active = obj
 
 def get_object_by_name(name):
     if name in bpy.data.objects:
@@ -1044,18 +1044,15 @@ def get_vertgroup_verts(obj, vgroup_name):
                 #Blender return an error if the vert is not in group
     return verts_idxs
 
-
-
-
-
 def set_object_visible(obj):
     if obj:
         print_log_report("DEBUG","Turn the visibility of {0} ON".format(obj.name))
-        obj.hide = False
+        obj.hide_select = False
 
+        #TODO: I don't think this is needed in blender 2.8
         #bpy.context.scene.layers = obj.layers in some cases this return DAG zero error (with old depsgraph)!
-        n = bpy.context.scene.active_layer
-        set_object_layer(obj,n) #TODO not perfect because it changes the layer
+        #n = bpy.context.scene.active_layer
+        #set_object_layer(obj,n) #TODO not perfect because it changes the layer
 
 def load_vertices_database(vertices_path):
     vertices = []
@@ -1377,17 +1374,26 @@ def update_bendy_bones(armat):
                 stretch_to_constraint = get_bone_constraint_by_type(p_bone, 'STRETCH_TO')
                 set_bone_constraint_parameter(stretch_to_constraint, 'rest_length', length)
 
-def link_to_scene(obj):
-    scn = bpy.context.scene
-    if obj.name:
-        if obj.name in bpy.data.objects:
-            if obj.name not in scn.object_bases:
-                scn.objects.link(obj)
-            else:
-                print_log_report("WARNING","The object {0} is already linked to the scene".format(obj.name))
-        else:
-            print_log_report("ERROR","Cannot link obj {0} because it's not appended to sccene".format(obj.name))
+def link_to_collection(obj):
+    # sanity check
+    if obj.name not in bpy.data.objects:
+        print_log_report("ERROR","Cannot link obj {0} because it's not in bpy.data.objects".format(obj.name))
+        return
 
+    collection_name = 'ManuelBastioni_Character'
+    c = bpy.data.collections.get(collection_name)
+    scene = bpy.context.scene
+    # collection is already created
+    if c is not None:
+        if obj.name not in c.objects:
+            c.objects.link(obj)
+        else:
+            print_log_report("WARNING","The object {0} is already linked to the scene".format(obj.name))
+    else:
+        # create the collection, link collection to scene and link obj to collection
+        c = bpy.data.collections.new(collection_name)
+        scene.collection.children.link(c)
+        c.objects.link(obj)
 
 def import_object_from_lib(lib_filepath, name, final_name = None, stop_import = True):
     if name != "":
@@ -1431,10 +1437,10 @@ def append_object_from_library(lib_filepath, obj_names, suffix = None):
         return None
 
     for obj in data_to.objects:
-        link_to_scene(obj)
+        link_to_collection(obj)
         obj_parent = get_object_parent(obj)
         if obj_parent:
-            link_to_scene(obj_parent)
+            link_to_collection(obj_parent)
 
 
 
