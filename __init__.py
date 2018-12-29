@@ -202,6 +202,14 @@ def tone_update(self, context):
 def modifiers_update(self, context):
     sync_character_to_props()
 
+def set_cycles_render_engine(self, context):
+    if context.scene.mblab_use_cycles:
+        context.scene.mblab_use_eevee = False
+
+def set_eevee_render_engine(self, context):
+    if context.scene.mblab_use_eevee:
+        context.scene.mblab_use_cycles = False
+
 
 def preset_update(self, context):
     """
@@ -527,11 +535,13 @@ bpy.types.Scene.mblab_remove_all_modifiers = bpy.props.BoolProperty(
 bpy.types.Scene.mblab_use_cycles = bpy.props.BoolProperty(
     name="Use Cycles materials (needed for skin shaders)",
     default = True,
+    update = set_cycles_render_engine,
     description="This is needed in order to use the skin editor and shaders (highly recommended)")
 
 bpy.types.Scene.mblab_use_eevee = bpy.props.BoolProperty(
     name="Use EEVEE materials (needed for skin shaders)",
     default = False,
+    update = set_eevee_render_engine,
     description="This is needed in order to use the skin editor and shaders")
 
 bpy.types.Scene.mblab_use_lamps = bpy.props.BoolProperty(
