@@ -67,7 +67,9 @@ class SkeletonEngine:
 
             if obj_armat != None:
                 self.store_z_axis()
-                self.armature_visibility = [x for x in obj_armat.layers]
+                # TODO doesn't look like armature_visibility is used
+                # anywhere
+                #self.armature_visibility = [x for x in obj_armat.layers]
                 self.armature_name = obj_armat.name                
                 self.align_bones_z_axis()
                 obj_body.parent = obj_armat
