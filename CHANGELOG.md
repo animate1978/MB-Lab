@@ -2,6 +2,25 @@
 
 All changes will be documented here
 
+# MB-Lab 1.7.0
+
+## Blender 2.80 Update!
+
+ - Blender 2.80 Beta code port done by Amir Shehata amir.shehata@gmail.com
+
+## Changed
+
+ - Minor shader node edit to eyes to bring out iris more in renders
+ - Changes in bump mapping, now uses both procedural and texture map
+ - Removed skin age
+
+## Added
+
+ - New SSS Scalable vector node, brings scalable SSS to Principled BSDF
+ - New bump texture map
+ - New eye diffuse map for all realistic models
+
+
 # MB-Lab 1.6.5
 
  - New shading network based on Principled BSDF for skin, eyes and teeth
