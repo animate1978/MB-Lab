@@ -3,7 +3,8 @@
 MB-Lab is an attempt to keep the ManuelBastioniLAB Blender addon alive through community efforts.
 
 ## Blender 2.8 Support
-ManuelBastioni Lab has been ported to work with blender 2.8. The port is available on the blender28 branch of this repository.
+
+MB-Lab has been ported to work with blender 2.80
 
 ## Contributors wanted! Python programmers needed!
 
@@ -20,6 +21,12 @@ In 2000 he started Makehuman Project, a free and open source software for the mo
 He is the author of Manuel Bastioni Laboratory, a free and open source add-on for Blender to create 3d humanoids. It includes the results of years of prototyping and studies realized by him during the development of his 3d graphics projects.
 
 This fork is an attempt to keep this addon going towards the next generation of Blender as the original author is no longer developing ManuelBastioniLAB
+
+## MB-Lab 1.7.0 Notes
+
+    Blender 2.80 port
+    Scalable SSS for Principled BSDF
+    New texture maps for eyes and bump map
 
 ## MB-Lab 1.6.5 Notes
 
