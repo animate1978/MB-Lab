@@ -2,6 +2,20 @@
 
 All changes will be documented here
 
+# MB-Lab 1.7.0b
+
+## Bug fixes
+
+ - Fixed texture map lookup bug for Anime characters
+ - Fixed a bug with unregistering the add-on
+
+## Changed
+
+ - Anime skin and eye shaders now grouped up
+ - Moved Dermal and Displacement image import / export to File Tools
+ - Changed and added missing descriptions
+
+
 # MB-Lab 1.7.0
 
 ## Blender 2.80 Update!

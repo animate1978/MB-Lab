@@ -1370,9 +1370,9 @@ class CharacterGenerator(bpy.types.Operator):
         return {'FINISHED'}
 
 class ExpDisplacementImage(bpy.types.Operator, ExportHelper):
-    """Export parameters for the character"""
+    """Export texture maps for the character"""
     bl_idname = "mbast.export_dispimage"
-    bl_label = "Save displacement image"
+    bl_label = "Save displacement map"
     filename_ext = ".png"
     filter_glob: bpy.props.StringProperty(
         default="*.png",
@@ -1386,9 +1386,9 @@ class ExpDisplacementImage(bpy.types.Operator, ExportHelper):
         return {'FINISHED'}
 
 class ExpDermalImage(bpy.types.Operator, ExportHelper):
-    """Export parameters for the character"""
+    """Export texture maps for the character"""
     bl_idname = "mbast.export_dermimage"
-    bl_label = "Save dermal image"
+    bl_label = "Save dermal map"
     filename_ext = ".png"
     filter_glob: bpy.props.StringProperty(
         default="*.png",
@@ -1403,10 +1403,9 @@ class ExpDermalImage(bpy.types.Operator, ExportHelper):
 
 
 class ExpAllImages(bpy.types.Operator, ExportHelper):
-    """
-    """
+    """Export all texture maps for the character"""
     bl_idname = "mbast.export_allimages"
-    bl_label = "Export all images"
+    bl_label = "Export all maps"
     filename_ext = ".png"
     filter_glob: bpy.props.StringProperty(
         default="*.png",
@@ -1456,9 +1455,7 @@ class ExpMeasures(bpy.types.Operator, ExportHelper):
 
 
 class ImpCharacter(bpy.types.Operator, ImportHelper):
-    """
-    Import parameters for the character
-    """
+    """Import parameters for the character"""
     bl_idname = "mbast.import_character"
     bl_label = "Import character"
     filename_ext = ".json"
@@ -1475,9 +1472,7 @@ class ImpCharacter(bpy.types.Operator, ImportHelper):
         return {'FINISHED'}
 
 class ImpMeasures(bpy.types.Operator, ImportHelper):
-    """
-    Import parameters for the character
-    """
+    """Import parameters for the character"""
     bl_idname = "mbast.import_measures"
     bl_label = "Import measures"
     filename_ext = ".json"
@@ -1494,11 +1489,9 @@ class ImpMeasures(bpy.types.Operator, ImportHelper):
 
 
 class LoadDermImage(bpy.types.Operator, ImportHelper):
-    """
-
-    """
+    """Import texture maps for the character"""
     bl_idname = "mbast.import_dermal"
-    bl_label = "Load dermal image"
+    bl_label = "Load dermal map"
     filename_ext = ".png"
     filter_glob: bpy.props.StringProperty(
         default="*.png",
@@ -1513,11 +1506,9 @@ class LoadDermImage(bpy.types.Operator, ImportHelper):
 
 
 class LoadDispImage(bpy.types.Operator, ImportHelper):
-    """
-
-    """
+    """Import texture maps for the character"""
     bl_idname = "mbast.import_displacement"
-    bl_label = "Load displacement image"
+    bl_label = "Load displacement map"
     filename_ext = ".png"
     filter_glob: bpy.props.StringProperty(
         default="*.png",
@@ -1558,9 +1549,7 @@ class RemoveProxy(bpy.types.Operator):
         return {'FINISHED'}
 
 class ApplyMeasures(bpy.types.Operator):
-    """
-    Fit the character to the measures
-    """
+    """Fit the character to the measures"""
 
     bl_label = 'Update character'
     bl_idname = 'mbast.measures_apply'
@@ -1575,9 +1564,7 @@ class ApplyMeasures(bpy.types.Operator):
 
 
 class AutoModelling(bpy.types.Operator):
-    """
-    Fit the character to the measures
-    """
+    """Fit the character to the measures"""
 
     bl_label = 'Auto modelling'
     bl_idname = 'mbast.auto_modelling'
@@ -1591,9 +1578,7 @@ class AutoModelling(bpy.types.Operator):
         return {'FINISHED'}
 
 class AutoModellingMix(bpy.types.Operator):
-    """
-    Fit the character to the measures
-    """
+    """Fit the character to the measures"""
 
     bl_label = 'Averaged auto modelling'
     bl_idname = 'mbast.auto_modelling_mix'
@@ -1624,9 +1609,7 @@ class SaveRestPose(bpy.types.Operator, ExportHelper):
         return {'FINISHED'}
 
 class LoadRestPose(bpy.types.Operator, ImportHelper):
-    """
-    Import parameters for the character
-    """
+    """Import parameters for the character"""
     bl_idname = "mbast.restpose_load"
     bl_label = "Load custom rest pose"
     filename_ext = ".json"
@@ -1661,9 +1644,7 @@ class SavePose(bpy.types.Operator, ExportHelper):
         return {'FINISHED'}
 
 class LoadPose(bpy.types.Operator, ImportHelper):
-    """
-    Import parameters for the character
-    """
+    """Import parameters for the character"""
     bl_idname = "mbast.pose_load"
     bl_label = "Load pose"
     filename_ext = ".json"
@@ -1679,9 +1660,7 @@ class LoadPose(bpy.types.Operator, ImportHelper):
         return {'FINISHED'}
 
 class ResetPose(bpy.types.Operator):
-    """
-    Import parameters for the character
-    """
+    """Import parameters for the character"""
     bl_idname = "mbast.pose_reset"
     bl_label = "Reset pose"
     bl_context = 'objectmode'
@@ -1695,9 +1674,7 @@ class ResetPose(bpy.types.Operator):
 
 
 class LoadBvh(bpy.types.Operator, ImportHelper):
-    """
-    Import parameters for the character
-    """
+    """Import parameters for the character"""
     bl_idname = "mbast.load_animation"
     bl_label = "Load animation (bvh)"
     filename_ext = ".bvh"
@@ -1942,7 +1919,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                     for meta_data_prop in sorted(mblab_humanoid.character_metaproperties.keys()):
                         if "last" not in meta_data_prop:
                             self.layout.prop(obj, meta_data_prop)
-                    self.layout.operator("mbast.reset_allproperties", icon="WORKSPACE")
+                    self.layout.operator("mbast.reset_allproperties", icon="RECOVER_LAST")
                     if mblab_humanoid.get_subd_visibility() == True:
                         self.layout.label(text="Tip: for slow PC, disable the subdivision in Display Options below", icon='INFO')
 
@@ -2074,6 +2051,11 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                     for material_data_prop in sorted(mblab_humanoid.character_material_properties.keys()):
                         box.prop(obj, material_data_prop)
 
+                if gui_active_panel != "file":
+                    self.layout.operator('mbast.button_file_on', icon=icon_expand)
+                else:
+                    self.layout.operator('mbast.button_file_off', icon=icon_collapse)
+                    box = self.layout.box()
                     box.prop(scn, 'mblab_show_texture_load_save')
                     if scn.mblab_show_texture_load_save:
 
@@ -2092,12 +2074,6 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                         sub = box.box()
                         sub.label(text="Export all images used in skin shader")
                         sub.operator("mbast.export_allimages", icon='EXPORT')
-
-                if gui_active_panel != "file":
-                    self.layout.operator('mbast.button_file_on', icon=icon_expand)
-                else:
-                    self.layout.operator('mbast.button_file_off', icon=icon_collapse)
-                    box = self.layout.box()
                     box.prop(scn, 'mblab_export_proportions')
                     box.prop(scn, 'mblab_export_materials')
                     box.operator("mbast.export_character", icon='EXPORT')
