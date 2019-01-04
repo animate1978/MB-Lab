@@ -1262,9 +1262,7 @@ class FinalizeCharacter(bpy.types.Operator):
 
 
 class ResetParameters(bpy.types.Operator):
-    """
-    Reset all morphings.
-    """
+    """Reset all morphings."""
     bl_label = 'Reset character'
     bl_idname = 'mbast.reset_allproperties'
     bl_description = 'Reset all character parameters'
@@ -1277,9 +1275,7 @@ class ResetParameters(bpy.types.Operator):
         return {'FINISHED'}
 
 class ResetExpressions(bpy.types.Operator):
-    """
-    Reset all morphings.
-    """
+    """Reset all morphings."""
     bl_label = 'Reset Expression'
     bl_idname = 'mbast.reset_expression'
     bl_description = 'Reset the expression'
@@ -1308,9 +1304,7 @@ class ResetExpressions(bpy.types.Operator):
 
 
 class InsertExpressionKeyframe(bpy.types.Operator):
-    """
-    Reset all morphings.
-    """
+    """Reset all morphings."""
     bl_label = 'Insert Keyframe'
     bl_idname = 'mbast.keyframe_expression'
     bl_description = 'Insert a keyframe expression at the current time'
@@ -1324,9 +1318,7 @@ class InsertExpressionKeyframe(bpy.types.Operator):
 
 
 class Reset_category(bpy.types.Operator):
-    """
-    Reset the parameters for the currently selected category
-    """
+    """Reset the parameters for the currently selected category"""
     bl_label = 'Reset category'
     bl_idname = 'mbast.reset_categoryonly'
     bl_description = 'Reset the parameters for the current category'
@@ -1341,9 +1333,7 @@ class Reset_category(bpy.types.Operator):
 
 
 class CharacterGenerator(bpy.types.Operator):
-    """
-    Generate a new character using the specified parameters.
-    """
+    """Generate a new character using the specified parameters"""
     bl_label = 'Generate'
     bl_idname = 'mbast.character_generator'
     bl_description = 'Generate a new character according the parameters.'
