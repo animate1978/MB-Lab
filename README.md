@@ -37,9 +37,10 @@ This fork is an attempt to keep this addon going towards the next generation of 
     Changed Skin Editor values to reflect new PBR shading network
 
 
-## Release notes for ManuelBastioniLAB 1.6.1
+## Release notes for ManuelBastioniLAB 1.6.1a
 
-The version 1.6.1 of ManuelbastioniLAB, the free and open source character editor for Blender, is still available for download at http://www.manuelbastioni.com
+The version 1.6.1a of ManuelbastioniLAB, the free and open source character editor for Blender, ~~is still available for download at http://www.manuelbastioni.com~~
+Direct download: [manuelbastionilab_161a.zip](https://numessanguis.stackstorage.com/s/jLamuetD8drgCfP)
 
 ## New features
 
