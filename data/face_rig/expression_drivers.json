@@ -1,0 +1,3296 @@
+{
+    "driver1": {
+        "data_path": "key_blocks[\"Expressions_mouthOpen_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [],
+        "driver": {
+            "expression": "var + 0.0",
+            "is_simple_expression": false,
+            "is_valid": true,
+            "type": "AVERAGE",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_mouthOpen_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver2": {
+        "data_path": "key_blocks[\"Expressions_mouthOpen_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_mouthOpen_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver3": {
+        "data_path": "key_blocks[\"Expressions_mouthSmileL_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    5.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "var + 0.0",
+            "is_simple_expression": false,
+            "is_valid": true,
+            "type": "AVERAGE",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "LOC_Y",
+                            "bone_target": "Expressions_mouthSmileL_max.L"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver4": {
+        "data_path": "key_blocks[\"Expressions_mouthSmileR_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    5.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "var + 0.0",
+            "is_simple_expression": false,
+            "is_valid": true,
+            "type": "AVERAGE",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "LOC_Y",
+                            "bone_target": "Expressions_mouthSmileL_max.R"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver5": {
+        "data_path": "key_blocks[\"Expressions_jawHoriz_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.5999999046325684
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "LOC_Y",
+                            "bone_target": "Expressions_jawHoriz_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver6": {
+        "data_path": "key_blocks[\"Expressions_jawHoriz_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.5999999046325684
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "LOC_Y",
+                            "bone_target": "Expressions_jawHoriz_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver7": {
+        "data_path": "key_blocks[\"Expressions_mouthBite_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [],
+        "driver": {
+            "expression": "var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_mouthBite_max"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver8": {
+        "data_path": "key_blocks[\"Expressions_mouthBite_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [],
+        "driver": {
+            "expression": "var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_mouthBite_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver9": {
+        "data_path": "key_blocks[\"Expressions_jawOut_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [],
+        "driver": {
+            "expression": "var + 0.0",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_Y",
+                            "bone_target": "Expressions_jawOut_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver10": {
+        "data_path": "key_blocks[\"Expressions_jawOut_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_Y",
+                            "bone_target": "Expressions_jawOut_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver11": {
+        "data_path": "key_blocks[\"Expressions_cheekSneerL_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [],
+        "driver": {
+            "expression": "var + 0.0",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_cheekSneerL_max.L"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver12": {
+        "data_path": "key_blocks[\"Expressions_cheekSneerR_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [],
+        "driver": {
+            "expression": "var + 0.0",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_cheekSneerL_max.R"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver13": {
+        "data_path": "key_blocks[\"Expressions_eyeSquintL_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [],
+        "driver": {
+            "expression": "var + 0.0",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_Z",
+                            "bone_target": "Expressions_eyeSquintL_max_min.L"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver14": {
+        "data_path": "key_blocks[\"Expressions_eyeSquintL_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_Z",
+                            "bone_target": "Expressions_eyeSquintL_max_min.L"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver15": {
+        "data_path": "key_blocks[\"Expressions_eyeSquintR_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [],
+        "driver": {
+            "expression": "var + 0.0",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_Z",
+                            "bone_target": "Expressions_eyeSquintL_max_min.R"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver16": {
+        "data_path": "key_blocks[\"Expressions_eyeSquintR_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_Z",
+                            "bone_target": "Expressions_eyeSquintL_max_min.R"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver17": {
+        "data_path": "key_blocks[\"Expressions_browsMidVert_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [],
+        "driver": {
+            "expression": "var + 0.0",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_Z",
+                            "bone_target": "Expressions_browsMidVert_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver18": {
+        "data_path": "key_blocks[\"Expressions_browsMidVert_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_Z",
+                            "bone_target": "Expressions_browsMidVert_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver19": {
+        "data_path": "key_blocks[\"Expressions_browOutVertL_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "var + 0.0",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_browOutVertL_max_min.L"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver20": {
+        "data_path": "key_blocks[\"Expressions_browOutVertL_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    4.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_browOutVertL_max_min.L"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver21": {
+        "data_path": "key_blocks[\"Expressions_browOutVertR_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "var + 0.0",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_browOutVertL_max_min.R"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver22": {
+        "data_path": "key_blocks[\"Expressions_browOutVertR_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    4.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_browOutVertL_max_min.R"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver23": {
+        "data_path": "key_blocks[\"Expressions_browSqueezeL_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    3.059999942779541
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_browSqueezeL_max_min.L"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver24": {
+        "data_path": "key_blocks[\"Expressions_browSqueezeL_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    3.059999942779541
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_browSqueezeL_max_min.L"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver25": {
+        "data_path": "key_blocks[\"Expressions_browSqueezeR_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    3.059999942779541
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_browSqueezeL_max_min.R"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver26": {
+        "data_path": "key_blocks[\"Expressions_browSqueezeR_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    3.059999942779541
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_browSqueezeL_max_min.R"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver27": {
+        "data_path": "key_blocks[\"Expressions_eyeClosedPressureL_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [],
+        "driver": {
+            "expression": "var + 0.0",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_Z",
+                            "bone_target": "Expressions_eyeClosedPressureL_max_min.L"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver28": {
+        "data_path": "key_blocks[\"Expressions_eyeClosedPressureL_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_Z",
+                            "bone_target": "Expressions_eyeClosedPressureL_max_min.L"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver29": {
+        "data_path": "key_blocks[\"Expressions_eyeClosedPressureR_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [],
+        "driver": {
+            "expression": "var + 0.0",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_Z",
+                            "bone_target": "Expressions_eyeClosedPressureL_max_min.R"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver30": {
+        "data_path": "key_blocks[\"Expressions_eyeClosedPressureR_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_Z",
+                            "bone_target": "Expressions_eyeClosedPressureL_max_min.R"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver31": {
+        "data_path": "key_blocks[\"Expressions_eyeClosedL_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    38.499996185302734
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "LOC_Z",
+                            "bone_target": "Expressions_eyeClosedL_max.L"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver32": {
+        "data_path": "key_blocks[\"Expressions_eyeClosedL_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    38.499996185302734
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "LOC_Z",
+                            "bone_target": "Expressions_eyeClosedL_max.L"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver33": {
+        "data_path": "key_blocks[\"Expressions_eyeClosedR_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    38.499996185302734
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "LOC_Z",
+                            "bone_target": "Expressions_eyeClosedL_max.R"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver34": {
+        "data_path": "key_blocks[\"Expressions_eyeClosedR_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    38.499996185302734
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "LOC_Z",
+                            "bone_target": "Expressions_eyeClosedL_max.R"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver35": {
+        "data_path": "key_blocks[\"Expressions_eyesHoriz_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "LOC_X",
+                            "bone_target": "Expressions_eyesLookAt"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver36": {
+        "data_path": "key_blocks[\"Expressions_eyesHoriz_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "LOC_X",
+                            "bone_target": "Expressions_eyesLookAt"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver37": {
+        "data_path": "key_blocks[\"Expressions_eyesVert_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "LOC_Y",
+                            "bone_target": "Expressions_eyesLookAt"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver38": {
+        "data_path": "key_blocks[\"Expressions_eyesVert_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "LOC_Y",
+                            "bone_target": "Expressions_eyesLookAt"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver39": {
+        "data_path": "key_blocks[\"Expressions_mouthChew_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_mouthChew_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver40": {
+        "data_path": "key_blocks[\"Expressions_mouthChew_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_mouthChew_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver41": {
+        "data_path": "key_blocks[\"Expressions_mouthClosed_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_mouthClosed_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver42": {
+        "data_path": "key_blocks[\"Expressions_mouthClosed_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_mouthClosed_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver43": {
+        "data_path": "key_blocks[\"Expressions_mouthHoriz_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_mouthHoriz_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver44": {
+        "data_path": "key_blocks[\"Expressions_mouthHoriz_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_mouthHoriz_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver45": {
+        "data_path": "key_blocks[\"Expressions_mouthInflated_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_mouthInflated_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver46": {
+        "data_path": "key_blocks[\"Expressions_mouthInflated_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_mouthInflated_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver47": {
+        "data_path": "key_blocks[\"Expressions_mouthLowerOut_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_mouthLowerOut_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver48": {
+        "data_path": "key_blocks[\"Expressions_mouthLowerOut_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_mouthLowerOut_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver49": {
+        "data_path": "key_blocks[\"Expressions_mouthOpenAggr_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_mouthOpenAggr_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver50": {
+        "data_path": "key_blocks[\"Expressions_mouthOpenAggr_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_mouthOpenAggr_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver51": {
+        "data_path": "key_blocks[\"Expressions_mouthOpenHalf_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_mouthOpenHalf_max"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver52": {
+        "data_path": "key_blocks[\"Expressions_mouthOpenO_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_mouthOpenO_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver53": {
+        "data_path": "key_blocks[\"Expressions_mouthOpenO_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_mouthOpenO_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver54": {
+        "data_path": "key_blocks[\"Expressions_mouthOpenTeethClosed_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_mouthOpenTeethClosed_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver55": {
+        "data_path": "key_blocks[\"Expressions_mouthOpenTeethClosed_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_mouthOpenTeethClosed_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver56": {
+        "data_path": "key_blocks[\"Expressions_mouthSmileOpen2_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_mouthSmileOpen2_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver57": {
+        "data_path": "key_blocks[\"Expressions_mouthSmileOpen2_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_mouthSmileOpen2_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver58": {
+        "data_path": "key_blocks[\"Expressions_mouthSmileOpen_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_mouthSmileOpen_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver59": {
+        "data_path": "key_blocks[\"Expressions_mouthSmileOpen_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_mouthSmileOpen_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver60": {
+        "data_path": "key_blocks[\"Expressions_mouthSmile_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_mouthSmile_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver61": {
+        "data_path": "key_blocks[\"Expressions_mouthSmile_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_mouthSmile_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver62": {
+        "data_path": "key_blocks[\"Expressions_nostrilsExpansion_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_nostrilsExpansion_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver63": {
+        "data_path": "key_blocks[\"Expressions_nostrilsExpansion_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_nostrilsExpansion_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver64": {
+        "data_path": "key_blocks[\"Expressions_tongueHoriz_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_tongueHoriz_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver65": {
+        "data_path": "key_blocks[\"Expressions_tongueHoriz_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": true,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_tongueHoriz_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver66": {
+        "data_path": "key_blocks[\"Expressions_tongueOutPressure_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_tongueOutPressure_max"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver67": {
+        "data_path": "key_blocks[\"Expressions_tongueOut_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_tongueOut_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver68": {
+        "data_path": "key_blocks[\"Expressions_tongueOut_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_tongueOut_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver69": {
+        "data_path": "key_blocks[\"Expressions_tongueTipUp_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_tongueTipUp_max"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver70": {
+        "data_path": "key_blocks[\"Expressions_tongueVert_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_tongueVert_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver71": {
+        "data_path": "key_blocks[\"Expressions_tongueVert_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_tongueVert_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver72": {
+        "data_path": "key_blocks[\"Expressions_pupilsDilatation_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_pupilsDilatation_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver73": {
+        "data_path": "key_blocks[\"Expressions_pupilsDilatation_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_pupilsDilatation_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver74": {
+        "data_path": "key_blocks[\"Expressions_mouthOpenLarge_max\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "-var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_mouthOpenLarge_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "driver75": {
+        "data_path": "key_blocks[\"Expressions_mouthOpenLarge_min\"].value",
+        "hide": false,
+        "lock": false,
+        "mute": false,
+        "select": false,
+        "modifiers": [
+            {
+                "active": true,
+                "blend_in": 0.0,
+                "blend_out": 0.0,
+                "influence": 1.0,
+                "mode": "POLYNOMIAL",
+                "mute": false,
+                "poly_order": 1,
+                "type": "GENERATOR",
+                "use_additive": false,
+                "use_influence": false,
+                "coefficients": [
+                    0.0,
+                    2.0
+                ]
+            }
+        ],
+        "driver": {
+            "expression": "var",
+            "is_simple_expression": true,
+            "is_valid": true,
+            "type": "SCRIPTED",
+            "use_self": false,
+            "variables": [
+                {
+                    "name": "var",
+                    "is_name_valid": true,
+                    "type": "TRANSFORMS",
+                    "targets": [
+                        {
+                            "id_type": "OBJECT",
+                            "id_name": "MBLab_skeleton_face_rig",
+                            "transform_space": "LOCAL_SPACE",
+                            "transform_type": "ROT_X",
+                            "bone_target": "Expressions_mouthOpenLarge_max_min"
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}
