@@ -34,6 +34,7 @@ import json
 from bpy_extras.io_utils import ExportHelper, ImportHelper
 from bpy.app.handlers import persistent
 from . import humanoid, animationengine, proxyengine
+from . import facerig
 import time
 
 
@@ -47,10 +48,6 @@ gui_status = "NEW_SESSION"
 gui_err_msg = ""
 gui_active_panel = None
 gui_active_panel_fin = None
-
-
-
-
 
 def start_lab_session():
 
@@ -1680,7 +1677,23 @@ class LoadBvh(bpy.types.Operator, ImportHelper):
         mblab_retarget.load_animation(self.filepath)
         return {'FINISHED'}
 
+class CreateFaceRig(bpy.types.Operator):
+    bl_idname = "mbast.create_face_rig"
+    bl_label = "Create Face Rig"
+    bl_description = "Create the character's face Rig"
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL','UNDO'}
 
+    def execute(self, context):
+        mblab_shapekeys.update_expressions_data()
+        if mblab_shapekeys.model_type != "NONE":
+            if not facerig.setup_face_rig():
+                self.report({'ERROR'},
+                            "Face Rig creation process failed")
+        else:
+            self.report({'ERROR'},
+                "Select finalized MB Lab character to create face rig")
+        return {'FINISHED'}
 
 class StartSession(bpy.types.Operator):
     bl_idname = "mbast.init_character"
@@ -1692,7 +1705,6 @@ class StartSession(bpy.types.Operator):
     def execute(self, context):
         start_lab_session()
         return {'FINISHED'}
-
 
 class LoadTemplate(bpy.types.Operator):
     bl_idname = "mbast.load_base_template"
@@ -1758,6 +1770,8 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
             self.layout.label(text=" ")
             self.layout.label(text="AFTER-CREATION TOOLS")
 
+            # face rig button
+            self.layout.operator('mbast.create_face_rig')
 
             if gui_active_panel_fin != "assets":
                 self.layout.operator('mbast.button_assets_on', icon=icon_expand)
@@ -1770,9 +1784,6 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                 box.prop(scn,'mblab_assets_models')
                 #box.operator('mbast.load_assets_element')
                 box.label(text="To adapt the asset, use the proxy fitting tool", icon = 'INFO')
-
-
-
 
             if gui_active_panel_fin != "pose":
                 self.layout.operator('mbast.button_pose_on', icon=icon_expand)
@@ -2176,6 +2187,7 @@ classes = (
     ResetPose,
     LoadBvh,
     StartSession,
+    CreateFaceRig,
     LoadTemplate,
     VIEW3D_PT_tools_ManuelbastioniLAB,
 )

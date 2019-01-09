@@ -25,7 +25,7 @@ import json
 import array
 
 
-debug_level = 0
+debug_level = 3
 
 def print_log_report(level, text_to_write):
     l = 0
