@@ -2,6 +2,18 @@
 
 All changes will be documented here
 
+# MB-Lab 1.7.1
+
+## Added
+
+ - New Facial Rig connected to shapekeys
+ - EEVEE and CYCLES specific shading networks
+ - New Clothes in the Assets directory ready to be added to proxies
+
+## Known Issues
+
+ - EEVEE Eye shader darker than normal trying to find a fix
+
 # MB-Lab 1.7.0b
 
 ## Bug fixes
