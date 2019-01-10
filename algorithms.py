@@ -1253,7 +1253,7 @@ def set_node_image(mat_node, mat_image):
     if mat_node:
         mat_node.image = mat_image
     else:
-        print_log_report("WARNING", "Node assignment failed. Image not found: {0}".format(image_name))
+        print_log_report("WARNING", "Node assignment failed. Image not found: {0}".format(mat_image))
 
 
 def get_material(material_name):
