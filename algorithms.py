@@ -74,9 +74,9 @@ def get_blendlibrary_path():
     data_path = get_data_path()
     if data_path:
         return os.path.join(data_path, "humanoid_library.blend")
-    else:
-        print_log_report("CRITICAL", "Models library not found. Please check your Blender addons directory.")
-        return None
+
+    print_log_report("CRITICAL", "Models library not found. Please check your Blender addons directory.")
+    return None
 
 
 def simple_path(input_path, use_basename=True, max_len=50):
@@ -87,7 +87,7 @@ def simple_path(input_path, use_basename=True, max_len=50):
         return os.path.basename(input_path)
 
     if len(input_path) > max_len:
-        return("[Trunked].."+input_path[len(input_path)-max_len:])
+        return f"[Trunked]..{input_path[len(input_path)-max_len:]}"
 
     return input_path
 
@@ -409,24 +409,9 @@ def looking_for_humanoid_obj():
     if not human_obj:
         msg = "No lab humanoids in the scene"
         print_log_report("INFO", msg)
-        return("NO_OBJ", msg)
+        return "NO_OBJ", msg
 
-    if not("manuellab_id" in get_object_keys(obj)):
-        msg = "Character created with old lab version"
-        print_log_report("INFO", "Character type not found in obj properties")
-        return("ERROR", msg)
-
-    if not("manuellab_rig" in get_object_keys(obj)):
-        msg = "Character created with old lab version"
-        print_log_report("INFO", "Rig type not found in obj properties")
-        return("ERROR", msg)
-
-    if has_shapekeys(obj):
-        msg = "The lab cannot edit a character with shapekeys"
-        print_log_report("WARNING", msg)
-        return("ERROR", msg)
-
-    return("FOUND", name)
+    return "FOUND", name
 
 
 def is_string_in_string(b_string, b_name):
