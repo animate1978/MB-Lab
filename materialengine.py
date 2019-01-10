@@ -14,12 +14,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import math
 import array
-import bpy
 import os
 import time
+import math
 import json
+
+import bpy
 from . import algorithms
 
 
