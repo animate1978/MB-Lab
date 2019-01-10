@@ -573,11 +573,7 @@ def set_object_layer(obj, n):
 
 
 def normal_from_points(points):
-    if len(points) == 4:
-        plane_norm = mathutils.geometry.normal(points[0], points[1], points[2], points[3])
-    else:
-        plane_norm = mathutils.geometry.normal(points[0], points[1], points[2])
-    return plane_norm
+    return mathutils.geometry.normal(*points[:4]) if len(points) == 4 else mathutils.geometry.normal(*points[:3])
 
 
 def apply_object_matrix(obj):
@@ -646,14 +642,11 @@ def set_object_modifiers_visibility(obj, modifier_status):
 
 
 def get_modifier(obj, modifier_name):
-    if modifier_name in obj.modifiers:
-        return obj.modifiers[modifier_name]
+    return obj.modifiers.get(modifier_name)
 
 
 def get_modifier_name(modfr):
-    if hasattr(modfr, 'name'):
-        return modfr.name
-    return None
+    return hasattr(modfr, 'name')
 
 
 def apply_modifier(obj, modifier):
@@ -662,7 +655,7 @@ def apply_modifier(obj, modifier):
         set_active_object(obj)
         try:
             bpy.ops.object.modifier_apply(apply_as='DATA', modifier=modifier_name)
-        except:
+        except AttributeError:
             print_log_report("WARNING", "Problems in applying {0}. Is the modifier disabled?".format(modifier_name))
 
 
@@ -688,20 +681,13 @@ def remove_modifier(obj, modifier_name):
 
 def disable_modifier(modfr):
     print("Disable ", modfr.name)
-    if hasattr(modfr, 'show_viewport'):
-        modfr.show_viewport = False
-    if hasattr(modfr, 'show_render'):
-        modfr.show_render = False
-    if hasattr(modfr, 'show_in_editmode'):
-        modfr.show_in_editmode = False
-    if hasattr(modfr, 'show_on_cage'):
-        modfr.show_on_cage = False
+    for mdf in ('show_viewport', 'show_render', 'show_in_editmode', 'show_on_cage'):
+        if hasattr(modfr, mdf):
+            setattr(modfr, mdf, False)
 
 
 def get_modifier_viewport(modfr):
-    if hasattr(modfr, 'show_viewport'):
-        return modfr.show_viewport
-    return None
+    return getattr(modfr, 'show_viewport', None)
 
 
 def set_modifier_viewport(modfr, value):
@@ -713,14 +699,14 @@ def new_modifier(obj, name, modifier_type, parameters):
     if name in obj.modifiers:
         print_log_report("INFO", "Modifier {0} already present in {1}".format(modifier_type, obj.name))
         return obj.modifiers[name]
-    new_modifier = obj.modifiers.new(name, modifier_type)
+    _new_modifier = obj.modifiers.new(name, modifier_type)
     for parameter, value in parameters.items():
-        if hasattr(new_modifier, parameter):
+        if hasattr(_new_modifier, parameter):
             try:
-                setattr(new_modifier, parameter, value)
+                setattr(_new_modifier, parameter, value)
             except AttributeError:
                 print_log_report("INFO", "Setattr failed for attribute '{0}' of modifier {1}".format(parameter, name))
-    return new_modifier
+    return _new_modifier
 
 
 def set_modifier_parameter(modifier, parameter, value):
@@ -729,7 +715,7 @@ def set_modifier_parameter(modifier, parameter, value):
             setattr(modifier, parameter, value)
         except AttributeError:
             print_log_report("INFO", "Setattr failed for attribute '{0}' of modifier {1}".format(
-                parameter, modifier_name))
+                parameter, modifier))
 
 
 def get_object_materials(obj):
@@ -747,7 +733,7 @@ def select_and_change_mode(obj, obj_mode):
         try:
             bpy.ops.object.mode_set(mode=obj_mode)
             print_log_report("DEBUG", "Select and change mode of {0} = {1}".format(obj.name, obj_mode))
-        except:
+        except AttributeError:
             print_log_report("WARNING", "Can't change the mode of {0} to {1}.".format(obj.name, obj_mode))
 
 
@@ -782,21 +768,15 @@ def set_active_object(obj):
 
 
 def get_object_by_name(name):
-    if name in bpy.data.objects:
-        return bpy.data.objects[name]
-    return None
+    return bpy.data.objects.get(name)
 
 
 def is_object(obj):
-    if type(obj) == bpy.types.Object:
-        return True
-    return False
+    return isinstance(obj, bpy.types.Object)
 
 
 def is_mesh(obj):
-    if type(obj) == bpy.types.Mesh:
-        return True
-    return False
+    return isinstance(obj, bpy.types.Mesh)
 
 
 def get_objects_selected_names():
@@ -813,7 +793,7 @@ def get_deforming_armature(obj):
             for modf in obj.modifiers:
                 if modf.type == 'ARMATURE':
                     return modf.object
-
+    return None
 
 def apply_object_transformation(obj):
     if obj:
@@ -854,7 +834,7 @@ def get_newest_object(existing_obj_names):
 def get_selected_gender():
     obj = get_active_body()
     template = get_template_model(obj)
-    if template is not None:
+    if template:
         if "_female" in template:
             return "FEMALE"
         if "_male" in template:
@@ -869,23 +849,19 @@ def identify_template(obj):
             polygons = obj.data.polygons
             config_data = get_configuration()
             # TODO error messages
-            if verts is not None:
-                if polygons is not None:
-                    n_verts = len(verts)
-                    n_polygons = len(polygons)
-                    for template in config_data["templates_list"]:
-                        n_verts2 = config_data[template]["vertices"]
-                        n_polygons2 = config_data[template]["faces"]
-                        if n_verts2 == n_verts:
-                            if n_polygons2 == n_polygons:
-                                return template
+            if verts and polygons:
+                for template in config_data["templates_list"]:
+                    n_verts2 = config_data[template]["vertices"]
+                    n_polygons2 = config_data[template]["faces"]
+                    if n_verts2 == len(verts) and n_polygons2 == len(polygons):
+                        return template
     return None
 
 
 def get_template_model(obj):
     template = identify_template(obj)
     config_data = get_configuration()
-    if template is not None:
+    if template:
         return config_data[template]["template_model"]
     return None
 
@@ -893,29 +869,25 @@ def get_template_model(obj):
 def get_template_polygons(obj):
     template = identify_template(obj)
     config_data = get_configuration()
-    if template is not None:
+    if template:
         return config_data[template]["template_polygons"]
     return None
 
 
 def is_a_lab_character(obj):
-    if get_template_model(obj) is not None:
-        return True
-    return False
+    return get_template_model(obj) is not None
 
 
 def get_active_body():
-    config_data = get_configuration()
     obj = get_active_object()
     if obj:
         if obj.type == 'MESH':
             return obj
-        if obj.type == 'ARMATURE':
-            if obj.children:
-                for c_obj in obj.children:
-                    obj_id = get_template_model(c_obj)
-                    if obj_id is not None:
-                        return c_obj
+        if obj.type == 'ARMATURE' and obj.children:
+            for c_obj in obj.children:
+                obj_id = get_template_model(c_obj)
+                if obj_id:
+                    return c_obj
     return None
 
 
@@ -931,10 +903,9 @@ def is_IK_armature(self, armature=None):
 
 
 def get_object_parent(obj):
-    if obj:
-        if hasattr(obj, "parent"):
-            return obj.parent
-    return None
+    if not obj:
+        return None
+    return getattr(obj, "parent", None)
 
 
 def get_active_armature():
@@ -997,10 +968,7 @@ def collect_existing_meshes():
 
 
 def get_mesh(name):
-    if name in bpy.data.meshes:
-        return bpy.data.meshes[name]
-    else:
-        return None
+    return bpy.data.meshes.get(name, None)
 
 
 def get_newest_mesh(existing_mesh_names):
@@ -1052,7 +1020,7 @@ def get_vertgroup_verts(obj, vgroup_name):
             try:
                 if g.weight(i) > 0:
                     verts_idxs.append(i)
-            except:
+            except AttributeError:
                 pass
                 # Blender return an error if the vert is not in group
     return verts_idxs
@@ -1127,38 +1095,31 @@ def get_image(name):
                     print_log_report("WARNING", "Image named {0} is from file: {1}".format(
                         name, os.path.basename(bpy.data.images[name].filepath)))
             return bpy.data.images[name]
-        else:
-            print_log_report("WARNING", "Getting image failed. Image {0} not found in bpy.data.images".format(name))
-    else:
-        print_log_report("WARNING", "Getting image failed. Image name is {0}".format(name))
+        print_log_report("WARNING", "Getting image failed. Image {0} not found in bpy.data.images".format(name))
+        return None
+
+    print_log_report("WARNING", "Getting image failed. Image name is {0}".format(name))
     return None
 
 
 def are_squared_images(image1, image2):
-    size1 = image1.size
-    size2 = image2.size
-
-    if size1[0] != size1[1]:
+    out = image1.size[0] == image1.size[1] and image1.size[0] == image2.size[0]
+    if not out:
         print_log_report("WARNING", "The image {0} cannot be used: not squared". format(image1.name))
-        return False
 
-    if size2[0] != size2[1]:
-        print_log_report("WARNING", "The image {0} cannot be used: not squared". format(image2.name))
-        return False
-
-    return True
+    return out
 
 
 def scale_image_to_fit(image1, image2):
     if are_squared_images(image1, image2):
-        size1 = image1.size
-        size2 = image2.size
-        if size1[0] != size2[0]:
-            if size1[0]*size1[1] > size2[0]*size2[1]:
-                image2.scale(size1[0], size1[1])
+        size1_0, size1_1 = image1.size
+        size2_0, size2_1 = image2.size
+        if size1_0 != size2_0:
+            if size1_0 * size1_1 > size2_0 * size2_1:
+                image2.scale(size1_0, size1_1)
 
-            if size1[0]*size1[1] < size2[0]*size2[1]:
-                image1.scale(size2[0], size2[1])
+            if size1_0 * size1_1 < size2_0 * size2_1:
+                image1.scale(size2_0, size2_1)
 
 
 def save_image(name, filepath, fileformat='PNG'):
@@ -1176,12 +1137,12 @@ def save_image(name, filepath, fileformat='PNG'):
 
 def new_texture(name, image=None):
     if name not in bpy.data.textures:
-        new_texture = bpy.data.textures.new(name, type='IMAGE')
+        _new_texture = bpy.data.textures.new(name, type='IMAGE')
     else:
-        new_texture = bpy.data.textures[name]
+        _new_texture = bpy.data.textures[name]
     if image:
-        new_texture.image = image
-    return new_texture
+        _new_texture.image = image
+    return _new_texture
 
 
 def image_to_array(blender_image):
@@ -1210,9 +1171,9 @@ def get_material(material_name):
 def get_material_nodes(material):
     if material.node_tree:
         return material.node_tree.nodes
-    else:
-        return None
-        print_log_report("WARNING", "Material {0} has not nodes".format(material.node))
+
+    print_log_report("WARNING", "Material {0} has not nodes".format(material.name))
+    return None
 
 
 def get_material_node(material_name, node_name):
@@ -1227,17 +1188,19 @@ def get_material_node(material_name, node_name):
 
 
 def get_node_output_value(node, index):
-    if index in range(len(node.outputs)):
+    if index < len(node.outputs):
         if hasattr(node.outputs[index], "default_value"):
             return node.outputs[index].default_value
-        else:
-            print_log_report("WARNING", "Socket [{0}] has not default_value attribute".format(index))
-    else:
-        print_log_report("WARNING", "Socket [{0}] not in range of node {1} outputs".format(index, node.name))
+
+        print_log_report("WARNING", "Socket [{0}] has not default_value attribute".format(index))
+        return None
+
+    print_log_report("WARNING", "Socket [{0}] not in range of node {1} outputs".format(index, node.name))
+    return None
 
 
 def set_node_output_value(node, index, value):
-    if index in range(len(node.outputs)):
+    if index < len(node.outputs):
         if hasattr(node.outputs[index], "default_value"):
             node.outputs[index].default_value = value
         else:
@@ -1250,29 +1213,26 @@ def get_edit_bones(armature):
     if bpy.context.mode != 'EDIT_ARMATURE':
         print_log_report("WARNING", "Cannot get the edit bones because the obj is not in edit mode")
         return None
-    else:
-        return armature.data.edit_bones
+    return armature.data.edit_bones
 
 
 def get_bones(armature):
-    if armature.type == 'ARMATURE':
-        return armature.data.bones
-    else:
+    if armature.type != 'ARMATURE':
         print_log_report("WARNING", "Cannot get the bones because the obj is not an armature")
         return None
+    return armature.data.bones
 
 
 def get_pose_bones(armature):
     if bpy.context.mode != 'POSE':
         print_log_report("WARNING", "Cannot get the pose bones because the obj is not in pose mode")
         return None
-    else:
-        return armature.pose.bones
+    return armature.pose.bones
 
 
 def get_edit_bone(armature, name):
     edit_bones = get_edit_bones(armature)
-    if edit_bones is not None:
+    if edit_bones:
         if name in edit_bones:
             return edit_bones[name]
     return None
@@ -1286,11 +1246,12 @@ def set_bone_rotation(bone, value, mode='QUATERNION'):
 def get_bone_rotation(bone, mode='QUATERNION'):
     if mode == 'QUATERNION':
         return bone.rotation_quaternion
+    return None
 
 
 def has_anime_shapekeys(obj):
 
-    anime_specific_sks = ["Expressions_brow01L_max", "Expressions_brow01L_min",
+    anime_specific_sks = {"Expressions_brow01L_max", "Expressions_brow01L_min",
                           "Expressions_brow01R_max", "Expressions_brow01R_min",
                           "Expressions_brow02L_min", "Expressions_brow02R_min",
                           "Expressions_brow03_max", "Expressions_brow03_min",
@@ -1299,17 +1260,14 @@ def has_anime_shapekeys(obj):
                           "Expressions_eyes03_max", "Expressions_eyes03_min",
                           "Expressions_eyes04_max", "Expressions_eyes04_min",
                           "Expressions_eyes05_max", "Expressions_eyes05_min",
-                          "Expressions_eyes06_max"]
+                          "Expressions_eyes06_max"}
     current_sks = set()
     if has_shapekeys(obj):
-        current_sks = set(get_shapekeys_names())
+        current_sks = set(get_shapekeys_names(obj))
         anime_sk_in_current_sk = current_sks.intersection(anime_specific_sks)
-        if len(anime_sk_in_current_sk) >= (len(anime_specific_sks)/2):
-            return True
-        else:
-            return False
-    else:
-        return False
+        return len(anime_sk_in_current_sk) >= (len(anime_specific_sks)/2)
+
+    return False
 
 
 def get_rest_lengths(armat):
@@ -1340,10 +1298,8 @@ def set_bone_constraint_parameter(constraint, parameter, value):
 
 
 def get_vertgroup_by_name(obj, group_name):
-    if obj:
-        if obj.type == 'MESH':
-            if group_name in obj.vertex_groups:
-                return obj.vertex_groups[group_name]
+    if obj and obj.type == 'MESH' and group_name in obj.vertex_groups:
+        return obj.vertex_groups[group_name]
     return None
 
 
@@ -1410,7 +1366,6 @@ def get_shapekeys_names(obj):
 
 def has_shapekeys(obj):
     return hasattr(obj.data.shape_keys, 'key_blocks')
-    return None
 
 
 def update_bendy_bones(armat):
@@ -1450,7 +1405,7 @@ def link_to_collection(obj):
 
 def import_object_from_lib(lib_filepath, name, final_name=None, stop_import=True):
     if name != "":
-        if stop_import == True:
+        if stop_import:
             print_log_report("INFO", "Appending object {0} from {1}".format(name, simple_path(lib_filepath)))
             if name in bpy.data.objects:
                 print_log_report("WARNING", "Object {0} already in the scene. Import stopped".format(name))
@@ -1469,13 +1424,12 @@ def import_object_from_lib(lib_filepath, name, final_name=None, stop_import=True
                 obj.name = final_name
                 print_log_report("INFO", "Object '{0}' renamed as '{1}'".format(name, final_name))
             return obj
-        else:
-            print_log_report("WARNING", "Object {0} not found in library {1}".format(name, simple_path(lib_filepath)))
+
+        print_log_report("WARNING", "Object {0} not found in library {1}".format(name, simple_path(lib_filepath)))
     return None
 
 
 def append_object_from_library(lib_filepath, obj_names, suffix=None):
-    scn = bpy.context.scene
 
     try:
         with bpy.data.libraries.load(lib_filepath) as (data_from, data_to):
@@ -1485,9 +1439,8 @@ def append_object_from_library(lib_filepath, obj_names, suffix=None):
             else:
                 names_to_append = obj_names
                 data_to.objects = [name for name in names_to_append if name in data_from.objects]
-    except:
+    except OSError:
         print_log_report("CRITICAL", "lib {0} not found".format(lib_filepath))
-        return None
 
     for obj in data_to.objects:
         link_to_collection(obj)
@@ -1497,7 +1450,6 @@ def append_object_from_library(lib_filepath, obj_names, suffix=None):
 
 
 def append_mesh_from_library(lib_filepath, mesh_names, suffix=None):
-    scn = bpy.context.scene
 
     try:
         with bpy.data.libraries.load(lib_filepath) as (data_from, data_to):
@@ -1507,9 +1459,8 @@ def append_mesh_from_library(lib_filepath, mesh_names, suffix=None):
             else:
                 names_to_append = mesh_names
                 data_to.meshes = [name for name in names_to_append if name in data_from.meshes]
-    except:
+    except OSError:
         print_log_report("CRITICAL", "lib {0} not found".format(lib_filepath))
-        return None
 
 
 def read_object_names_from_library(lib_filepath):
@@ -1517,17 +1468,15 @@ def read_object_names_from_library(lib_filepath):
         with bpy.data.libraries.load(lib_filepath) as (data_from, data_to):
             for name in data_from.objects:
                 print("OBJ_LIB: ", name)
-    except:
+    except OSError:
         print_log_report("CRITICAL", "lib {0} not found".format(lib_filepath))
-        return None
 
 
 def is_armature_linked(obj, armat):
     if obj.type == 'MESH':
         for modfr in obj.modifiers:
-            if modfr.type == 'ARMATURE':
-                if modfr.object == armat:
-                    return True
+            if modfr.type == 'ARMATURE' and modfr.object == armat:
+                return True
     return False
 
 
@@ -1543,9 +1492,7 @@ def has_deformation_vgroups(obj, armat):
 
 def is_rigged(obj, armat):
     # if is_armature_linked(obj, armat):
-    if has_deformation_vgroups(obj, armat):
-        return True
-    return False
+    return has_deformation_vgroups(obj, armat)
 
 
 def get_boundary_verts(obj):
@@ -1571,7 +1518,7 @@ def get_object_groups(obj):
             try:
                 if grp.weight(idx) > 0:
                     weights.append([idx, grp.weight(idx)])
-            except:
+            except AttributeError:
                 pass
         obj_groups[grp.name] = weights
     return obj_groups
