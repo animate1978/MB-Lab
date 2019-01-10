@@ -38,36 +38,36 @@ def print_log_report(level, text_to_write):
 
 
 def is_writeable(filepath):
-    writeable = False
     try:
-        test_writing = open(filepath, 'w')
-        test_writing.close()
-        writeable = True
-    except:
+        with open(filepath, 'w'):
+            return True
+    except IOError:
         print("WARNING: Writing permission denied for {0}".format(filepath))
-    return writeable
+    return False
 
 
 def get_data_path():
     addon_directory = os.path.dirname(os.path.realpath(__file__))
     data_dir = os.path.join(addon_directory, "data")
     print_log_report("INFO", "Looking for the retarget data in the folder {0}...".format(simple_path(data_dir)))
-    if os.path.isdir(data_dir):
-        return data_dir
-    else:
+
+    if not os.path.isdir(data_dir):
         print_log_report("CRITICAL", "Tools data not found. Please check your Blender addons directory.")
         return None
+
+    return data_dir
 
 
 def get_configuration():
     data_path = get_data_path()
+
     if data_path:
         configuration_path = os.path.join(data_path, "characters_config.json")
         if os.path.isfile(configuration_path):
             return load_json_data(configuration_path, "Characters definition")
-        else:
-            print_log_report("CRITICAL", "Configuration database not found. Please check your Blender addons directory.")
-            return None
+
+    print_log_report("CRITICAL", "Configuration database not found. Please check your Blender addons directory.")
+    return None
 
 
 def get_blendlibrary_path():
@@ -83,19 +83,17 @@ def simple_path(input_path, use_basename=True, max_len=50):
     """
     Return the last part of long paths
     """
-    if use_basename == True:
+    if use_basename:
         return os.path.basename(input_path)
-    else:
-        if len(input_path) > max_len:
-            return("[Trunked].."+input_path[len(input_path)-max_len:])
-        else:
-            return input_path
+
+    if len(input_path) > max_len:
+        return("[Trunked].."+input_path[len(input_path)-max_len:])
+
+    return input_path
 
 
 def json_booleans_to_python(value):
-    if value == 0:
-        return True
-    return False
+    return value == 0
 
 
 def quick_dist(p_1, p_2):
@@ -106,24 +104,24 @@ def full_dist(vert1, vert2, axis="ALL"):
     v1 = mathutils.Vector(vert1)
     v2 = mathutils.Vector(vert2)
 
-    if axis not in ["X", "Y", "Z"]:
-        v3 = v1-v2
+    if axis not in {"X", "Y", "Z"}:
+        v3 = v1 - v2
         return v3.length
     if axis == "X":
         return abs(v1[0]-v2[0])
     if axis == "Y":
         return abs(v1[1]-v2[1])
-    if axis == "Z":
-        return abs(v1[2]-v2[2])
+    # if axis == "Z":
+    return abs(v1[2]-v2[2])
 
 
 def exists_database(lib_path):
     result = False
     if simple_path(lib_path) != "":
         if os.path.isdir(lib_path):
-            if len(os.listdir(lib_path)) > 0:
+            if os.listdir(lib_path):
                 for database_file in os.listdir(lib_path):
-                    p_item, extension = os.path.splitext(database_file)
+                    _, extension = os.path.splitext(database_file)
                     if "json" in extension or "bvh" in extension:
                         result = True
                     else:
@@ -140,21 +138,15 @@ def length_of_strip(vertices_coords, indices, axis="ALL"):
         v1 = vertices_coords[indices[x]]
         v2 = vertices_coords[indices[x+1]]
         strip_length += full_dist(v1, v2, axis)
-    return(strip_length)
+    return strip_length
 
 
 def function_modifier_a(val_x):
-    val_y = 0.0
-    if val_x > 0.5:
-        val_y = 2*val_x-1
-    return val_y
+    return 2 * val_x - 1 if val_x > 0.5 else 0.0
 
 
 def function_modifier_b(val_x):
-    val_y = 0.0
-    if val_x < 0.5:
-        val_y = 1-2*val_x
-    return val_y
+    return 1-2 * val_x if val_x < 0.5 else 0.0
 
 
 def bounding_box(verts_coo, indices, roundness=4):
@@ -179,7 +171,7 @@ def bounding_box(verts_coo, indices, roundness=4):
 
 def get_bounding_box(v_coords):
 
-    if len(v_coords) > 0:
+    if v_coords:
 
         val_x, val_y, val_z = [], [], []
         for coord in v_coords:
@@ -205,25 +197,19 @@ def load_bbox_data(filepath):
 
     bbox_data_dict = {}
     for x_data in bboxes:
-        idx = x_data[0]
-        idx_x_max = int(x_data[1])
-        idx_y_max = int(x_data[2])
-        idx_z_max = int(x_data[3])
-        idx_x_min = int(x_data[4])
-        idx_y_min = int(x_data[5])
-        idx_z_min = int(x_data[6])
-
-        bbox_data_dict[idx] = [
-            idx_x_max, idx_y_max,
-            idx_z_max, idx_x_min,
-            idx_y_min, idx_z_min]
+        bbox_data_dict[x_data[0]] = [
+            int(x_data[1]),
+            int(x_data[2]),
+            int(x_data[3]),
+            int(x_data[4]),
+            int(x_data[5]),
+            int(x_data[6]),
+        ]
     return bbox_data_dict
 
 
 def smart_combo(prefix, morph_values):
 
-    debug1 = False
-    debug2 = False
     tags = []
     names = []
     weights = []
@@ -246,24 +232,19 @@ def smart_combo(prefix, morph_values):
 
     # Filter on bestval and calculate the normalize factor
     summ = 0.0
-    for i in range(len(weights)):
-        weights[i] = max(0, weights[i]-best_val/toll)
-        summ += weights[i]
+    for i, weight in enumerate(weights):
+        new = max(0, weight - best_val / toll)
+        summ += new
+        weights[i] = new
 
     # Normalize using summ
+    # FIXME: this is bad idea as
+    # >>> (1.0/3) * 3 == 0.0
+    # False
     if summ != 0:
         for i in range(len(weights)):
             weights[i] = factor*(weights[i]/summ)
 
-    if debug1:
-        print("BESTVAL = {0}".format(best_val))
-        print("SUM = {0}".format(summ))
-        print("AVERAGE = {0}".format(factor))
-    if debug2:
-        print("MORPHINGS:")
-        for i in range(len(names)):
-            if weights[i] != 0:
-                print(names[i], weights[i])
     return (names, weights)
 
 
@@ -379,11 +360,9 @@ def correct_morph(base_form, current_form, morph_deltas, bboxes):
 
 def check_version(m_vers, min_version=(1, 5, 0)):
 
-    version_check = False
-
     # m_vers can be a list, tuple, IDfloatarray or str
     # so it must be converted in a list.
-    if type(m_vers) is not str:
+    if not isinstance(m_vers, str):
         m_vers = list(m_vers)
 
     mesh_version = str(m_vers)
@@ -394,12 +373,7 @@ def check_version(m_vers, min_version=(1, 5, 0)):
         return False
 
     mesh_version = (float(mesh_version[0]), float(mesh_version[2]), float(mesh_version[4]))
-    if mesh_version > min_version:
-        return True
-    else:
-        return False
-
-    return version_check
+    return mesh_version > min_version
 
 
 def looking_for_humanoid_obj():
@@ -456,68 +430,52 @@ def looking_for_humanoid_obj():
 
 
 def is_string_in_string(b_string, b_name):
-    if b_string and b_name:
-        if b_string.lower() in b_name.lower():
-            return True
-    return False
+    return b_string and b_name and b_string.lower() in b_name.lower()
 
 
 def is_too_much_similar(string1, string2, val=2):
-    s1 = set(string1)
-    s2 = set(string2)
+    s1, s2 = set(string1), set(string2)
 
-    if len(s1) > len(s2):
-        threshold = len(s1) - val
-    else:
-        threshold = len(s2) - val
+    threshold = len(s1) - val if len(s1) > len(s2) else len(s2) - val
 
-    if len(s1.intersection(s2)) > threshold:
-        return True
-    return False
+    return len(s1.intersection(s2)) > threshold
 
 
 def is_in_list(list1, list2, position="ANY"):
 
     for element1 in list1:
         for element2 in list2:
-            if position == "ANY":
-                if element1.lower() in element2.lower():
-                    return True
-            if position == "START":
-                if element1.lower() in element2[:len(element1)].lower():
-                    return True
-            if position == "END":
-                if element1.lower() in element2[len(element1):].lower():
-                    return True
+            if position == "ANY" and element1.lower() in element2.lower():
+                return True
+            if position == "START" and element1.lower() in element2[:len(element1)].lower():
+                return True
+            if position == "END" and element1.lower() in element2[len(element1):].lower():
+                return True
     return False
 
 
 def load_json_data(json_path, description=None):
-    if os.path.isfile(json_path):
+    try:
         time1 = time.time()
-        j_file = open(json_path, "r")
-        j_database = None
-        try:
+        with open(json_path, "r") as j_file:
             j_database = json.load(j_file)
-        except:
-            print_log_report("WARNING", "Errors in json file: {0}".format(simple_path(json_path)))
-        j_file.close()
-        if not description:
-            print_log_report("INFO", "Json database {0} loaded in {1} secs".format(
-                simple_path(json_path), time.time()-time1))
-        else:
-            print_log_report("INFO", "{0} loaded from {1} in {2} secs".format(
-                description, simple_path(json_path), time.time()-time1))
-        return j_database
-    else:
+            if not description:
+                print_log_report("INFO", "Json database {0} loaded in {1} secs".format(
+                    simple_path(json_path), time.time()-time1))
+            else:
+                print_log_report("INFO", "{0} loaded from {1} in {2} secs".format(
+                    description, simple_path(json_path), time.time()-time1))
+            return j_database
+    except IOError:
         if simple_path(json_path) != "":
             print_log_report("WARNING", "File not found: {0}".format(simple_path(json_path)))
-        return None
+    except json.JSONDecodeError:
+        print_log_report("WARNING", "Errors in json file: {0}".format(simple_path(json_path)))
+    return None
 
 
 def less_boundary_verts(obj, verts_idx, iterations=1):
     polygons = obj.data.polygons
-    vertices = obj.data.vertices
 
     while iterations != 0:
         verts_to_remove = set()
@@ -525,8 +483,8 @@ def less_boundary_verts(obj, verts_idx, iterations=1):
             poly_verts_idx = poly.vertices
             for v_idx in poly_verts_idx:
                 if v_idx not in verts_idx:
-                    for v_idx in poly_verts_idx:
-                        verts_to_remove.add(v_idx)
+                    for _v_idx in poly_verts_idx:
+                        verts_to_remove.add(_v_idx)
                     break
         verts_idx.difference_update(verts_to_remove)
         iterations -= 1
