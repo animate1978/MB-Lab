@@ -15,12 +15,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import bpy
-from . import morphengine, skeletonengine, algorithms, proxyengine, materialengine
 import os
 import time
 import json
-import operator
+
+import bpy
+from . import morphengine, skeletonengine, algorithms, materialengine
 
 
 class HumanModifier:

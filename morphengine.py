@@ -16,12 +16,13 @@
 
 
 import os
+import time
+import operator
+
 import bpy
 import mathutils
-from . import algorithms, proxyengine
-import time
-import json
-import operator
+
+from . import algorithms
 
 
 class MorphingEngine:
@@ -219,7 +220,7 @@ class MorphingEngine:
 
     def calculate_proportions(self, measures):
 
-        if measures == None:
+        if measures is None:
             measures = self.measures
         if "body_height_Z" in measures:
             if "buttock_girth" in measures:

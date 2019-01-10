@@ -16,13 +16,18 @@
 
 
 import time
-from . import facerig
-from . import humanoid, animationengine, proxyengine
-from bpy.app.handlers import persistent
-from bpy_extras.io_utils import ExportHelper, ImportHelper
 import json
 import os
+
 import bpy
+from bpy.app.handlers import persistent
+from bpy_extras.io_utils import ExportHelper, ImportHelper
+
+from . import facerig
+from . import humanoid, animationengine, proxyengine
+
+
+
 bl_info = {
     "name": "MB-Lab",
     "author": "Manuel Bastioni",
@@ -449,7 +454,7 @@ def get_character_items(self, context):
     items = []
     for obj in bpy.data.objects:
         if obj.type == 'MESH':
-            if algorithms.get_template_model(obj) != None:
+            if algorithms.get_template_model(obj) is not None:
                 items.append((obj.name, obj.name, obj.name))
     return items
 
@@ -458,7 +463,7 @@ def get_proxy_items(self, context):
     items = []
     for obj in bpy.data.objects:
         if obj.type == 'MESH':
-            if algorithms.get_template_model(obj) == None:
+            if algorithms.get_template_model(obj) is None:
                 items.append((obj.name, obj.name, obj.name))
     if len(items) == 0:
         items = [("NO_PROXY_FOUND", "No proxy found", "No proxy found")]
@@ -1861,7 +1866,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                 box = self.layout.box()
 
                 armature = algorithms.get_active_armature()
-                if armature != None and algorithms.is_IK_armature(armature) != True:
+                if armature is not None and algorithms.is_IK_armature(armature) != True:
                     box.enabled = True
                     sel_gender = algorithms.get_selected_gender()
                     if sel_gender == "FEMALE":

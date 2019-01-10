@@ -15,17 +15,17 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import mathutils
 import itertools
 import random
 import time
 import os
-import bpy
 import json
 import array
 
+import mathutils
+import bpy
 
-debug_level = 3
+DEBUG_LEVEL = 3
 
 
 def print_log_report(level, text_to_write):
@@ -33,7 +33,7 @@ def print_log_report(level, text_to_write):
     levels = {"INFO": 0, "DEBUG": 1, "WARNING": 2, "ERROR": 3, "CRITICAL": 4, }
     if level in levels:
         l = levels[level]
-    if l >= debug_level:
+    if l >= DEBUG_LEVEL:
         print(level + ": " + text_to_write)
 
 
@@ -543,7 +543,7 @@ def kdtree_from_mesh_polygons(mesh):
 
 def kdtree_from_obj_polygons(obj, indices_of_polygons_subset=None):
     polygons = []
-    if indices_of_polygons_subset != None:
+    if indices_of_polygons_subset is not None:
         for idx in indices_of_polygons_subset:
             polygons.append(obj.data.polygons[idx])
     else:
@@ -615,7 +615,7 @@ def remove_object(obj, delete_mesh=False, delete_materials=False):
 
         bpy.data.objects.remove(obj, do_unlink=True)
         if delete_mesh:
-            if mesh_to_remove != None:
+            if mesh_to_remove is not None:
                 remove_mesh(mesh_to_remove, delete_materials)
 
 
@@ -911,7 +911,7 @@ def get_newest_object(existing_obj_names):
 def get_selected_gender():
     obj = get_active_body()
     template = get_template_model(obj)
-    if template != None:
+    if template is not None:
         if "_female" in template:
             return "FEMALE"
         if "_male" in template:
@@ -926,8 +926,8 @@ def identify_template(obj):
             polygons = obj.data.polygons
             config_data = get_configuration()
             # TODO error messages
-            if verts != None:
-                if polygons != None:
+            if verts is not None:
+                if polygons is not None:
                     n_verts = len(verts)
                     n_polygons = len(polygons)
                     for template in config_data["templates_list"]:
@@ -942,7 +942,7 @@ def identify_template(obj):
 def get_template_model(obj):
     template = identify_template(obj)
     config_data = get_configuration()
-    if template != None:
+    if template is not None:
         return config_data[template]["template_model"]
     return None
 
@@ -950,13 +950,13 @@ def get_template_model(obj):
 def get_template_polygons(obj):
     template = identify_template(obj)
     config_data = get_configuration()
-    if template != None:
+    if template is not None:
         return config_data[template]["template_polygons"]
     return None
 
 
 def is_a_lab_character(obj):
-    if get_template_model(obj) != None:
+    if get_template_model(obj) is not None:
         return True
     return False
 
@@ -971,7 +971,7 @@ def get_active_body():
             if obj.children:
                 for c_obj in obj.children:
                     obj_id = get_template_model(c_obj)
-                    if obj_id != None:
+                    if obj_id is not None:
                         return c_obj
     return None
 
@@ -1104,7 +1104,7 @@ def get_vertgroup_verts(obj, vgroup_name):
 
     g = get_vertgroup_by_name(obj, vgroup_name)
     verts_idxs = []
-    if g != None:
+    if g is not None:
         for i in range(len(obj.data.vertices)):
             try:
                 if g.weight(i) > 0:
@@ -1329,7 +1329,7 @@ def get_pose_bones(armature):
 
 def get_edit_bone(armature, name):
     edit_bones = get_edit_bones(armature)
-    if edit_bones != None:
+    if edit_bones is not None:
         if name in edit_bones:
             return edit_bones[name]
     return None

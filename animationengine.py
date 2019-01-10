@@ -15,11 +15,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import bpy
 import os
 import json
 import time
+
 import mathutils
+import bpy
+
 from . import algorithms
 
 
@@ -208,7 +210,7 @@ class RetargetEngine:
                 for x_bone in target_armature.data.bones:
                     b_name = x_bone.name
                     source_bone_name = self.get_mapped_name(b_name)
-                    if source_bone_name != None:
+                    if source_bone_name is not None:
                         armature_z_axis[b_name] = source_armature.data.edit_bones[source_bone_name].z_axis.copy()
                     else:
                         algorithms.print_log_report("DEBUG", "Bone {0} non mapped".format(b_name))
@@ -319,7 +321,7 @@ class RetargetEngine:
             if index == "None":
                 index = None
 
-            if index != None:
+            if index is not None:
                 try:
                     return bones_chain[index]
                 except:
@@ -414,7 +416,7 @@ class RetargetEngine:
             chain_sets.append(set(chain))
 
         for i, chain in enumerate(chain_sets):
-            if chain_inters == None:
+            if chain_inters is None:
                 chain_inters = chain
             else:
                 chain_inters = chain_inters.intersection(chain)
@@ -915,7 +917,7 @@ class RetargetEngine:
 
     def map_bone(self, armat, b_name, b_type, s_method):
         mapped_name = self.find_bone(armat, b_type, s_method)
-        if mapped_name != None:
+        if mapped_name is not None:
             self.skeleton_mapped[b_name] = mapped_name
 
     def map_by_direct_parent(self, armat, childr_name, map_name):
@@ -1052,11 +1054,11 @@ class RetargetEngine:
             hand_bone1 = self.get_source_editbone(armat, "hand_R")
             hand_bone2 = self.get_source_editbone(armat, "hand_L")
 
-            if head_bone == None:
+            if head_bone is None:
                 head_bone = self.get_source_editbone(armat, "neck")
-            if hand_bone1 == None:
+            if hand_bone1 is None:
                 hand_bone1 = self.get_source_editbone(armat, "lowerarm_R")
-            if hand_bone2 == None:
+            if hand_bone2 is None:
                 hand_bone2 = self.get_source_editbone(armat, "lowerarm_L")
 
         if armat_type == 'TARGET':
@@ -1066,27 +1068,27 @@ class RetargetEngine:
             hand_bone1 = self.get_target_editbone(armat, "hand_R")
             hand_bone2 = self.get_target_editbone(armat, "hand_L")
 
-            if head_bone == None:
+            if head_bone is None:
                 head_bone = self.get_target_editbone(armat, "neck")
-            if hand_bone1 == None:
+            if hand_bone1 is None:
                 hand_bone1 = self.get_target_editbone(armat, "lowerarm_R")
-            if hand_bone2 == None:
+            if hand_bone2 is None:
                 hand_bone2 = self.get_target_editbone(armat, "lowerarm_L")
 
         vect1 = None
         vect2 = None
 
-        if head_bone != None:
-            if pelvis_bone != None:
-                if hand_bone1 != None:
-                    if hand_bone2 != None:
+        if head_bone is not None:
+            if pelvis_bone is not None:
+                if hand_bone1 is not None:
+                    if hand_bone2 is not None:
 
                         vect1 = head_bone.head-pelvis_bone.head
                         vect2 = hand_bone2.head-hand_bone1.head
 
         algorithms.select_and_change_mode(armat, "POSE")
 
-        if vect1 != None and vect2 != None:
+        if vect1 is not None and vect2 is not None:
             if rot_type == "ALIGN_SPINE":
                 return vect1.normalized()
             if rot_type == "ALIGN_SHOULDERS":
@@ -1128,7 +1130,7 @@ class RetargetEngine:
             target_vectors = self.calculate_skeleton_vectors(target_armat, 'TARGET', rot_type)
             if rot_type == "ALIGN_SHOULDERS":
                 source_vectors.z = 0.0
-            if target_vectors != None:
+            if target_vectors is not None:
                 angle = source_vectors.angle(target_vectors)
                 rot_axis = source_vectors.cross(target_vectors)
                 rot = self.define_angle_direction(source_vectors, target_vectors, rot_axis, angle)
@@ -1146,8 +1148,8 @@ class RetargetEngine:
 
     def use_animation_pelvis(self, target_armat, source_armat):
 
-        if target_armat != None:
-            if source_armat != None:
+        if target_armat is not None:
+            if source_armat is not None:
                 v1 = None
                 v2 = None
 
@@ -1157,9 +1159,9 @@ class RetargetEngine:
                 r_thigh_bone = self.get_source_editbone(source_armat, "thigh_R")
                 l_thigh_bone = self.get_source_editbone(source_armat, "thigh_L")
 
-                if source_pelvis != None:
-                    if r_thigh_bone != None:
-                        if l_thigh_bone != None:
+                if source_pelvis is not None:
+                    if r_thigh_bone is not None:
+                        if l_thigh_bone is not None:
 
                             p1 = (r_thigh_bone.head + l_thigh_bone.head)*0.5
                             p2 = source_pelvis.head
@@ -1169,16 +1171,16 @@ class RetargetEngine:
 
                 algorithms.select_and_change_mode(source_armat, 'POSE')
 
-                if v1 != None:
-                    if v2 != None:
+                if v1 is not None:
+                    if v2 is not None:
                         algorithms.select_and_change_mode(target_armat, 'EDIT')
                         target_pelvis = self.get_target_editbone(target_armat, "pelvis")
                         r_thigh_bone = self.get_target_editbone(target_armat, "thigh_R")
                         l_thigh_bone = self.get_target_editbone(target_armat, "thigh_L")
 
-                        if target_pelvis != None:
-                            if r_thigh_bone != None:
-                                if l_thigh_bone != None:
+                        if target_pelvis is not None:
+                            if r_thigh_bone is not None:
+                                if l_thigh_bone is not None:
 
                                     p1a = (r_thigh_bone.head + l_thigh_bone.head)*0.5
                                     target_pelvis.head = p1a+v1
@@ -1248,7 +1250,7 @@ class RetargetEngine:
         for b in target_armat.pose.bones:
             if b.name in self.skeleton_mapped:
                 if b.name in bones_to_rotate:
-                    if self.skeleton_mapped[b.name] != None:
+                    if self.skeleton_mapped[b.name] is not None:
                         if "mbastlab_rot" not in b.constraints:
                             cstr = b.constraints.new('COPY_ROTATION')
                             cstr.target = source_armat

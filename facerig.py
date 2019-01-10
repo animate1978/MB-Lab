@@ -1,6 +1,8 @@
 import json
 import os
+
 import bpy
+
 from . import algorithms
 
 

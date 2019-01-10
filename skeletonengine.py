@@ -15,10 +15,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import bpy
 import os
-import json
+
+import bpy
 import mathutils
+
 from . import algorithms
 
 
@@ -66,7 +67,7 @@ class SkeletonEngine:
                 obj_armat = algorithms.import_object_from_lib(
                     self.lib_filepath, self.skeleton_template_name, self.skeleton_name)
 
-            if obj_armat != None:
+            if obj_armat is not None:
                 self.store_z_axis()
                 # TODO doesn't look like armature_visibility is used
                 # anywhere
