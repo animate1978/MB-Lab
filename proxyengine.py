@@ -14,13 +14,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
+import logging
 import os
 
 import mathutils
 import bpy
 
 from . import algorithms
+
+
+logger = logging.getLogger(__name__)
 
 
 class ProxyEngine:
@@ -63,7 +66,7 @@ class ProxyEngine:
             proxy_vertices = fit_shapekey.data
         else:
             proxy_vertices = proxy.data.vertices
-            algorithms.print_log_report("WARNING", "Weights transfer executed without fitting (No fit shapekey found)")
+            logger.warning("Weights transfer executed without fitting (No fit shapekey found)")
 
         body_verts_weights = [[] for v in body.data.vertices]
         for grp in body.vertex_groups:
@@ -321,7 +324,7 @@ class ProxyEngine:
 
             mask_name = "mbastlab_mask_" + proxy.name
 
-            algorithms.print_log_report("INFO", "Fitting proxy {0}".format(proxy.name))
+            logger.info("Fitting proxy %s", proxy.name)
             selected_objs_names = algorithms.get_objects_selected_names()
 
             algorithms.disable_object_modifiers(proxy, ['ARMATURE', 'SUBSURF', 'MASK'])

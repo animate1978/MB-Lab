@@ -14,12 +14,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import logging
 import array
 import os
 import time
 
 import bpy
 from . import algorithms
+
+
+logger = logging.getLogger(__name__)
 
 
 class MaterialEngine:
@@ -137,13 +141,13 @@ class MaterialEngine:
 
     @staticmethod
     def assign_image_to_node(material_name, node_name, image_name):
-        algorithms.print_log_report("INFO", "Assigning the image {0} to node {1}".format(image_name, node_name))
+        logger.info("Assigning the image %s to node %s", image_name, node_name)
         mat_node = algorithms.get_material_node(material_name, node_name)
         mat_image = algorithms.get_image(image_name)
         if mat_image:
             algorithms.set_node_image(mat_node, mat_image)
         else:
-            algorithms.print_log_report("WARNING", "Node assignment failed. Image not found: {0}".format(image_name))
+            logger.warning("Node assignment failed. Image not found: %s", image_name)
 
     def get_material_parameters(self):
 
@@ -215,16 +219,14 @@ class MaterialEngine:
             disp_data_image = algorithms.get_image(disp_data_image_name)
             if disp_data_image:
                 disp_size = disp_data_image.size
-                algorithms.print_log_report(
-                    "INFO",
-                    "Creating the displacement image from data image {0} with size {1}x{2}".format(
-                        disp_data_image.name, disp_size[0], disp_size[1]))
+                logger.info(
+                    "Creating the displacement image from data image %s with size %sx%s",
+                    disp_data_image.name, disp_size[0], disp_size[1])
                 algorithms.new_image(self.image_file_names["body_displ"], disp_size)
             else:
-                algorithms.print_log_report(
-                    "WARNING",
-                    "Cannot create the displacement modifier: data image not found: {0}".format(
-                    algorithms.simple_path(self.image_file_paths["displ_data"])))
+                logger.warning(
+                    "Cannot create the displacement modifier: data image not found: %s",
+                    algorithms.simple_path(self.image_file_paths["displ_data"]))
 
     def calculate_displacement_texture(self, age_factor, tone_factor, mass_factor):
         time1 = time.time()
@@ -238,31 +240,27 @@ class MaterialEngine:
                 if self.image_file_names["body_displ"] in bpy.data.images:
                     disp_img = bpy.data.images[self.image_file_names["body_displ"]]
                 else:
-                    algorithms.print_log_report("WARNING", "Displace image not found: {0}".format(
-                        self.image_file_names["body_displ"]))
+                    logger.warning("Displace image not found: %s", self.image_file_names["body_displ"])
                     return
 
                 if self.generated_disp_modifier_ID in bpy.data.textures:
                     disp_tex = bpy.data.textures[self.generated_disp_modifier_ID]
                 else:
-                    algorithms.print_log_report(
-                        "WARNING", "Displace texture not found: {0}".format(self.generated_disp_modifier_ID))
+                    logger.warning("Displace texture not found: %s", self.generated_disp_modifier_ID)
                     return
 
                 if algorithms.are_squared_images(disp_data_image, disp_img):
                     algorithms.scale_image_to_fit(disp_data_image, disp_img)
                     disp_img.pixels = self.calculate_disp_pixels(disp_data_image, age_factor, tone_factor, mass_factor)
                     disp_tex.image = disp_img
-                    algorithms.print_log_report(
-                        "INFO", "Displacement calculated in {0} seconds".format(time.time()-time1))
+                    logger.info("Displacement calculated in %s seconds", time.time()-time1)
             else:
-                algorithms.print_log_report("ERROR", "Displace data image not found: {0}".format(
-                    algorithms.simple_path(self.image_file_paths["displ_data"])))
+                logger.error("Displace data image not found: %s",
+                             algorithms.simple_path(self.image_file_paths["displ_data"]))
 
     def save_texture(self, filepath, shader_target):
         img_name = self.image_file_names[shader_target]
-        algorithms.print_log_report("INFO", "Saving image {0} in {1}".format(
-            img_name, algorithms.simple_path(filepath)))
+        logger.info("Saving image %s in %s", img_name, algorithms.simple_path(filepath))
         algorithms.save_image(img_name, filepath)
         algorithms.load_image(filepath)  # Load the just saved image to replace the current one
         self.image_file_names[shader_target] = os.path.basename(filepath)
