@@ -651,7 +651,7 @@ def get_modifier(obj, modifier_name):
 
 
 def get_modifier_name(modfr):
-    return hasattr(modfr, 'name')
+    return getattr(modfr, 'name')
 
 
 def apply_modifier(obj, modifier):

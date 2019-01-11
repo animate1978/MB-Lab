@@ -101,7 +101,7 @@ class MaterialEngine:
     @staticmethod
     def calculate_disp_pixels(blender_image, age_factor, tone_factor, mass_factor):
 
-        source_data_image = array.array('f', blender_image.pixels[:])
+        img_a = array.array('f', blender_image.pixels[:])
         result_image = array.array('f')
 
         age_f = age_factor if age_factor > 0 else 0
@@ -110,9 +110,9 @@ class MaterialEngine:
 
         mass_f = (1 - tone_f) * mass_factor if mass_factor > 0 else 0
 
-        for r, g, b, a in range(0, len(source_data_image), 4):
+        for i in range(0, len(img_a), 4):
             # details + age_disp + tone_disp + mass_disp
-            add_result = r + age_f * (g - 0.5) + tone_f * (b - 0.5) + mass_f * (a - 0.5)
+            add_result = img_a[0] + age_f * (img_a[1] - 0.5) + tone_f * (img_a[2] - 0.5) + mass_f * (img_a[3] - 0.5)
             if add_result > 1.0:
                 add_result = 1.0
 
