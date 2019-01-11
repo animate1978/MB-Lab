@@ -1039,16 +1039,6 @@ def load_image(filepath):
         logger.info("Image %s not found", os.path.basename(filepath))
 
 
-def new_image(name, img_size, color=(0.5, 0.5, 0.5, 1)):
-    logger.info("Creating new image %s with size %sx%s", name, img_size[0], img_size[1])
-    if name in bpy.data.images:
-        bpy.data.images.remove(bpy.data.images[name], do_unlink=True)
-        logger.info("Previous existing image %s replaced with the new one", name)
-    new_img = bpy.data.images.new(name, img_size[0], img_size[1])
-    new_img.generated_color = color
-    return new_img
-
-
 def get_image(name):
     if name:
         if name in bpy.data.images:
@@ -1063,26 +1053,6 @@ def get_image(name):
 
     logger.warning("Getting image failed. Image name is %s", name)
     return None
-
-
-def are_squared_images(image1, image2):
-    out = image1.size[0] == image1.size[1] and image1.size[0] == image2.size[0]
-    if not out:
-        logger.warning("The image %s cannot be used: not squared", image1.name)
-
-    return out
-
-
-def scale_image_to_fit(image1, image2):
-    if are_squared_images(image1, image2):
-        size1_0, size1_1 = image1.size
-        size2_0, size2_1 = image2.size
-        if size1_0 != size2_0:
-            if size1_0 * size1_1 > size2_0 * size2_1:
-                image2.scale(size1_0, size1_1)
-
-            if size1_0 * size1_1 < size2_0 * size2_1:
-                image1.scale(size2_0, size2_1)
 
 
 def save_image(name, filepath, fileformat='PNG'):
