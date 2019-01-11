@@ -256,7 +256,7 @@ def measure_units_update(self, context):
 def human_expression_update(self, context):
     global mblab_shapekeys
     scn = bpy.context.scene
-    mblab_shapekeys.sync_expression_to_GUI()
+    mblab_shapekeys.sync_expression_to_gui()
 
 
 def restpose_update(self, context):
@@ -1341,7 +1341,7 @@ class ResetExpressions(bpy.types.Operator):
 
     def execute(self, context):
         global mblab_shapekeys
-        mblab_shapekeys.reset_expressions_GUI()
+        mblab_shapekeys.reset_expressions_gui()
         return {'FINISHED'}
 
 # class LoadAssets(bpy.types.Operator):
