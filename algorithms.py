@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
+import logging
 import itertools
 import random
 import time
@@ -25,10 +25,15 @@ import array
 import mathutils
 import bpy
 
+
+logger = logging.getLogger(__name__)
+
 DEBUG_LEVEL = 3
 
 
 def print_log_report(level, text_to_write):
+    import warnings
+    warnings.warn("print_log_report deprecated, use python logging", DeprecationWarning)
     l = 0
     levels = {"INFO": 0, "DEBUG": 1, "WARNING": 2, "ERROR": 3, "CRITICAL": 4, }
     if level in levels:
@@ -42,17 +47,17 @@ def is_writeable(filepath):
         with open(filepath, 'w'):
             return True
     except IOError:
-        print("WARNING: Writing permission denied for {0}".format(filepath))
+        logger.warning("Writing permission denied for %s", filepath)
     return False
 
 
 def get_data_path():
     addon_directory = os.path.dirname(os.path.realpath(__file__))
     data_dir = os.path.join(addon_directory, "data")
-    print_log_report("INFO", "Looking for the retarget data in the folder {0}...".format(simple_path(data_dir)))
+    logger.info("Looking for the retarget data in the folder %s...", simple_path(data_dir))
 
     if not os.path.isdir(data_dir):
-        print_log_report("CRITICAL", "Tools data not found. Please check your Blender addons directory.")
+        logger.critical("Tools data not found. Please check your Blender addons directory.")
         return None
 
     return data_dir
@@ -66,7 +71,7 @@ def get_configuration():
         if os.path.isfile(configuration_path):
             return load_json_data(configuration_path, "Characters definition")
 
-    print_log_report("CRITICAL", "Configuration database not found. Please check your Blender addons directory.")
+    logger.critical("Configuration database not found. Please check your Blender addons directory.")
     return None
 
 
@@ -75,7 +80,7 @@ def get_blendlibrary_path():
     if data_path:
         return os.path.join(data_path, "humanoid_library.blend")
 
-    print_log_report("CRITICAL", "Models library not found. Please check your Blender addons directory.")
+    logger.critical("Models library not found. Please check your Blender addons directory.")
     return None
 
 
@@ -125,10 +130,10 @@ def exists_database(lib_path):
                     if "json" in extension or "bvh" in extension:
                         result = True
                     else:
-                        print_log_report("WARNING", "Unknow file extension in {0}".format(simple_path(lib_path)))
+                        logger.warning("Unknow file extension in %s", simple_path(lib_path))
 
         else:
-            print_log_report("WARNING", "data path {0} not found".format(simple_path(lib_path)))
+            logger.warning("data path %s not found", simple_path(lib_path))
     return result
 
 
@@ -158,8 +163,8 @@ def bounding_box(verts_coo, indices, roundness=4):
             val_y.append(verts_coo[idx][1])
             val_z.append(verts_coo[idx][2])
         else:
-            print_log_report("WARNING", "Error in calculating bounding box: index {0} not in verts_coo (len(verts_coo) = {1})".format(
-                idx, len(verts_coo)))
+            logger.warning("Error in calculating bounding box: index %s not in verts_coo (len(verts_coo) = %s)",
+                           idx, len(verts_coo))
             return None
 
     box_x = round(max(val_x)-min(val_x), roundness)
@@ -353,8 +358,8 @@ def correct_morph(base_form, current_form, morph_deltas, bboxes):
                     new_morph_deltas.append([idx, newd])
         else:
             new_morph_deltas.append(d_data)
-            print_log_report("WARNING", "Index {0} not in bounding box database".format(idx))
-    print_log_report("INFO", "Morphing corrected in {0} secs".format(time.time()-time1))
+            logger.warning("Index %s not in bounding box database", idx)
+    logger.info("Morphing corrected in %s secs", time.time()-time1)
     return new_morph_deltas
 
 
@@ -369,7 +374,7 @@ def check_version(m_vers, min_version=(1, 5, 0)):
     mesh_version = mesh_version.replace(' ', '')
     mesh_version = mesh_version.strip("[]()")
     if len(mesh_version) < 5:
-        print_log_report("WARNING", "The current humanoid has wrong format for version")
+        logger.warning("The current humanoid has wrong format for version")
         return False
 
     mesh_version = (float(mesh_version[0]), float(mesh_version[2]), float(mesh_version[4]))
@@ -380,20 +385,20 @@ def looking_for_humanoid_obj():
     """
     Looking for a mesh that is OK for the lab
     """
-    print_log_report("INFO", "Looking for an humanoid object...")
+    logger.info("Looking for an humanoid object...")
     if bpy.app.version < (2, 78, 0):
         msg = "Sorry, the lab requires official Blender 2.78 or 2.79."
-        print_log_report("WARNING", msg)
+        logger.warning(msg)
         return("ERROR", msg)
 
 #        if bpy.app.version >= (2,80,0):
 #            msg = "Sorry, this version of lab does no work with Blender 2.8"
-#            print_log_report("WARNING",msg)
+#            logger.warning(sg)
 #            return("ERROR",msg)
 
 #       if bpy.app.version > (2,79,0):
 #            msg = "The lab is not designed to work with unstable Blender build {0}".format(str(bpy.app.version))
-#            print_log_report("WARNING",msg)
+#            logger.warning(sg)
         # return("ERROR",msg)
 
     human_obj = None
@@ -408,7 +413,7 @@ def looking_for_humanoid_obj():
 
     if not human_obj:
         msg = "No lab humanoids in the scene"
-        print_log_report("INFO", msg)
+        logger.info(msg)
         return "NO_OBJ", msg
 
     return "FOUND", name
@@ -445,17 +450,17 @@ def load_json_data(json_path, description=None):
         with open(json_path, "r") as j_file:
             j_database = json.load(j_file)
             if not description:
-                print_log_report("INFO", "Json database {0} loaded in {1} secs".format(
-                    simple_path(json_path), time.time()-time1))
+                logger.info("Json database %s loaded in %s secs",
+                            simple_path(json_path), time.time()-time1)
             else:
-                print_log_report("INFO", "{0} loaded from {1} in {2} secs".format(
-                    description, simple_path(json_path), time.time()-time1))
+                logger.info("%s loaded from %s in %s secs",
+                            description, simple_path(json_path), time.time()-time1)
             return j_database
     except IOError:
         if simple_path(json_path) != "":
-            print_log_report("WARNING", "File not found: {0}".format(simple_path(json_path)))
+            logger.warning("File not found: %s", simple_path(json_path))
     except json.JSONDecodeError:
-        print_log_report("WARNING", "Errors in json file: {0}".format(simple_path(json_path)))
+        logger.warning("Errors in json file: %s", simple_path(json_path))
     return None
 
 
@@ -614,12 +619,12 @@ def disable_object_modifiers(obj, types_to_disable=[]):
         modifier_type = modfr.type
         if modifier_type in types_to_disable:
             set_modifier_viewport(modfr, False)
-            print_log_report("INFO", "Modifier {0} of {1} can create unpredictable fitting results. The lab disabled it".format(
-                modifier_type, obj.name))
+            logger.info("Modifier %s of %s can create unpredictable fitting results. The lab disabled it",
+                        modifier_type, obj.name)
         elif types_to_disable == []:
             set_modifier_viewport(modfr, False)
-            print_log_report("INFO", "Modifier {0} of {1} can create unpredictable fitting results. The lab disabled it".format(
-                modifier_type, obj.name))
+            logger.info("Modifier %s of %s can create unpredictable fitting results. The lab disabled it",
+                        modifier_type, obj.name)
 
 
 def get_object_modifiers_visibility(obj):
@@ -656,7 +661,7 @@ def apply_modifier(obj, modifier):
         try:
             bpy.ops.object.modifier_apply(apply_as='DATA', modifier=modifier_name)
         except AttributeError:
-            print_log_report("WARNING", "Problems in applying {0}. Is the modifier disabled?".format(modifier_name))
+            logger.warning("Problems in applying %s. Is the modifier disabled?", modifier_name)
 
 
 def move_up_modifier(obj, modifier):
@@ -680,7 +685,7 @@ def remove_modifier(obj, modifier_name):
 
 
 def disable_modifier(modfr):
-    print("Disable ", modfr.name)
+    logger.info("Disable %s", modfr.name)
     for mdf in ('show_viewport', 'show_render', 'show_in_editmode', 'show_on_cage'):
         if hasattr(modfr, mdf):
             setattr(modfr, mdf, False)
@@ -697,7 +702,7 @@ def set_modifier_viewport(modfr, value):
 
 def new_modifier(obj, name, modifier_type, parameters):
     if name in obj.modifiers:
-        print_log_report("INFO", "Modifier {0} already present in {1}".format(modifier_type, obj.name))
+        logger.info("Modifier %s already present in %s", modifier_type, obj.name)
         return obj.modifiers[name]
     _new_modifier = obj.modifiers.new(name, modifier_type)
     for parameter, value in parameters.items():
@@ -705,7 +710,7 @@ def new_modifier(obj, name, modifier_type, parameters):
             try:
                 setattr(_new_modifier, parameter, value)
             except AttributeError:
-                print_log_report("INFO", "Setattr failed for attribute '{0}' of modifier {1}".format(parameter, name))
+                logger.info("Setattr failed for attribute '%s' of modifier %s", parameter, name)
     return _new_modifier
 
 
@@ -714,8 +719,7 @@ def set_modifier_parameter(modifier, parameter, value):
         try:
             setattr(modifier, parameter, value)
         except AttributeError:
-            print_log_report("INFO", "Setattr failed for attribute '{0}' of modifier {1}".format(
-                parameter, modifier))
+            logger.info("Setattr failed for attribute '%s' of modifier %s", parameter, modifier)
 
 
 def get_object_materials(obj):
@@ -732,9 +736,9 @@ def select_and_change_mode(obj, obj_mode):
         set_object_visible(obj)
         try:
             bpy.ops.object.mode_set(mode=obj_mode)
-            print_log_report("DEBUG", "Select and change mode of {0} = {1}".format(obj.name, obj_mode))
+            logger.debug("Select and change mode of %s = %s", obj.name, obj_mode)
         except AttributeError:
-            print_log_report("WARNING", "Can't change the mode of {0} to {1}.".format(obj.name, obj_mode))
+            logger.warning("Can't change the mode of %s to %s", obj.name, obj_mode)
 
 
 def get_selected_objs_names():
@@ -1028,7 +1032,7 @@ def get_vertgroup_verts(obj, vgroup_name):
 
 def set_object_visible(obj):
     if obj:
-        print_log_report("DEBUG", "Turn the visibility of {0} ON".format(obj.name))
+        logger.debug("Turn the visibility of %s ON", obj.name)
         obj.hide_select = False
 
         # TODO: I don't think this is needed in blender 2.8
@@ -1069,18 +1073,18 @@ def generate_items_list(folderpath, file_type="json"):
 
 def load_image(filepath):
     if os.path.isfile(filepath):
-        print_log_report("INFO", "Loading image {0}". format(os.path.basename(filepath)))
+        logger.info("Loading image %s", os.path.basename(filepath))
         img = bpy.data.images.load(filepath, check_existing=True)
         img.reload()
     else:
-        print_log_report("INFO", "Image {0} not found". format(os.path.basename(filepath)))
+        logger.info("Image %s not found", os.path.basename(filepath))
 
 
 def new_image(name, img_size, color=(0.5, 0.5, 0.5, 1)):
-    print_log_report("INFO", "Creating new image {0} with size {1}x{2}". format(name, img_size[0], img_size[1]))
+    logger.info("Creating new image %s with size %sx%s", name, img_size[0], img_size[1])
     if name in bpy.data.images:
         bpy.data.images.remove(bpy.data.images[name], do_unlink=True)
-        print_log_report("INFO", "Previous existing image {0} replaced with the new one". format(name))
+        logger.info("Previous existing image %s replaced with the new one", name)
     new_img = bpy.data.images.new(name, img_size[0], img_size[1])
     new_img.generated_color = color
     return new_img
@@ -1092,20 +1096,20 @@ def get_image(name):
             # Some check for log
             if bpy.data.images[name].source == "FILE":
                 if os.path.basename(bpy.data.images[name].filepath) != name:
-                    print_log_report("WARNING", "Image named {0} is from file: {1}".format(
-                        name, os.path.basename(bpy.data.images[name].filepath)))
+                    logger.warning("Image named %s is from file: %s",
+                                   name, os.path.basename(bpy.data.images[name].filepath))
             return bpy.data.images[name]
-        print_log_report("WARNING", "Getting image failed. Image {0} not found in bpy.data.images".format(name))
+        logger.warning("Getting image failed. Image %s not found in bpy.data.images", name)
         return None
 
-    print_log_report("WARNING", "Getting image failed. Image name is {0}".format(name))
+    logger.warning("Getting image failed. Image name is %s", name)
     return None
 
 
 def are_squared_images(image1, image2):
     out = image1.size[0] == image1.size[1] and image1.size[0] == image2.size[0]
     if not out:
-        print_log_report("WARNING", "The image {0} cannot be used: not squared". format(image1.name))
+        logger.warning("The image %s cannot be used: not squared", image1.name)
 
     return out
 
@@ -1131,8 +1135,8 @@ def save_image(name, filepath, fileformat='PNG'):
         img.save_render(filepath)
         scn.render.image_settings.file_format = current_format
     else:
-        print_log_report(
-            "WARNING", "The image {0} cannot be saved because it's not present in bpy.data.images.". format(name))
+        logger.warning(
+            "The image %s cannot be saved because it's not present in bpy.data.images.", name)
 
 
 def new_texture(name, image=None):
@@ -1157,14 +1161,14 @@ def set_node_image(mat_node, mat_image):
     if mat_node:
         mat_node.image = mat_image
     else:
-        print_log_report("WARNING", "Node assignment failed. Image not found: {0}".format(mat_image))
+        logger.warning("Node assignment failed. Image not found: %s", mat_image)
 
 
 def get_material(material_name):
     for material in bpy.data.materials:
         if material.name == material_name:
             return material
-    print_log_report("WARNING", "Material {0} not found".format(material_name))
+    logger.warning("Material %s not found", material_name)
     return None
 
 
@@ -1172,7 +1176,7 @@ def get_material_nodes(material):
     if material.node_tree:
         return material.node_tree.nodes
 
-    print_log_report("WARNING", "Material {0} has not nodes".format(material.name))
+    logger.warning("Material %s has not nodes", material.name)
     return None
 
 
@@ -1183,7 +1187,7 @@ def get_material_node(material_name, node_name):
         if node_name in material.node_tree.nodes:
             material_node = material.node_tree.nodes[node_name]
     if not material_node:
-        print_log_report("WARNING", "Node not found: {0} in material {1}".format(node_name, material_name))
+        logger.warning("Node not found: %s in material %s", node_name, material_name)
     return material_node
 
 
@@ -1192,10 +1196,10 @@ def get_node_output_value(node, index):
         if hasattr(node.outputs[index], "default_value"):
             return node.outputs[index].default_value
 
-        print_log_report("WARNING", "Socket [{0}] has not default_value attribute".format(index))
+        logger.warning("Socket [%s] has not default_value attribute", index)
         return None
 
-    print_log_report("WARNING", "Socket [{0}] not in range of node {1} outputs".format(index, node.name))
+    logger.warning("Socket [%s] not in range of node %s outputs", index, node.name)
     return None
 
 
@@ -1204,28 +1208,28 @@ def set_node_output_value(node, index, value):
         if hasattr(node.outputs[index], "default_value"):
             node.outputs[index].default_value = value
         else:
-            print_log_report("WARNING", "Socket [{0}] has not default_value attribute".format(index))
+            logger.warning("Socket [%s] has not default_value attribute", index)
     else:
-        print_log_report("WARNING", "Socket[{0}] not in range of node {1} outputs".format(index, node.name))
+        logger.warning("Socket[%s] not in range of node %s outputs", index, node.name)
 
 
 def get_edit_bones(armature):
     if bpy.context.mode != 'EDIT_ARMATURE':
-        print_log_report("WARNING", "Cannot get the edit bones because the obj is not in edit mode")
+        logger.warning("Cannot get the edit bones because the obj is not in edit mode")
         return None
     return armature.data.edit_bones
 
 
 def get_bones(armature):
     if armature.type != 'ARMATURE':
-        print_log_report("WARNING", "Cannot get the bones because the obj is not an armature")
+        logger.warning("Cannot get the bones because the obj is not an armature")
         return None
     return armature.data.bones
 
 
 def get_pose_bones(armature):
     if bpy.context.mode != 'POSE':
-        print_log_report("WARNING", "Cannot get the pose bones because the obj is not in pose mode")
+        logger.warning("Cannot get the pose bones because the obj is not in pose mode")
         return None
     return armature.pose.bones
 
@@ -1293,8 +1297,8 @@ def set_bone_constraint_parameter(constraint, parameter, value):
         try:
             setattr(constraint, parameter, value)
         except AttributeError:
-            print_log_report("INFO", "Setattr failed for attribute '{0}' of constraint {1}".format(
-                parameter, constraint.name))
+            logger.info("Setattr failed for attribute '%s' of constraint %s",
+                        parameter, constraint.name)
 
 
 def get_vertgroup_by_name(obj, group_name):
@@ -1384,7 +1388,7 @@ def update_bendy_bones(armat):
 def link_to_collection(obj):
     # sanity check
     if obj.name not in bpy.data.objects:
-        print_log_report("ERROR", "Cannot link obj {0} because it's not in bpy.data.objects".format(obj.name))
+        logger.error("Cannot link obj %s because it's not in bpy.data.objects", obj.name)
         return
 
     collection_name = 'ManuelBastioni_Character'
@@ -1395,7 +1399,7 @@ def link_to_collection(obj):
         if obj.name not in c.objects:
             c.objects.link(obj)
         else:
-            print_log_report("WARNING", "The object {0} is already linked to the scene".format(obj.name))
+            logger.warning("The object %s is already linked to the scene", obj.name)
     else:
         # create the collection, link collection to scene and link obj to collection
         c = bpy.data.collections.new(collection_name)
@@ -1406,26 +1410,26 @@ def link_to_collection(obj):
 def import_object_from_lib(lib_filepath, name, final_name=None, stop_import=True):
     if name != "":
         if stop_import:
-            print_log_report("INFO", "Appending object {0} from {1}".format(name, simple_path(lib_filepath)))
+            logger.info("Appending object %s from %s", name, simple_path(lib_filepath))
             if name in bpy.data.objects:
-                print_log_report("WARNING", "Object {0} already in the scene. Import stopped".format(name))
+                logger.warning("Object %s already in the scene. Import stopped", name)
                 return None
 
             if final_name:
                 if final_name in bpy.data.objects:
-                    print_log_report("WARNING", "Object {0} already in the scene. Import stopped".format(final_name))
+                    logger.warning("Object %s already in the scene. Import stopped", final_name)
                     return None
 
         append_object_from_library(lib_filepath, [name])
         obj = get_object_by_name(name)
         if obj:
-            print_log_report("INFO", "Object '{0}' imported".format(name))
+            logger.info("Object '%s' imported", name)
             if final_name:
                 obj.name = final_name
-                print_log_report("INFO", "Object '{0}' renamed as '{1}'".format(name, final_name))
+                logger.info("Object '%s' renamed as '%s'", name, final_name)
             return obj
 
-        print_log_report("WARNING", "Object {0} not found in library {1}".format(name, simple_path(lib_filepath)))
+        logger.warning("Object %s not found in library %s", name, simple_path(lib_filepath))
     return None
 
 
@@ -1440,7 +1444,7 @@ def append_object_from_library(lib_filepath, obj_names, suffix=None):
                 names_to_append = obj_names
                 data_to.objects = [name for name in names_to_append if name in data_from.objects]
     except OSError:
-        print_log_report("CRITICAL", "lib {0} not found".format(lib_filepath))
+        logger.critical("lib %s not found", lib_filepath)
 
     for obj in data_to.objects:
         link_to_collection(obj)
@@ -1460,7 +1464,7 @@ def append_mesh_from_library(lib_filepath, mesh_names, suffix=None):
                 names_to_append = mesh_names
                 data_to.meshes = [name for name in names_to_append if name in data_from.meshes]
     except OSError:
-        print_log_report("CRITICAL", "lib {0} not found".format(lib_filepath))
+        logger.critical("lib %s not found", lib_filepath)
 
 
 def read_object_names_from_library(lib_filepath):
@@ -1469,7 +1473,7 @@ def read_object_names_from_library(lib_filepath):
             for name in data_from.objects:
                 print("OBJ_LIB: ", name)
     except OSError:
-        print_log_report("CRITICAL", "lib {0} not found".format(lib_filepath))
+        logger.critical("lib %s not found", lib_filepath)
 
 
 def is_armature_linked(obj, armat):
