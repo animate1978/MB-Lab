@@ -21,7 +21,7 @@ import bpy
 import mathutils
 
 from . import algorithms
-
+from .utils import get_object_parent
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +64,7 @@ class SkeletonEngine:
             self.joints_offset_database = algorithms.load_json_data(joints_offset_data_path, "Joints offset data")
 
             if self.check_skeleton(obj_body):
-                obj_armat = algorithms.get_object_parent(obj_body)
+                obj_armat = get_object_parent(obj_body)
             else:
                 obj_armat = algorithms.import_object_from_lib(
                     self.lib_filepath, self.skeleton_template_name, skeleton_name)
@@ -83,7 +83,7 @@ class SkeletonEngine:
 
     @staticmethod
     def check_skeleton(obj_body):
-        obj_parent = algorithms.get_object_parent(obj_body)
+        obj_parent = get_object_parent(obj_body)
         return obj_parent and obj_parent.type == 'ARMATURE'
 
     def add_armature_modifier(self):

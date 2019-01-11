@@ -25,6 +25,7 @@ import array
 import mathutils
 import bpy
 
+from .utils import get_object_parent
 
 logger = logging.getLogger(__name__)
 
@@ -791,14 +792,6 @@ def get_objects_selected_names():
     return selected_objects
 
 
-def get_deforming_armature(obj):
-    if obj:
-        if obj.type == 'MESH':
-            for modf in obj.modifiers:
-                if modf.type == 'ARMATURE':
-                    return modf.object
-    return None
-
 def apply_object_transformation(obj):
     if obj:
         selected_objs = get_selected_objs_names()
@@ -892,40 +885,6 @@ def get_active_body():
                 obj_id = get_template_model(c_obj)
                 if obj_id:
                     return c_obj
-    return None
-
-
-def is_IK_armature(self, armature=None):
-    if not armature:
-        armature = get_active_armature()
-        if armature:
-            bones = get_bones(armature)
-            for b in bones:
-                if 'IK' in b.name:
-                    return True
-    return False
-
-
-def get_object_parent(obj):
-    if not obj:
-        return None
-    return getattr(obj, "parent", None)
-
-
-def get_active_armature():
-    active_obj = get_active_object()
-    parent_object = get_object_parent(active_obj)
-    if active_obj:
-        if active_obj.type == 'ARMATURE':
-            return active_obj
-        if active_obj.type == 'MESH':
-            if parent_object:
-                if parent_object.type == 'ARMATURE':
-                    return parent_object
-            else:
-                deforming_armature = get_deforming_armature(active_obj)
-                if deforming_armature:
-                    return deforming_armature
     return None
 
 
@@ -1218,13 +1177,6 @@ def get_edit_bones(armature):
         logger.warning("Cannot get the edit bones because the obj is not in edit mode")
         return None
     return armature.data.edit_bones
-
-
-def get_bones(armature):
-    if armature.type != 'ARMATURE':
-        logger.warning("Cannot get the bones because the obj is not an armature")
-        return None
-    return armature.data.bones
 
 
 def get_pose_bones(armature):
