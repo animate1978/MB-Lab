@@ -23,6 +23,7 @@ import mathutils
 import bpy
 
 from . import algorithms
+from .utils import get_active_armature
 
 logger = logging.getLogger(__name__)
 
@@ -68,7 +69,7 @@ class RetargetEngine:
         return None
 
     def is_editable_bone(self):
-        armat = algorithms.get_active_armature()
+        armat = get_active_armature()
         if armat:
             if armat.animation_data:
                 if armat.animation_data.action:
@@ -127,7 +128,7 @@ class RetargetEngine:
 
     def identify_curve_rot(self, bone):
         r_type = "NO_CURVES"
-        armat = algorithms.get_active_armature()
+        armat = get_active_armature()
         if armat:
             action = self.get_action(armat)
             if action:
@@ -160,7 +161,7 @@ class RetargetEngine:
         return None
 
     def get_curve_data(self, channel):
-        armat = algorithms.get_active_armature()
+        armat = get_active_armature()
         d_path = None
         if armat:
             action = self.get_action(armat)
@@ -1289,7 +1290,7 @@ class RetargetEngine:
 
     def reset_pose(self, armat=None, reset_location=True):
         if not armat:
-            armat = algorithms.get_active_armature()
+            armat = get_active_armature()
         if armat:
             self.clear_animation(armat)
             algorithms.stop_animation()
@@ -1332,7 +1333,7 @@ class RetargetEngine:
     def load_pose(self, filepath, target_armature=None, use_retarget=False):
 
         if not target_armature:
-            target_armature = algorithms.get_active_armature()
+            target_armature = get_active_armature()
         if not target_armature:
             return False
 
@@ -1354,7 +1355,7 @@ class RetargetEngine:
 
     def load_animation(self, bvh_path, debug_mode=False):
         time1 = time.time()
-        target_armature = algorithms.get_active_armature()
+        target_armature = get_active_armature()
         if not target_armature:
             return
         self.reset_bones_correction()
