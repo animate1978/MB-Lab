@@ -14,13 +14,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
+import logging
 import os
 
 import bpy
 import mathutils
 
 from . import algorithms
+
+
+logger = logging.getLogger(__name__)
 
 
 class SkeletonEngine:
@@ -114,10 +117,10 @@ class SkeletonEngine:
 
     @staticmethod
     def error_msg(path):
-        algorithms.print_log_report("ERROR", "Database file not found: {0}".format(algorithms.simple_path(path)))
+        logger.error("Database file not found: %s", algorithms.simple_path(path))
 
     def store_z_axis(self):
-        algorithms.print_log_report("INFO", "Importing temporary original skeleton to store z axis")
+        logger.info("Importing temporary original skeleton to store z axis")
         native_armature = algorithms.import_object_from_lib(
             self.lib_filepath, self.skeleton_template_name, "temp_armature")
 
@@ -152,17 +155,16 @@ class SkeletonEngine:
                             if isinstance(vert_data, list):
                                 new_group.add([vert_data[0]], vert_data[1], 'REPLACE')
                             else:
-                                algorithms.print_log_report("INFO", "Error: wrong format for vert weight")
+                                logger.info("Error: wrong format for vert weight")
                         else:
                             if isinstance(vert_data, int):
                                 new_group.add([vert_data], 1.0, 'REPLACE')
                             else:
-                                algorithms.print_log_report("INFO", "Error: wrong format for vert group")
+                                logger.info("Error: wrong format for vert group")
 
-                algorithms.print_log_report("INFO", "Group loaded from {0}".format(algorithms.simple_path(filepath)))
+                logger.info("Group loaded from %s", algorithms.simple_path(filepath))
             else:
-                algorithms.print_log_report(
-                    "WARNING", "Vgroup file problem {0}".format(algorithms.simple_path(filepath)))
+                logger.warning("Vgroup file problem %s", algorithms.simple_path(filepath))
 
     def get_body(self):
         if self.has_data:
@@ -194,7 +196,7 @@ class SkeletonEngine:
 
         if armat and body:
             algorithms.set_object_visible(armat)
-            algorithms.print_log_report("DEBUG", "Fitting armature {0}".format(armat.name))
+            logger.debug("Fitting armature %s", armat.name)
             armat.data.use_mirror_x = False
             current_active_obj = algorithms.get_active_object()
             algorithms.select_and_change_mode(armat, "EDIT")
