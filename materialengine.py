@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-import array
+import numpy as np
 import os
 import time
 
@@ -100,44 +100,27 @@ class MaterialEngine:
 
     @staticmethod
     def calculate_disp_pixels(blender_image, age_factor, tone_factor, mass_factor):
+        logger.info('start: calculate_disp_pixels %s', blender_image.name)
+        tone_f = tone_factor if tone_factor > 0.0 else 0.0
 
-        img_a = array.array('f', blender_image.pixels[:])
-        result_image = array.array('f')
-
-        age_f = age_factor if age_factor > 0 else 0
-
-        tone_f = tone_factor if tone_factor > 0 else 0
-
-        mass_f = (1 - tone_f) * mass_factor if mass_factor > 0 else 0
-
-        for i in range(0, len(img_a), 4):
-            # details + age_disp + tone_disp + mass_disp
-            add_result = img_a[0] + age_f * (img_a[1] - 0.5) + tone_f * (img_a[2] - 0.5) + mass_f * (img_a[3] - 0.5)
-            if add_result > 1.0:
-                add_result = 1.0
-
-            for _ in range(3):
-                result_image.append(add_result)  # R,G,B
-            result_image.append(1.0)  # Alpha is always 1
-
-        return result_image.tolist()
+        ajustments = np.array([0.0, 0.5, 0.5, 0.5], dtype='float32')
+        factors = np.fmax(np.array([1, age_factor, tone_f, (1.0 - tone_f) * mass_factor], dtype='float32'), 0.0)
+        np_image = np.array(blender_image.pixels, dtype='float32').reshape(-1, 4)
+        # add_result = r + age_f * (g - 0.5) + tone_f * (b - 0.5) + mass_f * (a - 0.5)
+        add_result = np.sum((np_image - ajustments) * factors, axis=1)
+        result_image = np.insert(np.repeat(np.fmin(add_result, 1.0), 3).reshape(-1, 3), 3, 1.0, axis=1)
+        logger.info('finish: calculate_disp_pixels %s', blender_image.name)
+        return result_image.flatten()
 
     @staticmethod
     def multiply_images(image1, image2, result_name, blending_factor=0.5):
+        logger.info('multiply_images %s', result_name)
+        if images_scale(image1, image2):
+            np_img1, np_img2 = np.array(image1.pixels, dtype='float32'), np.array(image2.pixels, dtype='float32')
 
-        if image1 and image2 and algorithms.are_squared_images(image1, image2):
-            algorithms.scale_image_to_fit(image1, image2)
-
-            img_1_arr = array.array('f', image1.pixels[:])
-            img_2_arr = array.array('f', image2.pixels[:])
-            result_array = array.array('f')
-
-            for px1, px2 in zip(img_1_arr, img_2_arr):
-                px_result = (px1 * px2 * blending_factor) + (px1 * (1 - blending_factor))
-                result_array.append(px_result)
-
-            result_img = algorithms.new_image(result_name, image1.size)
-            algorithms.array_to_image(result_array, result_img)
+            result_img = new_image(result_name, image2.size)
+            result_img.pixels = np_img1 * np_img2 * blending_factor + (np_img1 * (1.0 - blending_factor))
+        logger.info('finish: multiply_images %s', result_name)
 
     @staticmethod
     def assign_image_to_node(material_name, node_name, image_name):
@@ -222,7 +205,7 @@ class MaterialEngine:
                 logger.info(
                     "Creating the displacement image from data image %s with size %sx%s",
                     disp_data_image.name, disp_size[0], disp_size[1])
-                algorithms.new_image(self.image_file_names["body_displ"], disp_size)
+                new_image(self.image_file_names["body_displ"], disp_size)
             else:
                 logger.warning(
                     "Cannot create the displacement modifier: data image not found: %s",
@@ -249,8 +232,7 @@ class MaterialEngine:
                     logger.warning("Displace texture not found: %s", self.generated_disp_modifier_ID)
                     return
 
-                if algorithms.are_squared_images(disp_data_image, disp_img):
-                    algorithms.scale_image_to_fit(disp_data_image, disp_img)
+                if images_scale(disp_data_image, disp_img):
                     disp_img.pixels = self.calculate_disp_pixels(disp_data_image, age_factor, tone_factor, mass_factor)
                     disp_tex.image = disp_img
                     logger.info("Displacement calculated in %s seconds", time.time()-time1)
@@ -265,3 +247,30 @@ class MaterialEngine:
         algorithms.load_image(filepath)  # Load the just saved image to replace the current one
         self.image_file_names[shader_target] = os.path.basename(filepath)
         self.update_shaders()
+
+
+def new_image(name, img_size, color=(0.5, 0.5, 0.5, 1)):
+    logger.info("Creating new image %s with size %sx%s", name, *img_size)
+    try:
+        bpy.data.images.remove(bpy.data.images[name], do_unlink=True)
+        logger.info("Previous existing image %s replaced with the new one", name)
+    except KeyError:
+        pass
+
+    new_img = bpy.data.images.new(name, *img_size)
+    new_img.generated_color = color
+    logger.info("created new image %s", name)
+    return new_img
+
+
+def images_scale(image1, image2):
+    try:
+        if image1.size[0] == image1.size[1] and image2.size[0] == image2.size[1]:
+            if image1.size[0] > image2.size[0]:
+                image2.scale(*image1.size)
+            elif image1.size[0] < image2.size[0]:
+                image1.scale(*image2.size)
+            return True
+        return False
+    except (AttributeError, KeyError):
+        return False
