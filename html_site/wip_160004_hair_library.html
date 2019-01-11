@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+	<head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="MobileOptimized" content="width">
+        <meta name="HandheldFriendly" content="true">        
+        <link href="styles/styles.css" rel="stylesheet" type="text/css" media="screen">
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+        <link rel="icon" href="favicon_32.png" sizes="32x32">
+        <link rel="icon" href="favicon_48.png" sizes="48x48">
+        <link rel="icon" href="favicon_96.png" sizes="96x96">
+        <link rel="icon" href="favicon_144.png" sizes="144x144">
+ 
+
+<meta name="description" content="ManuelbastioniLAB 1.6.0 WIP. High quality 3D hair library and improvements of the proxy system" />
+<title>New feature for manuelbastioniLAB 1.6.0: hair library and improved proxy system.</title>
+
+   </head>
+
+<body>
+
+<div id="header_small">
+		<div id="navbar">
+
+            <div class="centered">
+                <div id="logo">
+                    <a href="index.html"><img src="images/logo.png"></a>
+                </div>
+
+                <div id="logo_title">
+                    <a href="index.html">Manuel Bastioni Laboratory</a>
+                </div>
+
+                <div id="menu-desktop">
+                    <ul>
+                        <li><a href="download.html">Download</a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                        <li><a href="contacts.html">Contact</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                    </ul>
+                </div>
+
+                <div id="menu-mobile">
+                    <ul>
+                        <li><a href="download.html">Downl.</a></li>
+                        <li><a href="gallery.html">Gall.</a></li>
+                        <li><a href="contacts.html">Cont.</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                    </ul>
+                </div>
+
+            </div>
+
+		</div>
+
+    <img src="images/headerbg_small.png" alt="manuelbastionilab header image">
+	<div class="separator"></div>
+</div>
+ 
+                    
+<div class="horizontal_section">
+    <div class="centered">
+        <div class="main_row">   
+            <p>[<a href="archive.html">Back to development log</a>]</p>
+
+            <h1>1.6.0 WIP: hair library and improved proxy system</h1>
+            <p>22 June 2017</p>
+
+
+            <p>
+            The first high quality hair 3D model specifically developed for ManuelbastioniLAB is just completed.
+            It's one of the four base hairstyles that will be included in the library of lab 1.6.0:
+            </p>
+            <ul>
+                <li>Basic hair for female humanoid (suitable for humanoids only, realistic anime and fantasy characters)</li>
+                <li>Basic hair for male humanoid (suitable for humanoids only, realistic anime and fantasy characters)</li>
+                <li>Basic hair for female anime (suitable for anime only)</li>
+                <li>Basic hair for male anime (suitable for anime only)</li>
+            </ul>
+
+            <p>
+                <a href="gallery_160_04.html">
+                    <img src="illustrations/gallery/thumbnails_big/gallery_160_04.png" width="450" height="450" alt="" class="fade"/>
+                </a>
+            </p>
+
+            <p>
+            Using the proxy system (that will be improved again in 1.6.0) the lab will provide an easily way
+            to load and automatically fit the hair geometry directly from a blend file.
+            According to the new philosophy in <a href="wip_160001_new_gui_and_philosophy.html">production pipeline</a>,
+            the loading of proxies will be moved to the "after-creation" tools, while the calibration will remain in the creation tools.  
+            </p>
+
+            <h2>The challenge of polygonal hair</h2>
+
+            <p>
+            Some artists asked me why support 3D polygonal hair instead of the Blender particles hair.
+            Well, the particles are cool, but they cannot be directly used in game engines external to Blender, 
+            also they are difficult to use for some complex hairstyles and often the rendering requires an high amount of RAM and CPU resources.
+            On the contrary the polygonal hair are easy to import and export, are easy to rig and usually the 
+            rendering is less expensive than the particles one.
+            </p> 
+
+
+              
+            <p>
+            Anyway the polygonal hair are a challenge.
+            Making high quality geometry, without messy and wild surfaces, easy to rig and to animate using clothes or soft body system, is not trivial.
+            There are a lot of polygonal hair models on the web, but few of them fulfil the features listed above.
+            I'm spending a lot of time researching the best pipeline to produce hair, in order to create high quality models, not only in terms of geometry, 
+            but also as Cycles shader and animation results.
+            </p>
+
+
+        </div>
+    </div>
+</div>
+<div id="footer">
+	<p>Copyright Manuel Bastioni 2015-2018 - Legal information <a href="legal.html"> available here</a></p>
+    <p>This site <strong>does not use  cookies</strong> and <strong>does not collect data</strong>.</p>
+</div>
+
+
+</body></html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+	<head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="MobileOptimized" content="width">
+        <meta name="HandheldFriendly" content="true">        
+        <link href="styles/styles.css" rel="stylesheet" type="text/css" media="screen">
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+        <link rel="icon" href="favicon_32.png" sizes="32x32">
+        <link rel="icon" href="favicon_48.png" sizes="48x48">
+        <link rel="icon" href="favicon_96.png" sizes="96x96">
+        <link rel="icon" href="favicon_144.png" sizes="144x144">
+ 
+
+<meta name="description" content="Testing the Blender Cycles shader for polygonal hair, the best method to animate them with physics simulation and the best geometry to use." />
+<title>Testing the Blender Cycles shader for polygonal hair that will be included in ManuelbastioniLAB 1.6.0</title>
+
+   </head>
+
+<body>
+
+<div id="header_small">
+		<div id="navbar">
+
+            <div class="centered">
+                <div id="logo">
+                    <a href="index.html"><img src="images/logo.png"></a>
+                </div>
+
+                <div id="logo_title">
+                    <a href="index.html">Manuel Bastioni Laboratory</a>
+                </div>
+
+                <div id="menu-desktop">
+                    <ul>
+                        <li><a href="download.html">Download</a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                        <li><a href="contacts.html">Contact</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                    </ul>
+                </div>
+
+                <div id="menu-mobile">
+                    <ul>
+                        <li><a href="download.html">Downl.</a></li>
+                        <li><a href="gallery.html">Gall.</a></li>
+                        <li><a href="contacts.html">Cont.</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                    </ul>
+                </div>
+
+            </div>
+
+		</div>
+
+    <img src="images/headerbg_small.png" alt="manuelbastionilab header image">
+	<div class="separator"></div>
+</div>
+ 
+                    
+<div class="horizontal_section">
+    <div class="centered">
+        <div class="main_row">   
+            <p>[<a href="archive.html">Back to development log</a>]</p>
+
+            <h1>Polygonal hair: Cycles shader and best method for physics simulation</h1>
+            <p>24 August 2017</p>
+
+
+            <p>
+            As explained in the <a href="wip_160005_hair_test.html">article on polygonal hair</a> 
+            and the 
+            <a href="wip_160004_hair_library.html">article on basic hair library</a>, 
+            the next release of ManuelbastioniLAB 1.6.0 will include some special proxies for hair.
+            </p>
+
+            <p>
+            The main part of the development is the design of advanced hair shader for Cycles, 
+            able to reproduce the main features of hair, like primary and secondary highlights,
+            primary and secondary colors, anisotropy reflection, etc...
+            </p>
+
+            <p>
+            The benchmarks tests were executed to evaluate the rendering quality and also 
+            aimed to find the best solution for physic simulation of polygonal hair. 
+            </p>
+
+            <p><a href="https://youtu.be/2kE-_idKkFk">
+            <img src="illustrations/wip/wip_160_019.png" alt="Testing new polygonal hair shader for Blender Cycles" class="fade"/>
+            </a></p> 
+
+            <p>
+            Two methods were tested: direct physic simulation (using two different geometries) 
+            and indirect one. As explained in the video, we found that the indirect one is the best
+            compromise between photorealistic results, CPU-RAM and polygons count.
+            </p>
+
+
+        </div>
+    </div>
+</div>
+<div id="footer">
+	<p>Copyright Manuel Bastioni 2015-2018 - Legal information <a href="legal.html"> available here</a></p>
+    <p>This site <strong>does not use  cookies</strong> and <strong>does not collect data</strong>.</p>
+</div>
+
+
+</body></html>

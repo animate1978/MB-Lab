@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+	<head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="MobileOptimized" content="width">
+        <meta name="HandheldFriendly" content="true">        
+        <link href="styles/styles.css" rel="stylesheet" type="text/css" media="screen">
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+        <link rel="icon" href="favicon_32.png" sizes="32x32">
+        <link rel="icon" href="favicon_48.png" sizes="48x48">
+        <link rel="icon" href="favicon_96.png" sizes="96x96">
+        <link rel="icon" href="favicon_144.png" sizes="144x144">
+ 
+
+<meta name="description" content="Rigging poses and weights in 3d human model" />
+<title>Rigging and poses</title>
+
+   </head>
+
+<body>
+
+<div id="header_small">
+		<div id="navbar">
+
+            <div class="centered">
+                <div id="logo">
+                    <a href="index.html"><img src="images/logo.png"></a>
+                </div>
+
+                <div id="logo_title">
+                    <a href="index.html">Manuel Bastioni Laboratory</a>
+                </div>
+
+                <div id="menu-desktop">
+                    <ul>
+                        <li><a href="download.html">Download</a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                        <li><a href="contacts.html">Contact</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                    </ul>
+                </div>
+
+                <div id="menu-mobile">
+                    <ul>
+                        <li><a href="download.html">Downl.</a></li>
+                        <li><a href="gallery.html">Gall.</a></li>
+                        <li><a href="contacts.html">Cont.</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                    </ul>
+                </div>
+
+            </div>
+
+		</div>
+
+    <img src="images/headerbg_small.png" alt="manuelbastionilab header image">
+	<div class="separator"></div>
+</div>
+    
+                         
+<div class="horizontal_section">
+    <div class="centered">
+        <div class="main_row">   
+            <p><a href="guide_manuellab_index.html">|Back to index|</a></p>
+
+            <h1>Rigging systems</h1>
+
+            <p>In version 1.6 ManuelbastioniLAB offers two new advanced rigging systems: the base muscle and the inverse kinematic.</p>
+
+            <p><img src="illustrations/manual/poses09.png" alt="Rigging selector"/></p>
+
+            <h2>Muscle base system</h2>
+
+            <p>
+            It's called "base" system to distinguish it from the "full" muscle system that is planned for future releases of the lab.
+            </p>
+
+            <p>
+            One of the main difference between the two systems is that the "full" one will be anatomically more accurate, 
+            but it will require (probably) to have the lab installed on the production machine. On the contrary, the "base" system already implemented in lab 1.6,
+            that simulates only the main muscles masses, relies on the standard Blender tools and after 
+            the <a href="guide_finalize_the_character.html">finalization step</a>
+            the character will work on any recent version of Blender, with or without the lab installed.
+            </p>
+
+            <p>
+            The images show some features of the muscle system and a comparison with the base system:
+            </p>
+
+            <p>
+            <a href="gallery_160_06.html">
+            <img src="illustrations/gallery/thumbnails/gallery_160_06.png" alt="" class="fade" height="150" width="150">
+            </a>
+
+            <a href="gallery_160_05.html">
+            <img src="illustrations/gallery/thumbnails/gallery_160_05.png" alt="" class="fade" height="150" width="150">
+            </a>
+            </p>
+
+            <p>
+            To reach this goal, a big amount of time was spent to design a flexible
+            armature using only basic built-in components offered by Blender, without drivers but only constraints. The structure was heavily 
+            tested with many benchmark animations, in particular to avoid or minimize the problem of unwanted rotations that sometime are created by 
+            the solver for extreme angles. The same sessions were also used to test the improved animation retarget system 1.6.0. Some of the cool results are in the video
+            that was created during the development.
+            </p>
+
+            <p>
+            <a href="https://youtu.be/stWsQv0tKU0">
+                <img src="illustrations/wip/wip_160_014.png" alt="See the video on youtube about the base muscle system"/>
+            </a>
+            </p>
+
+
+            <h2>Inverse Kinematics system</h2>
+
+            <p>
+            The IK structure offers a set of additional bones used to control the limbs in an easy and intuitive way. 
+            </p>
+
+            <p><img src="illustrations/manual/poses10.png" alt="Inverse kinematic controllers"/></p>
+
+            <p>
+            It includes special controllers for fingers 
+            (the complex movement open-close of each finger, obtained as a combination of four bones, is handled by one controller), controllers for metacarpals
+            (one controller handles contemporary the movement of all the metacarpals), controller for heel-toe movement, track target for head, and more.
+            Some features are illustrated in  <a href="https://youtu.be/zupmxmAR2Sg">this video</a>.
+            </p>
+
+
+            <p><a href="guide_manuellab_index.html">|Back to index|</a></p>
+        </div>
+    </div>
+</div>
+<div id="footer">
+	<p>Copyright Manuel Bastioni 2015-2018 - Legal information <a href="legal.html"> available here</a></p>
+    <p>This site <strong>does not use  cookies</strong> and <strong>does not collect data</strong>.</p>
+</div>
+
+
+</body></html>

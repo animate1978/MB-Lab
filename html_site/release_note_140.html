@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+	<head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="MobileOptimized" content="width">
+        <meta name="HandheldFriendly" content="true">        
+        <link href="styles/styles.css" rel="stylesheet" type="text/css" media="screen">
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+        <link rel="icon" href="favicon_32.png" sizes="32x32">
+        <link rel="icon" href="favicon_48.png" sizes="48x48">
+        <link rel="icon" href="favicon_96.png" sizes="96x96">
+        <link rel="icon" href="favicon_144.png" sizes="144x144">
+
+<meta name="description" content="Release notes for ManuelBastioniLAB 1.4.0" />
+<title>Release notes for ManuelbastioniLAB 1.4.0</title>
+
+   </head>
+
+<body>
+
+<div id="header_small">
+		<div id="navbar">
+
+            <div class="centered">
+                <div id="logo">
+                    <a href="index.html"><img src="images/logo.png"></a>
+                </div>
+
+                <div id="logo_title">
+                    <a href="index.html">Manuel Bastioni Laboratory</a>
+                </div>
+
+                <div id="menu-desktop">
+                    <ul>
+                        <li><a href="download.html">Download</a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                        <li><a href="contacts.html">Contact</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                    </ul>
+                </div>
+
+                <div id="menu-mobile">
+                    <ul>
+                        <li><a href="download.html">Downl.</a></li>
+                        <li><a href="gallery.html">Gall.</a></li>
+                        <li><a href="contacts.html">Cont.</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                    </ul>
+                </div>
+
+            </div>
+
+		</div>
+
+    <img src="images/headerbg_small.png" alt="manuelbastionilab header image">
+	<div class="separator"></div>
+</div>
+
+<div class="horizontal_section">
+    <div class="centered">
+        <div class="main_row">
+
+
+            <h1>Release notes for ManuelBastioniLAB 1.4.0</h1>
+
+            <p>
+                Welcome to ManuelbastioniLAB 1.4.0!
+                This new version includes new models,
+                new textures, big improvements in algorithms,
+                new interface and many bug fixes. Have fun!
+            </p>
+
+            <p><a href="https://youtu.be/FmvYZT0dbQI"><img src="illustrations/press_release/manuelbastionilab1_4_0_video.png"/></a></p>
+
+            <h2>Models</h2>
+
+            <p>
+                ManuelBastioniLAB 1.4.0 (download <a href="download.html">here</a>)
+                introduces five new types for base characters: realistic anime (male
+                and female), elves (male and female) and male dwarf.
+            </p>
+
+            <p>
+                The other base types (caucasian, asian and afro)
+                are also improved in terms of accuracy and details of the anatomy.
+            </p>
+
+            <p>
+                <a href="gallery_140_03.html">
+                <img src="illustrations/gallery/thumbnails/gallery_140_03.png" width="150" height="150" alt="" class="fade"/>
+                </a>
+                <a href="gallery_140_10.html">
+                <img src="illustrations/gallery/thumbnails/gallery_140_10.png" width="150" height="150" alt="" class="fade"/>
+                </a>
+                <a href="gallery_140_05.html">
+                <img src="illustrations/gallery/thumbnails/gallery_140_05.png" width="150" height="150" alt="" class="fade"/>
+                </a>
+                <a href="gallery_140_04.html">
+                <img src="illustrations/gallery/thumbnails/gallery_140_04.png" width="150" height="150" alt="" class="fade"/>
+                </a>
+            </p>
+
+
+            <p>
+                The anime base models and many related
+                morphings are improved in anatomy and style.
+            </p>
+
+            <p>
+                <a href="gallery_140_02.html">
+                <img src="illustrations/gallery/thumbnails/gallery_140_02.png" width="150" height="150" alt="" class="fade"/>
+                </a>
+            </p>
+
+            <h2>Textures</h2>
+
+
+            <p>
+                The UV layout is completely redesigned in
+                order to be symmetrical and to use most of the
+                available texture space. All textures are improved.
+                Details are separated from the diffuse texture:
+                this is a preliminary step for the next evolution
+                of the texture editor. The displacement now is
+                calculated on a HD texture 2048x2048.
+            </p>
+
+
+            <p>
+                <a href="gallery_140_07.html">
+                <img src="illustrations/gallery/thumbnails/gallery_140_07.png" width="150" height="150" alt="" class="fade"/>
+                </a>
+                <a href="gallery_140_06.html">
+                <img src="illustrations/gallery/thumbnails/gallery_140_06.png" width="150" height="150" alt="" class="fade"/>
+                </a>
+            </p>
+
+            <p>
+                <img src="illustrations/manuellab_notes/releasenote_140_01.png"  alt=""/>
+            </p>
+
+
+            <h2>Topology</h2>
+
+            <p>
+                The topology of humans and anime characters
+                is improved and optimized, in order to reduce
+                the possibility of errors in the area around the eyes.
+            </p>
+
+            <p>
+            <img src="illustrations/manuellab_notes/releasenote_140_02.png"  alt=""/>
+            </p>
+
+            <h2>Shaders</h2>
+
+            <p>
+                Big improvements in the toon shader for Cycles:
+                asymmetrical secondary tone, ambient occlusion,
+                water-colour effect and asymmetrical reflection.
+                Improvements in teeth shader.
+            </p>
+
+            <p>
+                <a href="gallery_140_01.html">
+                <img src="illustrations/gallery/thumbnails/gallery_140_01.png" width="150" height="150" alt="" class="fade"/>
+                </a>
+            </p>
+
+            <p>
+            <img src="illustrations/manuellab_notes/releasenote_140_05.png"  alt=""/>
+            </p>
+
+
+            <h2>Proxy system</h2>
+
+            <p>
+                The proxy system permits to fit any mesh after an initial calibration on the default character.
+                Now the implementation is more stable: it uses barycentric_transform instead of inverse matrix.
+            </p>
+            <p>
+                Also after the calibration for a specific base type,
+                the proxy can be saved in blend format and appended to any scene that includes a derived character:
+                It will work automatically without need to be recalibrated.
+            </p>
+            <p>
+                The interface is now very simple, and in most of cases the whole fitting is matter of one click only.
+            </p>
+
+
+            <p>The video below (published on the official Youtube channel) was created
+            during the development of the tool and shows a basic example of proxy usage (fitting of some spheres).</p>
+
+
+            <p>
+            <a href="https://youtu.be/In-3pi28psk">
+            <img src="illustrations/manuellab_notes/releasenote_140_03.png"  alt="Link to youtube video about proxy system"/>
+            </a>
+            </p>
+
+            <h2>Rigging</h2>
+
+            <p>
+            In version 1.4 there is a big improvement in the rigging of upper torso, in particular in the neck area.
+            Also now all female characters have a special breast rigging, useful to simulate clothes push, gravity, etc..
+            </p>
+
+            <p>
+            <img src="illustrations/manuellab_notes/releasenote_140_04.png"  alt=""/>
+            </p>
+
+            <p>
+            Also, in version 1.4, the pose system will use the Blender corrective smooth modifier by default.
+            </p>
+
+            <p>
+                <a href="gallery_140_08.html">
+                <img src="illustrations/gallery/thumbnails/gallery_140_08.png" width="150" height="150" alt="" class="fade"/>
+                </a>
+            </p>
+
+            <h2>More new features</h2>
+
+            <ul>
+                <li>New poses in the pose library</li>
+                <li>Now the anime characters can save the dermal texture</li>
+                <li>Now the finalize process can automatically save all the images used in the shader</li>
+                <li>Added Torso_SizeY option</li>
+            </ul>
+
+            <h2>Features improvement</h2>
+
+            <ul>
+                <li>Improved algorithm of random generator, with some bug fixed</li>     
+                <li>Improvement of poses library</li>
+                <li>Better calibration of studio lights</li>
+                <li>Improvement of female breast morph</li>
+                <li>Improved muscles in male bodybuilder</li>
+                <li>Improved the cheek side crease morphing</li>
+                <li>Improved feet shape</li>
+                
+            </ul>
+
+
+            <h2>GUI usability</h2>
+
+            <ul>
+                <li>1.4.0 uses new collapsable buttons to reduce the screen space used by the GUI.</li>
+                <li>Now meta parameters show the current age, fat and mass info</li>
+                <li>Now the export buttons are contained in the contextual tab</li>
+            </ul>
+
+            <h2>Code improvement</h2>
+
+            <ul>
+                <li>Now the lab is compatible with Blender 2.76</li>
+                <li>Now the system softly handles the error of an humanoid wrongly renamed</li>
+                <li>Now the system softly handle the errors of libraries not found</li>
+                <li>The blend library is optimized from 100 MB to 30 MB of space</li>
+                <li>Improved the bounding box system</li>
+                <li>Optimized textures database and morphs data</li>
+                <li>Now material are correctly imported reading native json format</li>
+                <li>Now the GUI code is even more separated from the technical code</li>
+            </ul>
+
+            <h2>Bug fixes</h2>
+
+            <ul>
+                <li>Fixed a bug related to the integration in Blender undo system</li>
+                <li>Fixed the cheek mass-tone meta parameter.</li>
+                <li>Fixed some morphing expressions</li>
+                <li>Fixed a bug in expression "kiss"</li>    
+                <li>Fixed error in toracic curve</li>
+                <li>Fixed error in torso size Y</li>
+                <li>Fixed error in waist size.</li>
+                <li>Fixed error in pelvis size X</li>
+                <li>Fixed errors in afro male nose</li>
+                <li>Fixed bug in metaparameters cheeks</li>
+            </ul>
+
+
+        </div>
+    </div>
+</div>
+<div id="footer">
+	<p>Copyright Manuel Bastioni 2015-2018 - Legal information <a href="legal.html"> available here</a></p>
+    <p>This site <strong>does not use  cookies</strong> and <strong>does not collect data</strong>.</p>
+</div>
+
+
+</body></html>
+
+
+
