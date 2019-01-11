@@ -27,7 +27,7 @@ def populate_modifiers(modifiers, mlist):
             i = i + 1
         else:
             mod = modifiers.new(m['type'])
-            populate_modifer(mod, m)
+            populate_modifier(mod, m)
 
 def populate_variable(v, var):
     face_rig = bpy.data.objects['MBLab_skeleton_face_rig']
