@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import logging
 
 import time
 import json
@@ -26,7 +27,7 @@ from bpy_extras.io_utils import ExportHelper, ImportHelper
 from . import facerig
 from . import humanoid, animationengine, proxyengine
 
-
+logger = logging.getLogger(__name__)
 
 bl_info = {
     "name": "MB-Lab",
@@ -58,7 +59,7 @@ def start_lab_session():
     global mblab_humanoid
     global gui_status, gui_err_msg
 
-    algorithms.print_log_report("INFO", "Start_the lab session...")
+    logger.info("Start_the lab session...")
     scn = bpy.context.scene
     character_identifier = scn.mblab_character_name
     rigging_type = "base"
@@ -94,7 +95,7 @@ def start_lab_session():
         is_existing = True
 
     if not obj:
-        algorithms.print_log_report("CRITICAL", "Init failed...")
+        logger.critical("Init failed...")
         gui_status = "ERROR_SESSION"
         gui_err_msg = "Init failed. Check the log file"
     else:
@@ -116,7 +117,7 @@ def start_lab_session():
             else:
                 scn.render.engine = 'BLENDER_WORKBENCH'
 
-            algorithms.print_log_report("INFO", "Rendering engine now is {0}".format(scn.render.engine))
+            logger.info("Rendering engine now is %s", scn.render.engine)
             init_morphing_props(mblab_humanoid)
             init_categories_props(mblab_humanoid)
             init_measures_props(mblab_humanoid)
@@ -128,7 +129,7 @@ def start_lab_session():
             mblab_humanoid.update_materials()
 
             if is_existing:
-                algorithms.print_log_report("INFO", "Re-init the character {0}".format(obj.name))
+                logger.info("Re-init the character %s", obj.name)
                 mblab_humanoid.store_mesh_in_cache()
                 mblab_humanoid.reset_mesh()
                 mblab_humanoid.recover_prop_values_from_obj_attr()
