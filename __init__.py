@@ -26,6 +26,7 @@ from bpy_extras.io_utils import ExportHelper, ImportHelper
 
 from . import facerig
 from . import humanoid, animationengine, proxyengine
+from . import utils
 
 logger = logging.getLogger(__name__)
 
@@ -269,7 +270,7 @@ def restpose_update(self, context):
 
 def malepose_update(self, context):
     global mblab_retarget
-    armature = algorithms.get_active_armature()
+    armature = utils.get_active_armature()
     filepath = os.path.join(
         mblab_retarget.maleposes_path,
         "".join([armature.male_pose, ".json"]))
@@ -278,7 +279,7 @@ def malepose_update(self, context):
 
 def femalepose_update(self, context):
     global mblab_retarget
-    armature = algorithms.get_active_armature()
+    armature = utils.get_active_armature()
     filepath = os.path.join(
         mblab_retarget.femaleposes_path,
         "".join([armature.female_pose, ".json"]))
@@ -1255,7 +1256,7 @@ class FinalizeCharacterAndImages(bpy.types.Operator, ExportHelper):
 
         mblab_humanoid.correct_expressions(correct_all=True)
 
-        if not algorithms.is_IK_armature(armature):
+        if not utils.is_ik_armature(armature):
             mblab_humanoid.set_rest_pose()
         if scn.mblab_remove_all_modifiers:
             mblab_humanoid.remove_modifiers()
@@ -1295,7 +1296,7 @@ class FinalizeCharacter(bpy.types.Operator):
 
         mblab_humanoid.correct_expressions(correct_all=True)
 
-        if not algorithms.is_IK_armature(armature):
+        if not utils.is_ik_armature(armature):
             mblab_humanoid.set_rest_pose()
         if scn.mblab_remove_all_modifiers:
             mblab_humanoid.remove_modifiers()
@@ -1696,7 +1697,7 @@ class SavePose(bpy.types.Operator, ExportHelper):
 
     def execute(self, context):
         global mblab_humanoid
-        armature = algorithms.get_active_armature()
+        armature = utils.get_active_armature()
         mblab_retarget.save_pose(armature, self.filepath)
         return {'FINISHED'}
 
@@ -1866,8 +1867,8 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                 self.layout.operator('mbast.button_pose_off', icon=icon_collapse)
                 box = self.layout.box()
 
-                armature = algorithms.get_active_armature()
-                if armature is not None and algorithms.is_IK_armature(armature) != True:
+                armature = utils.get_active_armature()
+                if armature is not None and not utils.is_ik_armature(armature):
                     box.enabled = True
                     sel_gender = algorithms.get_selected_gender()
                     if sel_gender == "FEMALE":
@@ -2098,7 +2099,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                         self.layout.operator('mbast.button_rest_pose_off', icon=icon_collapse)
                         box = self.layout.box()
 
-                        if algorithms.is_IK_armature(armature):
+                        if utils.is_ik_armature(armature):
                             box.enabled = False
                             box.label(text="Rest poses are not available for IK armatures", icon='INFO')
                         else:
