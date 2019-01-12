@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+	<head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="MobileOptimized" content="width">
+        <meta name="HandheldFriendly" content="true">        
+        <link href="styles/styles.css" rel="stylesheet" type="text/css" media="screen">
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+        <link rel="icon" href="favicon_32.png" sizes="32x32">
+        <link rel="icon" href="favicon_48.png" sizes="48x48">
+        <link rel="icon" href="favicon_96.png" sizes="96x96">
+        <link rel="icon" href="favicon_144.png" sizes="144x144">
+ 
+
+<meta name="description" content="More details of roadmap for ManuelbastioniLAB 1.7.0: new expression system, new GUI, new topologies and anime characters." />
+<title>More details in roadmap for Manuelbastionilab 1.7.0: new expression system, new GUI, new topologies and anime characters.</title>
+
+   </head>
+
+<body>
+
+<div id="header_small">
+		<div id="navbar">
+
+            <div class="centered">
+                <div id="logo">
+                    <a href="index.html"><img src="images/logo.png"></a>
+                </div>
+
+                <div id="logo_title">
+                    <a href="index.html">Manuel Bastioni Laboratory</a>
+                </div>
+
+                <div id="menu-desktop">
+                    <ul>
+                        <li><a href="download.html">Download</a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                        <li><a href="contacts.html">Contact</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                    </ul>
+                </div>
+
+                <div id="menu-mobile">
+                    <ul>
+                        <li><a href="download.html">Downl.</a></li>
+                        <li><a href="gallery.html">Gall.</a></li>
+                        <li><a href="contacts.html">Cont.</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                    </ul>
+                </div>
+
+            </div>
+
+		</div>
+
+    <img src="images/headerbg_small.png" alt="manuelbastionilab header image">
+	<div class="separator"></div>
+</div>
+ 
+                    
+<div class="horizontal_section">
+    <div class="centered">
+        <div class="main_row">   
+            <p>[<a href="archive.html">Back to development log</a>]</p>
+
+            <h1>More details in roadmap for lab 1.7.0: new expression system, new GUI, new topologies and anime characters.</h1>
+            <p>18 March 2018</p>
+
+
+            <p>
+            ManuelbastioniLAB 1.7.0 will be a rich milestone release. 
+            The goal of this release is to greatly increase the quality of lab models, adding new models, new topologies, new GUI, better expression system and more.
+            This brief article quickly introduces the main points of the <a href="progress170.html">roadmap</a>.
+            </p>
+
+            <h2>New humans and anime models</h2>
+
+            <p>
+            One of the most challenging feature is the implementation of a complete tool to create anime and manga. It has requested many months of work in order
+            to identify and understand the key features used in Japanese illustrations, evaluate their feasibility as tridimensional models and classify the main types.  
+            </p>
+
+            <p>
+            The result of this research is an impressive modelling work to do: 140 anime base models to cover five base styles, implemented using new meshes.<br /> 
+            Lab 1.7.0 will include the first two styles, that I called "Stylized" (the standard style often used in many anime) and "Realistic" (a more detailed anime style often used in games and
+            male-oriented anime). Total: 56 anime models to do for lab 1.7.0.
+            </p>
+            <p>
+            Also, since this is the modelling-focused release, it was decided to implement the new generation of human base meshes too. The new human topologies
+            will greatly increase the details and the anatomy accuracy, but as in previous models they will not require a CPU brute force: the models will be optimized
+            for subdivision-surface, preserving 
+            the quality and still being "human readable": in other words max quality with low poly count. 
+            A couple of preview images from the gallery shows the quality of new models: torso muscles and human ear.
+            </p>
+
+            <p>
+                <a href="gallery_170_02.html">
+                    <img src="illustrations/gallery/thumbnails_big/gallery_170_02.png" alt="" class="fade" width="150" height="150">
+                </a>
+
+                <a href="gallery_170_01.html">
+                    <img src="illustrations/gallery/thumbnails_big/gallery_170_01.png" alt="" class="fade" width="150" height="150">
+                </a>
+            </p>
+
+
+            <h2>New GUI and creation workflow</h2>
+
+            <p>
+            This great number of new models will also require a different phylosophy in the design of interface. In the current lab the user selects the base character choosing
+            it from a list of available models. Clearly this will be no longer possible in 1.7.0, because it will include more than 60 different base meshes. The new GUI will be
+            more intuitive and simple: it will just ask the required attributes: male or female, overweight or underweight, human or anime, etc. Then the system will generate the
+            character according to the selected parameters.
+            </p>
+
+            <h2>Optimized topologies and UV projections</h2>
+
+            <p>
+            The model topology will be optimized for the selected character. For example the mesh for an overweight human will be simpler than a mesh for a bodybuilder human, because
+            it doesn't need the same amount of muscle details. This approach will produce better results with less polygons and also will automatically use the appropriate UV projection 
+            and textures. On the other hand it will limit a bit the range of morphing, since the system will automatically prevent the creation of unoptimized meshes: it will be not possible, 
+            for example, to start from an overweight character and morph it in a bodybuilder. 
+            </p>
+
+            <h2>Experimental releases</h2>
+
+            <p>
+            New topologies also mean new high quality textures, improvement in shaders and new morphs parameteres remodelled from scratch. Obviously, this big amount of modelling work will be gradually
+            distributed in versions 1.6.2-1.6.9. The new models will be released version by version as "experimental-incomplete" features, since they will have only the basic rigging and morphs.
+            Advanced features as automodelling, measures, IK ecc will be gradually added in order to reach the completion in 1.7.0. All 1.6.x versions will use the "old" GUI, so 
+            during this release cycle the user will see a long list of characters: as said, this is a temporary solution and a more usable GUI will be implemented in the final 1.7.0.
+            </p>
+
+            <h2>Face rigging and shapekeys</h2>
+
+            <p>
+            Another important node in 1.7.0
+            is the technology that will be used for face animation. Shapekeys or face rigging? After a long discussion on the 
+            <a href="https://www.facebook.com/manuelbastionilab">social page</a> and the 
+            <a href="https://blenderartists.org/t/addon-manuel-bastioni-lab-turns-blender-in-a-laboratory-for-3d-humanoids-creation/661050">Blenderartists thread</a>, 
+            the current decision is to implement both. The main system will be the rigging, with an option that will bake the face poses as shapekeys. 
+            The evaluation of feasibility is still in progress: the determination of number and placement of feature points, the way to add details and other 
+            technical issues will require some experiments and new features to code and test. Another thing that is still under evaluation is the use or not of Blender drivers.
+            The support of after-creation expression tool is also under evaluation.
+            </p>
+
+
+
+        </div>
+    </div>
+</div>
+<div id="footer">
+	<p>Copyright Manuel Bastioni 2015-2018 - Legal information <a href="legal.html"> available here</a></p>
+    <p>This site <strong>does not use  cookies</strong> and <strong>does not collect data</strong>.</p>
+</div>
+
+
+</body></html>

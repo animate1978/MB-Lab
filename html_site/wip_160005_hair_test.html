@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+	<head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="MobileOptimized" content="width">
+        <meta name="HandheldFriendly" content="true">        
+        <link href="styles/styles.css" rel="stylesheet" type="text/css" media="screen">
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+        <link rel="icon" href="favicon_32.png" sizes="32x32">
+        <link rel="icon" href="favicon_48.png" sizes="48x48">
+        <link rel="icon" href="favicon_96.png" sizes="96x96">
+        <link rel="icon" href="favicon_144.png" sizes="144x144">
+ 
+
+<meta name="description" content="ManuelbastioniLAB 1.6.0 WIP. Development progress and video test of polygonal hair. New proxy features." />
+<title>Development progress and video test of polygonal hair</title>
+
+   </head>
+
+<body>
+
+<div id="header_small">
+		<div id="navbar">
+
+            <div class="centered">
+                <div id="logo">
+                    <a href="index.html"><img src="images/logo.png"></a>
+                </div>
+
+                <div id="logo_title">
+                    <a href="index.html">Manuel Bastioni Laboratory</a>
+                </div>
+
+                <div id="menu-desktop">
+                    <ul>
+                        <li><a href="download.html">Download</a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                        <li><a href="contacts.html">Contact</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                    </ul>
+                </div>
+
+                <div id="menu-mobile">
+                    <ul>
+                        <li><a href="download.html">Downl.</a></li>
+                        <li><a href="gallery.html">Gall.</a></li>
+                        <li><a href="contacts.html">Cont.</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                    </ul>
+                </div>
+
+            </div>
+
+		</div>
+
+    <img src="images/headerbg_small.png" alt="manuelbastionilab header image">
+	<div class="separator"></div>
+</div>
+ 
+                    
+<div class="horizontal_section">
+    <div class="centered">
+        <div class="main_row">   
+            <p>[<a href="archive.html">Back to development log</a>]</p>
+
+            <h1>Development progress and video test of polygonal hair</h1>
+            <p>01 July 2017</p>
+
+
+            <p>
+            During these weeks the code of the lab has greatly improved. The cleaning of functions  and the new abstraction layer 
+            that will facilitate the porting to Blender 2.8 are almost ready. About 80% of the new GUI design is already implemented.
+            The algorithm of proxy is improved, with the addition of two very important new features: "Keep above surface" and "proxy offset".
+            These new features will permit to fix most of cases of clothes-skin penetration.
+            </p>
+
+            <p>
+            In parallel with the code development, and strictly related to the proxy system, there is the basic hair library, already descripted in the 
+            <a href="wip_160004_hair_library.html">previous article</a>. Making a very high quality polygonal hair is not only matter
+            of a good shader and a good look in static poses. The geometry must also work during the animations without requiring additional efforts. 
+            The video  shows the result of a quick test that uses
+            the standard Blender clothes system. 
+            </p>
+
+            <p>
+            <a href="https://youtu.be/OCNjRiHCX5o">
+                <img src="illustrations/wip/wip_160_013.png" alt="See the video on youtube about the hair test"/>
+            </a>
+            </p>
+
+
+            <p>
+            The settings of collision object, hair object and weight group used for hair pinning are in the images below. 
+            </p>
+
+
+            <p>
+                <img src="illustrations/wip/wip_160_010.png" alt="Settings of collision object"/>
+            </p>
+
+            <p>
+                <img src="illustrations/wip/wip_160_011.png" alt="Settings of hair object"/>
+            </p>
+
+
+            <p>
+                <img src="illustrations/wip/wip_160_012.png" alt="Vertex group for hair pinning"/>
+            </p>
+
+        </div>
+    </div>
+</div>
+<div id="footer">
+	<p>Copyright Manuel Bastioni 2015-2018 - Legal information <a href="legal.html"> available here</a></p>
+    <p>This site <strong>does not use  cookies</strong> and <strong>does not collect data</strong>.</p>
+</div>
+
+
+</body></html>

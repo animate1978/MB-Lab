@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+	<head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="MobileOptimized" content="width">
+        <meta name="HandheldFriendly" content="true">        
+        <link href="styles/styles.css" rel="stylesheet" type="text/css" media="screen">
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+        <link rel="icon" href="favicon_32.png" sizes="32x32">
+        <link rel="icon" href="favicon_48.png" sizes="48x48">
+        <link rel="icon" href="favicon_96.png" sizes="96x96">
+        <link rel="icon" href="favicon_144.png" sizes="144x144">
+
+<meta name="description" content="Facial animation. Rigging vs shapekeys. Evaluating the best solution to implement in ManuelbastioniLAB 1.7.0" />
+<title>Rigging vs shapekeys. Evaluating the best solution to implement in ManuelbastioniLAB 1.7.0</title>
+
+   </head>
+
+<body>
+
+<div id="header_small">
+		<div id="navbar">
+
+            <div class="centered">
+                <div id="logo">
+                    <a href="index.html"><img src="images/logo.png"></a>
+                </div>
+
+                <div id="logo_title">
+                    <a href="index.html">Manuel Bastioni Laboratory</a>
+                </div>
+
+                <div id="menu-desktop">
+                    <ul>
+                        <li><a href="download.html">Download</a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                        <li><a href="contacts.html">Contact</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                    </ul>
+                </div>
+
+                <div id="menu-mobile">
+                    <ul>
+                        <li><a href="download.html">Downl.</a></li>
+                        <li><a href="gallery.html">Gall.</a></li>
+                        <li><a href="contacts.html">Cont.</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                    </ul>
+                </div>
+
+            </div>
+
+		</div>
+
+    <img src="images/headerbg_small.png" alt="manuelbastionilab header image">
+	<div class="separator"></div>
+</div>
+
+<div class="horizontal_section">
+    <div class="centered">
+        <div class="main_row">
+            <p>[<a href="archive.html">Back to development log</a>]</p>
+
+            <h1>Evaluating the best solution to implement in ManuelbastioniLAB 1.7.0</h1>
+            <p>11 March 2018</p>
+
+            <p>
+            The final version of roadmap for ManuelbastioniLAB 1.7.0 is almost completed and it will be published soon. It will include the new generation of
+            amazing base meshes for humans and anime, with new topologies, UV maps, textures and rigging. This means a complete remodelling of all the morphings and rigging weights.
+            There is still one thing under evaluation: keep the current expression system, with shapekeys, or replace it with a rigging system? Here are the pros and cons.
+            I'd like to know your opinion (discussions are available on the official <a href="https://www.facebook.com/manuelbastionilab">Facebook page</a>
+            and on the thread on 
+            <a href="https://blenderartists.org/forum/showthread.html?391401-Addon-Manuel-Bastioni-Lab-turns-Blender-in-a-laboratory-for-3d-humanoids-creation">Blenderartist forum</a>).
+            </p>
+
+
+            <h1>Solution1: shapekeys only (currently implemented in lab 1.6.x)</h1>
+            <h2>Pros</h2>
+            <ul>
+                <li>Shapekeys permit to reproduce details of muscles and skin behaviour. Also shapekeys can easily create the extreme expressions of anime and toons.</li>
+                <li>Few shapekeys (less than 50) are sufficient to create most of existing expressions and visemes.</li>
+                <li>Shapekeys are easy to export.</li>
+            </ul>
+
+            <h2>Cons</h2>
+                <ul>
+                <li>Shapekeys require a lot of modelling work.</li>
+                <li>Shapekeys need an algorithm to fit them from the base character to the specific character.</li>
+                <li>Shapekeys are linear so the bending of some elements (for example the tongue) is often wrong when applied with values smaller than 1.0.</li>
+                <li>Shapekeys require a different database for each character.</li>
+                </ul>
+
+
+            <h1>Solution2: Face rigging (without corrective shapekeys)</h1>
+
+            <h2>Pros</h2>
+                <ul>
+                <li>Doesn't require dedicated modelling.</li>
+                <li>More flexible and easy to customize.</li>
+                <li>Bones are easy to export.</li>
+                <li>The armature animation can include expressions too.</li>
+                <li>Rotations don't need to be scaled, so an expression based on rotated bones should fit better than shapekeys (for example jaw rotations).</li>
+                <li>Expressions can be exported and mixed as poses.</li>
+                <li>The same database of expressions can be used for all similar characters (example: a database for humans and one for anime).</li>
+                </ul>
+
+
+            <h2>Cons</h2>
+                <ul>
+                <li>A realistic face expression requires an high number of bones.</li>
+                <li>To create an user-friendly realtime interface for an high number of bones it's required a very complex driver-based system.</li>
+                <li>A driver-based system is practically not exportable out of Blender.</li>
+                <li>Coding a driver-based system is prone to some problems too long to describe here.</li>
+                </ul>
+
+
+            <h1>Solution3: Face rigging (with corrective shapekeys)</h1>
+
+            <p>It can reach the same level of realism of pure shapekeys system, with better results in rotations (jaw, eyes, tongue) but has the sum of all cons of shapekeys and 
+            bones with the addition of new cons caused by the complexity of implementation.</p>
+
+            <h1>Consideration</h1>
+
+            <p>Shapekeys are easier to code and to maintain, easier to port in external engines, but they require a lot of modelling work and sometime the results are not perfect.
+            Probably a system based on facial bones is better, but to avoid the cons listed above perhaps the lab should provide only the rigging, without the controllers. 
+            Then the user will choose his preferred method to animate them (for example linking them to a motion capture system).</p>
+
+            <p>The development of an hibrid system (solution 3) is excluded due to the big number of cons.
+            In case of development switching to facial bones, the current utility based on shapekeys will be not supported in future versions and 
+            the user will have a more powerful and flexible tool, but (at least for a couple of successive releases) the interface will be less friendly
+            (probably it will be required to manually pose the bones in order to create an expression).</p>
+
+        </div>
+    </div>
+</div>
+<div id="footer">
+	<p>Copyright Manuel Bastioni 2015-2018 - Legal information <a href="legal.html"> available here</a></p>
+    <p>This site <strong>does not use  cookies</strong> and <strong>does not collect data</strong>.</p>
+</div>
+
+
+</body></html>

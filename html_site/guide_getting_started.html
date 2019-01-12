@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+	<head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="MobileOptimized" content="width">
+        <meta name="HandheldFriendly" content="true">        
+        <link href="styles/styles.css" rel="stylesheet" type="text/css" media="screen">
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+        <link rel="icon" href="favicon_32.png" sizes="32x32">
+        <link rel="icon" href="favicon_48.png" sizes="48x48">
+        <link rel="icon" href="favicon_96.png" sizes="96x96">
+        <link rel="icon" href="favicon_144.png" sizes="144x144">
+ 
+
+<meta name="description" content="ManuelbastioniLAB basic usage and interface" />
+<title>Getting started</title>
+
+   </head>
+
+<body>
+
+<div id="header_small">
+		<div id="navbar">
+
+            <div class="centered">
+                <div id="logo">
+                    <a href="index.html"><img src="images/logo.png"></a>
+                </div>
+
+                <div id="logo_title">
+                    <a href="index.html">Manuel Bastioni Laboratory</a>
+                </div>
+
+                <div id="menu-desktop">
+                    <ul>
+                        <li><a href="download.html">Download</a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                        <li><a href="contacts.html">Contact</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                    </ul>
+                </div>
+
+                <div id="menu-mobile">
+                    <ul>
+                        <li><a href="download.html">Downl.</a></li>
+                        <li><a href="gallery.html">Gall.</a></li>
+                        <li><a href="contacts.html">Cont.</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                    </ul>
+                </div>
+
+            </div>
+
+		</div>
+
+    <img src="images/headerbg_small.png" alt="manuelbastionilab header image">
+	<div class="separator"></div>
+</div>
+  
+                 
+<div class="horizontal_section">
+    <div class="centered">
+        <div class="main_row">   
+            <p><a href="guide_manuellab_index.html">|Back to index|</a></p>
+
+            <h1><a name="getting_started">Getting started</a></h1>
+
+            <p>The user interface is perfectly integrated in Blender and designed to make the modelling process a simple and clear activity.</p> 
+            <p>The ManuelbastioniLAB tab is placed in the Blender "Tool shelf" column. </p> 
+            <p><img src="illustrations/manual/getting_started00.png" alt="Getting started"/></p>
+
+            <p>The lab is designed for a production pipeline divided in two main steps:</p>
+
+            <ul>
+            <li>Creation phase: definition of the body, the physiognomy and the appearance of the character.
+                The model will be characterized with age, muscles, mass, face details, measures, skin shader
+                and skin textures. 
+                This phase also includes the random generator, the automodelling, 
+                the character library, the definition of rest pose and the type of 
+                rigging to use (for example with inverse kinematic or not).
+                </li>
+                
+            <li>After-creation phase: use of finalized model during production.
+                This phase includes the loading of poses and animation (with automatic
+                retarget) the control of the expressions and the automatic fitting of proxies (clothes, hair).</li>
+
+            </ul>
+
+            <p>These two phases are reflected in the organization of the interface, that is divided in two parts. 
+            The upper section is for the creation step, while the lower section is for after-creation work.</p>
+
+            <p><img src="illustrations/manual/getting_started01.png" alt="Blender screenshot"/></p>
+
+            <div class="annotation">
+                <p>NOTE: The "after-creation" section is hidden during the creation step. It's automatically enabled only
+                for <a href="guide_finalize_the_character.html">finalized characters</a>.
+                </p>
+            </div>
+
+            <p>At the start the creation section contains only few elements: </p>
+
+            <ol>
+                <li>The selector to choose the base model </li>
+                <li>The option related to the type of skeleton (basic, with inverse kinematic, with bending muscles) </li>
+                <li>The init button to initialize it</li>
+                <li>Some options related to rendering engine and lights</li>
+            </ol>
+            <p>ManuelbastioniLAB includes a set of base characters, as shown in the figure:</p>
+            <p><img src="illustrations/manual/getting_started02.png" alt="Getting started"/></p>
+
+            <p>Pressing the "init character" button, Blender will create the selected model, 
+            placing it in the centre of the scene, at coordinates 0,0,0.</p>
+            <p>If the option "Use cycles materials" is active, Blender will use Cycles for rendering. 
+            This option is required in order to use the skin editor, that is specifically designed to work with cycles.</p>
+
+            <p>The option "Use portrait studio lights" is to create a set of lights already scaled and normalizated in order to reproduce a professional studio setup.</p>
+
+            <div class="annotation">Note: the scale is one BU (Blender Unit) = one meter.</div>
+
+            <p><img src="illustrations/manual/getting_started03.png" width="450" height="238" alt="The default character"/></p>
+
+            <p>The system has to import some hundreds of morphings, so it requires some seconds. At the end of the process the character will be ready for modifications.</p>
+
+            <p><a href="guide_manuellab_index.html">|Back to index|</a></p>
+        </div>
+    </div>
+</div>
+
+<div id="footer">
+	<p>Copyright Manuel Bastioni 2015-2018 - Legal information <a href="legal.html"> available here</a></p>
+    <p>This site <strong>does not use  cookies</strong> and <strong>does not collect data</strong>.</p>
+</div>
+
+
+</body></html>
