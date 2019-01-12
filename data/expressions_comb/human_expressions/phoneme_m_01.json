@@ -1,1 +1,9 @@
-{"metaproperties": {}, "structural": {"Expressions_mouthClosed": 0.41, "Expressions_mouthOpen": 0.2}, "manuellab_vers": [1, 6, 0], "materialproperties": {}}
+{
+  "metaproperties": {},
+  "structural": {
+    "Expressions_mouthClosed": 0.41,
+    "Expressions_mouthOpen": 0.2
+  },
+  "manuellab_vers": [1, 6, 0],
+  "materialproperties": {}
+}
