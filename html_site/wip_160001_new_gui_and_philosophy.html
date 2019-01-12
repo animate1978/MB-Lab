@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+	<head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="MobileOptimized" content="width">
+        <meta name="HandheldFriendly" content="true">        
+        <link href="styles/styles.css" rel="stylesheet" type="text/css" media="screen">
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+        <link rel="icon" href="favicon_32.png" sizes="32x32">
+        <link rel="icon" href="favicon_48.png" sizes="48x48">
+        <link rel="icon" href="favicon_96.png" sizes="96x96">
+        <link rel="icon" href="favicon_144.png" sizes="144x144">
+ 
+
+<meta name="description" content="New graphical user interface in ManuelbastioniLAB 1.6.0 and new production pipeline of 3d human characters" />
+<title>Changes in ManuelbastioniLAB 1.6.0: Graphical User Interface, usability and philosophy.</title>
+
+   </head>
+
+<body>
+
+<div id="header_small">
+		<div id="navbar">
+
+            <div class="centered">
+                <div id="logo">
+                    <a href="index.html"><img src="images/logo.png"></a>
+                </div>
+
+                <div id="logo_title">
+                    <a href="index.html">Manuel Bastioni Laboratory</a>
+                </div>
+
+                <div id="menu-desktop">
+                    <ul>
+                        <li><a href="download.html">Download</a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                        <li><a href="contacts.html">Contact</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                    </ul>
+                </div>
+
+                <div id="menu-mobile">
+                    <ul>
+                        <li><a href="download.html">Downl.</a></li>
+                        <li><a href="gallery.html">Gall.</a></li>
+                        <li><a href="contacts.html">Cont.</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                    </ul>
+                </div>
+
+            </div>
+
+		</div>
+
+    <img src="images/headerbg_small.png" alt="manuelbastionilab header image">
+	<div class="separator"></div>
+</div>
+ 
+                    
+<div class="horizontal_section">
+    <div class="centered">
+        <div class="main_row">   
+            <p>[<a href="archive.html">Back to development log</a>]</p>
+
+            <h1>Changes in ManuelbastioniLAB 1.6.0: Graphical User Interface, usability and philosophy.</h1>
+            <p>27 May 2017</p>
+
+            <h2>Current lab production pipeline: pro and contra</h2>
+
+            <p>
+            Over a year ago, the first version of ManuelbastioniLAB was released.
+            The goal was to create a laboratory to implement new ideas and algorithms 
+            (as the automodelling and the measure system, still experimental) 
+            in order to provide to Blender community a new powerful state-of-the-art tool 
+            in the field of 3d humanoid generation.     
+            </p>
+
+            <p>
+            In these 15 months the resources were focused on:
+            </p>
+
+            <ul>
+            <li>development of features</li>
+            <li>development of an intuitive interface</li>
+            <li>development of the anatomy-topology of the models</li>
+            </ul>
+
+            <p>
+            After the release of 1.5.0 new goals can be added to the existing list,
+            for example the improvement of production pipeline.    
+            </p>
+
+            <p>
+            Studying the software usability and listening to the community feedback, 
+            it was realized that the lab can be even more productive, standardized and easy-to-use 
+            just changing some elements of the current production pipeline philosophy.    
+            </p>
+
+            <p>
+            Currently there are two main steps in using ManuelbastioniLAB:    
+            </p>
+
+
+            <ol>
+            <li>Definition of the humanoid: age, muscle mass, tone, face details, body proportions, 
+            measures, expression, proxies, pose-animation, ecc.</li>
+            <li>Finalization of the humanoid, in order to transform it from a lab-character (suitable
+            to be modified in the lab, but not usable in production) to a standard-character 
+            (suitable to be used in production, customizable by hand, but no longer editable with the lab tools).</li>
+            </ol>
+
+
+            <p><img src="illustrations/wip/wip_160_001.png" alt="Graph of the current production pipeline"/></p>
+
+
+            <p>
+            This design has pro and contra.    
+            </p>
+
+
+            <p>
+            The pro is that in a lab session the elements are "under control": 
+            there is only one character in the scene, with a well defined skeleton
+            that use lab-standard bone names, an human mesh with an exact topology and 
+            with a series of custom properties to provide information to the lab engines.
+            These conditions make the tools very stable and reliable.    
+            </p>
+
+            <p>
+            The contra are that after the finalization, the lab expression library, 
+            the lab proxie fitting ,the lab pose library and the lab animation retargeting
+            system are no longer usable.
+            This creates redundant cycles in the production phase, for example
+            the user needs to produce a finalized character for each animation.    
+            </p>
+
+
+
+            <h2>Improvement and optimizations in production pipeline of ManuelbastioniLAB 1.6.0</h2>
+
+
+            <p>
+            Until now the lab was focused only on the editing of non-finalized models.
+            After the finalization, the humanoid was out of the lab scope: 
+            a standard character to be posed and animated using the normal Blender tool. 
+            In 1.6.0 this behaviour will change.     
+            </p>
+
+
+            <p>
+            We will have two production phases:     
+            </p>
+
+
+            <ul>
+            <li>Creation phase: definition of the body, the physiognomy and the appearance of the character.
+                The model will be characterized with age, muscles, mass, face details, measures, skin shader
+                and skin textures. 
+                This phase also includes the random generator, the automodelling, 
+                the character library, the definition of rest pose and the type of 
+                rigging to use (for example with inverse kinematic or not).
+                Probably it will also include the fitting of hair and clothes<a href="wip_160001_new_gui_and_philosophy.html#note-1">[*]</a>.</li>
+                
+            <li>After-creation phase: use of finalized model during production.
+                This phase includes the loading of poses and animation (with automatic
+                retarget) and the control of the expressions.</li>
+
+            </ul>
+
+            <p><img src="illustrations/wip/wip_160_002.png" alt="Graph of the new 3d character production pipeline"/></p>
+
+            <p>
+            With this new pipeline philosophy, that extends the scope of the lab to
+            finalized models too, we will have many advantages:    
+            </p>
+
+
+            <ul>
+            <li>Clear separation between the creation and the usage of the character.</li>
+            <li>Simplified interface, that will be also separated according to the two phases above.</li>
+            <li>Clean code, with a separate module for the after creation tools.</li>
+            </ul>
+
+
+            <p>
+            The lab users will be able to change the animation, the pose and the expression
+            on finalized character, without the needing to restart a creation session each time.    
+            </p>
+
+
+            <p><img src="illustrations/wip/wip_160_003.png" alt="Sketch of the new GUI for ManuelbastioniLAB 1.6.0"/></p>
+
+            <p>
+            Of course, any design has its contra. In this case the main problem is that
+            a finalized character can be subjected to customization from the user: it can have
+            more or less bones than expected, different names, altered topology, different
+            shapekeys ecc.    
+            </p>
+
+
+            <p>
+            This is a challenge for the lab developer, that will try to handle all the cases.
+            Anyway the recommendation will be to customize the topology and the skeleton only
+            if absolutely necessary, considering that in case of noticeable changes the after-creation
+            tools may not work.    
+            </p>
+
+            <p>
+            This is a little cost in comparison with the benefits of the new pipeline.   
+            </p>
+
+            <div class="annotation">
+            <p><a name="note-1">[*] </a>Under evaluation the possibility to move it to after-creation panel. </p>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div id="footer">
+	<p>Copyright Manuel Bastioni 2015-2018 - Legal information <a href="legal.html"> available here</a></p>
+    <p>This site <strong>does not use  cookies</strong> and <strong>does not collect data</strong>.</p>
+</div>
+
+
+</body></html>
