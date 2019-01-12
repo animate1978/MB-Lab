@@ -73,7 +73,7 @@ class ProxyEngine:
             for idx, w_data in enumerate(body_verts_weights):
                 try:
                     w_data.append([grp.name, grp.weight(idx)])
-                except AttributeError:
+                except RuntimeError:
                     pass  # TODO: idx in grp.weight
 
         for p_idx, proxy_vert in enumerate(proxy_vertices):
