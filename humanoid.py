@@ -764,7 +764,7 @@ class Humanoid:
                            set_tone_and_mass, body_mass, body_tone, prv_fantasy):
         logger.info("Generating character...")
 
-        all_props = self.character_data.keys()
+        all_props = list(self.character_data.keys())
         props_to_process = all_props[:]
 
         face_keys = ("Eye", "Eyelid", "Nose", "Mouth", "Ear", "Head", "Forehead", "Cheek", "Jaw")
