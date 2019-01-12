@@ -1,4 +1,5 @@
-{"age_data": [
+{
+  "age_data": [
     ["BreastMass", -0.15, -0.1],
     ["AureolaSize", -0.05, 0.1],
     ["BreastTone", 0.1, -0.2],
@@ -40,8 +41,8 @@
     ["Chin_SizeX", -0.02, -0.18],
     ["Chin_Tone", 0.02, -1.0],
     ["Mouth_CornersPosZ", 0.02, -0.05],
-    ["Mouth_LowerlipSizeZ", 0.01, -0.20],
-    ["Mouth_LowerlipVolume", 0.01, -0.20],
+    ["Mouth_LowerlipSizeZ", 0.01, -0.2],
+    ["Mouth_LowerlipVolume", 0.01, -0.2],
     ["Mouth_PosZ", 0.12, -0.08],
     ["Mouth_Protusion", 0.01, -0.12],
     ["Mouth_PhiltrumProminence", 0.01, -0.2],
@@ -88,43 +89,42 @@
     ["Hands_Mass", 0.02, -0.08],
     ["Hands_Size", 0.06, -0.02],
     ["Hands_Size", 0.06, -0.02]
-    ],
-    "fat_data": [
-    ["Neck_Mass",-1,1],
-    ["Shoulders_Mass",-1,1],
-    ["UpperarmMass",-1,1],
-    ["ForearmMass",-1,1],
-    ["Torso_Mass",-1,1],
+  ],
+  "fat_data": [
+    ["Neck_Mass", -1, 1],
+    ["Shoulders_Mass", -1, 1],
+    ["UpperarmMass", -1, 1],
+    ["ForearmMass", -1, 1],
+    ["Torso_Mass", -1, 1],
     ["Elbow_Size", -0.01, 0.2],
     ["Waist_Size", -0.01, 0.2],
     ["Wrists_Size", -0.05, 0.1],
     ["Stomach_LocalFat", -0.05, 0.02],
     ["Stomach_Volume", -0.02, 0.02],
-    ["Pelvis_GluteusMass",-1,1],
-    ["Legs_KneeSize",0.0,0.2],
-    ["Legs_UpperlegsSize",0.0,0.2],
-    ["Legs_UpperlegsMass",-1,1],
-    ["Legs_LowerlegsMass",-1,1],    
-    ["Cheeks_Mass",-1,1],
-    ["Hands_Mass",-1,1],
-    ["Feet_Mass",-1,1],
-    ["Abdomen_Mass",-1,1]
-    ],
-    "muscle_data": [
-    ["Neck_Tone",-1,1],
-    ["Shoulders_Tone",-1,1],
-    ["UpperarmTone",-1,1],
-    ["ForearmTone",-1,1],
-    ["Torso_Tone",-1,1],    
+    ["Pelvis_GluteusMass", -1, 1],
+    ["Legs_KneeSize", 0.0, 0.2],
+    ["Legs_UpperlegsSize", 0.0, 0.2],
+    ["Legs_UpperlegsMass", -1, 1],
+    ["Legs_LowerlegsMass", -1, 1],
+    ["Cheeks_Mass", -1, 1],
+    ["Hands_Mass", -1, 1],
+    ["Feet_Mass", -1, 1],
+    ["Abdomen_Mass", -1, 1]
+  ],
+  "muscle_data": [
+    ["Neck_Tone", -1, 1],
+    ["Shoulders_Tone", -1, 1],
+    ["UpperarmTone", -1, 1],
+    ["ForearmTone", -1, 1],
+    ["Torso_Tone", -1, 1],
     ["Elbow_Size", -0.01, 0.2],
     ["Waist_Size", -0.01, 0.2],
     ["Wrists_Size", -0.05, 0.1],
-    ["Pelvis_GluteusTone",-1,1],
-    ["Legs_KneeSize",0.0,0.2],
-    ["Legs_UpperlegsTone",-1,1],
-    ["Legs_LowerlegsTone",-1,1],
-    ["Cheeks_Tone",-1,1],
-    ["Abdomen_Tone",-1,1]
-    ]
-
-    }
+    ["Pelvis_GluteusTone", -1, 1],
+    ["Legs_KneeSize", 0.0, 0.2],
+    ["Legs_UpperlegsTone", -1, 1],
+    ["Legs_LowerlegsTone", -1, 1],
+    ["Cheeks_Tone", -1, 1],
+    ["Abdomen_Tone", -1, 1]
+  ]
+}
