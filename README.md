@@ -33,4 +33,4 @@ This fork is an attempt to keep this addon going towards the next generation of 
 We are including this for historical purposes as the website, videos and social media accounts are offline.
 
 The version 1.6.1a of ManuelbastioniLAB, the free and open source character editor for Blender, ~~is still available for download at http://www.manuelbastioni.com~~
-Direct download: [manuelbastionilab_161a.zip](https://numessanguis.stackstorage.com/s/jLamuetD8drgCfP)
+Direct download: [manuelbastionilab_161a.zip](https://github.com/NumesSanguis/FACSvatar/releases/download/v0.3.4-alpha-release/manuelbastionilab_161a.zip)
