@@ -30,43 +30,28 @@ logger = logging.getLogger(__name__)
 
 
 class RetargetEngine:
-    __slots__ = ('_bones', 'has_data', 'data_path', 'body_name', 'armature_name', 'skeleton_mapped', 'lib_filepath',
-                 'knowledge_database', 'local_rotation_bones', 'last_selected_bone_name', 'stored_animations',
-                 'correction_is_sync', 'is_animated_bone', 'rot_type', 'already_mapped_bones')
-    FINGER_BONE_NAMES = ('rfinger0_bones_names', 'rfinger1_bones_names', 'rfinger2_bones_names',
-                         'rfinger3_bones_names', 'rfinger4_bones_names', 'lfinger0_bones_names',
-                         'lfinger1_bones_names', 'lfinger2_bones_names', 'lfinger3_bones_names',
-                         'lfinger4_bones_names')
-    TOE_BONE_NAMES = ('rtoe1_bones_names', 'rtoe2_bones_names', 'rtoe3_bones_names', 'rtoe4_bones_names',
-                      'rtoe5_bones_names', 'ltoe1_bones_names', 'ltoe2_bones_names', 'ltoe3_bones_names',
-                      'ltoe4_bones_names', 'ltoe5_bones_names')
-    ARM_BONES_NAMES = ('rarm_bones_names', 'larm_bones_names')
-    LEG_BONES_NAMES = ('rleg_bones_names', 'lleg_bones_names')
-
-    BONE_NAMES = (
-        'spine_bones_names',
-        'head_bones_names',
-        'pelvis_bones_names',
-    ) + ARM_BONES_NAMES + LEG_BONES_NAMES + FINGER_BONE_NAMES + TOE_BONE_NAMES
 
     def __init__(self):
         self.has_data = False
-
+        self.femaleposes_exist = False
+        self.maleposes_exist = False
         self.data_path = algorithms.get_data_path()
-        # self.maleposes_path = os.path.join(self.data_path, self.data_path, "poses", "male_poses")
-        # self.femaleposes_path = os.path.join(self.data_path, self.data_path, "poses", "female_poses")
+        self.maleposes_path = os.path.join(self.data_path, self.data_path, "poses", "male_poses")
+        self.femaleposes_path = os.path.join(self.data_path, self.data_path, "poses", "female_poses")
+        if os.path.isdir(self.maleposes_path):
+            self.maleposes_exist = True
+        if os.path.isdir(self.femaleposes_path):
+            self.femaleposes_exist = True
 
         self.body_name = ""
         self.armature_name = ""
         self.skeleton_mapped = {}
         self.lib_filepath = algorithms.get_blendlibrary_path()
-        knowledge_path = os.path.join(self.data_path, "retarget_knowledge.json")
-        self._bones = {}
-        self.already_mapped_bones = {}
+        self.knowledge_path = os.path.join(self.data_path, "retarget_knowledge.json")
 
-        if os.path.isfile(self.lib_filepath) and os.path.isfile(knowledge_path):
+        if os.path.isfile(self.lib_filepath) and os.path.isfile(self.knowledge_path):
 
-            self.knowledge_database = algorithms.load_json_data(knowledge_path, "Skeleton knowledge data")
+            self.knowledge_database = algorithms.load_json_data(self.knowledge_path, "Skeleton knowledge data")
             self.local_rotation_bones = self.knowledge_database["local_rotation_bones"]
             self.last_selected_bone_name = None
             self.stored_animations = {}
@@ -76,23 +61,6 @@ class RetargetEngine:
             self.has_data = True
         else:
             logger.critical("Retarget database not found. Please check your Blender addons directory.")
-
-    @property
-    def maleposes_path(self):
-        return os.path.join(self.data_path, self.data_path, "poses", "male_poses")
-
-    @property
-    def femaleposes_path(self):
-        return os.path.join(self.data_path, self.data_path, "poses", "female_poses")
-
-
-    @property
-    def femaleposes_exist(self):
-        os.path.isdir(self.maleposes_path)
-
-    @property
-    def maleposes_exist(self):
-        os.path.isdir(self.femaleposes_path)
 
     @staticmethod
     def get_selected_posebone():
@@ -263,8 +231,33 @@ class RetargetEngine:
 
         self.reset_skeleton_mapped()
         self.already_mapped_bones = []
-
-        self._bones = {name: None for name in self.BONE_NAMES}
+        self.spine_bones_names = None
+        self.rarm_bones_names = None
+        self.larm_bones_names = None
+        self.rleg_bones_names = None
+        self.lleg_bones_names = None
+        self.head_bones_names = None
+        self.pelvis_bones_names = None
+        self.rtoe1_bones_names = None
+        self.rtoe2_bones_names = None
+        self.rtoe3_bones_names = None
+        self.rtoe4_bones_names = None
+        self.rtoe5_bones_names = None
+        self.ltoe1_bones_names = None
+        self.ltoe2_bones_names = None
+        self.ltoe3_bones_names = None
+        self.ltoe4_bones_names = None
+        self.ltoe5_bones_names = None
+        self.rfinger0_bones_names = None
+        self.rfinger1_bones_names = None
+        self.rfinger2_bones_names = None
+        self.rfinger3_bones_names = None
+        self.rfinger4_bones_names = None
+        self.lfinger0_bones_names = None
+        self.lfinger1_bones_names = None
+        self.lfinger2_bones_names = None
+        self.lfinger3_bones_names = None
+        self.lfinger4_bones_names = None
 
         self.map_main_bones(source_armat)
 
@@ -375,6 +368,7 @@ class RetargetEngine:
 
         bn_pos = "r" if side == "RIGHT" else "l"
 
+
         combo_bones_start = []
         combo_bones_end = []
 
@@ -404,13 +398,12 @@ class RetargetEngine:
             bone_name = bone_name.lower()
 
             if len(bone_name) > 3:
-                if (
-                        bone_name[:2] in id_side3 or
-                        bone_name[-2:] in id_side4 or
-                        id_side2 in bone_name or
-                        algorithms.is_in_list(bone_names, combo_bones_start, "START") or
-                        algorithms.is_in_list(bone_names, combo_bones_end, "END")
-                ):
+                c1 = bone_name[:2] in id_side3
+                c2 = bone_name[-2:] in id_side4
+                c3 = id_side2 in bone_name
+                c4 = algorithms.is_in_list(bone_names, combo_bones_start, "START")
+                c5 = algorithms.is_in_list(bone_names, combo_bones_end, "END")
+                if c1 or c2 or c3 or c4 or c5:
                     score_level += 1
 
         if bone_names:
@@ -531,20 +524,48 @@ class RetargetEngine:
         return chain
 
     def filter_chains_by_dotprod(self, armature):
-        bones = (
-            ('spine_bones_names', 'head_bones_names') + self.ARM_BONES_NAMES +
-            ('pelvis_bones_names', 'ltoe_and_leg_names', 'rtoe_and_leg_names') + self.FINGER_BONE_NAMES)
 
-        for name in bones:
-            self._bones[name] = self.clear_chain_by_dot_product(self._bones[name], armature)
+        self.spine_bones_names = self.clear_chain_by_dot_product(self.spine_bones_names, armature)
+        self.head_bones_names = self.clear_chain_by_dot_product(self.head_bones_names, armature)
+        self.rarm_bones_names = self.clear_chain_by_dot_product(self.rarm_bones_names, armature)
+        self.larm_bones_names = self.clear_chain_by_dot_product(self.larm_bones_names, armature)
+
+        self.pelvis_bones_names = self.clear_chain_by_dot_product(self.pelvis_bones_names, armature)
+        self.ltoe_and_leg_names = self.clear_chain_by_dot_product(self.ltoe_and_leg_names, armature)
+        self.rtoe_and_leg_names = self.clear_chain_by_dot_product(self.rtoe_and_leg_names, armature)
+
+        self.rfinger0_bones_names = self.clear_chain_by_dot_product(self.rfinger0_bones_names, armature)
+        self.rfinger1_bones_names = self.clear_chain_by_dot_product(self.rfinger1_bones_names, armature)
+        self.rfinger2_bones_names = self.clear_chain_by_dot_product(self.rfinger2_bones_names, armature)
+        self.rfinger3_bones_names = self.clear_chain_by_dot_product(self.rfinger3_bones_names, armature)
+        self.rfinger4_bones_names = self.clear_chain_by_dot_product(self.rfinger4_bones_names, armature)
+        self.lfinger0_bones_names = self.clear_chain_by_dot_product(self.lfinger0_bones_names, armature)
+        self.lfinger1_bones_names = self.clear_chain_by_dot_product(self.lfinger1_bones_names, armature)
+        self.lfinger2_bones_names = self.clear_chain_by_dot_product(self.lfinger2_bones_names, armature)
+        self.lfinger3_bones_names = self.clear_chain_by_dot_product(self.lfinger3_bones_names, armature)
+        self.lfinger4_bones_names = self.clear_chain_by_dot_product(self.lfinger4_bones_names, armature)
 
     def filter_chains_by_length(self, armature):
-        bones = (
-            ('head_bones_names',) + self.ARM_BONES_NAMES + self.ARM_BONES_NAMES +
-            ('ltoe_and_leg_names', 'rtoe_and_leg_names') + self.FINGER_BONE_NAMES)
 
-        for name in bones:
-            self._bones[name] = self.clear_chain_by_length(self._bones[name], armature)
+        self.head_bones_names = self.clear_chain_by_length(self.head_bones_names, armature)
+        self.rarm_bones_names = self.clear_chain_by_length(self.rarm_bones_names, armature)
+        self.larm_bones_names = self.clear_chain_by_length(self.larm_bones_names, armature)
+        self.rleg_bones_names = self.clear_chain_by_length(self.rleg_bones_names, armature)
+        self.lleg_bones_names = self.clear_chain_by_length(self.lleg_bones_names, armature)
+
+        self.ltoe_and_leg_names = self.clear_chain_by_length(self.ltoe_and_leg_names, armature)
+        self.rtoe_and_leg_names = self.clear_chain_by_length(self.rtoe_and_leg_names, armature)
+
+        self.rfinger0_bones_names = self.clear_chain_by_length(self.rfinger0_bones_names, armature)
+        self.rfinger1_bones_names = self.clear_chain_by_length(self.rfinger1_bones_names, armature)
+        self.rfinger2_bones_names = self.clear_chain_by_length(self.rfinger2_bones_names, armature)
+        self.rfinger3_bones_names = self.clear_chain_by_length(self.rfinger3_bones_names, armature)
+        self.rfinger4_bones_names = self.clear_chain_by_length(self.rfinger4_bones_names, armature)
+        self.lfinger0_bones_names = self.clear_chain_by_length(self.lfinger0_bones_names, armature)
+        self.lfinger1_bones_names = self.clear_chain_by_length(self.lfinger1_bones_names, armature)
+        self.lfinger2_bones_names = self.clear_chain_by_length(self.lfinger2_bones_names, armature)
+        self.lfinger3_bones_names = self.clear_chain_by_length(self.lfinger3_bones_names, armature)
+        self.lfinger4_bones_names = self.clear_chain_by_length(self.lfinger4_bones_names, armature)
 
     @staticmethod
     def filter_chains_by_id(chains, chain_ids):
@@ -633,6 +654,7 @@ class RetargetEngine:
 
         right_foot_tail_chains = self.filter_chains_by_tail(right_chains, foot_chain_ids)
         right_foot_tail_chains.sort()
+        self.rtoe_and_leg_names = right_foot_tail_chains[0]
         right_foot_tail_chains = self.filter_chains_by_max_length(right_foot_tail_chains)
         r_leg_and_spine_chain = self.chains_intersection(right_foot_tail_chains)
         right_leg_chain = self.chains_difference(r_leg_and_spine_chain, spine_chain)
@@ -641,6 +663,7 @@ class RetargetEngine:
 
         left_foot_tail_chains = self.filter_chains_by_tail(left_chains, foot_chain_ids)
         left_foot_tail_chains.sort()
+        self.ltoe_and_leg_names = left_foot_tail_chains[0]
         left_foot_tail_chains = self.filter_chains_by_max_length(left_foot_tail_chains)
         l_leg_and_spine_chain = self.chains_intersection(left_foot_tail_chains)
         left_leg_chain = self.chains_difference(l_leg_and_spine_chain, spine_chain)
@@ -654,20 +677,24 @@ class RetargetEngine:
 
         pelvis_chain = self.chains_intersection(feet_tail_chains)
 
-        self._bones['rtoe_and_leg_names'] = right_foot_tail_chains[0]
-        self._bones['ltoe_and_leg_names'] = left_foot_tail_chains[0]
-        self._bones['spine_bones_names'] = spine_chain
-        self._bones['head_bones_names'] = head_chain
-        self._bones['rarm_bones_names'] = right_arm_chain
-        self._bones['larm_bones_names'] = left_arm_chain
-        self._bones['rleg_bones_names'] = right_leg_chain
-        self._bones['lleg_bones_names'] = left_leg_chain
-        self._bones['pelvis_bones_names'] = pelvis_chain
-        for i, bone in self.FINGER_BONE_NAMES[:4]:
-            self._bones[bone] = self.filter_chains_by_order(right_fingers_chain, i)
+        self.spine_bones_names = spine_chain
+        self.head_bones_names = head_chain
+        self.rarm_bones_names = right_arm_chain
+        self.larm_bones_names = left_arm_chain
+        self.rleg_bones_names = right_leg_chain
+        self.lleg_bones_names = left_leg_chain
+        self.pelvis_bones_names = pelvis_chain
 
-        for i, bone in self.FINGER_BONE_NAMES[4:]:
-            self._bones[bone] = self.filter_chains_by_order(left_fingers_chain, i)
+        self.rfinger0_bones_names = self.filter_chains_by_order(right_fingers_chain, 0)
+        self.rfinger1_bones_names = self.filter_chains_by_order(right_fingers_chain, 1)
+        self.rfinger2_bones_names = self.filter_chains_by_order(right_fingers_chain, 2)
+        self.rfinger3_bones_names = self.filter_chains_by_order(right_fingers_chain, 3)
+        self.rfinger4_bones_names = self.filter_chains_by_order(right_fingers_chain, 4)
+        self.lfinger0_bones_names = self.filter_chains_by_order(left_fingers_chain, 0)
+        self.lfinger1_bones_names = self.filter_chains_by_order(left_fingers_chain, 1)
+        self.lfinger2_bones_names = self.filter_chains_by_order(left_fingers_chain, 2)
+        self.lfinger3_bones_names = self.filter_chains_by_order(left_fingers_chain, 3)
+        self.lfinger4_bones_names = self.filter_chains_by_order(left_fingers_chain, 4)
 
     @staticmethod
     def get_ending_bones(armat):
@@ -725,14 +752,50 @@ class RetargetEngine:
         position_in_chain = bone_knowledge["position_in_chain"]
         bones_chain = None
 
-        if chain_id == "all_chains":
+        if chain_id == "spine_bones_names":
+            bones_chain = self.spine_bones_names
+        elif chain_id == "rarm_bones_names":
+            bones_chain = self.rarm_bones_names
+        elif chain_id == "larm_bones_names":
+            bones_chain = self.larm_bones_names
+        elif chain_id == "rleg_bones_names":
+            bones_chain = self.rleg_bones_names
+        elif chain_id == "lleg_bones_names":
+            bones_chain = self.lleg_bones_names
+        elif chain_id == "head_bones_names":
+            bones_chain = self.head_bones_names
+        elif chain_id == "pelvis_bones_names":
+            bones_chain = self.pelvis_bones_names
+        elif chain_id == "rtoe_and_leg_names":
+            bones_chain = self.rtoe_and_leg_names
+        elif chain_id == "ltoe_and_leg_names":
+            bones_chain = self.ltoe_and_leg_names
+        elif chain_id == "rfinger0_bones_names":
+            bones_chain = self.rfinger0_bones_names
+        elif chain_id == "rfinger1_bones_names":
+            bones_chain = self.rfinger1_bones_names
+        elif chain_id == "rfinger2_bones_names":
+            bones_chain = self.rfinger2_bones_names
+        elif chain_id == "rfinger3_bones_names":
+            bones_chain = self.rfinger3_bones_names
+        elif chain_id == "rfinger4_bones_names":
+            bones_chain = self.rfinger4_bones_names
+        elif chain_id == "lfinger0_bones_names":
+            bones_chain = self.lfinger0_bones_names
+        elif chain_id == "lfinger1_bones_names":
+            bones_chain = self.lfinger1_bones_names
+        elif chain_id == "lfinger2_bones_names":
+            bones_chain = self.lfinger2_bones_names
+        elif chain_id == "lfinger3_bones_names":
+            bones_chain = self.lfinger3_bones_names
+        elif chain_id == "lfinger4_bones_names":
+            bones_chain = self.lfinger4_bones_names
+        elif chain_id == "all_chains":
             bones_chain = self.get_all_bone_names(armat)
-        else:
-            self._bones.get(chain_id)
 
         if bones_chain:
 
-            all_methods = ("by_exact_name", "by_chain_index", "by_similar_name", "by_children")
+            all_methods = ["by_exact_name", "by_chain_index", "by_similar_name", "by_children"]
             search_sequence = [search_method]  # The first method is the one in knowledge
 
             for methd in all_methods:
@@ -750,7 +813,7 @@ class RetargetEngine:
                             logger.info("Retarget: %s added to mapped bones", result)
                             return result
 
-                elif s_method == "by_similar_name":
+                if s_method == "by_similar_name":
                     result = self.get_bone_by_similar_id(bones_chain, main_ids, side)
 
                     if result:
@@ -760,7 +823,7 @@ class RetargetEngine:
                             logger.info("Retarget: %s added to mapped bones", result)
                             return result
 
-                elif s_method == "by_children":
+                if s_method == "by_children":
                     result = self.get_bone_by_childr(armat, bones_chain, children_ids)
 
                     if result:
@@ -770,7 +833,7 @@ class RetargetEngine:
                             logger.info("Retarget: %s added to mapped bones", result)
                             return result
 
-                elif s_method == "by_chain_index":
+                if s_method == "by_chain_index":
                     result = self.get_bones_by_index(bones_chain, position_in_chain)
 
                     if result:
@@ -781,8 +844,7 @@ class RetargetEngine:
                             return result
 
             logger.warning("All retarget methods failed for %s.", bone_type)
-            # logger.warning(No candidates found in: %s, or the candidate found is already mapped to another bone",
-            #                bones_chain))
+            #logger.warning(No candidates found in: {0}, or the candidate found is already mapped to another bone".format(bones_chain))
         return None
 
     def bone_parent_name(self, armat, b_name):
@@ -880,7 +942,7 @@ class RetargetEngine:
                 ("toes_L", "LTOE", "by_exact_name"),
                 ("pelvis", "PELVIS", "by_exact_name"),
                 ("spine03", "CHEST", "by_chain_index"),
-        ):
+            ):
             self.map_bone(armat, *bone)
 
         if not self.map_by_direct_parent(armat, "head", "neck"):
@@ -1329,24 +1391,23 @@ class RetargetEngine:
 
 
 class ExpressionEngineShapeK:
-    __slots__ = ('has_data', 'data_path', 'expressions_labels', 'human_expressions_data', 'anime_expressions_data',
-                 'model_type', 'expressions_data')
+
     def __init__(self):
         self.has_data = False
         self.data_path = algorithms.get_data_path()
-        human_expression_path = os.path.join(
+        self.human_expression_path = os.path.join(
             self.data_path,
             "expressions_comb",
             "human_expressions")
 
-        anime_expression_path = os.path.join(
+        self.anime_expression_path = os.path.join(
             self.data_path,
             "expressions_comb",
             "anime_expressions")
 
         self.expressions_labels = set()
-        self.human_expressions_data = self.load_expression_database(human_expression_path)
-        self.anime_expressions_data = self.load_expression_database(anime_expression_path)
+        self.human_expressions_data = self.load_expression_database(self.human_expression_path)
+        self.anime_expressions_data = self.load_expression_database(self.anime_expression_path)
         self.expressions_data = {}
         self.model_type = "NONE"
         self.has_data = True
