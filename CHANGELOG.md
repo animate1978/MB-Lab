@@ -2,6 +2,27 @@
 
 All changes will be documented here
 
+# MB-Lab 1.7.1b
+
+## Changed
+
+ - Replace algorithms.print_log_report by python standard logging
+ - Use numpy to to calculate_disp_pixel
+ - Code cleanup
+
+## Bug Fixes
+
+ - Fixed a spelling typo in facerig.populate_modifiers
+ - Finalize character fix
+ - Remove 'self' from args
+ - Moved is_ik_armature, get_active_armature, get_deforming_armature, get_object_parent to utils.py
+ - init.py uses get_active_armature and is_ik_armature from utils (previous was algorithms that wasn't imported)
+ - Armature Toe Bone flipped pose bug
+
+ ## Known Issues
+ - Proxy Fitting broken at this time, advised to not use until fixed
+
+
 # MB-Lab 1.7.1
 
 ## Added
