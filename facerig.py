@@ -49,8 +49,7 @@ def populate_variable(v, var):
     v.targets[0].transform_type = var['targets'][0]['transform_type']
     v.targets[0].bone_target = var['targets'][0]['bone_target']
 
-
-def build_drivers(drivers):
+def add_rm_drivers(drivers, add=True):
     # Iterate through each driver entry and create driver
     mesh = algorithms.get_active_body()
     mname = mesh.name
@@ -63,14 +62,22 @@ def build_drivers(drivers):
         check = bpy.data.objects[mname].data.shape_keys.animation_data and \
             bpy.data.objects[mname].data.shape_keys.animation_data.drivers.\
             find(v['data_path'])
-        if check:
+        if check and add:
             logger.critical("%s shape key already has animation data", shape_name)
             continue
 
         # NOTE: The call to driver_add adds a modifier of type GENERATOR
         # automatically
-        driver = bpy.data.objects[mname].data.shape_keys.key_blocks[idx]. \
-            driver_add('value')
+        if add:
+            driver = bpy.data.objects[mname].data.shape_keys.key_blocks[idx]. \
+                        driver_add('value')
+        else:
+            rc = bpy.data.objects[mname].data.shape_keys.key_blocks[idx].\
+                    driver_remove('value')
+            if not rc:
+                print("failed to removed: ", shape_name, "idx=", idx)
+            continue
+
         # Populate the driver
         driver.hide = v['hide']
         driver.lock = v['lock']
@@ -129,3 +136,40 @@ def setup_face_rig():
         build_drivers(drivers)
 
     return True
+
+def delete_face_rig():
+    # check if the face rig is already imported
+    facerig = bpy.data.objects.get('MBLab_skeleton_face_rig')
+    if not facerig:
+        logger.critical("face rig is not added")
+        return False
+
+    data_path = algorithms.get_data_path()
+
+    # load face rig json file
+    json_file = os.path.join(data_path, "face_rig", "expression_drivers.json")
+
+    if not os.path.exists(json_file):
+        logger.critical("%s not found. Might need to reinstall ManuelBastioniLab", json_file)
+        return False
+
+    with open(json_file, 'r') as f:
+        drivers = json.load(f)
+        add_rm_drivers(drivers, add=False)
+
+    # store the original selection
+    orig_selection = {}
+    for ob in bpy.context.scene.objects:
+        orig_selection[ob.name] = ob.select_get()
+        ob.select_set(False)
+
+    # delete the face rig
+    facerig.select_set(True)
+    bpy.ops.object.delete()
+
+    # restore the original selection
+    for ob in bpy.context.scene.objects:
+        ob.select_set(orig_selection[ob.name])
+
+    return True
+
