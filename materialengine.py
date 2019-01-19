@@ -14,50 +14,62 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import logging
-import numpy as np
+import math
+import array
+import bpy
 import os
 import time
-
-import bpy
+import json
 from . import algorithms
 
 
-logger = logging.getLogger(__name__)
-
-
 class MaterialEngine:
-    generated_disp_modifier_ID = "mbastlab_displacement"
-    generated_disp_texture_name = "mbastlab_displ_texture"
-    subdivision_modifier_name = "mbastlab_subdvision"
-    parameter_identifiers = ("skin_", "eyes_")
 
     def __init__(self, obj_name, character_config):
 
         data_path = algorithms.get_data_path()
         self.obj_name = obj_name
+        self.displacement_data_file = character_config["texture_displacement"]
+        self.image_diffuse_file = character_config["texture_diffuse"]
+        self.image_specular_file = character_config["texture_specular"]
+        self.image_subdermal_file = character_config["texture_subdermal"]
+        self.image_displacement_file = character_config["name"] + "_displ.png"
 
-        image_file_names = {
-            "displ_data": character_config["texture_displacement"],
-            "body_derm": character_config["texture_diffuse"],
-            "body_displ": character_config["name"]+"_displ.png",
-            "body_spec": character_config["texture_specular"],
-            "body_rough": character_config["texture_roughness"],
-            "eyes_diffuse": character_config["texture_eyes"],
-            "body_bump": character_config["texture_bump"],
-            "body_subd": character_config["texture_subdermal"],
-        }
+        self.texture_data_path = os.path.join(data_path, "textures")
+        self.texture_dermal_exist = False
+        self.texture_displace_exist = False
 
-        image_file_paths = {}
+        self.generated_disp_modifier_ID = "mbastlab_displacement"
+        self.generated_disp_texture_name = "mbastlab_displ_texture"
+        self.subdivision_modifier_name = "mbastlab_subdvision"
 
-        for img_id, value in image_file_names.items():
-            image_file_paths[img_id] = os.path.join(
-                os.path.join(data_path, "textures"),
-                value
-            )
+        self.image_file_names = {}
+        self.image_file_names["body_displ"] = self.image_displacement_file
+        self.image_file_names["displ_data"] = self.displacement_data_file
+        self.image_file_names["body_derm"] = self.image_diffuse_file
+        self.image_file_names["body_spec"] = self.image_specular_file
+        self.image_file_names["body_subd"] = self.image_subdermal_file
 
-        self.image_file_paths = image_file_paths
-        self.image_file_names = image_file_names
+        self.image_file_paths = {}
+        for img_id in self.image_file_names.keys():
+            self.image_file_paths[img_id] = os.path.join(
+                self.texture_data_path,
+                self.image_file_names[img_id])
+
+        self.parameter_identifiers = ["skin_", "eyes_"]
+
+        if os.path.isfile(self.image_file_paths["body_derm"]):
+            self.texture_dermal_exist = True
+
+        if os.path.isfile(self.image_file_paths["body_spec"]):
+            self.texture_dermal_exist = True
+
+        if os.path.isfile(self.image_file_paths["body_subd"]):
+            self.texture_dermal_exist = True
+
+        if os.path.isfile(self.image_file_paths["displ_data"]):
+            self.texture_displace_exist = True
+
         self.load_data_images()
         self.generate_displacement_image()
 
@@ -70,67 +82,73 @@ class MaterialEngine:
         self.image_file_names[shader_target] = os.path.basename(img_path)
         self.update_shaders()
 
-    @property
-    def texture_dermal_exist(self):
-        return os.path.isfile(self.image_file_paths["body_derm"])
+    def calculate_disp_pixels(self, blender_image, age_factor, tone_factor, mass_factor):
 
-    @property
-    def texture_spec_exist(self):
-        return os.path.isfile(self.image_file_paths["body_spec"])
+        source_data_image = algorithms.image_to_array(blender_image)
+        result_image = array.array('f')
 
-    @property
-    def texture_rough_exist(self):
-        return os.path.isfile(self.image_file_paths["body_rough"])
+        if age_factor > 0:
+            age_f = age_factor
+        else:
+            age_f = 0
 
-    @property
-    def texture_subd_exist(self):
-        return os.path.isfile(self.image_file_paths["body_subd"])
+        if tone_factor > 0:
+            tone_f = tone_factor
+        else:
+            tone_f = 0
 
-    @property
-    def texture_eyes_exist(self):
-        return os.path.isfile(self.image_file_paths["eyes_diffuse"])
+        if mass_factor > 0:
+            mass_f = (1 - tone_f) * mass_factor
+        else:
+            mass_f = 0
 
-    @property
-    def texture_bump_exist(self):
-        return os.path.isfile(self.image_file_paths["body_bump"])
+        for i in range(0, len(source_data_image), 4):
+            r = source_data_image[i]
+            g = source_data_image[i + 1]
+            b = source_data_image[i + 2]
+            a = source_data_image[i + 3]
 
-    @property
-    def texture_displace_exist(self):
-        return os.path.isfile(self.image_file_paths["displ_data"])
+            details = r
+            age_disp = age_f * (g - 0.5)
+            tone_disp = tone_f * (b - 0.5)
+            mass_disp = mass_f * (a - 0.5)
 
-    @staticmethod
-    def calculate_disp_pixels(blender_image, age_factor, tone_factor, mass_factor):
-        logger.info('start: calculate_disp_pixels %s', blender_image.name)
-        tone_f = tone_factor if tone_factor > 0.0 else 0.0
+            add_result = details + age_disp + tone_disp + mass_disp
+            if add_result > 1.0:
+                add_result = 1.0
 
-        ajustments = np.array([0.0, 0.5, 0.5, 0.5], dtype='float32')
-        factors = np.fmax(np.array([1, age_factor, tone_f, (1.0 - tone_f) * mass_factor], dtype='float32'), 0.0)
-        np_image = np.array(blender_image.pixels, dtype='float32').reshape(-1, 4)
-        # add_result = r + age_f * (g - 0.5) + tone_f * (b - 0.5) + mass_f * (a - 0.5)
-        add_result = np.sum((np_image - ajustments) * factors, axis=1)
-        result_image = np.insert(np.repeat(np.fmin(add_result, 1.0), 3).reshape(-1, 3), 3, 1.0, axis=1)
-        logger.info('finish: calculate_disp_pixels %s', blender_image.name)
-        return result_image.flatten()
+            for i2 in range(3):
+                result_image.append(add_result)  # R,G,B
+            result_image.append(1.0)  # Alpha is always 1
 
-    @staticmethod
-    def multiply_images(image1, image2, result_name, blending_factor=0.5):
-        logger.info('multiply_images %s', result_name)
-        if images_scale(image1, image2):
-            np_img1, np_img2 = np.array(image1.pixels, dtype='float32'), np.array(image2.pixels, dtype='float32')
+        return result_image.tolist()
 
-            result_img = new_image(result_name, image2.size)
-            result_img.pixels = np_img1 * np_img2 * blending_factor + (np_img1 * (1.0 - blending_factor))
-        logger.info('finish: multiply_images %s', result_name)
+    def multiply_images(self, image1, image2, result_name, blending_factor=0.5, ):
 
-    @staticmethod
-    def assign_image_to_node(material_name, node_name, image_name):
-        logger.info("Assigning the image %s to node %s", image_name, node_name)
+        if image1 and image2:
+            if algorithms.are_squared_images(image1, image2):
+                algorithms.scale_image_to_fit(image1, image2)
+                image1 = algorithms.image_to_array(image1)
+                image2 = algorithms.image_to_array(image2)
+                result_array = array.array('f')
+
+                for i in range(len(image1)):
+                    px1 = image1[i]
+                    px2 = image2[i]
+                    px_result = (px1 * px2 * blending_factor) + (px1 * (1 - blending_factor))
+                    result_array.append(px_result)
+
+                result_img = algorithms.new_image(result_name, size1)
+                algorithms.array_to_image(result_array, result_img)
+
+    def assign_image_to_node(self, material_name, node_name, image_name):
+        algorithms.print_log_report("INFO", "Assigning the image {0} to node {1}".format(image_name, node_name))
         mat_node = algorithms.get_material_node(material_name, node_name)
         mat_image = algorithms.get_image(image_name)
         if mat_image:
             algorithms.set_node_image(mat_node, mat_image)
         else:
-            logger.warning("Node assignment failed. Image not found: %s", image_name)
+            algorithms.print_log_report("WARNING", "Node assignment failed. Image not found: {0}".format(image_name))
 
     def get_material_parameters(self):
 
@@ -144,8 +162,7 @@ class MaterialEngine:
                     for param_identifier in self.parameter_identifiers:
                         if param_identifier in node.name:
                             is_parameter = True
-                            break
-                    if is_parameter:
+                    if is_parameter == True:
                         node_output_val = algorithms.get_node_output_value(node, 0)
                         material_parameters[node.name] = node_output_val
         return material_parameters
@@ -154,36 +171,30 @@ class MaterialEngine:
 
         obj = self.get_object()
         for material in algorithms.get_object_materials(obj):
+            material_name = material.name
             nodes = algorithms.get_material_nodes(material)
-            if not nodes:
-                continue
+            if nodes:
+                for node in nodes:
+                    if node.name in material_parameters:
+                        value = material_parameters[node.name]
+                        algorithms.set_node_output_value(node, 0, value)
+                    else:
+                        if update_textures_nodes == True:
 
-            for node in nodes:
-                if node.name in material_parameters:
-                    value = material_parameters[node.name]
-                    algorithms.set_node_output_value(node, 0, value)
-                elif update_textures_nodes:
-                    if "_skn_diffuse" in node.name:
-                        self.assign_image_to_node(material.name, node.name, self.image_file_names["body_derm"])
-                    if "_skn_specular" in node.name:
-                        self.assign_image_to_node(material.name, node.name, self.image_file_names["body_spec"])
-                    if "_skn_roughness" in node.name:
-                        self.assign_image_to_node(material.name, node.name,
-                                                  self.image_file_names["body_rough"])
-                    if "_skn_subdermal" in node.name:
-                        self.assign_image_to_node(material.name, node.name, self.image_file_names["body_subd"])
-                    if "_eys_diffuse" in node.name:
-                        self.assign_image_to_node(material.name, node.name,
-                                                  self.image_file_names["eyes_diffuse"])
-                    if "_eylsh_diffuse" in node.name:
-                        self.assign_image_to_node(material.name, node.name, self.image_file_names["body_derm"])
-                    if "_tth_diffuse" in node.name:
-                        self.assign_image_to_node(material.name, node.name, self.image_file_names["body_derm"])
-                    if "_skn_bump" in node.name:
-                        self.assign_image_to_node(material.name, node.name, self.image_file_names["body_bump"])
-                    if "_skn_disp" in node.name:
-                        self.assign_image_to_node(material.name, node.name,
-                                                  self.image_file_names["body_displ"])
+                            if "_skn_diffuse" in node.name:
+                                self.assign_image_to_node(material.name, node.name, self.image_file_names["body_derm"])
+                            if "_skn_specular" in node.name:
+                                self.assign_image_to_node(material.name, node.name, self.image_file_names["body_spec"])
+                            if "_skn_subdermal" in node.name:
+                                self.assign_image_to_node(material.name, node.name, self.image_file_names["body_subd"])
+                            if "_eys_diffuse" in node.name:
+                                self.assign_image_to_node(material.name, node.name, self.image_file_names["body_derm"])
+                            if "_eylsh_diffuse" in node.name:
+                                self.assign_image_to_node(material.name, node.name, self.image_file_names["body_derm"])
+                            if "_tth_diffuse" in node.name:
+                                self.assign_image_to_node(material.name, node.name, self.image_file_names["body_derm"])
+                            if "_skn_disp" in node.name:
+                                self.assign_image_to_node(material.name, node.name, self.image_file_names["body_displ"])
 
     def rename_skin_shaders(self, prefix):
         obj = self.get_object()
@@ -191,7 +202,7 @@ class MaterialEngine:
             if prefix != "":
                 material.name = prefix + "_" + material.name
             else:
-                material.name = material.name+str(time.time())
+                material.name = material.name + str(time.time())
 
     def get_object(self):
         return algorithms.get_object_by_name(self.obj_name)
@@ -202,14 +213,14 @@ class MaterialEngine:
             disp_data_image = algorithms.get_image(disp_data_image_name)
             if disp_data_image:
                 disp_size = disp_data_image.size
-                logger.info(
-                    "Creating the displacement image from data image %s with size %sx%s",
-                    disp_data_image.name, disp_size[0], disp_size[1])
-                new_image(self.image_file_names["body_displ"], disp_size)
+                algorithms.print_log_report("INFO",
+                                            "Creating the displacement image from data image {0} with size {1}x{2}".format(
+                                                disp_data_image.name, disp_size[0], disp_size[1]))
+                disp_img = algorithms.new_image(self.image_file_names["body_displ"], disp_size)
             else:
-                logger.warning(
-                    "Cannot create the displacement modifier: data image not found: %s",
-                    algorithms.simple_path(self.image_file_paths["displ_data"]))
+                algorithms.print_log_report("WARNING",
+                                            "Cannot create the displacement modifier: data image not found: {0}".format(
+                                                algorithms.simple_path(self.image_file_paths["displ_data"])))
 
     def calculate_displacement_texture(self, age_factor, tone_factor, mass_factor):
         time1 = time.time()
@@ -223,54 +234,32 @@ class MaterialEngine:
                 if self.image_file_names["body_displ"] in bpy.data.images:
                     disp_img = bpy.data.images[self.image_file_names["body_displ"]]
                 else:
-                    logger.warning("Displace image not found: %s", self.image_file_names["body_displ"])
+                    algorithms.print_log_report("WARNING", "Displace image not found: {0}".format(
+                        self.image_file_names["body_displ"]))
                     return
 
                 if self.generated_disp_modifier_ID in bpy.data.textures:
                     disp_tex = bpy.data.textures[self.generated_disp_modifier_ID]
                 else:
-                    logger.warning("Displace texture not found: %s", self.generated_disp_modifier_ID)
+                    algorithms.print_log_report("WARNING",
+                                                "Displace texture not found: {0}".format(self.generated_disp_modifier))
                     return
 
-                if images_scale(disp_data_image, disp_img):
+                if algorithms.are_squared_images(disp_data_image, disp_img):
+                    algorithms.scale_image_to_fit(disp_data_image, disp_img)
                     disp_img.pixels = self.calculate_disp_pixels(disp_data_image, age_factor, tone_factor, mass_factor)
                     disp_tex.image = disp_img
-                    logger.info("Displacement calculated in %s seconds", time.time()-time1)
+                    algorithms.print_log_report("INFO",
+                                                "Displacement calculated in {0} seconds".format(time.time() - time1))
             else:
-                logger.error("Displace data image not found: %s",
-                             algorithms.simple_path(self.image_file_paths["displ_data"]))
+                algorithms.print_log_report("ERROR", "Displace data image not found: {0}".format(
+                    algorithms.simple_path(self.image_file_paths["displ_data"])))
 
     def save_texture(self, filepath, shader_target):
         img_name = self.image_file_names[shader_target]
-        logger.info("Saving image %s in %s", img_name, algorithms.simple_path(filepath))
+        algorithms.print_log_report("INFO",
+                                    "Saving image {0} in {1}".format(img_name, algorithms.simple_path(filepath)))
         algorithms.save_image(img_name, filepath)
         algorithms.load_image(filepath)  # Load the just saved image to replace the current one
         self.image_file_names[shader_target] = os.path.basename(filepath)
         self.update_shaders()
-
-
-def new_image(name, img_size, color=(0.5, 0.5, 0.5, 1)):
-    logger.info("Creating new image %s with size %sx%s", name, *img_size)
-    try:
-        bpy.data.images.remove(bpy.data.images[name], do_unlink=True)
-        logger.info("Previous existing image %s replaced with the new one", name)
-    except KeyError:
-        pass
-
-    new_img = bpy.data.images.new(name, *img_size)
-    new_img.generated_color = color
-    logger.info("created new image %s", name)
-    return new_img
-
-
-def images_scale(image1, image2):
-    try:
-        if image1.size[0] == image1.size[1] and image2.size[0] == image2.size[1]:
-            if image1.size[0] > image2.size[0]:
-                image2.scale(*image1.size)
-            elif image1.size[0] < image2.size[0]:
-                image1.scale(*image2.size)
-            return True
-        return False
-    except (AttributeError, KeyError):
-        return False
