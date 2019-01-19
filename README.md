@@ -2,9 +2,15 @@
 
 MB-Lab is an attempt to keep the ManuelBastioniLAB Blender addon alive through community efforts.
 
+## Blender 2.8 Support
+
+MB-Lab has been ported to work with blender 2.80
+
 ## Contributors wanted! Python programmers needed!
 
-Manuel Bastioni is active in open source projects since 1999.
+## About
+
+Manuel Bastioni was active in open source projects since 1999.
 
 Member of Blender Artist community since 2002.
 
@@ -14,37 +20,17 @@ In 2000 he started Makehuman Project, a free and open source software for the mo
 
 He is the author of Manuel Bastioni Laboratory, a free and open source add-on for Blender to create 3d humanoids. It includes the results of years of prototyping and studies realized by him during the development of his 3d graphics projects.
 
-## MB-Lab 1.6.5 Notes
+This fork is an attempt to keep this addon going towards the next generation of Blender as the original author is no longer developing ManuelBastioniLAB
 
-    New shader network based on Principled BSDF for skin, eyes and teeth
-    New texture maps for specular and sub dermal
-    Additional code to load new texture maps into right image texture node
-    Added references to new texture maps in the character config JSON file for all character types
-    Changed Skin Editor values to reflect new PBR shading network
+## MB-Lab 1.7.1 Notes
 
+    New Facial Rig connected to shapekey expressions
+    EEVEE and CYCLES specific shading networks and outputs
+    New collection of Clothing
 
-## Release notes for ManuelBastioniLAB 1.6.1
+## ManuelBastioniLAB 1.6.1a
 
-The version 1.6.1 of ManuelbastioniLAB, the free and open source character editor for Blender, is still available for download at http://www.manuelbastioni.com
+We are including this for historical purposes as the website, videos and social media accounts are offline.
 
-## New features
-
-    Assets library, with four hair models
-    Automatic transfer of rigging weights from body to proxy
-    Improvement of human base models
-    Improvement of proxy fitting process using a subset of polygons
-    Human hair shader for Cycles
-    Toon hair shader for Cycles
-    Custom name for finalized characters
-    Expressions parameter for eyes rotations
-
-## Bug fixed
-
-    Less restrictive version check to run in Blender vers. > 2.79.0
-    Fixed bug in hidden IK control
-    Fixed bug in save custom poses
-    Fixed bug in rest pose loading
-    Fixed bug in proxy reset
-    Fixed "red eyes" bug
-    Fixed a bug in expressions with multiple characters in the same scene
-
+The version 1.6.1a of ManuelbastioniLAB, the free and open source character editor for Blender, ~~is still available for download at http://www.manuelbastioni.com~~
+Direct download: [manuelbastionilab_161a.zip](https://github.com/NumesSanguis/FACSvatar/releases/download/v0.3.4-alpha-release/manuelbastionilab_161a.zip)
