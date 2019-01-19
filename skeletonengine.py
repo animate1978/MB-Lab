@@ -14,79 +14,84 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import logging
+import os
 
-import bpy, os, json
+import bpy
 import mathutils
+
 from . import algorithms
+from .utils import get_object_parent
+
+logger = logging.getLogger(__name__)
 
 
 class SkeletonEngine:
+    armature_modifier_name = "mbastlab_armature"
 
     def __init__(self, obj_body, character_config, rigging_type):
         self.has_data = False
         self.data_path = algorithms.get_data_path()
-        # characters_config = algorithms.get_configuration()
-        # character_config = characters_config[character_identifier]
+        #characters_config = algorithms.get_configuration()
+        #character_config = characters_config[character_identifier]
 
         if obj_body:
 
             self.body_name = obj_body.name
-            self.joints_indices = {}
-            self.armature_modifier_name = "mbastlab_armature"
             self.joints_filename = character_config["joints_base_file"]
             self.joints_offset_filename = character_config["joints_offset_file"]
 
             if rigging_type == "base":
                 self.skeleton_template_name = "MBLab_skeleton_base_fk"
                 self.groups_filename = character_config["vertexgroup_base_file"]
-            if rigging_type == "ik":
+            elif rigging_type == "ik":
                 self.skeleton_template_name = "MBLab_skeleton_base_ik"
                 self.groups_filename = character_config["vertexgroup_base_file"]
-
-            if rigging_type == "muscle":
+            elif rigging_type == "muscle":
                 self.skeleton_template_name = "MBLab_skeleton_muscle_fk"
                 self.groups_filename = character_config["vertexgroup_muscle_file"]
-            if rigging_type == "muscle_ik":
+            elif rigging_type == "muscle_ik":
                 self.skeleton_template_name = "MBLab_skeleton_muscle_ik"
                 self.groups_filename = character_config["vertexgroup_muscle_file"]
 
-            self.skeleton_name = character_config["name"] + "_skeleton"
+            skeleton_name = character_config["name"]+"_skeleton"
+            joints_data_path = os.path.join(self.data_path, "joints", self.joints_filename)
+            joints_offset_data_path = os.path.join(self.data_path, "joints", self.joints_offset_filename)
+            vgroup_data_path = os.path.join(self.data_path, "vgroups", self.groups_filename)
+
             self.lib_filepath = algorithms.get_blendlibrary_path()
-            self.joints_data_path = os.path.join(self.data_path, "joints", self.joints_filename)
-            self.joints_offset_data_path = os.path.join(self.data_path, "joints", self.joints_offset_filename)
-            self.vgroup_data_path = os.path.join(self.data_path, "vgroups", self.groups_filename)
-            self.joints_database = algorithms.load_json_data(self.joints_data_path, "Joints data")
-            self.joints_offset_database = algorithms.load_json_data(self.joints_offset_data_path, "Joints offset data")
+            self.joints_database = algorithms.load_json_data(joints_data_path, "Joints data")
+            self.joints_offset_database = algorithms.load_json_data(joints_offset_data_path, "Joints offset data")
 
             if self.check_skeleton(obj_body):
-                obj_armat = algorithms.get_object_parent(obj_body)
+                obj_armat = get_object_parent(obj_body)
             else:
-                obj_armat = algorithms.import_object_from_lib(self.lib_filepath, self.skeleton_template_name,
-                                                              self.skeleton_name)
+                obj_armat = algorithms.import_object_from_lib(
+                    self.lib_filepath, self.skeleton_template_name, skeleton_name)
 
-            if obj_armat != None:
+            if obj_armat is not None:
                 self.store_z_axis()
-                self.armature_visibility = [x for x in obj_armat.layers]
+                # TODO doesn't look like armature_visibility is used
+                # anywhere
+                #self.armature_visibility = [x for x in obj_armat.layers]
                 self.armature_name = obj_armat.name
                 self.align_bones_z_axis()
                 obj_body.parent = obj_armat
                 self.has_data = True
-            self.load_groups(self.vgroup_data_path)
+            self.load_groups(vgroup_data_path)
             self.add_armature_modifier()
 
-    def check_skeleton(self, obj_body):
-        obj_parent = algorithms.get_object_parent(obj_body)
-        if obj_parent:
-            if obj_parent.type == 'ARMATURE':
-                return True
-        return False
+    @staticmethod
+    def check_skeleton(obj_body):
+        obj_parent = get_object_parent(obj_body)
+        return obj_parent and obj_parent.type == 'ARMATURE'
 
     def add_armature_modifier(self):
         if self.has_data:
             obj = self.get_body()
             armat = self.get_armature()
             parameters = {"object": armat}
-            armature_modifier = algorithms.new_modifier(obj, self.armature_modifier_name, 'ARMATURE', parameters)
+            algorithms.new_modifier(obj, self.armature_modifier_name, 'ARMATURE', parameters)
 
     def move_up_armature_modifier(self):
         if self.has_data:
@@ -110,13 +115,14 @@ class SkeletonEngine:
             bpy.ops.pose.armature_apply()
             algorithms.select_and_change_mode(obj, 'OBJECT')
 
-    def error_msg(self, path):
-        algorithms.print_log_report("ERROR", "Database file not found: {0}".format(algorithms.simple_path(path)))
+    @staticmethod
+    def error_msg(path):
+        logger.error("Database file not found: %s", algorithms.simple_path(path))
 
     def store_z_axis(self):
-        algorithms.print_log_report("INFO", "Importing temporary original skeleton to store z axis")
-        native_armature = algorithms.import_object_from_lib(self.lib_filepath, self.skeleton_template_name,
-                                                            "temp_armature")
+        logger.info("Importing temporary original skeleton to store z axis")
+        native_armature = algorithms.import_object_from_lib(
+            self.lib_filepath, self.skeleton_template_name, "temp_armature")
 
         if native_armature:
             self.armature_z_axis = algorithms.get_all_bones_z_axis(native_armature)
@@ -146,38 +152,37 @@ class SkeletonEngine:
                     new_group = algorithms.new_vertgroup(obj, group_name)
                     for vert_data in g_data[group_name]:
                         if use_weights:
-                            if type(vert_data) == list:
+                            if isinstance(vert_data, list):
                                 new_group.add([vert_data[0]], vert_data[1], 'REPLACE')
                             else:
-                                algorithms.print_log_report("INFO", "Error: wrong format for vert weight")
+                                logger.info("Error: wrong format for vert weight")
                         else:
-                            if type(vert_data) == int:
+                            if isinstance(vert_data, int):
                                 new_group.add([vert_data], 1.0, 'REPLACE')
                             else:
-                                algorithms.print_log_report("INFO", "Error: wrong format for vert group")
+                                logger.info("Error: wrong format for vert group")
 
-                algorithms.print_log_report("INFO", "Group loaded from {0}".format(algorithms.simple_path(filepath)))
+                logger.info("Group loaded from %s", algorithms.simple_path(filepath))
             else:
-                algorithms.print_log_report("WARNING",
-                                            "Vgroup file problem {0}".format(algorithms.simple_path(filepath)))
+                logger.warning("Vgroup file problem %s", algorithms.simple_path(filepath))
 
     def get_body(self):
         if self.has_data:
             return algorithms.get_object_by_name(self.body_name)
+        return None
 
     def get_armature(self):
         if self.has_data:
             return algorithms.get_object_by_name(self.armature_name)
+        return None
 
     def __bool__(self):
         armat = self.get_armature()
         body = self.get_body()
-        if body and armat:
-            return True
-        else:
-            return False
+        return body and armat
 
-    def calculate_joint_location(self, obj, vertsindex_list):
+    @staticmethod
+    def calculate_joint_location(obj, vertsindex_list):
         joint_verts_coords = []
         for v_idx in vertsindex_list:
             vert = obj.data.vertices[v_idx]
@@ -191,7 +196,7 @@ class SkeletonEngine:
 
         if armat and body:
             algorithms.set_object_visible(armat)
-            algorithms.print_log_report("DEBUG", "Fitting armature {0}".format(armat.name))
+            logger.debug("Fitting armature %s", armat.name)
             armat.data.use_mirror_x = False
             current_active_obj = algorithms.get_active_object()
             algorithms.select_and_change_mode(armat, "EDIT")

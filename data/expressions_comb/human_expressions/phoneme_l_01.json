@@ -1,8 +1,8 @@
 {
   "metaproperties": {},
   "structural": {
-	"Expressions_tongueTipUp": 0.74,
-	"Expressions_mouthOpen": 0.62
+    "Expressions_tongueTipUp": 0.74,
+    "Expressions_mouthOpen": 0.62
   },
   "manuellab_vers": [1, 6, 0],
   "materialproperties": {}
