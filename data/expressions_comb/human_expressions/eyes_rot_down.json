@@ -2,5 +2,7 @@
   "materialproperties": {},
   "metaproperties": {},
   "manuellab_vers": [1, 6, 1],
-  "structural": { "Expressions_eyesVert": 0.0 }
+  "structural": {
+	"Expressions_eyesVert": 0.0
+  }
 }
