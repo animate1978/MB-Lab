@@ -29,6 +29,7 @@ from . import settings
 def print_log_report(level_in = -1, text_to_write = "An Error occur"):
     levels = ["INFO", "DEBUG", "WARNING", "ERROR", "CRITICAL"]
     if type(level_in) is str:
+<<<<<<< HEAD
         if len(level_in) == 1:
             for num, i in enumerate(levels):
                 if level_in == i[0]:
@@ -38,6 +39,10 @@ def print_log_report(level_in = -1, text_to_write = "An Error occur"):
         else:
             log_level = levels.index(level_in)
             level_mess = level_in
+=======
+        log_level = levels.index(level_in)
+        level_mess = level_in
+>>>>>>> parent of 9ecf178... Start Again from 2.80
     # Rewritten to allow use of int control. What's the point of a print log function if you're
     # just going to rewrite the control code all the time?!
     if type(level_in) is int and -1 <= level_in <= levels.__len__():
@@ -49,6 +54,16 @@ def print_log_report(level_in = -1, text_to_write = "An Error occur"):
     if log_level >= settings.debug_level:
         print(level_mess + ": " + text_to_write)
 
+<<<<<<< HEAD
+=======
+    # log_level = 0
+    # levels = {"INFO": 0, "DEBUG": 1, "WARNING": 2, "ERROR": 3, "CRITICAL": 4, }
+    # if level in levels:
+    #     log_level = levels[level]
+    # if log_level >= settings.debug_level:
+    #     print(level + ": " + text_to_write)
+
+>>>>>>> parent of 9ecf178... Start Again from 2.80
 
 def is_writeable(filepath, set_write=True):
     writeable = False
