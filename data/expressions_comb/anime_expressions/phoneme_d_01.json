@@ -1,8 +1,8 @@
 {
   "metaproperties": {},
   "structural": {
-	"Expressions_mouthClosed": 0.08,
-	"Expressions_tongueOutPressure": 0.71
+    "Expressions_mouthClosed": 0.08,
+    "Expressions_tongueOutPressure": 0.71
   },
   "manuellab_vers": [1, 6, 0],
   "materialproperties": {}
