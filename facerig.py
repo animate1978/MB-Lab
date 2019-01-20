@@ -6,7 +6,6 @@ import bpy
 
 from . import algorithms
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -25,7 +24,6 @@ def populate_modifier(mod, m):
     mod.coefficients[0] = m['coefficients'][0]
     mod.coefficients[1] = m['coefficients'][1]
 
-
 def populate_modifiers(modifiers, mlist):
     i = 0
     mod = modifiers[0]
@@ -37,9 +35,8 @@ def populate_modifiers(modifiers, mlist):
             mod = modifiers.new(m['type'])
             populate_modifier(mod, m)
 
-
 def populate_variable(v, var):
-    face_rig = bpy.data.objects['MBLab_skeleton_face_rig']
+    face_rig = bpy.data.objects[var['targets'][0]['id_name']]
 
     v.name = var['name']
     v.type = var['type']
@@ -60,8 +57,8 @@ def add_rm_drivers(drivers, add=True):
             logger.critical("%s shape key not found", shape_name)
             continue
         check = bpy.data.objects[mname].data.shape_keys.animation_data and \
-            bpy.data.objects[mname].data.shape_keys.animation_data.drivers.\
-            find(v['data_path'])
+                bpy.data.objects[mname].data.shape_keys.animation_data.drivers.\
+                    find(v['data_path'])
         if check and add:
             logger.critical("%s shape key already has animation data", shape_name)
             continue
@@ -92,7 +89,6 @@ def add_rm_drivers(drivers, add=True):
         for var in variables:
             v = driver.driver.variables.new()
             populate_variable(v, var)
-
 
 def setup_face_rig():
     # check if the face rig is already imported
@@ -133,15 +129,36 @@ def setup_face_rig():
 
     with open(json_file, 'r') as f:
         drivers = json.load(f)
-        build_drivers(drivers)
+        add_rm_drivers(drivers)
 
     return True
+
+def recursive_collection_delete(head):
+    for c in head.children:
+        recursive_collection_delete(c)
+
+    head.hide_select = False
+    head.hide_render = False
+    head.hide_viewport = False
+
+    for obj in head.all_objects:
+        obj.hide_select = False
+        obj.select_set(True)
+    bpy.ops.object.delete()
+
+    bpy.data.collections.remove(head)
 
 def delete_face_rig():
     # check if the face rig is already imported
     facerig = bpy.data.objects.get('MBLab_skeleton_face_rig')
     if not facerig:
         logger.critical("face rig is not added")
+        return False
+
+    # check if the face rig is already imported
+    phoneme = bpy.data.objects.get('MBLab_skeleton_phoneme_rig')
+    if not phoneme:
+        algorithms.print_log_report("CRITICAL", "face rig is not added")
         return False
 
     data_path = algorithms.get_data_path()
@@ -165,7 +182,11 @@ def delete_face_rig():
 
     # delete the face rig
     facerig.select_set(True)
+    phoneme.select_set(True)
     bpy.ops.object.delete()
+    c = bpy.data.collections.get('Face_Rig')
+    if c:
+       recursive_collection_delete(c)
 
     # restore the original selection
     for ob in bpy.context.scene.objects:
