@@ -20,7 +20,7 @@ All changes will be documented here
  - Armature Toe Bone flipped pose bug
 
  ## Known Issues
- - Proxy Fitting broken at this time, advised to not use until fixed
+ - Proxy Fitting was broken, now it is fixed
 
 
 # MB-Lab 1.7.1
