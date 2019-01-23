@@ -192,9 +192,9 @@ class Humanoid:
 
         self.has_data = False
         self.obj_name = obj.name
-        logger.info("INFO","Found the humanoid: {0}".format(character_identifier))
+        logger.info("Found the humanoid: {0}".format(character_identifier))
 
-        logger.info("INFO","Init the database...")
+        logger.info("Init the database...")
 
         self.no_categories = "BasisAsymTest"
         self.categories = {}
@@ -335,7 +335,7 @@ class Humanoid:
         for prop in category.get_all_properties():
             self.character_data[prop] = 0.5
         self.update_character(category_name=category.name, mode = "update_all")
-        logger.info("INFO","Category resetted in {0} secs".format(time.time()-time1))
+        logger.info("Category resetted in {0} secs".format(time.time()-time1))
 
 
     def exists_measure_database(self):
@@ -413,7 +413,7 @@ class Humanoid:
             self.update_character(mode = "update_directly_verts")
             algorithms.select_and_change_mode(obj,'OBJECT')
 
-            logger.info("INFO","Human fitting in {0} secs".format(time.time()-time2))
+            logger.info("Human fitting in {0} secs".format(time.time()-time2))
 
     def clean_verts_to_process(self):
         self.morph_engine.verts_to_update.clear()
@@ -456,7 +456,7 @@ class Humanoid:
         filename_root = os.path.splitext(filename)[0]
         new_filename = filename_root + 'backup.json'
         new_filepath = os.path.join(dir_path,new_filename)
-        logger.info("INFO","Saving backup character {0}".format(algorithms.simple_path(new_filepath)))
+        logger.info("Saving backup character {0}".format(algorithms.simple_path(new_filepath)))
         self.save_character(new_filepath, export_proportions=False, export_materials=True, export_metadata = True)
 
 
@@ -504,7 +504,7 @@ class Humanoid:
             if hasattr(obj, material_data_prop):
                 setattr(obj, material_data_prop, value)
             else:
-                algorithms.print_log_report("WARNING","material {0}  not found".format(material_data_prop))
+                logger.warning("material {0}  not found".format(material_data_prop))
         self.material_realtime_activated = True
 
 
@@ -532,7 +532,7 @@ class Humanoid:
         #if finish_it:
             #self.morph_engine.apply_finishing_morph()
 
-        logger.info("INFO","Expression corrected in {0} secs".format(time.time()-time1))
+        logger.info("Expression corrected in {0} secs".format(time.time()-time1))
 
 
     def reset_character(self):
@@ -546,7 +546,7 @@ class Humanoid:
         self.update_character(mode = "update_all")
 
 
-        logger.info("INFO","Character reset in {0} secs".format(time.time()-time1))
+        logger.info("Character reset in {0} secs".format(time.time()-time1))
 
 
     def reset_metadata(self):
@@ -576,7 +576,7 @@ class Humanoid:
                 setattr(obj, meta_data_prop, value)
             else:
                 if "last" not in meta_data_prop:
-                    logger.error("WARNING","metadata {0}.{1} not found".format(obj.name,meta_data_prop))
+                    logger.error("metadata {0}.{1} not found".format(obj.name,meta_data_prop))
         self.metadata_realtime_activated = True
 
 
@@ -606,10 +606,10 @@ class Humanoid:
             try:
                 del obj[prop]
             except:
-                logger.info("INFO","Property {0} was not used by this character".format(prop))
+                logger.info("Property {0} was not used by this character".format(prop))
 
         armat = self.sk_engine.get_armature()
-        logger.info("INFO","Properties deleted in {0} secs".format(time.time()-time1))
+        logger.info("Properties deleted in {0} secs".format(time.time()-time1))
 
 
     def recover_prop_values_from_obj_attr(self):
@@ -909,7 +909,7 @@ class Humanoid:
             self.update_character(mode = "update_metadata")
 
         else:
-            logger.warning("WARNING","{0} data not present".format(transformation_id))
+            logger.warning("{0} data not present".format(transformation_id))
 
 
     def init_delta_measures(self):
@@ -1008,7 +1008,7 @@ class Humanoid:
                                         self.character_data[prop] = self.search_best_value(measure_name,wish_measure,modifier,prop)
                                 self.combine_morphings(modifier)
 
-            logger.info("INFO","Measures fitting in {0} secs".format(time.time()-time1))
+            logger.info("Measures fitting in {0} secs".format(time.time()-time1))
 
 
     def save_character(self, filepath, export_proportions=True, export_materials=True, export_metadata = True):
@@ -1067,14 +1067,14 @@ class Humanoid:
 
         if "manuellab_vers" in charac_data:
             if not algorithms.check_version(charac_data["manuellab_vers"]):
-                logger.warning("WARNING","{0} created with vers. {1}. Current vers is {2}".format(log_msg_type,charac_data["manuellab_vers"],self.lab_vers))
+                logger.warning("{0} created with vers. {1}. Current vers is {2}".format(log_msg_type,charac_data["manuellab_vers"],self.lab_vers))
         else:
-            logger.info("INFO","No lab version specified in {0}".format(log_msg_type))
+            logger.info("No lab version specified in {0}".format(log_msg_type))
 
         if "structural" in charac_data:
             char_data = charac_data["structural"]
         else:
-            logger.warning("WARNING","No structural data in  {0}".format(log_msg_type))
+            logger.warning("No structural data in  {0}".format(log_msg_type))
             char_data = {}
 
         if "materialproperties" in charac_data:
@@ -1086,7 +1086,7 @@ class Humanoid:
         if "metaproperties" in charac_data:
             meta_data = charac_data["metaproperties"]
         else:
-            logger.info("INFO","No metaproperties data in  {0}".format(log_msg_type))
+            logger.info("No metaproperties data in  {0}".format(log_msg_type))
             meta_data = {}
 
         if char_data != None:
@@ -1120,7 +1120,7 @@ class Humanoid:
     def load_measures(self, filepath):
         char_data = algorithms.load_json_data(filepath, "Measures data")
         if not ("measures" in char_data):
-            logger.error("ERROR","This json has not the measures info, {0}".format(algorithms.simple_path(filepath)))
+            logger.error("This json has not the measures info, {0}".format(algorithms.simple_path(filepath)))
             return None
         c_data = char_data["measures"]
         return c_data
