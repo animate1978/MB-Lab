@@ -21,6 +21,7 @@ All changes will be documented here
 
  ## Known Issues
  - Proxy Fitting was broken, now it is fixed
+ - morphengine.py and humanoid.py reverted back to 1.7.0 version with logging added
 
 
 # MB-Lab 1.7.1
