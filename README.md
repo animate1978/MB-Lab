@@ -4,7 +4,7 @@ MB-Lab is an attempt to keep the ManuelBastioniLAB Blender addon alive through c
 
 ## Blender 2.8 Support
 
-MB-Lab has been ported to work with blender 2.80
+MB-Lab has been ported to work with Blender 2.80
 
 ## Contributors wanted! Python programmers needed!
 
