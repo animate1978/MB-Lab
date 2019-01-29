@@ -1,3 +1,9 @@
+MB-Lab Documentation
+====================
+
+This is a test
+
+
 .. toctree::
     :maxdepth: 2
 	
