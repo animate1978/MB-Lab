@@ -1,9 +1,12 @@
 Installation
 ============
 
-**Install MB-Lab**
+==============
+Install MB-Lab
+==============
 
-**IMPORTANT***
+
+**IMPORTANT**
 
 Because of how Github packages releases, this WILL affect how you install MB-Lab if downloading from the release page ONLY! If you download a clone where Github renames it MB-Lab-master, you will not have issues. You need to go to that directory and rename it from MB-Lab 1.x.x to MB-Lab-1-x-x or MBLAB170 if you want to be simple, just get rid of the periods in the directory name and Blender will recognize it and add the addon to the list.
 
@@ -27,8 +30,9 @@ When the installation will be completed, a new category named "Characters" will 
 
 Close the User Preferences window. Press "N" to make the Sidebar with the MB-Lab interface appear in Blender 2.80
 
-
-**Uninstall MB-Lab**
+====================
+Uninstall MB-Lab
+====================
 
 In Blender, open the user preferences window, choosing File → User Preferences
 
