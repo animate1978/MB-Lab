@@ -105,7 +105,7 @@ Anime male style shojo02
 ========================
 
 
-.. image:: images/gallery_150_20.png
+.. image:: images/gallery_140_20.png
 
 
 ==========================
