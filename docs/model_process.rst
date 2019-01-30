@@ -1,10 +1,3 @@
-.. toctree::
-   :maxdepth: 2
-
-   model_steps
-
-
-
 Modeling Process
 ================
 
@@ -23,4 +16,10 @@ What are modeling parameters?
 Parameters are physical features that can be modified by increasing or decreasing a numerical value.
 
 Examples of parameters are the numerical values for noticeable features like weight, height, muscle and mass percentages or for detail features like nose length, eyes distance, mouth width.
+
+.. toctree::
+   :maxdepth: 2
+
+   model_steps
+
 
