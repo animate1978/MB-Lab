@@ -16,3 +16,7 @@ Contents
    :glob:
 
    installation
+   getstart
+   base_char
+   model_process
+
