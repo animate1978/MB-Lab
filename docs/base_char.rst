@@ -18,18 +18,52 @@ In order to be SFW, models don't include genitals.
 
 All the base characters available in MB-Lab are modeled by Manuel Bastioni. The models available are:
 
+==================
 * Caucasian female
+==================
+
+.. image:: images/gallery_150_23.png
+
+
+==============
 * Asian female
+==============
+=============
 * Afro female
+=============
+================
 * Caucasian male
+================
+============
 * Asian male
+============
+===========
 * Afro male
+===========
+============================
 * Anime female style shojo01
+============================
+============================
 * Anime female style shojo02
+============================
+==============================
 * Anime female style realistic
-* Anime man style shojo01
-* Anime man style shojo02
-* Anime man style realistic
+==============================
+=========================
+* Anime male style shojo01
+=========================
+=========================
+* Anime male style shojo02
+=========================
+============================
+* Anime male style realistic
+============================
+============
 * Elf female
+============
+==========
 * Elf male
+==========
+============
 * Dwarf male
+============
