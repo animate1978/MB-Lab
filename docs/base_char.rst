@@ -1,4 +1,5 @@
-Base characters in MB-Lab
+Base characters
+===============
 
 The base characters are the results of many years of experience in modelling humans. Each one is built on a professional mesh, that respects the fundamental requisites that every good model should have:
 

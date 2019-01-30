@@ -1,4 +1,5 @@
-Getting started
+Getting Started
+===============
 
 The user interface is perfectly integrated in Blender and designed to make the modelling process a simple and clear activity.
 
