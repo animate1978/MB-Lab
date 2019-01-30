@@ -8,7 +8,11 @@ This software is based on the long experience gained during the realization of v
 and collected python scripts, new algorithms and original prototypes models developed by Manuel Bastioni.
 
 
+Contents
+--------
+
 .. toctree::
-    :maxdepth: 2
-    
-	installation
+   :maxdepth: 2
+   :glob:
+
+   installation
