@@ -13,8 +13,8 @@ Contents
 
 .. toctree::
    :maxdepth: 2
-   :numbered:
 
+   about
    installation
    getstart
    base_char
