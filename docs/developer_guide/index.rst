@@ -1,2 +1,0 @@
-.. toctree::
-    :maxdepth: 2
