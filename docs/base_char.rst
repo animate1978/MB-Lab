@@ -12,58 +12,131 @@ The base characters are the results of many years of experience in modeling huma
 
 All the characters include complete teeth and eye models and all them provide a real geometry eyelashes and eyebrows, in order to be exportable everywhere, without being dependent from Blender particles system.
 
+.. image:: images/base_models00.png
+
 The base characters are modeled after accurate studies of anatomy and anthropology. The proportions and face features are created using statistical data, in order to extract the average ideal character for each phenotype.
 
 In order to be SFW, models don't include genitals.
 
 All the base characters available in MB-Lab are modeled by Manuel Bastioni. The models available are:
 
-==================
-* Caucasian female
-==================
+================
+Caucasian female
+================
+
 
 .. image:: images/gallery_150_23.png
 
 
-==============
-* Asian female
-==============
-=============
-* Afro female
-=============
-================
-* Caucasian male
-================
 ============
-* Asian male
+Asian female
 ============
+
+
+.. image:: images/gallery_150_22.png
+
+
 ===========
-* Afro male
+Afro female
 ===========
-============================
-* Anime female style shojo01
-============================
-============================
-* Anime female style shojo02
-============================
-==============================
-* Anime female style realistic
-==============================
-=========================
-* Anime male style shojo01
-=========================
-=========================
-* Anime male style shojo02
-=========================
-============================
-* Anime male style realistic
-============================
-============
-* Elf female
-============
+
+
+.. image:: images/gallery_150_27.png
+
+
+==============
+Caucasian male
+==============
+
+
+.. image:: images/gallery_150_16.png
+
+
 ==========
-* Elf male
+Asian male
 ==========
-============
-* Dwarf male
-============
+
+
+.. image:: images/gallery_150_24.png
+
+
+=========
+Afro male
+=========
+
+
+.. image:: images/gallery_150_20.png
+
+
+==========================
+Anime female style shojo01
+==========================
+
+
+.. image:: images/gallery_140_18.png
+
+
+==========================
+Anime female style shojo02
+==========================
+
+
+.. image:: images/gallery_140_21.png
+
+
+============================
+Anime female style realistic
+============================
+
+
+.. image:: images/gallery_140_23.png
+
+
+========================
+Anime male style shojo01
+========================
+
+
+.. image:: images/gallery_140_19.png
+
+
+========================
+Anime male style shojo02
+========================
+
+
+.. image:: images/gallery_150_20.png
+
+
+==========================
+Anime male style realistic
+==========================
+
+
+.. image:: images/gallery_140_22.png
+
+
+==========
+Elf female
+==========
+
+
+.. image:: images/gallery_150_18.png
+
+
+========
+Elf male
+========
+
+
+.. image:: images/gallery_150_26.png
+
+
+==========
+Dwarf male
+==========
+
+
+.. image:: images/gallery_140_24.png
+
+
