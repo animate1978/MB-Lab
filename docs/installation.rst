@@ -14,21 +14,43 @@ Because of how Github packages releases, this WILL affect how you install MB-Lab
 
 In Blender, open the user preferences window, choosing File → User Preferences
 
+
+.. image:: images/installation00.png
+
+
 * Step 2
 
 Press the "Install from File" button in the left bottom side of the window
+
+
+.. image:: images/installation01.png
+
 
 * Step 3
 
 Use the file selector window in order to find the zip file, select it and click the button "Install from File".
 
+
+.. image:: images/installation02.png
+
+
+
 * Step 4
 
 When the installation will be completed, a new category named "Characters" will appear in the Categories list. Select it and enable the lab using the check button. When the plugin is enabled, remember to press the button "Save User Settings", in order to load the lab automatically each time you start Blender.
 
+
+.. image:: images/installation03.png
+
+
+
 * Step 5
 
 Close the User Preferences window. Press "N" to make the Sidebar with the MB-Lab interface appear in Blender 2.80
+
+
+.. image:: images/installation04.png
+
 
 ====================
 Uninstall MB-Lab
