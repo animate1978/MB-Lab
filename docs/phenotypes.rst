@@ -11,43 +11,43 @@ The available phenotypes depend by the base character selected:
 
 * Afro phenotypes
 
-.. image:: images/phenotype01.png
+.. image:: images/phenotypes01.png
 
-.. image:: images/phenotype02.png
+.. image:: images/phenotypes02.png
 
-.. image:: images/phenotype03.png
+.. image:: images/phenotypes03.png
 
-.. image:: images/phenotype04.png
+.. image:: images/phenotypes04.png
 
 * Asian phenotypes
 
-.. image:: images/phenotype05.png
+.. image:: images/phenotypes05.png
 
-.. image:: images/phenotype06.png
+.. image:: images/phenotypes06.png
 
-.. image:: images/phenotype07.png
+.. image:: images/phenotypes07.png
 
-.. image:: images/phenotype08.png
+.. image:: images/phenotypes08.png
 
-.. image:: images/phenotype18.png
+.. image:: images/phenotypes18.png
 
-.. image:: images/phenotype09.png
+.. image:: images/phenotypes09.png
 
-.. image:: images/phenotype10.png
+.. image:: images/phenotypes10.png
 
 * Caucasian phenotypes
 
-.. image:: images/phenotype11.png
+.. image:: images/phenotypes11.png
 
-.. image:: images/phenotype12.png
+.. image:: images/phenotypes12.png
 
-.. image:: images/phenotype13.png
+.. image:: images/phenotypes13.png
 
-.. image:: images/phenotype14.png
+.. image:: images/phenotypes14.png
 
-.. image:: images/phenotype15.png
+.. image:: images/phenotypes15.png
 
-.. image:: images/phenotype16.png
+.. image:: images/phenotypes16.png
 
-.. image:: images/phenotype17.png
+.. image:: images/phenotypes17.png
 

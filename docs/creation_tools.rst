@@ -18,7 +18,7 @@ Meta parameters
 
 The metaparameters are the most intuitive way to define a character. Using this technology, the definition of the main traits of the character is matter of few seconds. The user interface is very easy to understand: just three intuitive sliders for the values of age, mass and tone.
 
-.. image images/metaparameters01.png
+.. image:: images/metaparameters01.png
 
 * The age can vary from 18 to 80 y.o.
 * The mass can vary from 0% to 100%.
@@ -45,7 +45,7 @@ The system uses this kind of identifiers because they are less difficult to reme
 
 Types can be selected via the intuitive GUI in the main panel, it's also possible to use the "Mix" option to blend different types.
 
-.. image images/mix_types01.png
+.. image:: images/mix_types01.png
 
 
 
@@ -73,11 +73,11 @@ Low level parameters are modifiers that act on a small detail of the anatomy lik
 
 There are hundreds of modifiers, hidden by default. The control GUI can be enabled checking the option "Body, face and measure parameters" as indicated in the image below.
 
-.. image images/parameters00.png
+.. image:: images/parameters00.png
 
 When enabled, the interface will show a new set of tools.
 
-.. image images/parameters02.png
+.. image:: images/parameters02.png
 
 By default, the measures are not enabled and the column shows only the anatomic details. The upper element is the selector for the morphing category.
 
