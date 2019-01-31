@@ -30,3 +30,8 @@ The character is completed in five easy steps:
 * Defining the pose
 * Adding clothes/proxies
 * Saving/exporting the character
+
+.. toctree::
+   :maxdepth: 2
+
+   creation_tools
