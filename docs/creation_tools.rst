@@ -18,6 +18,8 @@ Meta parameters
 
 The metaparameters are the most intuitive way to define a character. Using this technology, the definition of the main traits of the character is matter of few seconds. The user interface is very easy to understand: just three intuitive sliders for the values of age, mass and tone.
 
+.. image images/metaparameters01.png
+
 * The age can vary from 18 to 80 y.o.
 * The mass can vary from 0% to 100%.
 * The tone can very from 0% to 100%
@@ -43,6 +45,8 @@ The system uses this kind of identifiers because they are less difficult to reme
 
 Types can be selected via the intuitive GUI in the main panel, it's also possible to use the "Mix" option to blend different types.
 
+.. image images/mix_types01.png
+
 
 
 A "special-type" differs from the "type" because it can describe non-realistic creatures (as example comic heroes, brute and other people with augmented proportions) or data-only entities (for example "older" and "younger" specialtypes).
@@ -60,3 +64,29 @@ Also the library includes the important database for ethnic phenotypes:
 * Caucasian phenotypes
 
 There are also types and phenotypes for anime characters
+
+=================
+Detail Parameters
+=================
+
+Low level parameters are modifiers that act on a small detail of the anatomy like the point of nose, the inner corner of the eyes and the size of the mouth.
+
+There are hundreds of modifiers, hidden by default. The control GUI can be enabled checking the option "Body, face and measure parameters" as indicated in the image below.
+
+.. image images/parameters00.png
+
+When enabled, the interface will show a new set of tools.
+
+.. image images/parameters02.png
+
+By default, the measures are not enabled and the column shows only the anatomic details. The upper element is the selector for the morphing category.
+
+A morphing category is a body element (for example the head) or a set of morphings (for example the expression units).
+
+Enabling the measures editor, the GUI is divided in two main sections: the column of anatomical parameters and the column of dimensions. The second column is dedicated to measures: see this page for more information.
+
+Depending on the category selected, the panel will show some sliders to increase or decrease a specific feature. In most of cases the parameters are very intuitive, for example increasing or decreasing the length of upper arm, but in some cases you need to try to see what happens, for example increasing or decreasing the dolichocefal value of the head.
+
+The button "Reset category" resets all the sliders of the selected category, setting their value to 0.5.
+
+The button "Reset All" resets all the sliders of all categories, setting their value to 0.5.
