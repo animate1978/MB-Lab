@@ -52,13 +52,13 @@ Close the User Preferences window. Press "N" to make the Sidebar with the MB-Lab
 .. image:: images/installation04.png
 
 
-====================
+================
 Uninstall MB-Lab
-====================
+================
 
 In Blender, open the user preferences window, choosing File → User Preferences
 
-In the addons tab, look for Characters → MB-Lab
+In the addon tab, look for Characters → MB-Lab
 
 .. image:: images/hot_to_remove01.png
 

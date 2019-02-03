@@ -1,7 +1,7 @@
 Creation Tools
 ==============
 
-After the initialization, a human model with basic proportions is placed in the center of the Blender scene and MB-Lab panel will show a series of tools to modify it.
+After the character creation, a human model with basic proportions is placed in the center of the Blender scene and MB-Lab panel will show a series of tools to modify it.
 
 There are six ways to manipulate the character:
 
