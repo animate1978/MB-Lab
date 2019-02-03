@@ -1,7 +1,7 @@
 Getting Started
 ===============
 
-The user interface is perfectly integrated in Blender and designed to make the modeling process a simple and clear activity.
+The user interface is perfectly integrated in Blender and designed to make the modeling process a simple and clear process.
 
 .. image:: images/getting_started00.png
 
