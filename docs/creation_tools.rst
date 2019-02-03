@@ -33,9 +33,9 @@ Behind these three operators there is a complex algorithm that evaluates in real
 The effect of meta parameters is very easy to predict: increasing the mass will lead to an increment of the body volume, but the "quality" of this mass depends by the tone. Of course, both "tone" and "mass" levels are affected by the age.
 
 
-========================================
-Define the character with preset library
-========================================
+==============
+Preset library
+==============
 
 Another way to quickly define a character is loading the parameters directly from the preset library
 
@@ -90,3 +90,105 @@ Depending on the category selected, the panel will show some sliders to increase
 The button "Reset category" resets all the sliders of the selected category, setting their value to 0.5.
 
 The button "Reset All" resets all the sliders of all categories, setting their value to 0.5.
+
+
+================
+Random Generator
+================
+
+The other way to create characters is using the quasi-random generator, that it's not entirely random, but partially controlled by some parameters.
+
+The engine includes some new algorithms, where the most interesting is probably the "heritage" option, that automatically creates variations of character preserving the prevalent "dna" characteristics.
+
+Another fundamental parameter is the scale of the randomization.
+
+It goes from "Light" level to "Extreme" level, through five degrees of intensity.
+
+Using the first two levels, the generated characters will be realistic and plausible in the range of human variations. using other parameters the results will tend to be unrealistic and grotesque.
+
+Five characters created with the realistic engine
+
+.. image:: images/generator02.png
+
+Five characters created using the extreme engine
+
+.. image:: images/generator03.png
+
+The main feature that makes the quasi-random generator a very powerful modeling tool is that it can be used in combination with the other MB-Lab tools. For example, you can select a phenotype in the first MB-Lab section, then go in the generator, enable the heritage and create many characters from the same family.
+
+.. image:: images/generator04.png
+
+The image above shows five characters created as derivation with heritage from the standard North European.
+
+The result without enabling the heritage option is shown in the image below.
+
+.. image:: images/generator05.png
+
+Other constrains are more intuitive: during the generation it's possible to preserve the mass, the muscles, the height and the face of the characters.
+
+This is very useful, for example if you like the face of the random generated character, but not the body, you can constrain the face and generate new variations.
+
+There is also a special option, the "tone and mass" one.
+
+.. image:: images/generator06.png
+
+Enabling it, a new couple of sliders will appear, to set the body mass and the body tone of the generated characters. These settings will overwrite the effects of the engine selected: for example if you set the mass slider to max, your character will have always the max mass, no matter if the engine says "light" variations.
+
+.. image:: images/generator07.png
+
+
+=============
+Auto-Modeling
+=============
+
+The auto-modeling system is an innovative way to define the character starting from a 3D draft.
+
+.. image:: images/automodelling02.png
+
+The user quickly modifies the character to vaguely suggest what he has in mind and the system works on it, correcting the errors and creating a character that best fits the user input.
+
+With this method, the artist can create his base character practically with two clicks.
+
+.. image:: images/automodelling01.png
+
+The first button, "auto modeling" corrects the anomalies in order to convert the model in the corresponding realistic human; the button "smooth" normalizes the character, making it more "uniform" and smooth.
+
+The system doesn't use math methods like PCA or SVD, but relies on the theory of proportions, that's more familiar to artists and already well studied by Renaissance geniuses as Leonardo Da Vinci and Piero Della Francesca.
+
+The algorithm is optimized and doesn't require big system resources. Practically it analyzes the given proportions using some smart algorithms and then creates a coherent character that fits these proportions as close as possible.
+
+"Coherent" means that the system can recognize, for example, if a big biceps circumference refers to a bodybuilder or to an overweight man so it doesn't return a character with the torso of a bodybuilder and the arms of an overweight man.
+
+
+========
+Measures
+========
+
+It's possible to define the shape of characters using a set of body measures. This new feature is available only for human characters (i.e. it's not available for anime).
+
+.. image:: images/measures01.png
+
+The measures editor is enabled selecting the "Body measures" option.
+
+When the measures editor is enabled, the "body parameters" panel contains two main sections: the column of anatomical parameters and the column of measures. The first column is dedicated to anatomical details: see this page for more information. The second column contains the main anthropometric measures used in design, anthropology and tailoring.
+
+There are three methods to set the measures of body: direct, indirect and loading a measure file.
+
+**Direct method**
+
+The direct method lies in setting the values (in cm or inches) directly in the measure column. Pressing the "Automeasure" button the system will analyse the proportions and will return a coherent human that fits as close as possible all the given values. Comparing the measures with a database, the system can recognize, for example, if a big upperarm circumference is part of a bodybuilder or an overweight character and create a consistent model.
+
+**Indirect method**
+
+The indirect method lies in modifying the values of anatomical parameters, monitoring the changes in the measure column. It can be difficult, since each parameter usually affects many measures in the same time, but it can be a good way for little adjustements or for checking the dimensions of the character.
+
+**Loading a measure file**
+
+The system can also export and import the measures using the simple json format. This format is human readable, highly portable and simple to generate, so it can be easily adopted by external software to communicate with MB-Lab.
+
+**Precision**
+
+Due to this algorithm, the resulting measures can differ a bit from the user input. In particular if the given measures are unrealistic or very uncommon, the result can present noticeable differences. The precision of the method will increase release by release, proportionally to the growing of the lab database.
+
+The height of the character can't be assigned directly, but is automatically calculated as sum of neck, torso, buttock, upper leg, lower leg and feet height.
+

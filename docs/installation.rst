@@ -60,6 +60,9 @@ In Blender, open the user preferences window, choosing File → User Preferences
 
 In the addons tab, look for Characters → MB-Lab
 
+.. image:: images/hot_to_remove01.png
+
+
 Click on "Remove" button
 
 It is VERY important to not have multiple copies of ManuelBastioniLAB or MB-Lab, there will be conflicts! Remove the old version first, then install from file the new version.
