@@ -37,7 +37,6 @@ The character is completed in five easy steps:
    :maxdepth: 2
 
    creation_tools
-   model_types
-   phenotypes
+   after_creation_tools
 
 
