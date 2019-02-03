@@ -192,3 +192,8 @@ Due to this algorithm, the resulting measures can differ a bit from the user inp
 
 The height of the character can't be assigned directly, but is automatically calculated as sum of neck, torso, buttock, upper leg, lower leg and feet height.
 
+.. toctree::
+   :maxdepth: 2
+
+   model_types
+   phenotypes
