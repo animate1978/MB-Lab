@@ -33,10 +33,3 @@ The character is completed in five easy steps:
 * Defining the pose
 * Saving/exporting the character
 
-.. toctree::
-   :maxdepth: 3
-
-   creation_tools
-   after_creation_tools
-
-

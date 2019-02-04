@@ -32,3 +32,8 @@ The option "Use portrait studio lights" is to create a set of lights in order to
 Note: the scale is one BU (Blender Unit) = one meter.
 
 The system has to import some hundreds of morphings, so it requires some time to complete. At the end of the process the character will be ready for modification.
+
+.. toctree::
+   :maxdepth: 2
+
+   base_char

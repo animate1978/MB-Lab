@@ -14,14 +14,15 @@ Contents
 --------
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
 
    about
    installation
    getstart
-   base_char
    model_process
+   creation_tools
    skin_editor
+   after_creation_tools
    finalize
    expressions
    proxy
