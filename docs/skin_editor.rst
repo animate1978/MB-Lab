@@ -13,9 +13,9 @@ One of the first features to be disabled was the "skin age" feature which in the
 
 Behind the simple interface there is a set of complex shaders for human skin, human eyes, toon skin and toon eyes. These shaders are developed in order to simulate the variety of skin tones and work under any lighting condition:
 
-    An advanced human skin shader
-    An advanced toon skin shader
-    Shaders for eyes
+* An advanced human skin shader
+* An advanced toon skin shader
+* Shaders for eyes and teeth
 
 Skin editor
 
