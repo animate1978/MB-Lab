@@ -1,14 +1,14 @@
 Save and Export
 ===============
 
-There are many ways to save or export the character created with ManuelbastioniLAB.
+There are many ways to save or export the character created with MB-Lab.
 Finalize the character and save it as Blender file
 
 The first method is to finalize the character and then save the blend file, as a normal scene.
 
 In this case the character will be converted in a normal blend model, rigged and ready for further modifications with usual Blender tools.
 
-The detrimental using this way is that the model will lose the specific features of ManuelbastioniLAB. The advantage is that it will be independent from the script, so it can be opened even on a system without ManuelbastioniLAB addon.
+The detrimental using this way is that the model will lose the specific features of MB-Lab. The advantage is that it will be independent from the script, so it can be opened even on a system without MB-Lab addon.
 Save it directly as Blender file
 
 Alternatively it's possible to save the blend file directly, without finalize the character. In this case, when the lab detects an existing (un-finalized) character in the scene, it automatically tries the re-initialization. If the process turns out well, the lab will show the regular GUI.

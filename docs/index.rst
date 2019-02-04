@@ -14,7 +14,7 @@ Contents
 --------
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 4
 
    about
    installation
@@ -22,9 +22,12 @@ Contents
    base_char
    model_process
    skin_editor
+   finalize
    expressions
    proxy
    pose
+   license
+   developer_main
 
 
 
