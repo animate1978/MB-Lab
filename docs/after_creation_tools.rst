@@ -1,4 +1,4 @@
-Post Creation Tools
+After Creation Tools
 ===================
 
 After the modeling of your character has been finalized MB-Lab will go back to it's default UI panel.

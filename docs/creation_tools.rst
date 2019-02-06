@@ -114,15 +114,7 @@ Five characters created using the extreme engine
 
 .. image:: images/generator03.png
 
-The main feature that makes the quasi-random generator a very powerful modeling tool is that it can be used in combination with the other MB-Lab tools. For example, you can select a phenotype in the first MB-Lab section, then go in the generator, enable the heritage and create many characters from the same family.
-
-.. image:: images/generator04.png
-
-The image above shows five characters created as derivation with heritage from the standard North European.
-
-The result without enabling the heritage option is shown in the image below.
-
-.. image:: images/generator05.png
+The main feature that makes the quasi-random generator a very powerful modeling tool is that it can be used in combination with the other MB-Lab tools.
 
 Other constrains are more intuitive: during the generation it's possible to preserve the mass, the muscles, the height and the face of the characters.
 
