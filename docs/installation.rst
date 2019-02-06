@@ -8,7 +8,9 @@ Install MB-Lab
 
 **IMPORTANT**
 
-Because of how Github packages releases, this WILL affect how you install MB-Lab if downloading from the release page ONLY! If you download a clone where Github renames it MB-Lab-master, you will not have issues. You need to go to that directory and rename it from MB-Lab 1.x.x to MB-Lab-1-x-x or MBLAB170 if you want to be simple, just get rid of the periods in the directory name and Blender will recognize it and add the addon to the list.
+Because of how Github packages releases, this WILL affect how you install MB-Lab if downloading from the release page ONLY!
+If you download a clone where Github renames it **MB-Lab-master**, you will not have issues.
+You need to go to that directory and rename it from **MB-Lab 1.x.x** to **MB-Lab-1-x-x** or **MBLAB170** if you want to be simple, **just get rid of the periods in the directory name** and Blender will recognize it and add the addon to the list.
 
 * Step 1
 
