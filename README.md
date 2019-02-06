@@ -8,7 +8,7 @@ MB-Lab has been ported to work with Blender 2.80 BETA.
 
 ## Contributors wanted! Python programmers needed!
 
-We are a small bunch of developers and artists but we always need more! MB-Lab's code is quite complex and needs work, to either fix bugs or to add new features, Python programmers are always welcome! Do you have other skills? We need modelers to help with future base models for instance. Are you a specailist in rigging? We could use some help improving the rigs for MB-Lab. There are lots to do in this project, we can only do so much at a time so please feel free to join us, fork the repository and then make something cool.
+We are a small bunch of developers and artists but we always need more! MB-Lab's code is quite complex and needs work, to either fix bugs or to add new features, Python programmers are always welcome! Do you have other skills? We need modelers to help with future base models for instance. Are you a specialist in rigging? We could use some help improving the rigs for MB-Lab. There are lots to do in this project, we can only do so much at a time so please feel free to join us, fork the repository and then make something cool.
 
 ## About
 
