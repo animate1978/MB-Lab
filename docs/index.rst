@@ -23,11 +23,11 @@ Contents
    creation_tools
    skin_editor
    after_creation_tools
-   finalize
-   save_export
    expressions
    proxy
    pose
+   finalize
+   save_export
    license
    developer_main
 
