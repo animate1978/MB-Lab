@@ -1,7 +1,7 @@
 Face Rig
 ========
 
-New in MB-Lab 1.7.0 is the addition of a facial rig
+New in MB-Lab 1.7.1 is the addition of a facial rig
 
 .. image:: images/face_rig.png
 
