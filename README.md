@@ -1,12 +1,14 @@
 # MB-Lab
 
-MB-Lab is an attempt to keep the ManuelBastioniLAB Blender addon alive through community efforts.
+MB-Lab is a community developed and supported project based off ManuelBastioniLAB.
 
 ## Blender 2.8 Support
 
-MB-Lab has been ported to work with Blender 2.80
+MB-Lab has been ported to work with Blender 2.80 BETA.
 
 ## Contributors wanted! Python programmers needed!
+
+We are a small bunch of developers and artists but we always need more! MB-Lab's code is quite complex and needs work, to either fix bugs or to add new features, Python programmers are always welcome! Do you have other skills? We need modelers to help with future base models for instance. Are you a specialist in rigging? We could use some help improving the rigs for MB-Lab. There are lots to do in this project, we can only do so much at a time so please feel free to join us, fork the repository and then make something cool.
 
 ## About
 
@@ -20,13 +22,12 @@ In 2000 he started Makehuman Project, a free and open source software for the mo
 
 He is the author of Manuel Bastioni Laboratory, a free and open source add-on for Blender to create 3d humanoids. It includes the results of years of prototyping and studies realized by him during the development of his 3d graphics projects.
 
-This fork is an attempt to keep this addon going towards the next generation of Blender as the original author is no longer developing ManuelBastioniLAB
+This fork is an attempt to keep this addon going forward as the original author is no longer developing ManuelBastioniLAB
 
 ## MB-Lab 1.7.1 Notes
 
     New Facial Rig connected to shapekey expressions
     EEVEE and CYCLES specific shading networks and outputs
-    New collection of Clothing
 
 ## ManuelBastioniLAB 1.6.1a
 
