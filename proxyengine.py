@@ -66,7 +66,7 @@ class ProxyEngine:
             proxy_vertices = fit_shapekey.data
         else:
             proxy_vertices = proxy.data.vertices
-            logger.warning("Weights transfer executed without fitting (No fit shapekey found)")
+            logger.warning("WARNING","Weights transfer executed without fitting (No fit shapekey found)")
 
         body_verts_weights = [[] for v in body.data.vertices]
         for grp in body.vertex_groups:
@@ -324,7 +324,7 @@ class ProxyEngine:
 
             mask_name = "mbastlab_mask_" + proxy.name
 
-            logger.info("Fitting proxy %s", proxy.name)
+            logger.info("INFO","Fitting proxy {0}".format(proxy.name))
             selected_objs_names = algorithms.get_objects_selected_names()
 
             algorithms.disable_object_modifiers(proxy, ['ARMATURE', 'SUBSURF', 'MASK'])
