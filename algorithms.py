@@ -29,7 +29,7 @@ from . import settings as s
 
 logger = logging.getLogger(__name__)
 
-DEBUG_LEVEL = s.DEBUG_LEVEL
+DEBUG_LEVEL = s.debug_level
 
 
 def print_log_report(level, text_to_write):
