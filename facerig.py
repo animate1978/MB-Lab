@@ -1,3 +1,19 @@
+# MB-Lab
+
+# MB-Lab fork website : https://github.com/animate1978/MB-Lab
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import logging
 import json
 import os
@@ -5,7 +21,6 @@ import os
 import bpy
 
 from . import algorithms
-
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +40,6 @@ def populate_modifier(mod, m):
     mod.coefficients[0] = m['coefficients'][0]
     mod.coefficients[1] = m['coefficients'][1]
 
-
 def populate_modifiers(modifiers, mlist):
     i = 0
     mod = modifiers[0]
@@ -37,9 +51,8 @@ def populate_modifiers(modifiers, mlist):
             mod = modifiers.new(m['type'])
             populate_modifier(mod, m)
 
-
 def populate_variable(v, var):
-    face_rig = bpy.data.objects['MBLab_skeleton_face_rig']
+    face_rig = bpy.data.objects[var['targets'][0]['id_name']]
 
     v.name = var['name']
     v.type = var['type']
@@ -60,8 +73,8 @@ def add_rm_drivers(drivers, add=True):
             logger.critical("%s shape key not found", shape_name)
             continue
         check = bpy.data.objects[mname].data.shape_keys.animation_data and \
-            bpy.data.objects[mname].data.shape_keys.animation_data.drivers.\
-            find(v['data_path'])
+                bpy.data.objects[mname].data.shape_keys.animation_data.drivers.\
+                    find(v['data_path'])
         if check and add:
             logger.critical("%s shape key already has animation data", shape_name)
             continue
@@ -133,15 +146,36 @@ def setup_face_rig():
 
     with open(json_file, 'r') as f:
         drivers = json.load(f)
-        build_drivers(drivers)
+        add_rm_drivers(drivers)
 
     return True
+
+def recursive_collection_delete(head):
+    for c in head.children:
+        recursive_collection_delete(c)
+
+    head.hide_select = False
+    head.hide_render = False
+    head.hide_viewport = False
+
+    for obj in head.all_objects:
+        obj.hide_select = False
+        obj.select_set(True)
+    bpy.ops.object.delete()
+
+    bpy.data.collections.remove(head)
 
 def delete_face_rig():
     # check if the face rig is already imported
     facerig = bpy.data.objects.get('MBLab_skeleton_face_rig')
     if not facerig:
         logger.critical("face rig is not added")
+        return False
+
+    # check if the face rig is already imported
+    phoneme = bpy.data.objects.get('MBLab_skeleton_phoneme_rig')
+    if not phoneme:
+        algorithms.print_log_report("CRITICAL", "face rig is not added")
         return False
 
     data_path = algorithms.get_data_path()
@@ -165,11 +199,14 @@ def delete_face_rig():
 
     # delete the face rig
     facerig.select_set(True)
+    phoneme.select_set(True)
     bpy.ops.object.delete()
+    c = bpy.data.collections.get('Face_Rig')
+    if c:
+       recursive_collection_delete(c)
 
     # restore the original selection
     for ob in bpy.context.scene.objects:
         ob.select_set(orig_selection[ob.name])
 
     return True
-
