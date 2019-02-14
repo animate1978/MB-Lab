@@ -240,7 +240,7 @@ class MorphingEngine:
     def compare_file_proportions(self, filepath):
         char_data = algorithms.load_json_data(filepath, "Proportions data")
 
-        if not "proportion_index" in char_data:
+        if "proportion_index" not in char_data:
             logger.info("File %s does not contain proportions", algorithms.simple_path(filepath))
             return None
 

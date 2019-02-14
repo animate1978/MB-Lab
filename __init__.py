@@ -2083,7 +2083,10 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                         m_unit = "cm"
                         if obj.mblab_use_inch:
                             m_unit = "Inches"
-                        col.label(text="Height: {0} {1}".format(round(getattr(obj, "body_height_Z", 0), 3), m_unit))
+                            inches = round(getattr(obj, "body_height_Z", 0), 3)
+                            col.label(text="Height: {0} {1} ({2}'{3}\"".format(inches, m_unit, int(inches/12), int(inches % 12)))
+                        else:
+                            col.label(text="Height: {0} {1}".format(round(getattr(obj, "body_height_Z", 0), 3), m_unit))
                         for measure in sorted(mblab_humanoid.measures.keys()):
                             if measure != "body_height_Z":
                                 if hasattr(obj, measure):
