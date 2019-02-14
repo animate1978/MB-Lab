@@ -106,7 +106,6 @@ def add_rm_drivers(drivers, add=True):
             v = driver.driver.variables.new()
             populate_variable(v, var)
 
-
 def setup_face_rig():
     # check if the face rig is already imported
     if bpy.data.objects.find('MBLab_skeleton_face_rig') != -1:
@@ -210,3 +209,4 @@ def delete_face_rig():
         ob.select_set(orig_selection[ob.name])
 
     return True
+
