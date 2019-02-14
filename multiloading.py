@@ -17,29 +17,6 @@ def namesofallfile(thefiletype, thepath="", filename="*"):
 
 
 
-class PathDirectory:  # TODO determine if needed. With pathlib I don't think it is
-    """
-    This is a map of the the "project" directories remapped/'merged' together.
-    It should NOT move files around in the data folder.
-    """
-    # adapted from https://stackoverflow.com/questions/18510733/python-mapping-all-files-inside-a-folder
-
-    def __init__(self):
-        self.full_config = []
-        self.projects = []
-        self.get_proj()
-
-    def get_proj(self):
-        print("get_proj")
-        for i, projects in enumerate(dr.iterdir()):
-            inproj = projects
-            self.projects.append(inproj)
-            print(inproj.name)
-        print(list(dr.glob('**/data/*.json')))
-
-
-
-
 
 
 
