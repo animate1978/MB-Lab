@@ -21,15 +21,15 @@ import time
 import os
 import json
 import array
+
 import mathutils
 import bpy
 
 from .utils import get_object_parent
-from . import settings as s
 
 logger = logging.getLogger(__name__)
 
-DEBUG_LEVEL = s.debug_level
+DEBUG_LEVEL = 3
 
 
 def print_log_report(level, text_to_write):
