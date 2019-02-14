@@ -39,7 +39,7 @@ class MaterialEngine:
 
         image_file_names = {
             "displ_data": character_config["texture_displacement"],
-            "body_derm": character_config["texture_diffuse"],
+            "body_derm": character_config["texture_albedo"],
             "body_displ": character_config["name"]+"_displ.png",
             "body_spec": character_config["texture_specular"],
             "body_rough": character_config["texture_roughness"],
@@ -88,7 +88,7 @@ class MaterialEngine:
 
     @property
     def texture_eyes_exist(self):
-        return os.path.isfile(self.image_file_paths["eyes_diffuse"])
+        return os.path.isfile(self.image_file_paths["eyes_albedo"])
 
     @property
     def texture_bump_exist(self):
@@ -163,7 +163,7 @@ class MaterialEngine:
                     value = material_parameters[node.name]
                     algorithms.set_node_output_value(node, 0, value)
                 elif update_textures_nodes:
-                    if "_skn_diffuse" in node.name:
+                    if "_skn_albedo" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["body_derm"])
                     if "_skn_specular" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["body_spec"])
@@ -172,12 +172,12 @@ class MaterialEngine:
                                                   self.image_file_names["body_rough"])
                     if "_skn_subdermal" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["body_subd"])
-                    if "_eys_diffuse" in node.name:
+                    if "_eys_albedo" in node.name:
                         self.assign_image_to_node(material.name, node.name,
                                                   self.image_file_names["eyes_diffuse"])
-                    if "_eylsh_diffuse" in node.name:
+                    if "_eylsh_albedo" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["body_derm"])
-                    if "_tth_diffuse" in node.name:
+                    if "_tth_albedo" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["body_derm"])
                     if "_skn_bump" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["body_bump"])
