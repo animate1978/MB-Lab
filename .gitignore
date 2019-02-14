@@ -1,1 +1,10 @@
 __pycache__
+.idea/
+.idea/encodings.xml
+.idea/MB-Lab.iml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/workspace.xml
+Runblender.bat.lnk
+.idea/inspectionProfiles/Project_Default.xml
