@@ -43,7 +43,7 @@ class MaterialEngine:
             "body_displ": character_config["name"]+"_displ.png",
             "body_spec": character_config["texture_specular"],
             "body_rough": character_config["texture_roughness"],
-            "eyes_diffuse": character_config["texture_eyes"],
+            "eyes_albedo": character_config["texture_eyes"],
             "body_bump": character_config["texture_bump"],
             "body_subd": character_config["texture_subdermal"],
         }
@@ -174,7 +174,7 @@ class MaterialEngine:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["body_subd"])
                     if "_eys_albedo" in node.name:
                         self.assign_image_to_node(material.name, node.name,
-                                                  self.image_file_names["eyes_diffuse"])
+                                                  self.image_file_names["eyes_albedo"])
                     if "_eylsh_albedo" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["body_derm"])
                     if "_tth_albedo" in node.name:
