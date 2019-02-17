@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 bl_info = {
     "name": "MB-Lab",
     "author": "Manuel Bastioni",
-    "version": (1, 7, 1),
+    "version": (1, 7, 2),
     "blender": (2, 80, 0),
     "location": "View3D > Tools > MB-Lab",
     "description": "A complete lab for character creation",
@@ -2080,13 +2080,13 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                         col.prop(scn, 'mblab_measure_filter')
                         col.operator("mbast.measures_apply")
 
-                        m_unit = "cm"
                         if obj.mblab_use_inch:
-                            m_unit = "Inches"
-                            inches = round(getattr(obj, "body_height_Z", 0), 3)
-                            col.label(text="Height: {0} {1} ({2}'{3}\"".format(inches, m_unit, int(inches/12), int(inches % 12)))
+                            a_inch = getattr(obj, "body_height_Z", 0)
+                            m_feet = int(a_inch / 12)
+                            m_inch = int(a_inch % 12)
+                            col.label(text="Height: {0}ft {1}in ({2}in)".format(m_feet, m_inch, round(a_inch, 3)))
                         else:
-                            col.label(text="Height: {0} {1}".format(round(getattr(obj, "body_height_Z", 0), 3), m_unit))
+                            col.label(text="Height: {0} cm".format(round(getattr(obj, "body_height_Z", 0), 3)))
                         for measure in sorted(mblab_humanoid.measures.keys()):
                             if measure != "body_height_Z":
                                 if hasattr(obj, measure):
