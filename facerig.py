@@ -168,13 +168,13 @@ def delete_face_rig():
     # check if the face rig is already imported
     facerig = bpy.data.objects.get('MBLab_skeleton_face_rig')
     if not facerig:
-        logger.critical("face rig is not added")
+        logger.critical("face rig is not added due to missing facerig")
         return False
 
     # check if the face rig is already imported
     phoneme = bpy.data.objects.get('MBLab_skeleton_phoneme_rig')
     if not phoneme:
-        algorithms.print_log_report("CRITICAL", "face rig is not added")
+        logger.critical("face rig is not added due to phoneme")
         return False
 
     data_path = algorithms.get_data_path()
