@@ -126,10 +126,10 @@ class MorphingEngine:
 
         #Checks:
         if len(self.final_form) != len(self.base_form):
-            logger.critical("CRITICAL","Vertices database not coherent with the vertices in the obj {0}".format(self.obj_name))
+            logger.critical("Vertices database not coherent with the vertices in the obj {0}".format(self.obj_name))
         #TODO: add more checks
 
-        logger.info("INFO","Databases loaded in {0} secs".format(time.time()-time1))
+        logger.info("Databases loaded in {0} secs".format(time.time()-time1))
 
     def init_final_form(self):
         obj = self.get_object()
@@ -146,7 +146,7 @@ class MorphingEngine:
         return None
 
     def error_msg(self, path):
-        logger.warning("WARNING","Database file not found: {0}".format(algorithms.simple_path(path)))
+        logger.warning("Database file not found: {0}".format(algorithms.simple_path(path)))
 
     def reset(self, update=True):
         for i in range(len(self.base_form)):
@@ -180,13 +180,13 @@ class MorphingEngine:
                     morph_deltas.append([d_data[0], t_delta])
                     modified_verts.add(d_data[0])
                 if morph_name in self.morph_data:
-                    logger.warning("WARNING","Morph {0} duplicated while loading morphs from file".format(morph_name))
+                    logger.warning("Morph {0} duplicated while loading morphs from file".format(morph_name))
 
                 self.morph_data[morph_name] = morph_deltas
                 self.morph_values[morph_name] = 0.0
                 self.morph_modified_verts[morph_name] = modified_verts
-            logger.info("INFO","Morph database {0} loaded in {1} secs".format(algorithms.simple_path(morph_data_path),time.time()-time1))
-            logger.info("INFO","Now local morph data contains {0} elements".format(len(self.morph_data)))
+            logger.info("Morph database {0} loaded in {1} secs".format(algorithms.simple_path(morph_data_path),time.time()-time1))
+            logger.info("Now local morph data contains {0} elements".format(len(self.morph_data)))
 
 
     #def apply_finishing_morph(self):
@@ -200,7 +200,7 @@ class MorphingEngine:
         #if not self.forma_data:
             #self.forma_data = proxyengine.load_forma_database(self.morph_forma_path)
         #proxyengine.calculate_finishing_morph(obj, self.boundary_verts, self.forma_data, threshold=0.25)
-        #logger.info("INFO","Finishing applied in {0} secs".format(time.time()-time1))
+        #logger.info("Finishing applied in {0} secs".format(time.time()-time1))
 
     def calculate_measures(self,measure_name = None,vert_coords=None):
 
@@ -216,7 +216,7 @@ class MorphingEngine:
         else:
             for measure_name in self.measures_data.keys():
                 measures[measure_name] = self.calculate_measures(measure_name, vert_coords)
-            logger.debug("DEBUG","Measures calculated in {0} secs".format(time.time()-time1))
+            logger.debug("Measures calculated in {0} secs".format(time.time()-time1))
             return measures
 
     def calculate_proportions(self, measures):
@@ -249,7 +249,7 @@ class MorphingEngine:
 
             return (delta_v.length,filepath)
         else:
-            logger.info("INFO","File {0} does not contain proportions".format(algorithms.simple_path(filepath)))
+            logger.info("File {0} does not contain proportions".format(algorithms.simple_path(filepath)))
 
 
     def compare_data_proportions(self):
@@ -261,9 +261,9 @@ class MorphingEngine:
                 if "json" in extension:
                     scores.append(self.compare_file_proportions(os.path.join(self.bodies_data_path,database_file)))
             scores.sort(key=operator.itemgetter(0), reverse=False)
-            logger.info("INFO","Measures compared with database in {0} seconds".format(time.time()-time1))
+            logger.info("Measures compared with database in {0} seconds".format(time.time()-time1))
         else:
-            logger.warning("WARNING","Bodies database not found")
+            logger.warning("Bodies database not found")
         return scores
 
 
@@ -320,13 +320,13 @@ class MorphingEngine:
         for vert in obj.data.vertices:
             stored_vertices.append(mathutils.Vector(vert.co))
 
-        logger.info("INFO","Storing neutral character...OK")
+        logger.info("Storing neutral character...OK")
         counter = 0
         for morph_name in sorted(self.morph_data.keys()):
             if "Expression" in morph_name:
                 counter += 1
                 self.calculate_morph(morph_name, 1.0)
-                logger.info("INFO","Converting {} to shapekey".format(morph_name))
+                logger.info("Converting {} to shapekey".format(morph_name))
                 self.update(update_all_verts=True)
                 new_sk = algorithms.new_shapekey_from_current_vertices(obj, morph_name)
                 new_sk.value = 0
@@ -335,7 +335,7 @@ class MorphingEngine:
                 for i in range(len(self.final_form)):
                     self.final_form[i] = stored_vertices[i]
                 self.update(update_all_verts=True)
-        logger.info("INFO","Successfully converted {0} morphs in shapekeys".format(counter))
+        logger.info("Successfully converted {0} morphs in shapekeys".format(counter))
 
 
 
@@ -356,15 +356,15 @@ class MorphingEngine:
         vertices = obj.data.vertices
         for i in range(len(self.final_form)):
             self.cache_form.append(vertices[i].co.copy())
-        logger.info("INFO","Mesh cached")
+        logger.info("Mesh cached")
 
     def copy_from_cache(self):
         if len(self.final_form) == len(self.cache_form):
             for i in range(len(self.final_form)):
                 self.final_form[i] = self.cache_form[i]
-            logger.info("INFO","Mesh copied from cache")
+            logger.info("Mesh copied from cache")
         else:
-            logger.warning("WARNING","Cached mesh not found")
+            logger.warning("Cached mesh not found")
 
     def clean_the_cache(self):
         self.cache_form = []
@@ -384,7 +384,7 @@ class MorphingEngine:
                     self.verts_to_update = self.verts_to_update.union(self.morph_modified_verts[morph_name])
                 self.morph_values[morph_name] = val
         else:
-            logger.debug("DEBUG","Morph data {0} not found".format(morph_name))
+            logger.debug("Morph data {0} not found".format(morph_name))
 
 
 
