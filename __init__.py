@@ -27,6 +27,7 @@ from bpy_extras.io_utils import ExportHelper, ImportHelper
 from . import facerig
 from . import humanoid, animationengine, proxyengine
 from . import utils
+from . import algorithms
 
 logger = logging.getLogger(__name__)
 
