@@ -137,7 +137,7 @@ def exists_database(lib_path):
             logger.warning("data path %s not found", simple_path(lib_path))
     return result
 
-
+# TODO: This may be the data input we are looking for?
 def length_of_strip(vertices_coords, indices, axis="ALL"):
     strip_length = 0
     for x in range(len(indices)-1):
@@ -444,7 +444,7 @@ def is_in_list(list1, list2, position="ANY"):
                 return True
     return False
 
-
+#TODO: Calls from morphengine.py loads JSON file
 def load_json_data(json_path, description=None):
     try:
         time1 = time.time()
