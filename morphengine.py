@@ -167,10 +167,10 @@ class MorphingEngine:
     def load_bboxes_database(self, bounding_box_path):
         self.bbox_data = algorithms.load_json_data(bounding_box_path,"Bounding box data")
 
-
+    #TODO: This loads the morphs
     def load_morphs_database(self, morph_data_path):
         time1 = time.time()
-        m_data = algorithms.load_json_data(morph_data_path,"Morph data")
+        m_data = algorithms.load_json_data(morph_data_path,"Morph data") #calls algorithms.py
         if m_data:
             for morph_name, deltas in m_data.items():
                 morph_deltas = []
@@ -212,7 +212,7 @@ class MorphingEngine:
             if measure_name in self.measures_data:
                 indices =  self.measures_data[measure_name]
                 axis = measure_name[-1]
-                return algorithms.length_of_strip(vert_coords, indices, axis)
+                return algorithms.length_of_strip(vert_coords, indices, axis) #check algorithms.py
         else:
             for measure_name in self.measures_data.keys():
                 measures[measure_name] = self.calculate_measures(measure_name, vert_coords)
@@ -233,11 +233,11 @@ class MorphingEngine:
                     p5 = round(measures["upperleg_top_girth"]/measures["body_height_Z"],4)
                     self.proportion_index = [p1,p2,p3,p4,p5]
                 else:
-                    logger.error("ERROR","The 'chest_girth' measure not present in the analyzed database")
+                    logger.error("The 'chest_girth' measure not present in the analyzed database")
             else:
-                logger.error("ERROR","The 'buttock_girth' measure not present in the analyzed database")
+                logger.error("The 'buttock_girth' measure not present in the analyzed database")
         else:
-            logger.error("ERROR","The 'body_height_Z' measure not present in the analyzed database")
+            logger.error("The 'body_height_Z' measure not present in the analyzed database")
 
 
     def compare_file_proportions(self,filepath):
