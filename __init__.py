@@ -1820,7 +1820,7 @@ class LoadTemplate(bpy.types.Operator):
 
 # demo bare-bones preferences
 @addon_updater_ops.make_annotations
-class DemoPreferences(bpy.types.AddonPreferences):
+class MBPreferences(bpy.types.AddonPreferences):
 	bl_idname = __package__
 
 	# addon updater preferences
@@ -2351,7 +2351,7 @@ classes = (
     CreateFaceRig,
     DeleteFaceRig,
     LoadTemplate,
-    DemoPreferences,
+    MBPreferences,
     VIEW3D_PT_tools_ManuelbastioniLAB,
 )
 
