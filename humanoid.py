@@ -236,7 +236,7 @@ class Humanoid:
         for morph in self.morph_engine.morph_data.keys():
             self.init_character_data(morph)
 
-        logger.info("INFO","Loaded {0} categories from morph database".format(
+        logger.info("Loaded {0} categories from morph database".format(
             len(self.categories)))
         bpy.context.view_layer.objects.active = obj
         self.measures = self.morph_engine.measures
@@ -326,7 +326,7 @@ class Humanoid:
                         modifier.add(prop)
                     self.character_data[prop] = 0.5
             else:
-                logger.warning("WARNING","Wrong name for morph: {0}".format(morph_name))
+                logger.warning("Wrong name for morph: {0}".format(morph_name))
 
     def reset_category(self, categ):
         time1 = time.time()
@@ -582,7 +582,7 @@ class Humanoid:
 
     def delete_all_properties(self):
         time1 = time.time() #TODO: usare obj.keys per lavorare solo sui valory applicati
-        logger.info("INFO","Deleting custom properties")
+        logger.info("Deleting custom properties")
         obj = self.get_object()
         props_to_delete = set(["manuellab_vers", "mblab_use_inch","manuellab_rig"])
         for category in self.get_categories():
@@ -783,10 +783,10 @@ class Humanoid:
 
         self.set_subd_visibility(subdivision_value)
 
-        #logger.error("DEBUG","Character updated in {0} secs".format(time.time()-time1))
+        #logger.error("Character updated in {0} secs".format(time.time()-time1))
 
     def generate_character(self,random_value,prv_face,prv_body,prv_mass,prv_tone,prv_height,prv_phenotype,set_tone_and_mass,body_mass,body_tone,prv_fantasy):
-        logger.info("INFO","Generating character...")
+        logger.info("Generating character...")
 
         all_props = [x for x in self.character_data.keys()]
         props_to_process = all_props.copy()
@@ -945,7 +945,7 @@ class Humanoid:
                             self.delta_measures[delta_name] = [delta1,delta3]
 
 
-        logger.info("INFO","Delta init in {0} secs".format(time.time()-time1))
+        logger.info("Delta init in {0} secs".format(time.time()-time1))
 
 
     def search_best_value(self,m_name,wished_measure,human_modifier,prop):
@@ -1012,7 +1012,7 @@ class Humanoid:
 
 
     def save_character(self, filepath, export_proportions=True, export_materials=True, export_metadata = True):
-        logger.info("INFO","Exporting character to {0}".format(algorithms.simple_path(filepath)))
+        logger.info("Exporting character to {0}".format(algorithms.simple_path(filepath)))
         obj = self.get_object()
         char_data = {"manuellab_vers": self.lab_vers, "structural":dict(), "metaproperties":dict(), "materialproperties":dict()}
 
@@ -1039,7 +1039,7 @@ class Humanoid:
             output_file.close()
 
     def export_measures(self, filepath):
-        logger.info("INFO","Exporting measures to {0}".format(algorithms.simple_path(filepath)))
+        logger.info("Exporting measures to {0}".format(algorithms.simple_path(filepath)))
         obj = self.get_object()
         char_data = {"manuellab_vers": self.lab_vers, "measures":dict()}
         if obj:
@@ -1063,7 +1063,7 @@ class Humanoid:
         else:
             charac_data = data_source
 
-        logger.info("INFO","Loading character from {0}".format(log_msg_type))
+        logger.info("Loading character from {0}".format(log_msg_type))
 
         if "manuellab_vers" in charac_data:
             if not algorithms.check_version(charac_data["manuellab_vers"]):
@@ -1080,7 +1080,7 @@ class Humanoid:
         if "materialproperties" in charac_data:
             material_data = charac_data["materialproperties"]
         else:
-            logger.info("INFO","No material data in  {0}".format(log_msg_type))
+            logger.info("No material data in  {0}".format(log_msg_type))
             material_data = {}
 
         if "metaproperties" in charac_data:
