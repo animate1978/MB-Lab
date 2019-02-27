@@ -107,7 +107,7 @@ def get_user_preferences(context=None):
 class addon_updater_install_popup(bpy.types.Operator):
 	"""Check and install update if available"""
 	bl_label = "Update {x} addon".format(x=updater.addon)
-	bl_idname = updater.addon+".updater_install_popup"
+	bl_idname = "object.updater_install_popup"
 	bl_description = "Popup menu to check and display current updates available"
 	bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -209,7 +209,7 @@ class addon_updater_install_popup(bpy.types.Operator):
 # User preference check-now operator
 class addon_updater_check_now(bpy.types.Operator):
 	bl_label = "Check now for "+updater.addon+" update"
-	bl_idname = updater.addon+".updater_check_now"
+	bl_idname = "object.updater_check_now"
 	bl_description = "Check now for an update to the {x} addon".format(
 														x=updater.addon)
 	bl_options = {'REGISTER', 'INTERNAL'}
@@ -248,7 +248,7 @@ class addon_updater_check_now(bpy.types.Operator):
 
 class addon_updater_update_now(bpy.types.Operator):
 	bl_label = "Update "+updater.addon+" addon now"
-	bl_idname = updater.addon+".updater_update_now"
+	bl_idname = "object.updater_update_now"
 	bl_description = "Update to the latest version of the {x} addon".format(
 														x=updater.addon)
 	bl_options = {'REGISTER', 'INTERNAL'}
@@ -304,7 +304,7 @@ class addon_updater_update_now(bpy.types.Operator):
 
 class addon_updater_update_target(bpy.types.Operator):
 	bl_label = updater.addon+" version target"
-	bl_idname = updater.addon+".updater_update_target"
+	bl_idname = "object.updater_update_target"
 	bl_description = "Install a targeted version of the {x} addon".format(
 														x=updater.addon)
 	bl_options = {'REGISTER', 'INTERNAL'}
@@ -384,7 +384,7 @@ class addon_updater_update_target(bpy.types.Operator):
 class addon_updater_install_manually(bpy.types.Operator):
 	"""As a fallback, direct the user to download the addon manually"""
 	bl_label = "Install update manually"
-	bl_idname = updater.addon+".updater_install_manually"
+	bl_idname = "object.updater_install_manually"
 	bl_description = "Proceed to manually install update"
 	bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -446,7 +446,7 @@ class addon_updater_install_manually(bpy.types.Operator):
 class addon_updater_updated_successful(bpy.types.Operator):
 	"""Addon in place, popup telling user it completed or what went wrong"""
 	bl_label = "Installation Report"
-	bl_idname = updater.addon+".updater_update_successful"
+	bl_idname = "object.updater_update_successful"
 	bl_description = "Update installation response"
 	bl_options = {'REGISTER', 'INTERNAL', 'UNDO'}
 
@@ -514,7 +514,7 @@ class addon_updater_updated_successful(bpy.types.Operator):
 class addon_updater_restore_backup(bpy.types.Operator):
 	"""Restore addon from backup"""
 	bl_label = "Restore backup"
-	bl_idname = updater.addon+".updater_restore_backup"
+	bl_idname = "object.updater_restore_backup"
 	bl_description = "Restore addon from backup"
 	bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -536,7 +536,7 @@ class addon_updater_restore_backup(bpy.types.Operator):
 class addon_updater_ignore(bpy.types.Operator):
 	"""Prevent future update notice popups"""
 	bl_label = "Ignore update"
-	bl_idname = updater.addon+".updater_ignore"
+	bl_idname = "object.updater_ignore"
 	bl_description = "Ignore update to prevent future popups"
 	bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -561,7 +561,7 @@ class addon_updater_ignore(bpy.types.Operator):
 class addon_updater_end_background(bpy.types.Operator):
 	"""Stop checking for update in the background"""
 	bl_label = "End background check"
-	bl_idname = updater.addon+".end_background_check"
+	bl_idname = "object.end_background_check"
 	bl_description = "Stop checking for update in the background"
 	bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -1295,9 +1295,9 @@ def register(bl_info):
 	updater.backup_current = True # True by default
 
 	# Sample ignore patterns for when creating backup of current during update
-	updater.backup_ignore_patterns = ["__pycache__"]
+	# updater.backup_ignore_patterns = ["__pycache__"]
 	# Alternate example patterns
-	# updater.backup_ignore_patterns = [".git", "__pycache__", "*.bat", ".gitignore", "*.exe"]
+	updater.backup_ignore_patterns = [".git", "__pycache__", "*.bat", ".gitignore", "*.exe"]
 
 	# Patterns for files to actively overwrite if found in new update
 	# file and are also found in the currently installed addon. Note that
@@ -1367,7 +1367,7 @@ def register(bl_info):
 
 	# Used for development only, "pretend" to install an update to test
 	# reloading conditions
-	updater.fake_install = True # Set to true to test callback/reloading
+	updater.fake_install = False  # Set to true to test callback/reloading
 
 	# Show popups, ie if auto-check for update is enabled or a previous
 	# check for update in user preferences found a new version, show a popup
@@ -1400,9 +1400,11 @@ def register(bl_info):
 	# in the addon, delete these lines (also from unregister)
 	for cls in classes:
 		# apply annotations to remove Blender 2.8 warnings, no effect on 2.7
+		print("cls BA: " + str(make_annotations(cls)))
 		make_annotations(cls)
-		# comment out this line if using bpy.utils.register_module(__name__)
-		#bpy.utils.register_class(cls)
+		print("cls: " + str(make_annotations(cls)))
+		# 	# comment out this line if using bpy.utils.register_module(__name__)
+		bpy.utils.register_class(cls)
 
 	# special situation: we just updated the addon, show a popup
 	# to tell the user it worked
