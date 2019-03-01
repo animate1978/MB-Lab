@@ -18,6 +18,7 @@ Contents
 
    about
    installation
+   updates
    getstart
    model_process
    creation_tools
