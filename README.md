@@ -24,10 +24,10 @@ He is the author of Manuel Bastioni Laboratory, a free and open source add-on fo
 
 This fork is an attempt to keep this addon going forward as the original author is no longer developing ManuelBastioniLAB
 
-## MB-Lab 1.7.1 Notes
+## MB-Lab 1.7.3 Notes
 
-    New Facial Rig connected to shapekey expressions
-    EEVEE and CYCLES specific shading networks and outputs
+    Auto Updater added so notifications and updates can happen within Blender
+    Minor logging error fixes
 
 ## ManuelBastioniLAB 1.6.1a
 
