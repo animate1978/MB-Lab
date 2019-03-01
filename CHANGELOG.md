@@ -2,6 +2,17 @@
 
 All changes will be documented here
 
+# MB-Lab 1.7.3
+
+## Added
+
+ - Added Auto-Updater by CGCookie
+
+## Bug Fixes
+
+ - Fixed logging errors left over from original code
+
+
 # MB-Lab 1.7.2
 
  - Changed Diffuse to Albedo in shaders and textures to reflect current shader terminology
