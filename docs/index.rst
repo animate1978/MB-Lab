@@ -17,8 +17,9 @@ Contents
    :maxdepth: 2
 
    about
-   installation
    updates
+   new_features
+   installation
    getstart
    model_process
    creation_tools

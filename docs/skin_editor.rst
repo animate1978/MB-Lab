@@ -54,4 +54,3 @@ You should use this button to update the bump/displacement each time you change 
 
 Each time the button "Update displacement" is pressed, the system recalculates the displacement map using the values of meta parameters. This map can be saved with the "Save displacement image" button, in order to be usable in external engines or in finalized characters.
 
-Note: This function is somewhat buggy at the moment
