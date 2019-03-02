@@ -165,7 +165,6 @@ def recursive_collection_delete(head):
     head.hide_viewport = False
 
     for obj in head.all_objects:
-        obj.hide_select = False
         obj.select_set(True)
     bpy.ops.object.delete()
 

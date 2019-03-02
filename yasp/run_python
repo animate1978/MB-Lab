@@ -1,0 +1,3 @@
+# assume that we're in the parent directory
+export LD_LIBRARY_PATH=$PWD/sphinxinstall/lib/:$PWD/yaspbin
+python3.7 -i yaspbin/yasp_setup.py

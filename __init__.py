@@ -32,6 +32,7 @@ from bpy.app.handlers import persistent
 from bpy_extras.io_utils import ExportHelper, ImportHelper
 
 from . import facerig
+from . import mb_yasp
 from . import humanoid, animationengine, proxyengine
 from . import utils
 from . import algorithms
@@ -2287,6 +2288,16 @@ classes = (
     LoadTemplate,
     preferences.MBPreferences,
     VIEW3D_PT_tools_ManuelbastioniLAB,
+    mb_yasp.VIEW3D_PT_tools_mb_yasp,
+    mb_yasp.YASP_OT_mark,
+    mb_yasp.YASP_OT_unmark,
+    mb_yasp.YASP_OT_set,
+    mb_yasp.YASP_OT_unset,
+    mb_yasp.YASP_OT_next,
+    mb_yasp.YASP_OT_prev,
+    mb_yasp.YASP_OT_setallKeyframes,
+    mb_yasp.YASP_OT_deleteallKeyframes,
+    mb_yasp.YASP_OT_delete_seq,
 )
 
 def register():
@@ -2299,6 +2310,29 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
+    bpy.types.Scene.yasp_wave_path = bpy.props.StringProperty(
+        name="Path to wave file",
+        subtype='FILE_PATH',
+        default='',
+        description='Path to wave file')
+
+    bpy.types.Scene.yasp_transcript_path = bpy.props.StringProperty(
+        name="Path to transcript file",
+        subtype='FILE_PATH',
+        default='',
+        description='Path to transcript file')
+
+    bpy.types.Scene.yasp_start_frame = bpy.props.StringProperty(
+        name="Start frame",
+        subtype='FILE_NAME',
+        default='',
+        description='Start audio on specified frame')
+
+    bpy.types.Scene.yasp_avg_window_size = bpy.props.StringProperty(
+        name="Avg Window",
+        subtype='FILE_NAME',
+        default='0',
+        description='Average keyframe values within the window')
 
 def unregister():
     # addon updater unregister
