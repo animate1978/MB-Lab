@@ -23,6 +23,7 @@ pocketsphinxlib = None
 sphinxadlib = None
 sphinxbaselib = None
 yasplib = None
+libs_loaded = True
 
 logger = logging.getLogger(__name__)
 
@@ -30,21 +31,31 @@ logger = logging.getLogger(__name__)
 # Then import yasp
 # Now we're ready to do some speech parsing
 def yasp_load_dep():
+    global libs_loaded
     pocketsphinx = os.path.join(yasp_sphinx_dir, "libpocketsphinx.so")
     sphinxad = os.path.join(yasp_sphinx_dir, "libsphinxad.so")
     sphinxbase = os.path.join(yasp_sphinx_dir, "libsphinxbase.so")
     yasp = os.path.join(yasp_libs_dir, "_yasp.so")
+    if not os.path.exists(pocketsphinx) or \
+       not os.path.exists(sphinxad) or \
+       not os.path.exists(sphinxbase) or \
+       not os.path.exists(yasp):
+           logger.critical("libraries don't exist. Reinstall")
     try:
-        pocketsphinxlib = ctypes.cdll.LoadLibrary(pocketsphinx)
-        sphinxadlib = ctypes.cdll.LoadLibrary(sphinxad)
-        sphinxbaselib = ctypes.cdll.LoadLibrary(sphinxbase)
-        yasplib = ctypes.cdll.LoadLibrary(yasp)
-    except:
-       logger.critical("Failed to load libraries")
+        sphinxbaselib = ctypes.cdll.LoadLibrary(os.path.abspath(sphinxbase))
+        sphinxadlib = ctypes.cdll.LoadLibrary(os.path.abspath(sphinxad))
+        pocketsphinxlib = ctypes.cdll.LoadLibrary(os.path.abspath(pocketsphinx))
+        yasplib = ctypes.cdll.LoadLibrary(os.path.abspath(yasp))
+    except Exception as e:
+        print(e)
+        logger.critical("Failed to load libraries")
+        libs_loaded = False
+
 
 if platform.system() == "Linux":
     yasp_load_dep()
-    import yasp
+    if libs_loaded:
+        import yasp
 
 # class maps yasp phoneme Mapper
 # YASP produces a more nuanced phonemes. We need to reduce that to the set
@@ -703,6 +714,10 @@ class VIEW3D_PT_tools_mb_yasp(bpy.types.Panel):
 
         if platform.system() != "Linux":
             col.label(text="Linux only feature", icon='ERROR')
+            return
+
+        if not libs_loaded:
+            col.label(text="Libraries not loaded", icon='ERROR')
             return
 
         col.label(text="Path to WAV file")
