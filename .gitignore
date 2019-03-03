@@ -9,3 +9,5 @@ __pycache__
 Runblender.bat.lnk
 .idea/inspectionProfiles/Project_Default.xml
 /mb-lab_updater/MB-Lab_updater_status.json
+/.vscode/settings.json
+/.vscode/launch.json
