@@ -42,7 +42,7 @@ logger = logging.getLogger(__name__)
 
 bl_info = {
     "name": "MB-Lab",
-    "author": "Manuel Bastioni",
+    "author": "Manuel Bastioni, MB-Lab Community",
     "version": (1, 7, 3),
     "blender": (2, 80, 0),
     "location": "View3D > Tools > MB-Lab",
