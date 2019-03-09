@@ -42,7 +42,7 @@ logger = logging.getLogger(__name__)
 
 bl_info = {
     "name": "MB-Lab",
-    "author": "Manuel Bastioni, MB-Lab Community,",
+    "author": "Manuel Bastioni, MB-Lab Community",
     "version": (1, 7, 3),
     "blender": (2, 80, 0),
     "location": "View3D > Tools > MB-Lab",
@@ -568,19 +568,19 @@ bpy.types.Scene.mblab_remove_all_modifiers = bpy.props.BoolProperty(
     description="If checked, all the modifiers will be removed, except the armature one (displacement, subdivision, corrective smooth, etc) will be removed from the finalized character)")
 
 bpy.types.Scene.mblab_use_cycles = bpy.props.BoolProperty(
-    name="Use Cycles materials (needed for skin shaders)",
+    name="Use Cycles materials",
     default=True,
     update=set_cycles_render_engine,
     description="This is needed in order to use the skin editor and shaders (highly recommended)")
 
 bpy.types.Scene.mblab_use_eevee = bpy.props.BoolProperty(
-    name="Use EEVEE materials (needed for skin shaders)",
+    name="Use EEVEE materials",
     default=False,
     update=set_eevee_render_engine,
     description="This is needed in order to use the skin editor and shaders")
 
 bpy.types.Scene.mblab_use_lamps = bpy.props.BoolProperty(
-    name="Use portrait studio lights (recommended)",
+    name="Use portrait studio lights",
     default=True,
     description="Add a set of lights optimized for portrait. Useful during the design of skin (recommended)")
 
@@ -1233,10 +1233,7 @@ class FinalizeCharacterAndImages(bpy.types.Operator, ExportHelper):
     bl_label = 'Finalize with textures and backup'
     bl_idname = 'mbast.finalize_character_and_images'
     filename_ext = ".png"
-    filter_glob: bpy.props.StringProperty(
-        default="*.png",
-        options={'HIDDEN'},
-    )
+    filter_glob: bpy.props.StringProperty(default="*.png", options={'HIDDEN'},)
     bl_description = 'Finalize, saving all the textures and converting the parameters in shapekeys. Warning: after the conversion the character will be no longer modifiable using MB-Lab tools'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
@@ -1838,11 +1835,11 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
             box.label(text=gui_err_msg, icon="INFO")
 
         if gui_status == "NEW_SESSION":
-            # box = self.layout.box()
-
+            
             self.layout.label(text="https://github.com/animate1978/MB-Lab")
             self.layout.label(text="CREATION TOOLS")
             self.layout.prop(scn, 'mblab_character_name')
+
 
             if mblab_humanoid.is_ik_rig_available(scn.mblab_character_name):
                 self.layout.prop(scn, 'mblab_use_ik')
@@ -1853,7 +1850,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
             self.layout.prop(scn, 'mblab_use_eevee')
             if scn.mblab_use_cycles or scn.mblab_use_eevee:
                 self.layout.prop(scn, 'mblab_use_lamps')
-            self.layout.operator('mbast.init_character')
+            self.layout.operator('mbast.init_character', icon='ARMATURE_DATA')
 
         if gui_status != "ACTIVE_SESSION":
             self.layout.label(text=" ")
