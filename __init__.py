@@ -1829,6 +1829,9 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
         scn = bpy.context.scene
         icon_expand = "DISCLOSURE_TRI_RIGHT"
         icon_collapse = "DISCLOSURE_TRI_DOWN"
+        
+        box = self.layout.box()
+        box.label(text="https://github.com/animate1978/MB-Lab")
 
         if gui_status == "ERROR_SESSION":
             box = self.layout.box()
@@ -1836,34 +1839,36 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
 
         if gui_status == "NEW_SESSION":
             
-            self.layout.label(text="https://github.com/animate1978/MB-Lab")
             self.layout.label(text="CREATION TOOLS")
-            self.layout.prop(scn, 'mblab_character_name')
-
-
+            box = self.layout.box()
+            box.prop(scn, 'mblab_character_name')
+            
             if mblab_humanoid.is_ik_rig_available(scn.mblab_character_name):
-                self.layout.prop(scn, 'mblab_use_ik')
+                box.prop(scn, 'mblab_use_ik')
             if mblab_humanoid.is_muscle_rig_available(scn.mblab_character_name):
-                self.layout.prop(scn, 'mblab_use_muscle')
+                box.prop(scn, 'mblab_use_muscle')
 
-            self.layout.prop(scn, 'mblab_use_cycles')
-            self.layout.prop(scn, 'mblab_use_eevee')
+            box.prop(scn, 'mblab_use_cycles')
+            box.prop(scn, 'mblab_use_eevee')
             if scn.mblab_use_cycles or scn.mblab_use_eevee:
-                self.layout.prop(scn, 'mblab_use_lamps')
-            self.layout.operator('mbast.init_character', icon='ARMATURE_DATA')
+                box.prop(scn, 'mblab_use_lamps')
+            box.operator('mbast.init_character', icon='ARMATURE_DATA')
 
         if gui_status != "ACTIVE_SESSION":
             self.layout.label(text=" ")
             self.layout.label(text="AFTER-CREATION TOOLS")
 
             # face rig button
-            self.layout.operator('mbast.create_face_rig')
-            self.layout.operator('mbast.delete_face_rig')
+            box = self.layout.box()
+            box.label(text="Face Rig")
+            box.operator('mbast.create_face_rig')
+            box.operator('mbast.delete_face_rig')
+
 
             if gui_active_panel_fin != "assets":
-                self.layout.operator('mbast.button_assets_on', icon=icon_expand)
+                box.operator('mbast.button_assets_on', icon=icon_expand)
             else:
-                self.layout.operator('mbast.button_assets_off', icon=icon_collapse)
+                box.operator('mbast.button_assets_off', icon=icon_collapse)
                 # assets_status = mblab_proxy.validate_assets_fitting()
                 box = self.layout.box()
 
@@ -1872,32 +1877,10 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                 # box.operator('mbast.load_assets_element')
                 box.label(text="To adapt the asset, use the proxy fitting tool", icon='INFO')
 
-            if gui_active_panel_fin != "pose":
-                self.layout.operator('mbast.button_pose_on', icon=icon_expand)
-            else:
-                self.layout.operator('mbast.button_pose_off', icon=icon_collapse)
-                box = self.layout.box()
-
-                armature = utils.get_active_armature()
-                if armature is not None and not utils.is_ik_armature(armature):
-                    box.enabled = True
-                    sel_gender = algorithms.get_selected_gender()
-                    if sel_gender == "FEMALE":
-                        if mblab_retarget.femaleposes_exist:
-                            box.prop(armature, "female_pose")
-                    if sel_gender == "MALE":
-                        if mblab_retarget.maleposes_exist:
-                            box.prop(armature, "male_pose")
-                    box.operator("mbast.pose_load", icon='IMPORT')
-                    box.operator("mbast.pose_save", icon='EXPORT')
-                    box.operator("mbast.pose_reset", icon='ARMATURE_DATA')
-                    box.operator("mbast.load_animation", icon='IMPORT')
-                else:
-                    box.enabled = False
-                    box.label(text="Please select the lab character (IK not supported)", icon='INFO')
+            
 
             if gui_active_panel_fin != "expressions":
-                self.layout.operator('mbast.button_expressions_on', icon=icon_expand)
+                box.operator('mbast.button_expressions_on', icon=icon_expand)
             else:
                 self.layout.operator('mbast.button_expressions_off', icon=icon_collapse)
                 box = self.layout.box()
@@ -1918,9 +1901,9 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                     box.label(text="No express. shapekeys", icon='INFO')
 
             if gui_active_panel_fin != "proxy_fit":
-                self.layout.operator('mbast.button_proxy_fit_on', icon=icon_expand)
+                box.operator('mbast.button_proxy_fit_on', icon=icon_expand)
             else:
-                self.layout.operator('mbast.button_proxy_fit_off', icon=icon_collapse)
+                box.operator('mbast.button_proxy_fit_off', icon=icon_collapse)
                 fitting_status, proxy_obj, reference_obj = mblab_proxy.get_proxy_fitting_ingredients()
 
                 box = self.layout.box()
@@ -1963,9 +1946,32 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                 if fitting_status == 'NO_MESH_SELECTED':
                     box.enabled = False
                     box.label(text="Selected proxy is not a mesh", icon="INFO")
+                    
+            if gui_active_panel_fin != "pose":
+                box.operator('mbast.button_pose_on', icon=icon_expand)
+            else:
+                self.layout.operator('mbast.button_pose_off', icon=icon_collapse)
+                box = self.layout.box()
 
+                armature = utils.get_active_armature()
+                if armature is not None and not utils.is_ik_armature(armature):
+                    box.enabled = True
+                    sel_gender = algorithms.get_selected_gender()
+                    if sel_gender == "FEMALE":
+                        if mblab_retarget.femaleposes_exist:
+                            box.prop(armature, "female_pose")
+                    if sel_gender == "MALE":
+                        if mblab_retarget.maleposes_exist:
+                            box.prop(armature, "male_pose")
+                    box.operator("mbast.pose_load", icon='IMPORT')
+                    box.operator("mbast.pose_save", icon='EXPORT')
+                    box.operator("mbast.pose_reset", icon='ARMATURE_DATA')
+                    box.operator("mbast.load_animation", icon='IMPORT')
+                else:
+                    box.enabled = False
+                    box.label(text="Please select the lab character (IK not supported)", icon='INFO')
             if gui_active_panel_fin != "utilities":
-                self.layout.operator('mbast.button_utilities_on', icon=icon_expand)
+                box.operator('mbast.button_utilities_on', icon=icon_expand)
             else:
                 self.layout.operator('mbast.button_utilities_off', icon=icon_collapse)
 
@@ -2000,7 +2006,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                     age_lbl = round((15.5 * x_age ** 2) + 31 * x_age + 33)
                     mass_lbl = round(50 * (x_mass + 1))
                     tone_lbl = round(50 * (x_tone + 1))
-                    lbl_text = "Age: {0}y  Mass: {1}%  Tone: {2}% ".format(age_lbl, mass_lbl, tone_lbl)
+                    lbl_text = "Age: {0} yr.  Mass: {1}%  Tone: {2}% ".format(age_lbl, mass_lbl, tone_lbl)
                     self.layout.label(text=lbl_text, icon="RNA")
                     for meta_data_prop in sorted(mblab_humanoid.character_metaproperties.keys()):
                         if "last" not in meta_data_prop:
