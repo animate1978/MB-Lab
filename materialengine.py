@@ -175,13 +175,11 @@ class MaterialEngine:
                     if "_skn_specular" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["body_spec"])
                     if "_skn_roughness" in node.name:
-                        self.assign_image_to_node(material.name, node.name,
-                                                  self.image_file_names["body_rough"])
+                        self.assign_image_to_node(material.name, node.name, self.image_file_names["body_rough"])
                     if "_skn_subdermal" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["body_subd"])
                     if "_eys_albedo" in node.name:
-                        self.assign_image_to_node(material.name, node.name,
-                                                  self.image_file_names["eyes_albedo"])
+                        self.assign_image_to_node(material.name, node.name, self.image_file_names["eyes_albedo"])
                     if "_eylsh_albedo" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["body_derm"])
                     if "_tth_albedo" in node.name:
@@ -189,8 +187,7 @@ class MaterialEngine:
                     if "_skn_bump" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["body_bump"])
                     if "_skn_disp" in node.name:
-                        self.assign_image_to_node(material.name, node.name,
-                                                  self.image_file_names["body_displ"])
+                        self.assign_image_to_node(material.name, node.name, self.image_file_names["body_displ"])
 
     def rename_skin_shaders(self, prefix):
         obj = self.get_object()
