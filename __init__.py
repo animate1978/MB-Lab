@@ -1864,21 +1864,6 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
             box.operator('mbast.create_face_rig')
             box.operator('mbast.delete_face_rig')
 
-
-            if gui_active_panel_fin != "assets":
-                box.operator('mbast.button_assets_on', icon=icon_expand)
-            else:
-                box.operator('mbast.button_assets_off', icon=icon_collapse)
-                # assets_status = mblab_proxy.validate_assets_fitting()
-                box = self.layout.box()
-
-                box.prop(scn, 'mblab_proxy_library')
-                box.prop(scn, 'mblab_assets_models')
-                # box.operator('mbast.load_assets_element')
-                box.label(text="To adapt the asset, use the proxy fitting tool", icon='INFO')
-
-            
-
             if gui_active_panel_fin != "expressions":
                 box.operator('mbast.button_expressions_on', icon=icon_expand)
             else:
@@ -1899,7 +1884,20 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                 else:
                     box.enabled = False
                     box.label(text="No express. shapekeys", icon='INFO')
+                    
+            if gui_active_panel_fin != "assets":
+                box.operator('mbast.button_assets_on', icon=icon_expand)
+            else:
+                box.operator('mbast.button_assets_off', icon=icon_collapse)
+                # assets_status = mblab_proxy.validate_assets_fitting()
+                box = self.layout.box()
 
+                box.prop(scn, 'mblab_proxy_library')
+                box.prop(scn, 'mblab_assets_models')
+                # box.operator('mbast.load_assets_element')
+                box.label(text="To adapt the asset, use the proxy fitting tool", icon='INFO')
+
+            
             if gui_active_panel_fin != "proxy_fit":
                 box.operator('mbast.button_proxy_fit_on', icon=icon_expand)
             else:
@@ -1970,6 +1968,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                 else:
                     box.enabled = False
                     box.label(text="Please select the lab character (IK not supported)", icon='INFO')
+                    
             if gui_active_panel_fin != "utilities":
                 box.operator('mbast.button_utilities_on', icon=icon_expand)
             else:
