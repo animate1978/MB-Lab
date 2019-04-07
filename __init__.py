@@ -560,12 +560,12 @@ bpy.types.Scene.mblab_use_ik = bpy.props.BoolProperty(
 bpy.types.Scene.mblab_use_muscle = bpy.props.BoolProperty(
     name="Use basic muscles",
     default=False,
-    description="Use basic muscle armature")
+    description="Use basic muscle armature. THIS IS BUGGY!")
 
 bpy.types.Scene.mblab_remove_all_modifiers = bpy.props.BoolProperty(
     name="Remove modifiers",
     default=False,
-    description="If checked, all the modifiers will be removed, except the armature one (displacement, subdivision, corrective smooth, etc) will be removed from the finalized character)")
+    description="If checked, all the modifiers will be removed, except the armature (displacement, subdivision, corrective smooth, etc)")
 
 bpy.types.Scene.mblab_use_cycles = bpy.props.BoolProperty(
     name="Use Cycles materials",
@@ -581,7 +581,7 @@ bpy.types.Scene.mblab_use_eevee = bpy.props.BoolProperty(
 
 bpy.types.Scene.mblab_use_lamps = bpy.props.BoolProperty(
     name="Use portrait studio lights",
-    default=True,
+    default=False,
     description="Add a set of lights optimized for portrait. Useful during the design of skin (recommended)")
 
 bpy.types.Scene.mblab_show_measures = bpy.props.BoolProperty(
@@ -665,7 +665,7 @@ bpy.types.Scene.mblab_preserve_tone = bpy.props.BoolProperty(
 
 bpy.types.Scene.mblab_preserve_fantasy = bpy.props.BoolProperty(
     name="Fantasy",
-    description="Preserve the current amount of fantasy morphs. For example, starting from a character with zero fantasy elements, all the generated characters will have zero fantasy elements")
+    description="Preserve the current amount of fantasy morphs")
 
 bpy.types.Scene.mblab_preserve_body = bpy.props.BoolProperty(
     name="Body",
