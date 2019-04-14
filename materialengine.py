@@ -53,6 +53,7 @@ class MaterialEngine:
             "eyes_albedo": character_config["texture_eyes"],
             "body_bump": character_config["texture_bump"],
             "body_subd": character_config["texture_subdermal"],
+            "freckle_mask": character_config["texture_frecklemask"],
         }
 
         image_file_paths = {}
@@ -104,6 +105,10 @@ class MaterialEngine:
     @property
     def texture_displace_exist(self):
         return os.path.isfile(self.image_file_paths["displ_data"])
+    
+    @property
+    def texture_frecklemask_exist(self):
+        return os.path.isfile(self.image_file_paths["freckle_mask"])
 
     @staticmethod
     def calculate_disp_pixels(blender_image, age_factor, tone_factor, mass_factor):
@@ -188,6 +193,8 @@ class MaterialEngine:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["body_bump"])
                     if "_skn_disp" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["body_displ"])
+                    if "_skn_frecklemask" in node.name:
+                        self.assign_image_to_node(material.name, node.name, self.image_file_names["freckle_mask"])
 
     def rename_skin_shaders(self, prefix):
         obj = self.get_object()
