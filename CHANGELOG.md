@@ -17,10 +17,13 @@ All changes will be documented here
 - Changed scaling of sub dermal map
 - Updated Material Engine code for texture masks
 - Added bug warning to Muscle checkbox
+- When transferring weights for proxying, check the vertex is in the group
+- Changed lighting setup using Area lights
 
 ## Bug Fixes
 
 - Set lighting setup default to False, fixing a minor startup bug
+- 
 
 # MB-Lab 1.7.3
 
