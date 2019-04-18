@@ -1,6 +1,22 @@
 Updates
 =======
 
+============
+MB-Lab 1.7.4
+============
+
+* New Procedural Eye shaders
+* New Texture Mask for freckles
+* Deleted Principled BSDF shader networks for custom surface shaders
+* Minor GUI edits
+* Edited Bump and Albedo texture maps
+* Changed scaling of sub dermal map
+* Updated Material Engine code for texture masks
+* Added bug warning to Muscle checkbox
+* When transferring weights for proxying, check the vertex is in the group
+* Changed lighting setup using Area lights
+* Set lighting setup default to False, fixing a minor startup bug
+
 ==============
 MB-Lab 1.7.3
 ==============
