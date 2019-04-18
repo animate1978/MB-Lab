@@ -35,8 +35,6 @@ The system has to import some hundreds of morphings, so it requires some
 time to complete. At the end of the process the character will be ready
 for modification.
 
-<div class="toctree" data-maxdepth="2">
+Additional Links
 
-base\_char
-
-</div>
+- [Base Carhacter](base_cahr.md)

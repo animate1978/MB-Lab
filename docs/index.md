@@ -23,7 +23,7 @@ Manuel Bastioni.
 - [After Creation Tools](after_creation_tools.md) 
 - [\(Facial) Expressions](expressions.md) 
 - [Proxy](proxy.md)
-- [Pose] (pose.md) 
+- [Pose](pose.md) 
 - [Finalize](finalize.md) 
 - [Save and Export](save_export.md)
 - [For Developers](developer_main.md)
