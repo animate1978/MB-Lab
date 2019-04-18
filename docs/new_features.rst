@@ -5,7 +5,7 @@ Version 1.7.4
 
 Shaders for this version have been re-worked from the ground up to try to achieve a realistic look as much as possible.
 
-The skin shader has dropped the Principled BSDF node in favor of a new custom skin shader .
+The skin shader has dropped the Principled BSDF node in favor of a new custom node network.
 
 Procedural veins have been added. The visibility of the veins are controlled by a slider in the skin editor.
 
@@ -13,7 +13,7 @@ The eyes have become completely procedural in this version, which allows a great
 
 Eye vein visiblity is controlled with a slider.
 
-
+The lighting setup has been changed to a three point arrangment using Area lights now.
 
 
 
