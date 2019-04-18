@@ -10,8 +10,6 @@ is your character ready for it's next task.
 
 ![image](images/finalization01.png)
 
-<div class="toctree" data-maxdepth="2">
+Additional links
 
-face\_rig
-
-</div>
+- [Face Rig](face_rig.md)

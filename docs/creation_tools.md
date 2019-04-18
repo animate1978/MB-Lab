@@ -274,8 +274,5 @@ The height of the character can't be assigned directly, but is
 automatically calculated as sum of neck, torso, buttock, upper leg,
 lower leg and feet height.
 
-<div class="toctree" data-maxdepth="2">
-
-model\_types phenotypes
-
-</div>
+Additional Links
+- [Model Phenotypes](model_types.md)
