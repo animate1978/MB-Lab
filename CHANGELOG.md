@@ -2,6 +2,17 @@
 
 All changes will be documented here
 
+# MB-Lab 1.7.5
+
+## Added
+## Changed
+
+- Changed descriptions for male and female elf and dwarf characters
+- Changed iris shader to use UV for texture coordinate input
+- Changed Blender minimum version to 2.80.60
+
+## Bug Fixes
+
 # MB-Lab 1.7.4
 
 ## Added
@@ -23,7 +34,6 @@ All changes will be documented here
 ## Bug Fixes
 
 - Set lighting setup default to False, fixing a minor startup bug
-- 
 
 # MB-Lab 1.7.3
 
