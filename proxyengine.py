@@ -79,12 +79,10 @@ class ProxyEngine:
 
 
         body_verts_weights = [[] for v in body.data.vertices]
-        for grp in body.vertex_groups:
+        for gid, grp in enumerate(body.vertex_groups):
             for idx, w_data in enumerate(body_verts_weights):
-                try:
-                    w_data.append([grp.name,grp.weight(idx)])
-                except:
-                    pass #TODO: idx in grp.weight
+                in_group = gid in [g.group for g in body.data.vertices[idx].groups]
+                w_data.append([grp.name,grp.weight(idx) if in_group else 0])
 
         for p_idx, proxy_vert in enumerate(proxy_vertices):
 
