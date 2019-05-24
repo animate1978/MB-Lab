@@ -24,10 +24,27 @@ He is the author of Manuel Bastioni Laboratory, a free and open source add-on fo
 
 This fork is an attempt to keep this addon going forward as the original author is no longer developing ManuelBastioniLAB
 
-## MB-Lab 1.7.3 Notes
+# MB-Lab 1.7.4
 
-    Auto Updater added so notifications and updates can happen within Blender
-    Minor logging error fixes
+## Added
+
+- New Procedural Eye shaders
+- New Texture Mask for freckles
+
+## Changed
+
+- Deleted Principled BSDF shader networks for custom surface shaders
+- Minor GUI edits
+- Edited Bump and Albedo texture maps (NOT YET)
+- Changed scaling of sub dermal map
+- Updated Material Engine code for texture masks
+- Added bug warning to Muscle checkbox
+- When transferring weights for proxying, check the vertex is in the group
+- Changed lighting setup using Area lights
+
+## Bug Fixes
+
+- Set lighting setup default to False, fixing a minor startup bug
 
 ## ManuelBastioniLAB 1.6.1a
 
