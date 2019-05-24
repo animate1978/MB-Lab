@@ -379,7 +379,7 @@
     "vertexgroup_muscle_file": "human_male_vgroups_muscles.json"
   },
   "f_ft01": {
-    "description": "Generate a realistic anime female character",
+    "description": "Generate a realistic female elf character",
     "template_model": "MBLab_human_female",
     "name": "f_ft01",
     "label": "Female elf (F_ft01)",
@@ -405,7 +405,7 @@
     "vertexgroup_muscle_file": "human_female_vgroups_muscles.json"
   },
   "m_ft01": {
-    "description": "Generate a realistic anime male character",
+    "description": "Generate a realistic male elf character",
     "template_model": "MBLab_human_male",
     "name": "m_ft01",
     "label": "Male elf (M_ft01)",
@@ -431,7 +431,7 @@
     "vertexgroup_muscle_file": "human_male_vgroups_muscles.json"
   },
   "m_ft02": {
-    "description": "Generate a realistic anime male character",
+    "description": "Generate a realistic male dwarf character",
     "template_model": "MBLab_human_male",
     "name": "m_ft02",
     "label": "Male dwarf (M_ft02)",
