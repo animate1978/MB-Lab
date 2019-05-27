@@ -1133,7 +1133,7 @@ class RetargetEngine:
     def rotate_skeleton(armat, rot_quat):
         armat.rotation_mode = 'QUATERNION'
         armat.rotation_quaternion = rot_quat
-        bpy.context.scene.update() # BUG! https://github.com/animate1978/MB-Lab/issues/120#issue-446081905
+        bpy.context.view_layer.update() # BUG! https://github.com/animate1978/MB-Lab/issues/120#issue-446081905
 
     def use_animation_pelvis(self, target_armat, source_armat):
 
