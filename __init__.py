@@ -44,7 +44,7 @@ bl_info = {
     "name": "MB-Lab",
     "author": "Manuel Bastioni, MB-Lab Community",
     "version": (1, 7, 4),
-    "blender": (2, 80, 70),
+    "blender": (2, 80, 72),
     "location": "View3D > Tools > MB-Lab",
     "description": "A complete lab for character creation",
     "warning": "",
