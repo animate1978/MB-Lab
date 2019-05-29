@@ -44,7 +44,7 @@ bl_info = {
     "name": "MB-Lab",
     "author": "Manuel Bastioni, MB-Lab Community",
     "version": (1, 7, 4),
-    "blender": (2, 80, 70),
+    "blender": (2, 80, 72),
     "location": "View3D > Tools > MB-Lab",
     "description": "A complete lab for character creation",
     "warning": "",
@@ -2012,8 +2012,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                             self.layout.prop(obj, meta_data_prop)
                     self.layout.operator("mbast.reset_allproperties", icon="RECOVER_LAST")
                     if mblab_humanoid.get_subd_visibility() == True:
-                        self.layout.label(
-                            text="Tip: for slow PC, disable the subdivision in Display Options below", icon='INFO')
+                        self.layout.label(text="Tip: for slow PC, disable the subdivision in Display Options below", icon='INFO')
 
                 if gui_active_panel != "library":
                     self.layout.operator('mbast.button_library_on', icon=icon_expand)

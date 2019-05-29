@@ -1309,7 +1309,7 @@ def register(bl_info):
 	# as a part of the pattern list below so they will always be overwritten by an
 	# update. If a pattern file is not found in new update, no action is taken
 	# This does NOT detele anything, only defines what is allowed to be overwritten
-	updater.overwrite_patterns = ["*.png","*.jpg","*.blend","*.json","README.md","LICENSE.txt"]
+	updater.overwrite_patterns = ["*.py","*.pyc","*.png","*.jpg","*.blend","*.json","README.md","LICENSE.txt"]
 	# updater.overwrite_patterns = []
 	# other examples:
 	# ["*"] means ALL files/folders will be overwritten by update, was the behavior pre updater v1.0.4
