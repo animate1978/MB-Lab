@@ -2012,8 +2012,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                             self.layout.prop(obj, meta_data_prop)
                     self.layout.operator("mbast.reset_allproperties", icon="RECOVER_LAST")
                     if mblab_humanoid.get_subd_visibility() == True:
-                        self.layout.label(
-                            text="Tip: for slow PC, disable the subdivision in Display Options below", icon='INFO')
+                        self.layout.label(text="Tip: for slow PC, disable the subdivision in Display Options below", icon='INFO')
 
                 if gui_active_panel != "library":
                     self.layout.operator('mbast.button_library_on', icon=icon_expand)
