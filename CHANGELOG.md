@@ -2,16 +2,18 @@
 
 All changes will be documented here
 
-# MB-Lab 1.7.5
+# MB-Lab 1.7.5 (DEVELOPMENTAL)
 
 ## Added
 ## Changed
 
 - Changed descriptions for male and female elf and dwarf characters
 - Changed iris shader to use UV for texture coordinate input
-- Changed Blender minimum version to 2.80.70
+- Changed Blender minimum version to 2.80.72
 
 ## Bug Fixes
+
+- Fixed API change 'bpy.context.scene.update()' to 'bpy.context.view_layer.update()' in animationengine.py fixing BVH import bug
 
 # MB-Lab 1.7.4
 
