@@ -1839,7 +1839,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
 
         if gui_status == "NEW_SESSION":
             
-            self.layout.label(text="CREATION TOOLS")
+            self.layout.label(text="CREATION TOOLS", icon='RNA_ADD')
             box = self.layout.box()
             box.prop(scn, 'mblab_character_name')
             
@@ -1856,13 +1856,13 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
 
         if gui_status != "ACTIVE_SESSION":
             self.layout.label(text=" ")
-            self.layout.label(text="AFTER-CREATION TOOLS")
+            self.layout.label(text="AFTER-CREATION TOOLS", icon='MODIFIER_ON')
 
             # face rig button
             box = self.layout.box()
             box.label(text="Face Rig")
-            box.operator('mbast.create_face_rig')
-            box.operator('mbast.delete_face_rig')
+            box.operator('mbast.create_face_rig', icon='USER')
+            box.operator('mbast.delete_face_rig', icon='CANCEL')
 
             if gui_active_panel_fin != "expressions":
                 box.operator('mbast.button_expressions_on', icon=icon_expand)
