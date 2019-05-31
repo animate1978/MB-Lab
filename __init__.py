@@ -44,7 +44,7 @@ bl_info = {
     "name": "MB-Lab",
     "author": "Manuel Bastioni, MB-Lab Community",
     "version": (1, 7, 4),
-    "blender": (2, 80, 72),
+    "blender": (2, 80, 73),
     "location": "View3D > Tools > MB-Lab",
     "description": "A complete lab for character creation",
     "warning": "",
@@ -1863,6 +1863,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
             box.label(text="Face Rig")
             box.operator('mbast.create_face_rig', icon='USER')
             box.operator('mbast.delete_face_rig', icon='CANCEL')
+            box = self.layout.box()
 
             if gui_active_panel_fin != "expressions":
                 box.operator('mbast.button_expressions_on', icon=icon_expand)
@@ -1998,7 +1999,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                 # box = self.layout.box()
 
                 if mblab_humanoid.exists_transform_database():
-                    self.layout.label(text="CREATION TOOLS")
+                    self.layout.label(text="CREATION TOOLS", icon="RNA")
                     x_age = getattr(obj, 'character_age', 0)
                     x_mass = getattr(obj, 'character_mass', 0)
                     x_tone = getattr(obj, 'character_tone', 0)
@@ -2006,7 +2007,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                     mass_lbl = round(50 * (x_mass + 1))
                     tone_lbl = round(50 * (x_tone + 1))
                     lbl_text = "Age: {0} yr.  Mass: {1}%  Tone: {2}% ".format(age_lbl, mass_lbl, tone_lbl)
-                    self.layout.label(text=lbl_text, icon="RNA")
+                    self.layout.label(text=lbl_text)
                     for meta_data_prop in sorted(mblab_humanoid.character_metaproperties.keys()):
                         if "last" not in meta_data_prop:
                             self.layout.prop(obj, meta_data_prop)
@@ -2209,7 +2210,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                         box.operator("mbast.corrective_disable", icon='X')
 
                 self.layout.label(text=" ")
-                self.layout.label(text="AFTER-CREATION TOOLS")
+                self.layout.label(text="AFTER-CREATION TOOLS", icon="MODIFIER_ON")
                 self.layout.label(
                     text="After-creation tools (expressions, poses, ecc..) not available for unfinalized characters",
                     icon="INFO")
