@@ -11,6 +11,7 @@ All changes will be documented here
 - Changed iris shader to use UV for texture coordinate input
 - Changed Blender minimum version to 2.80.73
 - Added icons and modified GUI slightly
+- Removed Buggy message from Muscle checkbox because the Blender bug has been fixed
 
 ## Bug Fixes
 

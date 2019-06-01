@@ -44,7 +44,7 @@ bl_info = {
     "name": "MB-Lab",
     "author": "Manuel Bastioni, MB-Lab Community",
     "version": (1, 7, 4),
-    "blender": (2, 80, 73),
+    "blender": (2, 80, 74),
     "location": "View3D > Tools > MB-Lab",
     "description": "A complete lab for character creation",
     "warning": "",
@@ -560,7 +560,7 @@ bpy.types.Scene.mblab_use_ik = bpy.props.BoolProperty(
 bpy.types.Scene.mblab_use_muscle = bpy.props.BoolProperty(
     name="Use basic muscles",
     default=False,
-    description="Use basic muscle armature. THIS IS BUGGY!")
+    description="Use basic muscle armature")
 
 bpy.types.Scene.mblab_remove_all_modifiers = bpy.props.BoolProperty(
     name="Remove modifiers",
@@ -2212,8 +2212,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                 self.layout.label(text=" ")
                 self.layout.label(text="AFTER-CREATION TOOLS", icon="MODIFIER_ON")
                 self.layout.label(
-                    text="After-creation tools (expressions, poses, ecc..) not available for unfinalized characters",
-                    icon="INFO")
+                    text="After-creation tools FINALIZED characters ONLY", icon="INFO")
 
             else:
                 gui_status = "NEW_SESSION"
