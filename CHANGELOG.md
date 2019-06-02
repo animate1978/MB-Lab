@@ -12,6 +12,8 @@ All changes will be documented here
 - Changed Blender minimum version to 2.80.73
 - Added icons and modified GUI slightly
 - Removed Buggy message from Muscle checkbox because the Blender bug has been fixed
+- Changed CREATION TOOLS in GUI to CREATION OPTIONS
+- Documentation updates
 
 ## Bug Fixes
 

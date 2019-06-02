@@ -1,7 +1,19 @@
 New Features
 ============
 
-Version 1.7.4
+* Version 1.7.5
+
+GUI Change, this version shows the evolution of the GUI that has changed since the original 1.6.1 version.
+
+Gone are the checkboxes in the Creation Tools section, replaced with buttons with icons. 
+
+.. image:: images/GUI_175.png
+
+The CREATION TOOLS has been renamed to CREATION OPTIONS and there is visible seperation of tools now
+
+
+
+* Version 1.7.4
 
 Shaders for this version have been re-worked from the ground up to try to achieve a realistic look as much as possible.
 
@@ -17,7 +29,9 @@ The lighting setup has been changed to a three point arrangment using Area light
 
 
 
-In version 1.7.3 is the addition of the Auto Updater.
+* Version 1.7.3
+
+This version is the addition of the Auto Updater.
 
 .. image:: images/auto_updater_173.png
 

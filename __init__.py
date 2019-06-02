@@ -43,11 +43,11 @@ logger = logging.getLogger(__name__)
 bl_info = {
     "name": "MB-Lab",
     "author": "Manuel Bastioni, MB-Lab Community",
-    "version": (1, 7, 4),
+    "version": (1, 7, 5),
     "blender": (2, 80, 74),
     "location": "View3D > Tools > MB-Lab",
     "description": "A complete lab for character creation",
-    "warning": "",
+    "warning": "Developmental",
     'wiki_url': "https://github.com/animate1978/MB-Lab/wiki",
     'tracker_url': 'https://github.com/animate1978/MB-Lab/issues',
     "category": "Characters"
@@ -1839,19 +1839,19 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
 
         if gui_status == "NEW_SESSION":
             
-            self.layout.label(text="CREATION TOOLS", icon='RNA_ADD')
+            self.layout.label(text="CREATION OPTIONS", icon='RNA_ADD')
             box = self.layout.box()
             box.prop(scn, 'mblab_character_name')
             
             if mblab_humanoid.is_ik_rig_available(scn.mblab_character_name):
-                box.prop(scn, 'mblab_use_ik')
+                box.prop(scn, 'mblab_use_ik', icon='BONE_DATA')
             if mblab_humanoid.is_muscle_rig_available(scn.mblab_character_name):
-                box.prop(scn, 'mblab_use_muscle')
+                box.prop(scn, 'mblab_use_muscle', icon='BONE_DATA')
 
-            box.prop(scn, 'mblab_use_cycles')
-            box.prop(scn, 'mblab_use_eevee')
+            box.prop(scn, 'mblab_use_cycles', icon='SHADING_RENDERED')
+            box.prop(scn, 'mblab_use_eevee', icon='SHADING_RENDERED')
             if scn.mblab_use_cycles or scn.mblab_use_eevee:
-                box.prop(scn, 'mblab_use_lamps')
+                box.prop(scn, 'mblab_use_lamps', icon='LIGHT_DATA')
             box.operator('mbast.init_character', icon='ARMATURE_DATA')
 
         if gui_status != "ACTIVE_SESSION":
@@ -2073,7 +2073,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                     if mblab_humanoid.exists_measure_database() and scn.mblab_show_measures:
                         col = split.column()
                         col.label(text="DIMENSIONS")
-                        col.label(text="Experimental feature", icon='ERROR')
+                        #col.label(text="Experimental feature", icon='ERROR')
                         col.prop(obj, 'mblab_use_inch')
                         col.prop(scn, 'mblab_measure_filter')
                         col.operator("mbast.measures_apply")
