@@ -3,7 +3,7 @@ Getting Started
 
 The user interface is perfectly integrated in Blender and designed to make the modeling process a simple and clear process.
 
-.. image:: images/new_GUI_01.png
+.. image:: images/new_GUI_001.png
 
 At the start the creation section contains only few elements:
 
