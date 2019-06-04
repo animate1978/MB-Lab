@@ -24,27 +24,26 @@ He is the author of Manuel Bastioni Laboratory, a free and open source add-on fo
 
 This fork is an attempt to keep this addon going forward as the original author is no longer developing ManuelBastioniLAB
 
-# MB-Lab 1.7.4
+# MB-Lab 1.7.5 (DEVELOPMENTAL)
 
 ## Added
 
-- New Procedural Eye shaders
-- New Texture Mask for freckles
+- Added icons and modified GUI slightly
 
 ## Changed
 
-- Deleted Principled BSDF shader networks for custom surface shaders
-- Minor GUI edits
-- Edited Bump and Albedo texture maps (NOT YET)
-- Changed scaling of sub dermal map
-- Updated Material Engine code for texture masks
-- Added bug warning to Muscle checkbox
-- When transferring weights for proxying, check the vertex is in the group
-- Changed lighting setup using Area lights
+- Changed descriptions for male and female elf and dwarf characters
+- Changed iris shader to use UV for texture coordinate input
+- Changed Blender minimum version to 2.80.74
+- Removed Buggy message from Muscle checkbox because the Blender bug has been fixed
+- Changed CREATION TOOLS in GUI to CREATION OPTIONS at startup
+- Documentation updates
+
 
 ## Bug Fixes
 
-- Set lighting setup default to False, fixing a minor startup bug
+- Fixed API change 'bpy.context.scene.update()' to 'bpy.context.view_layer.update()' in animationengine.py fixing BVH import bug
+- Gloss fix for EEVEE in human skin shader
 
 ## ManuelBastioniLAB 1.6.1a
 

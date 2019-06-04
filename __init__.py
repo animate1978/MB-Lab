@@ -2026,7 +2026,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                         box.prop(obj, "preset")
                     if mblab_humanoid.exists_phenotype_database():
                         box.prop(obj, "ethnic")
-                    box.prop(scn, 'mblab_mix_characters')
+                    box.prop(scn, 'mblab_mix_characters', icon='FORCE_CHARGE')
 
                 if gui_active_panel != "random":
                     self.layout.operator('mbast.button_random_on', icon=icon_expand)
@@ -2104,8 +2104,8 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                     else:
                         self.layout.operator('mbast.button_automodelling_off', icon=icon_collapse)
                         box = self.layout.box()
-                        box.operator("mbast.auto_modelling")
-                        box.operator("mbast.auto_modelling_mix")
+                        box.operator("mbast.auto_modelling", icon='OUTLINER_DATA_MESH')
+                        box.operator("mbast.auto_modelling_mix", icon='OUTLINER_OB_MESH')
                 else:
                     box = self.layout.box()
                     box.enabled = False
@@ -2179,8 +2179,8 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                 else:
                     self.layout.operator('mbast.button_finalize_off', icon=icon_collapse)
                     box = self.layout.box()
-                    box.prop(scn, 'mblab_save_images_and_backup')
-                    box.prop(scn, 'mblab_remove_all_modifiers')
+                    box.prop(scn, 'mblab_save_images_and_backup', icon='EXPORT')
+                    box.prop(scn, 'mblab_remove_all_modifiers', icon='CANCEL')
                     box.prop(scn, 'mblab_final_prefix')
                     if scn.mblab_save_images_and_backup:
                         box.operator("mbast.finalize_character_and_images", icon='FREEZE')
