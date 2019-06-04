@@ -5,19 +5,23 @@ All changes will be documented here
 # MB-Lab 1.7.5 (DEVELOPMENTAL)
 
 ## Added
+
+- Added icons and modified GUI slightly
+
 ## Changed
 
 - Changed descriptions for male and female elf and dwarf characters
 - Changed iris shader to use UV for texture coordinate input
-- Changed Blender minimum version to 2.80.73
-- Added icons and modified GUI slightly
+- Changed Blender minimum version to 2.80.74
 - Removed Buggy message from Muscle checkbox because the Blender bug has been fixed
-- Changed CREATION TOOLS in GUI to CREATION OPTIONS
+- Changed CREATION TOOLS in GUI to CREATION OPTIONS at startup
 - Documentation updates
+
 
 ## Bug Fixes
 
 - Fixed API change 'bpy.context.scene.update()' to 'bpy.context.view_layer.update()' in animationengine.py fixing BVH import bug
+- Gloss fix for EEVEE in human skin shader
 
 # MB-Lab 1.7.4
 

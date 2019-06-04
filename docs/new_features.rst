@@ -3,7 +3,7 @@ New Features
 
 * Version 1.7.5
 
-GUI Change, this version shows the evolution of the GUI that has changed since the original 1.6.1 version.
+GUI change, this version shows the evolution of the GUI that has changed since the original 1.6.1 version.
 
 Gone are the checkboxes in the Creation Tools section, replaced with buttons with icons. 
 

@@ -568,13 +568,13 @@ bpy.types.Scene.mblab_remove_all_modifiers = bpy.props.BoolProperty(
     description="If checked, all the modifiers will be removed, except the armature (displacement, subdivision, corrective smooth, etc)")
 
 bpy.types.Scene.mblab_use_cycles = bpy.props.BoolProperty(
-    name="Use Cycles materials",
+    name="Use Cycles engine",
     default=True,
     update=set_cycles_render_engine,
     description="This is needed in order to use the skin editor and shaders (highly recommended)")
 
 bpy.types.Scene.mblab_use_eevee = bpy.props.BoolProperty(
-    name="Use EEVEE materials",
+    name="Use EEVEE engine",
     default=False,
     update=set_eevee_render_engine,
     description="This is needed in order to use the skin editor and shaders")
@@ -2006,7 +2006,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                     age_lbl = round((15.5 * x_age ** 2) + 31 * x_age + 33)
                     mass_lbl = round(50 * (x_mass + 1))
                     tone_lbl = round(50 * (x_tone + 1))
-                    lbl_text = "Age: {0} yr.  Mass: {1}%  Tone: {2}% ".format(age_lbl, mass_lbl, tone_lbl)
+                    lbl_text = "Age : {0} yr.  Mass : {1}%  Tone : {2}% ".format(age_lbl, mass_lbl, tone_lbl)
                     self.layout.label(text=lbl_text)
                     for meta_data_prop in sorted(mblab_humanoid.character_metaproperties.keys()):
                         if "last" not in meta_data_prop:
@@ -2059,7 +2059,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                     box = self.layout.box()
                     mblab_humanoid.bodydata_realtime_activated = True
                     if mblab_humanoid.exists_measure_database():
-                        box.prop(scn, 'mblab_show_measures')
+                        box.prop(scn, 'mblab_show_measures', icon='PRESET')
                     split = box.split()
 
                     col = split.column()
@@ -2096,7 +2096,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
 
                     sub = box.box()
                     sub.label(text="RESET")
-                    sub.operator("mbast.reset_categoryonly")
+                    sub.operator("mbast.reset_categoryonly", icon="RECOVER_LAST")
 
                 if mblab_humanoid.exists_measure_database():
                     if gui_active_panel != "automodelling":
@@ -2125,8 +2125,8 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                             box.enabled = True
                             box.prop(armature, "rest_pose")
 
-                            box.operator("mbast.restpose_load")
-                            box.operator("mbast.restpose_save")
+                            box.operator("mbast.restpose_load", icon='IMPORT')
+                            box.operator("mbast.restpose_save", icon='EXPORT')
 
                 if gui_active_panel != "skin":
                     self.layout.operator('mbast.button_skin_on', icon=icon_expand)
@@ -2140,7 +2140,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                         box.label(text="Skin editor requires Cycles or EEVEE", icon='INFO')
 
                     if mblab_humanoid.exists_displace_texture():
-                        box.operator("mbast.skindisplace_calculate")
+                        box.operator("mbast.skindisplace_calculate", icon='MOD_DISPLACE')
                         box.label(text="You need to enable subdiv and displ to see the displ in viewport", icon='INFO')
 
                     for material_data_prop in sorted(mblab_humanoid.character_material_properties.keys()):
@@ -2151,7 +2151,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                 else:
                     self.layout.operator('mbast.button_file_off', icon=icon_collapse)
                     box = self.layout.box()
-                    box.prop(scn, 'mblab_show_texture_load_save')
+                    box.prop(scn, 'mblab_show_texture_load_save', icon='TEXTURE')
                     if scn.mblab_show_texture_load_save:
 
                         if mblab_humanoid.exists_dermal_texture():
@@ -2169,8 +2169,8 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                         sub = box.box()
                         sub.label(text="Export all images used in skin shader")
                         sub.operator("mbast.export_allimages", icon='EXPORT')
-                    box.prop(scn, 'mblab_export_proportions')
-                    box.prop(scn, 'mblab_export_materials')
+                    box.prop(scn, 'mblab_export_proportions', icon='PRESET')
+                    box.prop(scn, 'mblab_export_materials', icon='MATERIAL')
                     box.operator("mbast.export_character", icon='EXPORT')
                     box.operator("mbast.import_character", icon='IMPORT')
 
