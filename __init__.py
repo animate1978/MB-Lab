@@ -2021,7 +2021,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                     self.layout.operator('mbast.button_library_off', icon=icon_collapse)
                     box = self.layout.box()
 
-                    box.label(text="Characters library")
+                    box.label(text="Characters library", icon='ARMATURE_DATA')
                     if mblab_humanoid.exists_preset_database():
                         box.prop(obj, "preset")
                     if mblab_humanoid.exists_phenotype_database():
@@ -2076,7 +2076,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                         #col.label(text="Experimental feature", icon='ERROR')
                         col.prop(obj, 'mblab_use_inch')
                         col.prop(scn, 'mblab_measure_filter')
-                        col.operator("mbast.measures_apply")
+                        col.operator("mbast.measures_apply", icon='FILE_REFRESH')
 
                         if obj.mblab_use_inch:
                             a_inch = getattr(obj, "body_height_Z", 0)
