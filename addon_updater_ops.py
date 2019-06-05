@@ -1415,7 +1415,7 @@ def register(bl_info):
 def unregister():
 	for cls in reversed(classes):
 		# comment out this line if using bpy.utils.unregister_module(__name__)
-		bpy.utils.unregister_class(cls)
+		bpy.utils.unregister_class(cls) #BUG - https://github.com/animate1978/MB-Lab/issues/101
 
 	# clear global vars since they may persist if not restarting blender
 	updater.clear_state() # clear internal vars, avoids reloading oddities
