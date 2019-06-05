@@ -24,11 +24,11 @@ Contents
    model_process
    creation_tools
    skin_editor
+   finalize
    after_creation_tools
    expressions
    proxy
    pose
-   finalize
    save_export
    license
    developer_main
