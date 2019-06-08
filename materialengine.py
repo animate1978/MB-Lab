@@ -53,6 +53,9 @@ class MaterialEngine:
             "eyes_albedo": character_config["texture_eyes"],
             "body_bump": character_config["texture_bump"],
             "body_subd": character_config["texture_subdermal"],
+            "tongue_albedo": character_config["texture_tongue_albedo"],
+            "tongue_sss": character_config["texture_tongue_sss"],
+            "tongue_bump": character_config["texture_tongue_bump"],
             "freckle_mask": character_config["texture_frecklemask"],
         }
 
@@ -103,9 +106,21 @@ class MaterialEngine:
         return os.path.isfile(self.image_file_paths["body_bump"])
 
     @property
+    def texture_tongue_albedo_exist(self):
+        return os.path.isfile(self.image_file_paths["tongue_albedo"])
+
+    @property
+    def texture_tongue_sss_exist(self):
+        return os.path.isfile(self.image_file_paths["tongue_sss"])
+
+    @property
+    def texture_tongue_bump_exist(self):
+        return os.path.isfile(self.image_file_paths["tongue_bump"])
+
+    @property
     def texture_displace_exist(self):
         return os.path.isfile(self.image_file_paths["displ_data"])
-    
+
     @property
     def texture_frecklemask_exist(self):
         return os.path.isfile(self.image_file_paths["freckle_mask"])
@@ -193,6 +208,12 @@ class MaterialEngine:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["body_bump"])
                     if "_skn_disp" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["body_displ"])
+                    if "_tongue_albedo" in node.name:
+                        self.assign_image_to_node(material.name, node.name, self.image_file_names["tongue_albedo"])
+                    if "_tongue_SSS" in node.name:
+                        self.assign_image_to_node(material.name, node.name, self.image_file_names["tongue_sss"])
+                    if "_tongue_bump" in node.name:
+                        self.assign_image_to_node(material.name, node.name, self.image_file_names["tongue_bump"])
                     if "_skn_frecklemask" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["freckle_mask"])
 
