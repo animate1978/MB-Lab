@@ -5,18 +5,25 @@ MB-Lab provides a procedural skin editor that can be used with Cycles or EEVEE.
 
 .. image:: images/skin_editor_gui01.png
 
-Behind the simple interface there is a set of complex shaders. These shaders are developed in order to simulate the variety of skin tones and work under any lighting condition:
+Behind the simple interface there is a set of complex shaders. The shaders themselves have undergone an evolution since version 1.6.1
+
+These shaders have been developed to simulate the variety of skin tones and work under any lighting condition :
 
 * An advanced human skin shader
 * An advanced toon skin shader
-* Shaders for eyes and teeth
+* Procedural eyeball and iris shaders
+* Shaders for the teeth and tongue
+
+These shaders have been developed with Cycles and EEVEE and continue to be worked on as MB-Lab evolves.
+
+.. image:: images/skin_shader_01.png
+
 
 =================
 Parameters editor
 =================
 
 The parameters editor is composed by an intuivive set of sliders for easily modify the values of skin complexion, skin bump, skin oil, skin saturation, skin subsurface scattering and more.
-The editor also provides controls for the eyes hue, tone and saturation.
 
 ---------------
 Skin complexion
@@ -38,11 +45,35 @@ Skin bump
 
 This parameter controls the amount of the skin bump. It doesn't affect the true displacement of the subdivided mesh, but only the visual bump effect calculated at render time.
 
+--------------
+Skin Roughness
+--------------
+
+This controls the micro scale roughness
+
 -------------
 Skin Freckles
 -------------
 
 This parameter controls how much procedural freckles are added
+
+----------
+Skin Veins
+----------
+
+This controls how much procedural veins are added to the skin
+
+-------
+Eye SSS
+-------
+
+This controls how much subsurface scattering of the eye is rendered
+
+---------------
+Eye Vein Amount
+---------------
+
+This controls how much veins are visible on the eyeball
 
 --------------------------
 Bump/displacement controls

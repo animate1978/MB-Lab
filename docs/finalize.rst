@@ -1,7 +1,7 @@
 Finalize
 ========
 
-In order to be modified with the tools during the creation phase, a model created with MB-Lab has some special requirements:
+In order to be modified with MB-Lab tools during the creation phase, a model created with MB-Lab has some special requirements:
 
 * It's name must be recognizable
 * It can't include shape keys
@@ -9,7 +9,7 @@ In order to be modified with the tools during the creation phase, a model create
 * It's not possible to add or remove vertices
 * It has many custom properties
 * It uses directly the textures from lab data so they can't be customized.
-* It's the unique lab character in the scene
+* It's the ONLY lab character in the scene
 
 To remove these limits and enable the "after-creation" tools, the lab model must be converted in a normal model, using the finalization process.
 The production pipeline and finalization step
