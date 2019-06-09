@@ -3,7 +3,7 @@ Skin Editor
 
 MB-Lab provides a procedural skin editor that can be used with Cycles or EEVEE.
 
-.. image:: images/skin_editor_gui01.png
+.. image:: images/skin_editor_01.png
 
 Behind the simple interface there is a set of complex shaders. The shaders themselves have undergone an evolution since version 1.6.1
 

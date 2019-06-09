@@ -29,6 +29,7 @@ This fork is an attempt to keep this addon going forward as the original author 
 ## Added
 
 - Added icons and modified GUI slightly
+- Initial Tongue shader added
 
 ## Changed
 
@@ -38,7 +39,7 @@ This fork is an attempt to keep this addon going forward as the original author 
 - Removed Buggy message from Muscle checkbox because the Blender bug has been fixed
 - Changed CREATION TOOLS in GUI to CREATION OPTIONS at startup
 - Documentation updates
-
+- Changed characters_config.json for tongue shader
 
 ## Bug Fixes
 

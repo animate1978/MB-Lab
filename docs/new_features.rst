@@ -1,19 +1,26 @@
 New Features
 ============
 
-* Version 1.7.5
+=============
+Version 1.7.5
+=============
 
-GUI change, this version shows the evolution of the GUI that has changed since the original 1.6.1 version.
+* GUI change
 
-Gone are the checkboxes in the Creation Tools section, replaced with buttons with icons. 
+This version shows the evolution of the GUI that has changed since the original 1.6.1 version.
+
+Icons have been added everywhere now!
 
 .. image:: images/GUI_175.png
 
-The CREATION TOOLS has been renamed to CREATION OPTIONS and there is visible seperation of tools now
+* Tongue Shader
+
+Now you can edit the skin complexion without changing the color of the tongue
 
 
-
-* Version 1.7.4
+=============
+Version 1.7.4
+=============
 
 Shaders for this version have been re-worked from the ground up to try to achieve a realistic look as much as possible.
 
@@ -28,8 +35,9 @@ Eye vein visiblity is controlled with a slider.
 The lighting setup has been changed to a three point arrangment using Area lights now.
 
 
-
-* Version 1.7.3
+=============
+Version 1.7.3
+=============
 
 This version is the addition of the Auto Updater.
 
