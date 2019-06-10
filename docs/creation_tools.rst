@@ -55,6 +55,8 @@ Types can be selected via the intuitive GUI in the main panel, it's also possibl
 
 A "special-type" differs from the "type" because it can describe non-realistic creatures (as example comic heroes, brute and other people with augmented proportions) or data-only entities (for example "older" and "younger" specialtypes).
 
+.. image:: images/modeltypes_01.png
+
 Depending on the features that are modified and the way they are modified, types can be grouped into categories
 
 * Types defined mainly by the variation of muscle and mass percentages
