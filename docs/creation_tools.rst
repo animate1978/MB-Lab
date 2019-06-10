@@ -18,7 +18,7 @@ Meta parameters
 
 The metaparameters are the most intuitive way to define a character. Using this technology, the definition of the main traits of the character is matter of few seconds. The user interface is very easy to understand: just three intuitive sliders for the values of age, mass and tone.
 
-.. image:: images/metaparameters01.png
+.. image:: images/metaparam_01.png
 
 * The age can vary from 18 to 80 y.o.
 * The mass can vary from 0% to 100%.
@@ -49,7 +49,7 @@ The system uses this kind of identifiers because they are less difficult to reme
 
 Types can be selected via the intuitive GUI in the main panel, it's also possible to use the "Mix" option to blend different types.
 
-.. image:: images/mix_types01.png
+.. image:: images/mixtypes_03.png
 
 
 
@@ -104,7 +104,9 @@ Random Generator
 
 The other way to create characters is using the quasi-random generator, that it's not entirely random, but partially controlled by some parameters.
 
-The engine includes some new algorithms, where the most interesting is probably the "heritage" option, that automatically creates variations of character preserving the prevalent "dna" characteristics.
+.. image:: images/random_02.png
+
+The engine includes some new algorithms, where the most interesting is probably the "phenotype" option, that automatically creates variations of character preserving the prevalent "dna" characteristics.
 
 Another fundamental parameter is the scale of the randomization.
 
@@ -126,14 +128,6 @@ Other constrains are more intuitive: during the generation it's possible to pres
 
 This is very useful, for example if you like the face of the random generated character, but not the body, you can constrain the face and generate new variations.
 
-There is also a special option, the "tone and mass" one.
-
-.. image:: images/generator06.png
-
-Enabling it, a new couple of sliders will appear, to set the body mass and the body tone of the generated characters. These settings will overwrite the effects of the engine selected: for example if you set the mass slider to max, your character will have always the max mass, no matter if the engine says "light" variations.
-
-.. image:: images/generator07.png
-
 
 =============
 Auto-Modeling
@@ -147,7 +141,7 @@ The user quickly modifies the character to vaguely suggest what he has in mind a
 
 With this method, the artist can create his base character practically with two clicks.
 
-.. image:: images/automodelling01.png
+.. image:: images/automodel_01.png
 
 The first button, "auto modeling" corrects the anomalies in order to convert the model in the corresponding realistic human; the button "smooth" normalizes the character, making it more "uniform" and smooth.
 
@@ -164,11 +158,15 @@ Measures
 
 It's possible to define the shape of characters using a set of body measures. This new feature is available only for human characters (i.e. it's not available for anime).
 
-.. image:: images/measures01.png
+.. image:: images/bodymeasures_01.png
 
 The measures editor is enabled selecting the "Body measures" option.
 
+.. image:: images/bodymeasures_02.png
+
 When the measures editor is enabled, the "body parameters" panel contains two main sections: the column of anatomical parameters and the column of measures. The first column is dedicated to anatomical details: see this page for more information. The second column contains the main anthropometric measures used in design, anthropology and tailoring.
+
+.. image:: images/bodymeasures_03.png
 
 There are three methods to set the measures of body: direct, indirect and loading a measure file.
 
