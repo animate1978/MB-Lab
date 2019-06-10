@@ -13,7 +13,7 @@ In lab 1.6 and above, there are two advanced rigging structures built on the cor
 
 As usual, the GUI to use this technology is very simple: the rigging systems are just options to choose before creating the character.
 
-.. image:: images/poses09.png
+.. image:: images/poses_01.png
 
 Starting from version 1.5.0 the standard skeleton also includes eight roll bones
 
