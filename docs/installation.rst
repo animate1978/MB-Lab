@@ -87,3 +87,18 @@ You can manually install MB-Lab as well. You need to unzip MB-Lab to the followi
 * Linux - /home/USERNAME/.config/blender/2.80/scripts/addons/
 
 To remove simply delete the MB-Lab directory from your file system
+
+=========
+Upgrading
+=========
+
+With MB-Lab 1.7.3 it is now possible to upgrade the addon inside Blender without having to go through a lot of extra steps of cloning the repository, downloading the addon and installing every time there is an update to MB-Lab.
+
+.. image:: images/auto_updater_173.png
+
+To update go to Edit → Preference → Addons and then check the arrow to expand the addon information.
+
+To update MB-Lab to latest version in the 'master' branch, click on "Update mb_lab addon now"
+
+You can also set the addon to automatically check, by setting the Interval between checks. There are options for Months, Days, Hours and Minutes. It is recommended to check every 2 weeks to a month based upon the update history of MB-Lab.
+

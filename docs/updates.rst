@@ -5,7 +5,17 @@ Updates
 MB-Lab 1.7.5
 ============
 
-WIP
+* Added icons and modified GUI slightly
+* Initial Tongue shader added
+* Changed descriptions for male and female elf and dwarf characters
+* Changed iris shader to use UV for texture coordinate input
+* Changed Blender minimum version to 2.80.74
+* Removed Buggy message from Muscle checkbox because the Blender bug has been fixed
+* Changed CREATION TOOLS in GUI to CREATION OPTIONS at startup
+* Documentation updates
+* Changed characters_config.json for tongue shader
+* Fixed API change 'bpy.context.scene.update()' to 'bpy.context.view_layer.update()' in animationengine.py fixing BVH import bug
+* Gloss fix for EEVEE in human skin shader
 
 ============
 MB-Lab 1.7.4

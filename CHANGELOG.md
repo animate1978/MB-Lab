@@ -8,6 +8,7 @@ All changes will be documented here
 
 - Added icons and modified GUI slightly
 - Initial Tongue shader added
+- Save/Load BVH Bone Config (pending)
 
 ## Changed
 

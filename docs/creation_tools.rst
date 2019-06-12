@@ -7,9 +7,9 @@ There are six ways to manipulate the character:
 
 * Using the meta parameters: body mass, body tone and age
 * Loading a preset from the character library: types, specialtypes and phenotypes.
-* Modifying the "low level" parameters: nose, eyes, mouth, legs, etc.
 * Using the quasi-random generator.
 * Using the automodelling tool.
+* Modifying the "low level" parameters: nose, eyes, mouth, legs, etc.
 * Using the measure tool.
 
 ===============
@@ -45,17 +45,15 @@ Another way to quickly define a character is loading the parameters directly fro
 
 A "type" defines in one shot all the main features of the body: bone structure, fat percentage, mass and muscles. Each type is created upon anthropometric data and artistic observations and delineates the body of the character. Types are labelled using simple names, like "ideal fashion", "athletic", "lazy", "hourglass".
 
+.. image:: images/modeltypes_01.png
+
 The system uses this kind of identifiers because they are less difficult to remember and more intuitive than scientific terms utilized in anthropometry.
 
 Types can be selected via the intuitive GUI in the main panel, it's also possible to use the "Mix" option to blend different types.
 
 .. image:: images/mixtypes_03.png
 
-
-
 A "special-type" differs from the "type" because it can describe non-realistic creatures (as example comic heroes, brute and other people with augmented proportions) or data-only entities (for example "older" and "younger" specialtypes).
-
-.. image:: images/modeltypes_01.png
 
 Depending on the features that are modified and the way they are modified, types can be grouped into categories
 
@@ -72,32 +70,6 @@ Also the library includes the important database for ethnic phenotypes:
 There are also types and phenotypes for anime characters
 
 .. image:: images/anime_variations01.png
-
-=================
-Detail Parameters
-=================
-
-Low level parameters are modifiers that act on a small detail of the anatomy like the point of nose, the inner corner of the eyes and the size of the mouth.
-
-There are hundreds of modifiers, hidden by default. The control GUI can be enabled checking the option "Body, face and measure parameters" as indicated in the image below.
-
-.. image:: images/parameters00.png
-
-When enabled, the interface will show a new set of tools.
-
-.. image:: images/parameters02.png
-
-By default, the measures are not enabled and the column shows only the anatomic details. The upper element is the selector for the morphing category.
-
-A morphing category is a body element (for example the head) or a set of morphings (for example the expression units).
-
-Enabling the measures editor, the GUI is divided in two main sections: the column of anatomical parameters and the column of dimensions. The second column is dedicated to measures: see this page for more information.
-
-Depending on the category selected, the panel will show some sliders to increase or decrease a specific feature. In most of cases the parameters are very intuitive, for example increasing or decreasing the length of upper arm, but in some cases you need to try to see what happens, for example increasing or decreasing the dolichocefal value of the head.
-
-The button "Reset category" resets all the sliders of the selected category, setting their value to 0.5.
-
-The button "Reset All" resets all the sliders of all categories, setting their value to 0.5.
 
 
 ================
@@ -160,6 +132,14 @@ Measures
 
 It's possible to define the shape of characters using a set of body measures. This new feature is available only for human characters (i.e. it's not available for anime).
 
+By default, the measures are not enabled and the column shows only the anatomic details. The upper element is the selector for the morphing category.
+
+A morphing category is a body element (for example the head) or a set of morphings (for example the expression units).
+
+Enabling the measures editor, the GUI is divided in two main sections: the column of anatomical parameters and the column of dimensions. The second column is dedicated to measures: see this page for more information.
+
+Depending on the category selected, the panel will show some sliders to increase or decrease a specific feature. In most of cases the parameters are very intuitive, for example increasing or decreasing the length of upper arm, but in some cases you need to try to see what happens, for example increasing or decreasing the dolichocefal value of the head.
+
 .. image:: images/bodymeasures_01.png
 
 The measures editor is enabled selecting the "Body measures" option.
@@ -169,6 +149,8 @@ The measures editor is enabled selecting the "Body measures" option.
 When the measures editor is enabled, the "body parameters" panel contains two main sections: the column of anatomical parameters and the column of measures. The first column is dedicated to anatomical details: see this page for more information. The second column contains the main anthropometric measures used in design, anthropology and tailoring.
 
 .. image:: images/bodymeasures_03.png
+
+There is an option to use "Inches" rather than "Centimeters" as well, converting from one measurement system to another. This updates in realtime.
 
 There are three methods to set the measures of body: direct, indirect and loading a measure file.
 
@@ -189,6 +171,10 @@ The system can also export and import the measures using the simple json format.
 Due to this algorithm, the resulting measures can differ a bit from the user input. In particular if the given measures are unrealistic or very uncommon, the result can present noticeable differences. The precision of the method will increase release by release, proportionally to the growing of the lab database.
 
 The height of the character can't be assigned directly, but is automatically calculated as sum of neck, torso, buttock, upper leg, lower leg and feet height.
+
+**Reset**
+The button "Reset category" resets all the sliders of the selected category, setting their value to 0.5.
+
 
 .. toctree::
    :maxdepth: 2

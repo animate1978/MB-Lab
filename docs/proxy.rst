@@ -39,15 +39,15 @@ Step 1
 
 1. Open the "Utilities" in the after-creation section of the lab.
 
-.. image:: images/proxy15.png
+.. image:: images/utilities_01.png
 
 2. Select a base template and load it with the "Import template" button. In this example the caucasian female template was loaded.
 
-.. image:: images/proxy16.png
+.. image:: images/utilities_02.png
 
 3. Import the clothes mesh (or model a new one from scratch). For this tutorial a standard Wavefront obj was imported, but you can use any format and any import technique supported by Blender. The algorithm handles both triangles and quads topologies.
 
-.. image:: images/proxy18.png
+.. image:: images/import_obj_01.png
 
 4. Manually fit the proxy to character, with the usual Blender techniques (scale, rotate, edit of verts, etc). One of the best tool to do this is using the Blender Proportional Edit brush.
 
@@ -76,7 +76,7 @@ Scenario: you have a finalized character created with the lab, derived from cauc
 
 The first thing is to load the proxy into the scene.
 
-.. image:: images/proxy29.png
+.. image:: images/assets_01.png
 
 If you saved it using the method (A) described above, open the "Library assets" panel and select your library folder: the asset will appear in the drop down menu, ready to be loaded with one click.
 
@@ -92,7 +92,7 @@ To make the benchmark even more extreme, a proxy with a skirt was used, that's t
 
 Selecting both the proxy object and the character, the "Proxy fitting" section will show the fitting tools: the parameters "Offset" and "Influence", the option "Add mask vertgroup" and the buttons "Fit proxy" and "Remove fitting".
 
-.. image:: images/proxy14.png
+.. image:: images/proxy_fitting_01.png
 
 All the proxy tools are explained in this tutorial, anyway they are very intuitive and the basic fitting process in most of cases is very simple:
 
@@ -136,7 +136,7 @@ If you remove the clothes you will notice that the part of body closer to the pr
 
 It's just a non-destructive modifier: you can always enable/disable it, or even edit manually the vertices in the "mbastlab_mask" group, to improve the mask.
 
-.. image:: images/proxy27.png
+.. image:: images/mask_group_01.png
 
 =======================
 Edit/remove the fitting
@@ -151,8 +151,19 @@ When a proxy is fitted to the body, the lab creates automatically two shapekeys:
 
 As usual the shapekeys are listed in the Blender property panel, data tab:
 
-.. image:: images/proxy28.png
+.. image:: images/shapekeys_01.png
 
 So, if you want to manually adjust the fitting, you have to select the proxyfit shapekey and then proceed with the regular edit mode.
 
 In case you want to edit the basis key, you have first to remove all the keys, pressing the lab button "Remove fitting". Alternatively you can remove the keys manually directly from the Blender panel, but you have to remember to delete them in this order: first the proxyfit and then the basis.
+
+===================
+Creating New Assets
+===================
+
+To create a new asset is actually fairly simple procress but certain requirements are needed in order for them to be used in MB-Lab
+
+* Scaled to the MB-Lab Base model
+* Named the same in Outliner as well as filename
+* WIP
+
