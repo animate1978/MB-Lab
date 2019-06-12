@@ -3,15 +3,15 @@ Save and Export
 
 There are many ways to save or export the character created with MB-Lab.
 
-=================
+============
 Finalization
-=================
+============
 
 The first method is to finalize the character and then save the blend file, as a normal scene.
 
 In this case the character will be converted in a normal blend model, rigged and ready for further modifications with usual Blender tools.
 
-The detrimental using this way is that the model will lose the specific features of MB-Lab. The advantage is that it will be independent from the script, so it can be opened even on a system without MB-Lab addon.
+The downside to using this way is that the model will lose the specific features of MB-Lab. The advantage is that it will be independent from the script, so it can be opened even on a system without MB-Lab addon.
 
 =================
 Save Blender File

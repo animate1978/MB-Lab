@@ -1,14 +1,17 @@
 Finalize
 ========
 
-In order to be modified with MB-Lab tools during the creation phase, a model created with MB-Lab has some special requirements:
+In order to be modified with MB-Lab Creation Tools during the creation phase, a model created with MB-Lab has some special requirements.
+
+=======================
+Pre-Finalized Character
+=======================
 
 * It's name must be recognizable
 * It can't include shape keys
 * It can't be customized (for example in edit mode or via sculpting)
 * It's not possible to add or remove vertices
-* It has many custom properties
-* It uses directly the textures from lab data so they can't be customized.
+* It uses directly the textures from lab data
 * It's the ONLY lab character in the scene
 
 To remove these limits and enable the "after-creation" tools, the lab model must be converted in a normal model, using the finalization process.
@@ -16,14 +19,14 @@ The production pipeline and finalization step
 
 The lab is optimized for a pipeline where
 
-* The lab is used to create the character.
+* MB-Lab is used to create the character.
 * The character is saved or exported as lab file in a "character archive" folder (see: Save and export the character for further details)
 * The character is converted in a normal Blender model (finalized).
 * The character now can be customized in edit mode and used as any other normal character. It can be exported in any format supported by Blender or appended in another Blender scene for final production.
 
+===============================
 Finalization effect and options
-
-The third step is very important.
+===============================
 
 The finalization is a process to clean all the custom properties, select the rest pose, add a set of standard shape keys for expressions and transform the lab character in a normal character for Blender, not linked to the lab script, that can be handled as any other normal model in Blender.
 
@@ -39,7 +42,7 @@ So the finalized character will have:
 
 The finalize panel includes some important options.
 
-the finalize panel
+.. image:: images/finalize_01.png
 
 The finalize section includes two options.
 
@@ -48,6 +51,6 @@ The finalize section includes two options.
 
 To finalize the character, just press the button "Finalize". It's located at the bottom of the lab panel. There is no undo for this operation.
 
-The finalization process is NOT reversible and it will convert the lab model in a normal model, so it will lose all the lab functionalities and it will be not editable with the lab tools.
+The finalization process is **NOT** reversible and it will convert the lab model in a normal model, so it will lose all the lab functionalities and it will be not editable with the lab tools.
 
 For this reason the option "Save images and backup charater" is very important and it's enabled by default.
