@@ -706,7 +706,6 @@ bpy.types.Scene.mblab_random_engine = bpy.props.EnumProperty(
     name="Engine",
     default="LI")
 
-
 class ButtonParametersOff(bpy.types.Operator):
     bl_label = 'Body Measures'
     bl_idname = 'mbast.button_parameters_off'
@@ -1078,7 +1077,7 @@ class ButtonLibraryOn(bpy.types.Operator):
 
 
 class ButtonFinalizedCorrectRot(bpy.types.Operator):
-    bl_label = 'Adjust the selected bone'
+    bl_label = 'Adjust the Selected Bone'
     bl_idname = 'mbast.button_adjustrotation'
     bl_description = 'Correct the animation with an offset to the bone angle'
     bl_context = 'objectmode'
@@ -1692,6 +1691,74 @@ class SavePose(bpy.types.Operator, ExportHelper):
         mblab_retarget.save_pose(armature, self.filepath)
         return {'FINISHED'}
 
+class ButtonLoadBvhAdjusments(bpy.types.Operator, ImportHelper):
+    """Import bvh settings for the character"""
+    bl_idname = "mbast.button_load_bvh_adjustments"
+    bl_label = "Load BVH Bone Config"
+    filename_ext = ".json"
+    bl_description = 'Import the json file containing bvh animation adjustments'
+    filter_glob: bpy.props.StringProperty(
+        default="*.json",
+        options={'HIDDEN'},
+    )
+    bl_context = 'objectmode'
+
+    def execute(self, context):
+        global mblab_humanoid
+        global mblab_retarget
+        scn = bpy.context.scene
+        armature = utils.get_active_armature()
+        matrix_data = algorithms.load_json_data(self.filepath, "BVH config")
+        # Loop Through Config Adjustments and Apply Changes
+        for bone in matrix_data:
+            armature.data.bones[bone].select = True
+            rot_x = matrix_data[bone][0]
+            rot_y = matrix_data[bone][1]
+            rot_z = matrix_data[bone][2]            
+            mblab_retarget.correct_bone_angle(0, rot_x)
+            mblab_retarget.correct_bone_angle(1, rot_y)
+            mblab_retarget.correct_bone_angle(2, rot_z)
+            armature.data.bones[bone].select = False
+        return {'FINISHED'}
+
+class ButtonSaveBvhAdjustments(bpy.types.Operator, ExportHelper):
+    bl_idname = 'mbast.button_save_bvh_adjustments'
+    bl_label = 'Save BVH Bone Config'
+    bl_description = 'Save bone corrections into a local json file'
+    filename_ext = ".json"
+    filter_glob: bpy.props.StringProperty(
+        default="*.json",
+        options={'HIDDEN'},
+    )
+    bl_context = 'objectmode'
+
+    def execute(self, context):
+        scn = bpy.context.scene
+        selected_bone = mblab_retarget.get_selected_posebone().name
+
+        if mblab_retarget.rot_type in ["EULER", "QUATERNION"]:
+            offsets = mblab_retarget.get_offset_values()
+            saveBone = []
+            saveBone.append(offsets[0])
+            saveBone.append(offsets[1])
+            saveBone.append(offsets[2])
+            dict = { selected_bone: saveBone }
+
+            if os.path.exists(self.filepath):
+                with open(self.filepath, 'r+') as f:
+                    bones = json.load(f)
+                    # Update Json
+                    bones[selected_bone] = saveBone
+                    f.seek(0)
+                    f.truncate()
+                    json.dump(bones, f)
+            else:
+                data = json.dumps(dict, indent=1, ensure_ascii=True)
+                with open(self.filepath, 'w') as outfile:
+                    outfile.write(data + '\n')    
+
+        return {'FINISHED'}
+
 
 class LoadPose(bpy.types.Operator, ImportHelper):
     """Import parameters for the character"""
@@ -1983,6 +2050,8 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                 box = self.layout.box()
                 box.label(text="Bones rot. offset")
                 box.operator('mbast.button_adjustrotation', icon='BONE_DATA')
+                box.operator('mbast.button_save_bvh_adjustments', icon='EXPORT')
+                box.operator('mbast.button_load_bvh_adjustments', icon='IMPORT')
                 mblab_retarget.check_correction_sync()
                 if mblab_retarget.is_animated_bone == "VALID_BONE":
                     if mblab_retarget.correction_is_sync:
@@ -2248,6 +2317,8 @@ classes = (
     ButtonLibraryOff,
     ButtonLibraryOn,
     ButtonFinalizedCorrectRot,
+    ButtonSaveBvhAdjustments,
+    ButtonLoadBvhAdjusments,
     UpdateSkinDisplacement,
     DisableSubdivision,
     EnableSubdivision,
