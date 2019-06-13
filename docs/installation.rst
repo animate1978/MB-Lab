@@ -92,7 +92,7 @@ To remove simply delete the MB-Lab directory from your file system
 Upgrading
 =========
 
-With MB-Lab 1.7.3 it is now possible to upgrade the addon inside Blender without having to go through a lot of extra steps of cloning the repository, downloading the addon and installing every time there is an update to MB-Lab.
+With **MB-Lab 1.7.3** it is now possible to upgrade the addon inside Blender without having to go through a lot of extra steps of cloning the repository, downloading the addon and installing every time there is an update to MB-Lab.
 
 .. image:: images/auto_updater_173.png
 

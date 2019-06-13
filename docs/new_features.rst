@@ -19,7 +19,7 @@ Now you can edit the skin complexion without changing the color of the tongue
 
 * Animation BVH Files
 
-These are "cleaned up" BVH files of some basic animations such as walking, running, jumping etc...
+These are "raw" BVH files of some basic animations such as walking, running, jumping etc...
 
 * BVH Bone Config
 
