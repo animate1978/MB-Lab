@@ -9,9 +9,13 @@ Finalization
 
 The first method is to finalize the character and then save the blend file, as a normal scene.
 
-In this case the character will be converted in a normal blend model, rigged and ready for further modifications with usual Blender tools.
+.. image:: images/finalize_01.png
 
-The downside to using this way is that the model will lose the specific features of MB-Lab. The advantage is that it will be independent from the script, so it can be opened even on a system without MB-Lab addon.
+In this case the character will be converted to a normal blend model, rigged and ready for further modifications with usual Blender tools or exported to another application.
+
+The downside to using this way is that the model will lose the specific features of MB-Lab. Once the character is finalized, there is no undo ability.
+
+The advantage is that it will be independent from the script, so it can be opened even on a system without MB-Lab addon.
 
 =================
 Save Blender File
@@ -25,8 +29,8 @@ This method will preserve the lab features, but you have to bear in mind that in
 Export as JSON
 ==============
 
-Exporting the character using the export button is the best way to preserve all features of the lab. Also, it permits to upgrade, convert and restore character, as described here.
+Exporting the character using the export button is the best way to preserve all features of the lab. Also, it permits to upgrade, convert and restore character.
 
 All the parameters will be saved in a very slim database, written using a standard json syntax.
 
-
+.. image:: images/export_json_01.png
