@@ -30,6 +30,7 @@ This fork is an attempt to keep this addon going forward as the original author 
 
 - Added icons and modified GUI slightly
 - Initial Tongue shader added
+- Save/Load BVH Bone Config
 
 ## Changed
 
