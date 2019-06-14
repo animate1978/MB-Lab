@@ -6,13 +6,13 @@ A "type" defines in one shot all the main features of the body: bone structure, 
 
 Types are labeled using simple names, like "ideal fashion", "athletic", "lazy", "hourglass".
 
-.. image:: images/types_and_special_types.png
+.. image:: images/modeltypes_01.png
 
 The system uses this kind of identifiers because they are less difficult to remember and more intuitive than scientific terms utilized in anthropometry.
 
 Types can be selected via the intuitive GUI in the main panel, it's also possible to use the "Mix" option to blend different types.
 
-.. image:: images/mix_types01.png
+.. image:: images/mixtypes_03.png
 
 .. image:: images/gallery_140_28.png
 

@@ -114,3 +114,7 @@ In some cases, when the rest pose of the bvh is not perfectly equal to the rest 
 .. image:: images/poses_05.png
 
 The system is not designed to correct the bvh, but just to load and retarget the animation as it is, so things like wrong angles, tremors, frame rates must be corrected using external specific tools.
+
+You can save and load Bone offsets.
+
+.. image:: images/bone_offset_01.png

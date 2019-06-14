@@ -23,7 +23,7 @@ These are "raw" BVH files of some basic animations such as walking, running, jum
 
 * BVH Bone Config
 
-The ability to save and load config files to adjust bones after importing BVH animation files can be quite helpful. (pending)
+Save and load config files to adjust bones after importing BVH animation files.
 
 
 =============
