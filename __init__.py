@@ -2214,7 +2214,20 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
 
                     for material_data_prop in sorted(mblab_humanoid.character_material_properties.keys()):
                         box.prop(obj, material_data_prop)
-
+                        
+                if gui_active_panel != "finalize":
+                    self.layout.operator('mbast.button_finalize_on', icon=icon_expand)
+                else:
+                    self.layout.operator('mbast.button_finalize_off', icon=icon_collapse)
+                    box = self.layout.box()
+                    box.prop(scn, 'mblab_save_images_and_backup', icon='EXPORT')
+                    box.prop(scn, 'mblab_remove_all_modifiers', icon='CANCEL')
+                    box.prop(scn, 'mblab_final_prefix')
+                    if scn.mblab_save_images_and_backup:
+                        box.operator("mbast.finalize_character_and_images", icon='FREEZE')
+                    else:
+                        box.operator("mbast.finalize_character", icon='FREEZE')
+                
                 if gui_active_panel != "file":
                     self.layout.operator('mbast.button_file_on', icon=icon_expand)
                 else:
@@ -2243,18 +2256,6 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                     box.operator("mbast.export_character", icon='EXPORT')
                     box.operator("mbast.import_character", icon='IMPORT')
 
-                if gui_active_panel != "finalize":
-                    self.layout.operator('mbast.button_finalize_on', icon=icon_expand)
-                else:
-                    self.layout.operator('mbast.button_finalize_off', icon=icon_collapse)
-                    box = self.layout.box()
-                    box.prop(scn, 'mblab_save_images_and_backup', icon='EXPORT')
-                    box.prop(scn, 'mblab_remove_all_modifiers', icon='CANCEL')
-                    box.prop(scn, 'mblab_final_prefix')
-                    if scn.mblab_save_images_and_backup:
-                        box.operator("mbast.finalize_character_and_images", icon='FREEZE')
-                    else:
-                        box.operator("mbast.finalize_character", icon='FREEZE')
 
                 if gui_active_panel != "display_opt":
                     self.layout.operator('mbast.button_display_on', icon=icon_expand)
