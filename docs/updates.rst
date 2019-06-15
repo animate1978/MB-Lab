@@ -7,6 +7,7 @@ MB-Lab 1.7.5
 
 * Added icons and modified GUI slightly
 * Initial Tongue shader added
+* Save and Load Bone rotation offsets to file
 * Changed descriptions for male and female elf and dwarf characters
 * Changed iris shader to use UV for texture coordinate input
 * Changed Blender minimum version to 2.80.74

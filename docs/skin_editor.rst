@@ -5,25 +5,26 @@ MB-Lab provides a procedural skin editor that can be used with Cycles or EEVEE.
 
 .. image:: images/skin_editor_01.png
 
-Behind the simple interface there is a set of complex shaders. The shaders themselves have undergone an evolution since version 1.6.1
+Behind the simple interface there is a set of complex shaders. The shaders themselves have undergone an evolution since version 1.6.1.
 
-These shaders have been developed to simulate the variety of skin tones and work under any lighting condition :
+These shaders have been developed to simulate the variety of skin tones and work under any lighting condition. There are currently two sets of shaders, one "photorealistic" set and the "cell" shaders set.
 
 * An advanced human skin shader
 * An advanced toon skin shader
 * Procedural eyeball and iris shaders
 * Shaders for the teeth and tongue
 
-These shaders have been developed with Cycles and EEVEE and continue to be worked on as MB-Lab evolves.
+These shaders have been developed for Cycles and EEVEE and continue to be worked on as MB-Lab evolves.
 
 .. image:: images/skin_shader_01.png
 
+The following paramter editor will change depending on the base model you choose. The parameters editor is composed by an intuivive set of sliders for easily modify the values of skin complexion, skin bump, skin oil, skin saturation, skin subsurface scattering and more.
 
-=================
-Parameters editor
-=================
+===========================
+Realistic Shader Parameters
+===========================
 
-The parameters editor is composed by an intuivive set of sliders for easily modify the values of skin complexion, skin bump, skin oil, skin saturation, skin subsurface scattering and more.
+The realistic skin shader set is linked to the realistic base models.
 
 ---------------
 Skin complexion
@@ -85,3 +86,44 @@ You should use this button to update the bump/displacement each time you change 
 
 Each time the button "Update displacement" is pressed, the system recalculates the displacement map using the values of meta parameters. This map can be saved with the "Save displacement image" button, in order to be usable in external engines or in finalized characters.
 
+======================
+Cell Shader Parameters
+======================
+
+The "Cell" shaders have some different sliders for this set, be aware that the EEVEE and Cycles rendering will be slightly different due to how the shader works. Also note that this shader is very fast and you will be able to see changes in near real time with EEVEE as well as Cycles.
+
+-------------
+Skin oil size
+-------------
+
+This controls the "oil" of the cell shader, this effect can bring out the contour of the characters.
+
+---------------
+Skin oil values
+---------------
+
+This controls how brightness of the "oil"
+
+-----------------
+Skin Outline size
+-----------------
+
+This controls the thickness of the outline of the characters
+
+------------------
+Skin Outline value
+------------------
+
+This controls how dark the outline will be
+
+-------------------
+Skin Secondary size
+-------------------
+
+This will add another shade to the cell shader, showing even more contour, warning this effect is only seen in Cycles currently
+
+--------------------
+Skin Secondary value
+--------------------
+
+This changes the color value of the Secondary cell shading

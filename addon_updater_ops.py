@@ -1222,7 +1222,6 @@ def select_link_function(self, tag):
 # Register, should be run in the register module itself
 # -----------------------------------------------------------------------------
 
-
 classes = (
 	addon_updater_install_popup,
 	addon_updater_check_now,
@@ -1403,7 +1402,7 @@ def register(bl_info):
 		print("cls BA: " + str(make_annotations(cls)))
 		make_annotations(cls)
 		print("cls: " + str(make_annotations(cls)))
-		# 	# comment out this line if using bpy.utils.register_module(__name__)
+		 	# comment out this line if using bpy.utils.register_module(__name__)
 		bpy.utils.register_class(cls)
 
 	# special situation: we just updated the addon, show a popup
