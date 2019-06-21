@@ -15,7 +15,7 @@ Icons have been added everywhere now!
 
 * Tongue Shader
 
-Now you can edit the skin complexion without changing the color of the tongue
+Now you can edit the skin complexion without changing the color of the tongue.
 
 * Animation BVH Files
 
@@ -24,6 +24,8 @@ These are "raw" BVH files of some basic animations such as walking, running, jum
 * BVH Bone Config
 
 Save and load config files to adjust bones after importing BVH animation files.
+
+.. image:: images/bone_offset_01.png
 
 
 =============

@@ -6,7 +6,7 @@ MB-Lab 1.7.5
 ============
 
 * Added icons and modified GUI slightly
-* Initial Tongue shader added
+* Tongue shader added
 * Save and Load Bone rotation offsets to file
 * Changed descriptions for male and female elf and dwarf characters
 * Changed iris shader to use UV for texture coordinate input
@@ -15,8 +15,10 @@ MB-Lab 1.7.5
 * Changed CREATION TOOLS in GUI to CREATION OPTIONS at startup
 * Documentation updates
 * Changed characters_config.json for tongue shader
+* Rebuilt humanoid_library.blend for Blender 2.80
 * Fixed API change 'bpy.context.scene.update()' to 'bpy.context.view_layer.update()' in animationengine.py fixing BVH import bug
 * Gloss fix for EEVEE in human skin shader
+* Muscle FK and IK, Skeleton FK and IK roll fixes for various bones in armatures
 
 ============
 MB-Lab 1.7.4

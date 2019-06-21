@@ -13,7 +13,7 @@ In **version 1.6.0** and above, there are two advanced rigging structures built 
 
 As usual, the GUI to use this technology is very simple: the rigging systems are just options to choose before creating the character.
 
-.. image:: images/poses_01.png
+.. image:: images/rig_select_01.png
 
 Starting from **version 1.5.0** the standard skeleton also includes eight roll bones
 
@@ -25,22 +25,32 @@ The hand structure is the classic one, with common names for fingers. The hand u
 Rigging Systems
 ===============
 
-MB-Lab offers two advanced rigging systems: the base muscle and the inverse kinematic.
+MB-Lab offers several rigging options.
 
+* Base Skeleton
+* Base Muscle
+* IK Skeleton
+* IK Skeleton and Muscle
+
+These options can be selected at MB-Lab start up.
+
+Depending on the rig options selected will determine the resulting rig and ultimatly how the character will be used depending on the needs of the user.
 
 ==================
 Muscle base system
 ==================
 
-MB-Lab includes a simulated muscle armature, a basic system that is called "base"
+MB-Lab includes a simulated muscle armature. This system tries to emulate the behaviour of the human muscles
 
-.. image:: images/GUI_175.png
+.. image:: images/muscles_175.png
 
-One of the main difference between the two systems is that the "full" one will be anatomically more accurate, but it will require (probably) to have the lab installed on the production machine. On the contrary, the "base" system already implemented in **version 1.6.0** and above, that simulates only the main muscles masses, relies on the standard Blender tools and after the finalization step the character will work on any recent version of Blender, with or without the lab installed.
+Originally there was a plan of two muscle systems, one which is already included in MB-Lab and another more advanced system, as described by Manuel Bastioni as a more accurate model. One of the main difference between the two systems is that the "full" one will be anatomically more accurate, but it will require (probably) to have the lab installed on the production machine. On the contrary, the "base" system already implemented in **version 1.6.0** and above, that simulates only the main muscles masses, relies on the standard Blender tools and after the finalization step the character will work on any recent version of Blender, with or without the lab installed.
 
-The images show some features of the muscle system and a comparison with the base system:
+The images show some features of the muscle system and a comparison with the base skeleton system:
 
-To reach this goal, a big amount of time was spent to design a flexible armature using only basic built-in components offered by Blender, without drivers but only constraints. The structure was heavily tested with many benchmark animations, in particular to avoid or minimize the problem of unwanted rotations that sometime are created by the solver for extreme angles. The same sessions were also used to test the improved animation retarget system 1.6.0. Some of the cool results are in the video that was created during the development.
+.. image:: images/muscles_175_02.png
+
+To reach this goal, a big amount of time was spent to design a flexible armature using only basic built-in components offered by Blender, without drivers but only constraints. The structure was heavily tested with many benchmark animations, in particular to avoid or minimize the problem of unwanted rotations that sometime are created by the solver for extreme angles. 
 
 ==================
 Inverse Kinematics
@@ -115,6 +125,8 @@ In some cases, when the rest pose of the bvh is not perfectly equal to the rest 
 
 The system is not designed to correct the bvh, but just to load and retarget the animation as it is, so things like wrong angles, tremors, frame rates must be corrected using external specific tools.
 
-You can save and load Bone offsets.
+Save and load config files to adjust bones after importing BVH animation files.
 
 .. image:: images/bone_offset_01.png
+
+With this feature, you'll be able to tweak XYZ bone rotations, store in a file for a specific BVH Animation ( or more depending on the adjustments ) and then simply load this file whenever you want to reuse that BVH animation and the tweaked bones will self-adjust.
