@@ -16,6 +16,7 @@ MB-Lab 1.7.5
 * Documentation updates
 * Changed characters_config.json for tongue shader
 * Rebuilt humanoid_library.blend for Blender 2.80
+* Reduced SSS value for EEVEE in human skin shader
 * Fixed API change 'bpy.context.scene.update()' to 'bpy.context.view_layer.update()' in animationengine.py fixing BVH import bug
 * Gloss fix for EEVEE in human skin shader
 * Muscle FK and IK, Skeleton FK and IK roll fixes for various bones in armatures

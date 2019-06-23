@@ -5,9 +5,9 @@ MB-Lab provides a procedural skin editor that can be used with Cycles or EEVEE.
 
 .. image:: images/skin_editor_01.png
 
-Behind the simple interface there is a set of complex shaders. The shaders themselves have undergone an evolution since version 1.6.1.
+Underneath the Skin Editor is a set of complex surface shaders. These shaders have been in constant development since version 1.6.1 
 
-These shaders have been developed to simulate the variety of skin tones and work under any lighting condition. There are currently two sets of shaders, one "photorealistic" set and the "cell" shaders set.
+These shaders have been developed to simulate the variety of skin tones and work under any lighting condition. There are currently two sets of shaders, one "photorealistic" set and the "cell" shaders set. Each set of shaders are assigned to specific base models.
 
 * An advanced human skin shader
 * An advanced toon skin shader
@@ -38,7 +38,19 @@ One of most important parameters is the complexion. It modifies the color in ord
 Skin oil
 --------
 
-Another important factor is the amount of the oil layer. It's a thin layer that protects the skin, more noticeable in some body parts and almost invisible in others.
+This controls the sheen value of the skin oil. The roughness value also affects the visual result of the oil.
+
+.. image:: images/SS_oil_00.png
+.. image:: images/SS_oil_90.png
+
+--------------
+Skin Roughness
+--------------
+
+This controls the micro scale roughness. This value helps control how much skin oil is also visible.
+
+.. image:: images/SS_rough_00.png
+.. image:: images/SS_rough_090.png
 
 ---------
 Skin bump
@@ -46,23 +58,30 @@ Skin bump
 
 This parameter controls the amount of the skin bump. It doesn't affect the true displacement of the subdivided mesh, but only the visual bump effect calculated at render time.
 
---------------
-Skin Roughness
---------------
-
-This controls the micro scale roughness
 
 -------------
 Skin Freckles
 -------------
 
-This parameter controls how much procedural freckles are added
+This parameter controls how much procedural freckles are added, the visibility is affected by a texture mask
 
 ----------
 Skin Veins
 ----------
 
 This controls how much procedural veins are added to the skin
+
+.. image:: images/SS_skinveins_000.png
+.. image:: images/SS_skinveins_100.png
+
+--------
+Skin SSS
+--------
+
+This controls the overalll Sub Surface Scattering of the skin
+
+.. image:: images/SS_SSS_000.png
+.. image:: images/SS_SSS_100.png
 
 -------
 Eye SSS
@@ -127,3 +146,25 @@ Skin Secondary value
 --------------------
 
 This changes the color value of the Secondary cell shading
+
+=======================
+Post Finalization Notes
+=======================
+
+Once you finalize the MB-Lab character it is NOT required to have the surface shaders currently shipped with, if your production needs differ from the shaders assigned it is fully possible to add your own shaders.
+
+Each base model has shaders assigned to polygons, these shaders can easily be replaced with your own simply by replacing the current ones shipped.
+
+This also applies to the texture maps that are shipped with MB-Lab, these can be edited by your prefered image editor (such as Photoshop or GIMP) to your specfic needs.
+
+============
+Future Notes
+============
+
+The surface shaders are always undergoing evalution and testing to try to achieve the best possible visual representation of the human body.
+
+One feature that is being developed for future versions of MB-Lab is a fingernail shader that will hopefully allow users to change the color. This will also apply to toe nails.
+
+It has been suggested that features such as scars or tattoos should be added, this unfortanatly cannot be completed because of the variable nature of such "features", one cannot predict or dictate these features without having a MASSIVE library for them and as such these will NOT be added to MB-Lab. If your production needs require such features it is recommended that you create edited versions of the texture maps supplied, change shader networks and whatever else is needed to complete the character AFTER finaliztion.
+
+If you have suggestions about the surface shaders please feel free to contact the developers.

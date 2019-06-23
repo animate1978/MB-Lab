@@ -5,6 +5,8 @@ New Features
 Version 1.7.5
 =============
 
+This version is meant to be the "official" stable version for Blender 2.80 after it is officially released.
+
 * GUI change
 
 This version shows the evolution of the GUI that has changed since the original 1.6.1 version.
