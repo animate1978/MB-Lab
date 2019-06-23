@@ -176,8 +176,97 @@ The height of the character can't be assigned directly, but is automatically cal
 The button "Reset category" resets all the sliders of the selected category, setting their value to 0.5.
 
 
-.. toctree::
-   :maxdepth: 2
+===========
+Model Types
+===========
 
-   model_types
-   phenotypes
+
+A "type" defines in one shot all the main features of the body: bone structure, fat percentage, mass and muscles. Each type is created upon anthropometric data and artistic observations and delineates the body of the character.
+
+Types are labeled using simple names, like "ideal fashion", "athletic", "lazy", "hourglass".
+
+.. image:: images/modeltypes_01.png
+
+The system uses this kind of identifiers because they are less difficult to remember and more intuitive than scientific terms utilized in anthropometry.
+
+Types can be selected via the intuitive GUI in the main panel, it's also possible to use the "Mix" option to blend different types.
+
+.. image:: images/mixtypes_03.png
+
+.. image:: images/gallery_140_28.png
+
+A "special-type" differs from the "type" because it can describe non-realistic creatures (as example comic heroes, brute and other people with augmented proportions) or data-only entities (for example "older" and "younger" special types).
+
+Depending on the features that are modified and the way they are modified, types can be grouped in some big categories:
+
+* Types defined mainly by the variation of muscle and mass percentages
+* Types defined mainly by the variation of proportions
+* Types defined by basic shapes
+
+Examples of types
+
+.. image:: images/gallery_140_25.png
+
+.. image:: images/gallery_140_26.png
+
+.. image:: images/gallery_140_27.png
+
+.. image:: images/gallery_140_12.png
+
+.. image:: images/gallery_140_13.png
+
+
+==========
+Phenotypes
+==========
+
+A "phenotype" defines merely the physical appearance of a class of characters, it's not related to politics, culture, language or history. It's used to describe the variations of human traits in relation to the evolution in a specific geographical area.
+
+MB-Lab supports the most of common human phenotypes to the extent of volumetric modeling features.
+
+The phenotypes are labeled using the geographic location where each phenotype is statistically more diffused.
+
+The available phenotypes depend by the base character selected:
+
+* Afro phenotypes
+
+.. image:: images/phenotypes01.png
+
+.. image:: images/phenotypes02.png
+
+.. image:: images/phenotypes03.png
+
+.. image:: images/phenotypes04.png
+
+* Asian phenotypes
+
+.. image:: images/phenotypes05.png
+
+.. image:: images/phenotypes06.png
+
+.. image:: images/phenotypes07.png
+
+.. image:: images/phenotypes08.png
+
+.. image:: images/phenotypes18.png
+
+.. image:: images/phenotypes09.png
+
+.. image:: images/phenotypes10.png
+
+* Caucasian phenotypes
+
+.. image:: images/phenotypes11.png
+
+.. image:: images/phenotypes12.png
+
+.. image:: images/phenotypes13.png
+
+.. image:: images/phenotypes14.png
+
+.. image:: images/phenotypes15.png
+
+.. image:: images/phenotypes16.png
+
+.. image:: images/phenotypes17.png
+
