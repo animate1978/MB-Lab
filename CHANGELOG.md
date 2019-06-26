@@ -21,6 +21,7 @@ All changes will be documented here
 - Changed characters_config.json for tongue shader
 - Rebuilt humanoid_library.blend file for Blender 2.80.74
 - Reduced SSS value for EEVEE in human skin shader
+* Inverted the bump map
 
 ## Bug Fixes
 
