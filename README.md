@@ -34,6 +34,8 @@ This fork is an attempt to keep this addon going forward as the original author 
 - Documentation updates
 - Changed characters_config.json for tongue shader
 - Rebuilt humanoid_library.blend file for Blender 2.80.74
+- Reduced SSS value for EEVEE in human skin shader
+- Edited bump maps
 
 ## Bug Fixes
 
