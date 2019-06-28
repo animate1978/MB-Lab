@@ -20,6 +20,7 @@ MB-Lab 1.7.5
 * Fixed API change 'bpy.context.scene.update()' to 'bpy.context.view_layer.update()' in animationengine.py fixing BVH import bug
 * Gloss fix for EEVEE in human skin shader
 * Muscle FK and IK, Skeleton FK and IK roll fixes for various bones in armatures
+* Edited bump maps
 
 ============
 MB-Lab 1.7.4

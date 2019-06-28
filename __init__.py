@@ -585,7 +585,7 @@ bpy.types.Scene.mblab_use_lamps = bpy.props.BoolProperty(
     description="Add a set of lights optimized for portrait. Useful during the design of skin (recommended)")
 
 bpy.types.Scene.mblab_show_measures = bpy.props.BoolProperty(
-    name="Body measures",
+    name="Measurements",
     description="Show measures controls",
     update=modifiers_update)
 
