@@ -142,7 +142,7 @@ Depending on the category selected, the panel will show some sliders to increase
 
 .. image:: images/bodymeasures_01.png
 
-The measures editor is enabled selecting the "Body measures" option.
+The measures editor is enabled selecting the "Measurements" option.
 
 .. image:: images/bodymeasures_02.png
 

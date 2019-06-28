@@ -2128,7 +2128,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                     box = self.layout.box()
                     mblab_humanoid.bodydata_realtime_activated = True
                     if mblab_humanoid.exists_measure_database():
-                        box.prop(scn, 'mblab_show_measures', icon='PRESET')
+                        box.prop(scn, 'mblab_show_measures', icon='SNAP_INCREMENT')
                     split = box.split()
 
                     col = split.column()
