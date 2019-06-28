@@ -22,6 +22,7 @@ All changes will be documented here
 - Rebuilt humanoid_library.blend file for Blender 2.80.74
 - Reduced SSS value for EEVEE in human skin shader
 - Edited bump maps
+- Changed "Body Measures" in "Body Measures" to "Measurements" to fix confusion
 
 ## Bug Fixes
 
