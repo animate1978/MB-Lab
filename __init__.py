@@ -706,6 +706,9 @@ bpy.types.Scene.mblab_random_engine = bpy.props.EnumProperty(
     name="Engine",
     default="LI")
 
+bpy.types.Scene.mblab_facs_rig = bpy.props.BoolProperty(
+    name="Import FACS Rig")
+
 class ButtonParametersOff(bpy.types.Operator):
     bl_label = 'Body Measures'
     bl_idname = 'mbast.button_parameters_off'
@@ -1819,9 +1822,17 @@ class CreateFaceRig(bpy.types.Operator):
     def execute(self, context):
         mblab_shapekeys.update_expressions_data()
         if mblab_shapekeys.model_type != "NONE":
-            if not facerig.setup_face_rig():
+            rc = facerig.setup_face_rig()
+            if not rc:
                 self.report({'ERROR'},
                             "Face Rig creation process failed")
+                return {'FINISHED'}
+            elif bpy.context.scene.mblab_facs_rig:
+                rc = facerig.setup_facs_rig()
+                if not rc:
+                    self.report({'ERROR'},
+                                "FACS Rig creation process failed")
+                    return {'FINISHED'}
         else:
             self.report({'ERROR'},
                         "Select finalized MB Lab character to create face rig")
@@ -1930,6 +1941,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
             box.label(text="Face Rig")
             box.operator('mbast.create_face_rig', icon='USER')
             box.operator('mbast.delete_face_rig', icon='CANCEL')
+            box.prop(scn, "mblab_facs_rig")
             box = self.layout.box()
 
             if gui_active_panel_fin != "expressions":
