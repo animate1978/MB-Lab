@@ -3,10 +3,23 @@ After Creation Tools
 
 After the modeling of your character has been finalized MB-Lab will go back to it's default UI panel.
 
-This is the time when your character is done and you can do with it as you wish, either further editing it by sculpting, or adding clothes, defining poses or starting animation sequences, or none at all and this is your character ready for it's next task.
+The After Creation Tools area contains functions that could help with characters post creation, such as poses, animations and adding clothing.
+
+* Face Expressions
+* Add clothing or polygonal hair assets
+* Fit the assets to your character
+* Poses
+* Animation
+* Helper tools
+
+
+It should be noted that these functions are possible using default Blender tools as well, these functions are helpers or automated parts that are not perfect and in some cases contains buggy code.
+
+Some of these functions are experimental as well and may evolve or be dropped in favor of better methods, tools or code.
 
 .. image:: images/finalization01.png
 
+The After Creation Tools area is also meant for future relases with potential new functions, such as cloth or hair.
 
 .. toctree::
    :maxdepth: 2
