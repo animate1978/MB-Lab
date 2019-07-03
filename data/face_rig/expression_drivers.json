@@ -379,12 +379,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.5999999046325684
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "var",
+            "expression": "(var * 2.6)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -427,12 +427,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.5999999046325684
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "-var",
+            "expression": "-(var*2.6)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -1093,12 +1093,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "var + 0.0",
+            "expression": "(var * 2)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -1141,12 +1141,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    4.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "-var",
+            "expression": "-(var*4)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -1189,12 +1189,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "var + 0.0",
+            "expression": "(var * 2)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -1237,12 +1237,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    4.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "-var",
+            "expression": "-(var*4)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -1285,12 +1285,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    3.059999942779541
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "-var",
+            "expression": "-(var*3.06)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -1333,12 +1333,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    3.059999942779541
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "var",
+            "expression": "(var*3.06)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -1381,12 +1381,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    3.059999942779541
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "-var",
+            "expression": "-(var*3.06)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -1429,12 +1429,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    3.059999942779541
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "var",
+            "expression": "(var*3.06)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -1669,12 +1669,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    38.499996185302734
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "-var",
+            "expression": "-(var*38.5)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -1717,12 +1717,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    38.499996185302734
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "var",
+            "expression": "(var*38.5)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -1765,12 +1765,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    38.499996185302734
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "-var",
+            "expression": "-(var*38.5)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -1813,12 +1813,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    38.499996185302734
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "var",
+            "expression": "(var*38.5)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -1861,12 +1861,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "-var",
+            "expression": "-(var*2.0)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -1909,12 +1909,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "var",
+            "expression": "(var*2.0)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -1957,12 +1957,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "var",
+            "expression": "(var*2.0)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -2005,12 +2005,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "-var",
+            "expression": "-(var*2.0)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -2053,12 +2053,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "-var",
+            "expression": "-(var*2.0)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -2101,12 +2101,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "var",
+            "expression": "(var*2.0)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -2149,12 +2149,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "var",
+            "expression": "(var*2.0)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -2245,12 +2245,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "-var",
+            "expression": "-(var*2.0)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -2293,12 +2293,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "var",
+            "expression": "(var*2.0)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -2341,12 +2341,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "var",
+            "expression": "(var*2.0)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -2389,12 +2389,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "-var",
+            "expression": "-(var*2.0)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -2437,12 +2437,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "-var",
+            "expression": "-(var*2.0)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -2637,12 +2637,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": " var + (ph_E/6) + (ph_FV/6.2341) + (ph_TH/8)",
+            "expression": " (var*2) + ((ph_E/6)*2) + ((ph_FV/6.2341)*2) +( (ph_TH/8)*2)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -2727,12 +2727,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "-var",
+            "expression": "(-var*2)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -2851,12 +2851,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "var + (ph_U/1.571) + (ph_WQ/4.5274)",
+            "expression": "(var*2) +( (ph_U/1.571)*2) +( (ph_WQ/4.5274)*2)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -2988,7 +2988,7 @@
         "hide": false,
         "lock": false,
         "mute": false,
-        "select": true,
+        "select": false,
         "modifiers": [
             {
                 "active": true,
@@ -3003,12 +3003,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "var + (ph_O/2.571) + (ph_L/14.962)",
+            "expression": "(var*2) +( (ph_O/2.571)*2) +( (ph_L/14.962)*2)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -3141,12 +3141,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "var",
+            "expression": "(var*2.0)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -3251,12 +3251,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "var",
+            "expression": "(var*2.0)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -3299,12 +3299,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "-var",
+            "expression": "-(var*2.0)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -3347,12 +3347,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "var",
+            "expression": "(var*2.0)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -3395,12 +3395,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "-var",
+            "expression": "-(var*2.0)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -3443,12 +3443,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "var",
+            "expression": "(var*2.0)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -3491,12 +3491,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "-var",
+            "expression": "-(var*2.0)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -3539,12 +3539,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "var",
+            "expression": "(var*2.0)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -3587,12 +3587,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "-var",
+            "expression": "-(var*2.0)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -3697,12 +3697,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "var",
+            "expression": "(var*2.0)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -3897,12 +3897,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "var",
+            "expression": "(var*2.0)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -3945,12 +3945,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "-var",
+            "expression": "-(var*2.0)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -3993,12 +3993,12 @@
                 "use_influence": false,
                 "coefficients": [
                     0.0,
-                    2.0
+                    1.0
                 ]
             }
         ],
         "driver": {
-            "expression": "var",
+            "expression": "(var*2)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -4102,7 +4102,7 @@
         "hide": false,
         "lock": false,
         "mute": false,
-        "select": false,
+        "select": true,
         "modifiers": [
             {
                 "active": true,
