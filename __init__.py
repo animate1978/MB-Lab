@@ -1925,7 +1925,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
             self.layout.label(text=" ")
             self.layout.label(text="AFTER-CREATION TOOLS", icon='MODIFIER_ON')
 
-            # face rig button
+            # face rig button CONTAINS A BUG
             box = self.layout.box()
             box.label(text="Face Rig")
             box.operator('mbast.create_face_rig', icon='USER')

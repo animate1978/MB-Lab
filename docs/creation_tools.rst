@@ -146,7 +146,7 @@ The measures editor is enabled selecting the "Measurements" option.
 
 .. image:: images/bodymeasures_02.png
 
-When the measures editor is enabled, the "body parameters" panel contains two main sections: the column of anatomical parameters and the column of measures. The first column is dedicated to anatomical details: see this page for more information. The second column contains the main anthropometric measures used in design, anthropology and tailoring.
+When the measures editor is enabled, the "body parameters" panel contains two main sections: the column of anatomical parameters and the column of measures. The first column is dedicated to anatomical details. The second column contains the main anthropometric measures used in design, anthropology and tailoring.
 
 .. image:: images/bodymeasures_03.png
 
