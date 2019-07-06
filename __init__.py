@@ -118,11 +118,11 @@ def start_lab_session():
                 else:
                     scn.render.engine = 'BLENDER_EEVEE'
                 if scn.mblab_use_lamps:
-                    #algorithms.import_object_from_lib(lib_filepath, "Lamp_back_bottom")
+                    
                     algorithms.import_object_from_lib(lib_filepath, "Light_Key")
                     algorithms.import_object_from_lib(lib_filepath, "Light_Fill")
                     algorithms.import_object_from_lib(lib_filepath, "Light_Backlight")
-                    # algorithms.append_object_from_library(lib_filepath, [], "Lamp_")
+                    
             else:
                 scn.render.engine = 'BLENDER_WORKBENCH'
 
@@ -1835,7 +1835,7 @@ class CreateFaceRig(bpy.types.Operator):
                     return {'FINISHED'}
         else:
             self.report({'ERROR'},
-                        "Select finalized MB Lab character to create face rig")
+                        "Select finalized MB-Lab character to create face rig")
         return {'FINISHED'}
 
 
@@ -1854,7 +1854,7 @@ class DeleteFaceRig(bpy.types.Operator):
                             "Face Rig deletion failed")
         else:
             self.report({'ERROR'},
-                        "Select finalized MB Lab character to create face rig")
+                        "Select finalized MB-Lab character to create face rig")
         return {'FINISHED'}
 
 
@@ -2088,13 +2088,17 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                     mass_lbl = round(50 * (x_mass + 1))
                     tone_lbl = round(50 * (x_tone + 1))
                     lbl_text = "Age : {0} yr.  Mass : {1}%  Tone : {2}% ".format(age_lbl, mass_lbl, tone_lbl)
-                    self.layout.label(text=lbl_text)
+                    box = self.layout.box()
+                    box.label(text=lbl_text)
+
                     for meta_data_prop in sorted(mblab_humanoid.character_metaproperties.keys()):
                         if "last" not in meta_data_prop:
                             self.layout.prop(obj, meta_data_prop)
                     self.layout.operator("mbast.reset_allproperties", icon="RECOVER_LAST")
-                    if mblab_humanoid.get_subd_visibility() == True:
-                        self.layout.label(text="Tip: for slow PC, disable the subdivision in Display Options below", icon='INFO')
+
+                    #if mblab_humanoid.get_subd_visibility() == True:
+                        #self.layout.label(text="Tip: for slow PC, disable the subdivision in Display Options below", icon='INFO')
+                    box = self.layout.box()
 
                 if gui_active_panel != "library":
                     self.layout.operator('mbast.button_library_on', icon=icon_expand)
@@ -2222,7 +2226,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
 
                     if mblab_humanoid.exists_displace_texture():
                         box.operator("mbast.skindisplace_calculate", icon='MOD_DISPLACE')
-                        box.label(text="You need to enable subdiv and displ to see the displ in viewport", icon='INFO')
+                        box.label(text="Enable Displacement Preview to view updates", icon='INFO')
 
                     for material_data_prop in sorted(mblab_humanoid.character_material_properties.keys()):
                         box.prop(obj, material_data_prop)
@@ -2285,7 +2289,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                         box.label(text="Subd. preview is very CPU intensive", icon='INFO')
                     else:
                         box.operator("mbast.subdivision_disable", icon='X')
-                        box.label(text="Disable subdivision to increase the performance", icon='ERROR')
+                        box.label(text="Disable subdivision to increase performance", icon='ERROR')
                     if mblab_humanoid.get_smooth_visibility() == False:
                         box.operator("mbast.corrective_enable", icon='MOD_SMOOTH')
                     else:
@@ -2294,7 +2298,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                 self.layout.label(text=" ")
                 self.layout.label(text="AFTER-CREATION TOOLS", icon="MODIFIER_ON")
                 self.layout.label(
-                    text="After-creation tools FINALIZED characters ONLY", icon="INFO")
+                    text="FINALIZED characters ONLY", icon="INFO")
 
             else:
                 gui_status = "NEW_SESSION"
