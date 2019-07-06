@@ -337,7 +337,7 @@ class RetargetEngine:
                 try:
                     return bones_chain[index]
                 except IndexError:
-                    logger.warning("The chain %s of mocap file has less bones than the chain in the lab", bones_chain)
+                    logger.warning("The chain %s of mocap file has less bones than the chain in MB-Lab", bones_chain)
 
         return None
 

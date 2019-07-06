@@ -5,7 +5,7 @@ Updates
 MB-Lab 1.7.5
 ============
 
-* Added icons and modified GUI slightly
+* Added icons and modified GUI
 * Tongue shader added
 * Save and Load Bone rotation offsets to file
 * Face Rig updated

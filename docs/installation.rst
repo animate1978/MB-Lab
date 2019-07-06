@@ -81,10 +81,11 @@ You can manually install MB-Lab as well. You need to unzip MB-Lab to the followi
 
 * Windows 7 - C: \ Users \ USERNAME \ AppData \ Roaming \ Blender Foundation \ Blender \ 2.80 \ scripts \ addons
 
-* Windows 10
-
+* Windows 10 - C: \ Users \ USERNAME \ AppData \ Roaming \ Blender Foundation \ Blender \ 2.80 \ scripts \ addons
 
 * Linux - /home/USERNAME/.config/blender/2.80/scripts/addons/
+
+* MacOS - ~/Library/Application Support/Blender/2.80/scripts/addons/
 
 To remove simply delete the MB-Lab directory from your file system
 

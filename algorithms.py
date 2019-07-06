@@ -393,9 +393,9 @@ def looking_for_humanoid_obj():
     """
     Looking for a mesh that is OK for the lab
     """
-    logger.info("Looking for an humanoid object...")
-    if bpy.app.version < (2, 78, 0):
-        msg = "Sorry, the lab requires official Blender 2.78 or 2.79."
+    logger.info("Looking for a humanoid object ...")
+    if bpy.app.version < (2, 80, 74):
+        msg = "Sorry, MB-Lab requires Blender 2.80"
         logger.warning(msg)
         return("ERROR", msg)
 
@@ -627,11 +627,11 @@ def disable_object_modifiers(obj, types_to_disable=[]):
         modifier_type = modfr.type
         if modifier_type in types_to_disable:
             set_modifier_viewport(modfr, False)
-            logger.info("Modifier %s of %s can create unpredictable fitting results. The lab disabled it",
+            logger.info("Modifier %s of %s can create unpredictable fitting results. MB-Lab has disabled it",
                         modifier_type, obj.name)
         elif types_to_disable == []:
             set_modifier_viewport(modfr, False)
-            logger.info("Modifier %s of %s can create unpredictable fitting results. The lab disabled it",
+            logger.info("Modifier %s of %s can create unpredictable fitting results. MB-Lab has disabled it",
                         modifier_type, obj.name)
 
 
