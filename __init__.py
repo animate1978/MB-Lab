@@ -1822,13 +1822,14 @@ class CreateFaceRig(bpy.types.Operator):
     def execute(self, context):
         mblab_shapekeys.update_expressions_data()
         if mblab_shapekeys.model_type != "NONE":
-            rc = facerig.setup_face_rig()
+            obj = algorithms.get_active_body()
+            rc = facerig.setup_face_rig(obj)
             if not rc:
                 self.report({'ERROR'},
                             "Face Rig creation process failed")
                 return {'FINISHED'}
             elif bpy.context.scene.mblab_facs_rig:
-                rc = facerig.setup_facs_rig()
+                rc = facerig.setup_facs_rig(obj)
                 if not rc:
                     self.report({'ERROR'},
                                 "FACS Rig creation process failed")
@@ -1848,13 +1849,13 @@ class DeleteFaceRig(bpy.types.Operator):
 
     def execute(self, context):
         mblab_shapekeys.update_expressions_data()
-        if mblab_shapekeys.model_type != "NONE":
-            if not facerig.delete_face_rig():
-                self.report({'ERROR'},
-                            "Face Rig deletion failed")
-        else:
-            self.report({'ERROR'},
-                        "Select finalized MB-Lab character to create face rig")
+        obj = algorithms.get_active_object()
+        if not obj:
+            self.report({'ERROR'}, "Select Face Rig to delete")
+            return {'FINISHED'}
+
+        if not facerig.delete_face_rig(obj):
+            self.report({'ERROR'}, "failed to delete face rig")
         return {'FINISHED'}
 
 

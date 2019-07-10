@@ -28,6 +28,7 @@ import os
 import bpy
 
 from . import algorithms
+from . import utils
 
 logger = logging.getLogger(__name__)
 
@@ -58,8 +59,9 @@ def populate_modifiers(modifiers, mlist):
             mod = modifiers.new(m['type'])
             populate_modifier(mod, m)
 
-def create_variable(var, driver):
-    face_rig = bpy.data.objects[var['targets'][0]['id_name']]
+def create_variable(var, driver, mb_name):
+    fr_name = var['targets'][0]['id_name']+'.'+mb_name
+    face_rig = bpy.data.objects[fr_name]
 
     v = driver.driver.variables.new()
 
@@ -71,16 +73,13 @@ def create_variable(var, driver):
     v.targets[0].transform_type = var['targets'][0]['transform_type']
     v.targets[0].bone_target = var['targets'][0]['bone_target']
 
-def rm_drivers():
-    mesh = algorithms.get_active_body()
-    mname = mesh.name
-
+def rm_drivers(mname):
     for d in bpy.data.objects[mname].data.shape_keys.key_blocks:
         rc = d.driver_remove('value')
         if not rc:
             logger.critical("failed to removed a driver: %d", rc)
 
-def add_drivers(drivers):
+def add_drivers(drivers, mb_name):
     # Iterate through each driver entry and create driver
     mesh = algorithms.get_active_body()
     mname = mesh.name
@@ -114,13 +113,12 @@ def add_drivers(drivers):
         driver.driver.use_self = v['driver']['use_self']
         variables = v['driver']['variables']
         for var in variables:
-            create_variable(var, driver)
+            create_variable(var, driver, mb_name)
 
-def add_facs_drivers(skd):
+def add_facs_drivers(skd, mesh):
     au_div = skd['Divisor']['au_value']
     gz_div = skd['Divisor']['gz_value']
 
-    mesh = algorithms.get_active_body()
     mname = mesh.name
 
     for au, exprs in skd.items():
@@ -128,7 +126,7 @@ def add_facs_drivers(skd):
             continue
 
         # get the object
-        slider = "facs_rig_slider_"+au
+        slider = "facs_rig_slider_"+au+"."+mname
         slider_obj = bpy.data.objects.get(slider)
         if not slider_obj:
             logger.critical("%s slider controller not found", slider)
@@ -201,11 +199,60 @@ def append_rig(rig_name, data_path):
 
     return True
 
+def find_collLayer(layerColl, collName):
+    found = None
+    if (layerColl.name == collName):
+        return layerColl
+    for layer in layerColl.children:
+        found = find_collLayer(layer, collName)
+        if found:
+            return found
 
-def setup_face_rig():
+def rename_collection(collLayer, new):
+    collLayer.collection.name = new
+
+def rename_object_in_collection(c, orig, new):
+    for obj in c.collection.all_objects:
+        if obj.name == orig:
+            obj.name = new
+
+def get_root_bone(armat, root):
+    armat.select_set(True)
+    bpy.context.view_layer.objects.active = armat
+    bpy.ops.object.mode_set(mode='POSE')
+    for b in bpy.context.object.pose.bones:
+        if b.name == root:
+             return b
+    return None
+
+def get_root_bone_x_loc(obj):
+    # move the Rigs closer to the character
+    armat = utils.get_deforming_armature(obj)
+    if not armat:
+        logger.critical("No aramature found for character %s. Ignoring",
+            obj.name)
+        return 0, False
+
+    root_bone = get_root_bone(armat, 'root')
+    if not root_bone:
+        logger.critical("%s does not have a root bone. Ignoring", obj.name)
+        return 0, False
+
+    root_x = root_bone.location[0]
+
+    return root_x, True
+
+def setup_face_rig(obj):
+    face_rig_collName = 'Face_Rig.'+obj.name
+    face_rig_name = 'MBLab_skeleton_face_rig.'+obj.name
+    ph_rig_collName = 'Phoneme_Rig.'+obj.name
+    ph_rig_name = 'MBLab_skeleton_phoneme_rig.'+obj.name
+
+    layerColl = find_collLayer(bpy.context.view_layer.layer_collection,
+                               face_rig_collName)
     # check if the face rig is already imported
-    if bpy.data.objects.find('MBLab_skeleton_face_rig') != -1:
-        logger.critical("MBLab_skeleton_face_rig is already imported")
+    if layerColl:
+        logger.critical("Character already has face rig")
         return False
 
     data_path = algorithms.get_data_path()
@@ -219,6 +266,21 @@ def setup_face_rig():
        not append_rig('Phoneme_Rig', data_path):
         return False
 
+    # rename imported items
+    fr_coll = find_collLayer(bpy.context.view_layer.layer_collection, 'Face_Rig')
+    if not fr_coll:
+        logger.critical("Face Rig broken manually delete")
+        return False
+    rename_collection(fr_coll, face_rig_collName)
+    rename_object_in_collection(fr_coll, 'MBLab_skeleton_face_rig', face_rig_name)
+
+    pr_coll = find_collLayer(bpy.context.view_layer.layer_collection, 'Phoneme_Rig')
+    if not pr_coll:
+        logger.critical("Face Rig broken manually delete")
+        return False
+    rename_collection(pr_coll, ph_rig_collName)
+    rename_object_in_collection(pr_coll, 'MBLab_skeleton_phoneme_rig', ph_rig_name)
+
     # load face rig json file
     json_file = os.path.join(data_path, "face_rig", "expression_drivers.json")
 
@@ -228,14 +290,53 @@ def setup_face_rig():
 
     with open(json_file, 'r') as f:
         drivers = json.load(f)
-        add_drivers(drivers)
+        add_drivers(drivers, obj.name)
+
+    root_x, rc = get_root_bone_x_loc(obj)
+    if not rc:
+        return True
+
+    # set the root of the face and phoneme rigs
+    face_rig = algorithms.get_object_by_name(face_rig_name)
+    if not face_rig:
+        logger.critical("Can't find %s. Delete face rig manually",
+            face_rig_name)
+        return False
+
+    root_bone = get_root_bone(face_rig, 'root')
+    if not root_bone:
+        logger.critical("%s does not have a root bone. Ignoring", obj.name)
+        return True
+
+    root_bone.location[0] = root_x * 0.7
+
+    ph_rig = algorithms.get_object_by_name(ph_rig_name)
+    if not face_rig:
+        logger.critical("Can't find %s. Delete face rig manually",
+            face_rig_name)
+        return False
+
+    root_bone = get_root_bone(ph_rig, 'root')
+    if not root_bone:
+        logger.critical("%s does not have a root bone. Ignoring", obj.name)
+        return True
+
+    root_bone.location[0] = root_x * 0.7
 
     return True
 
-def setup_facs_rig():
+def rename_facs_objs(c, post):
+    for obj in c.collection.all_objects:
+        obj.name = obj.name+"."+post
+
+def setup_facs_rig(obj):
     # check if the facs rig is already imported
-    if bpy.data.objects.find('MBLab_facs_rig') != -1:
-        logger.critical("MBLab_facs_rig is already imported")
+    facs_rig_collName = 'Facs_Rig.'+obj.name
+    layerColl = find_collLayer(bpy.context.view_layer.layer_collection,
+                               facs_rig_collName)
+    # check if the face rig is already imported
+    if layerColl:
+        logger.critical("Character already has face rig")
         return False
 
     data_path = algorithms.get_data_path()
@@ -248,6 +349,14 @@ def setup_facs_rig():
     if not append_rig('Facs_Rig', data_path):
         return False
 
+    # rename imported items
+    facs_coll = find_collLayer(bpy.context.view_layer.layer_collection, 'Facs_Rig')
+    if not facs_coll:
+        logger.critical("FACS Rig broken. Manually delete")
+        return False
+    rename_collection(facs_coll, facs_rig_collName)
+    rename_facs_objs(facs_coll, obj.name)
+
     # load face rig json file
     json_file = os.path.join(data_path, "face_rig", "facs_au.json")
 
@@ -258,11 +367,24 @@ def setup_facs_rig():
     with open(json_file, 'r') as f:
         shape_keys = json.load(f)
         try:
-            add_facs_drivers(shape_keys)
+            add_facs_drivers(shape_keys, obj)
         except Exception as e:
             traceback.print_stack()
             logger.critical("%s".str(e))
             return False
+
+    root_x, rc = get_root_bone_x_loc(obj)
+    if not rc:
+        return True
+
+    facs_frame = \
+        algorithms.get_object_by_name('facs_rig_frame.'+obj.name)
+    if not facs_frame:
+        logger.critical("FACS frame %s not found",
+            'facs_rig_frame.'+obj.name)
+        return True
+
+    facs_frame.location[0] = root_x * 0.7
 
     return True
 
@@ -280,20 +402,32 @@ def recursive_collection_delete(head):
 
     bpy.data.collections.remove(head)
 
-def delete_face_rig():
+def delete_face_rig(obj):
+    if not 'MBLab_skeleton_face_rig.' in obj.name and not 'MBLab_skeleton_phoneme_rig.' in obj.name:
+        return False
+
+    character_name = ''
+    if 'MBLab_skeleton_face_rig.' in obj.name:
+        character_name = obj.name.replace('MBLab_skeleton_face_rig.', '')
+    elif 'MBLab_skeleton_phoneme_rig.' in obj.name:
+        character_name = obj.name.replace('MBLab_skeleton_phoneme_rig.','')
+
+    fr_name = 'MBLab_skeleton_face_rig.'+character_name
+    pr_name = 'MBLab_skeleton_phoneme_rig.'+character_name
+
     # check if the face rig is already imported
-    facerig = bpy.data.objects.get('MBLab_skeleton_face_rig')
+    facerig = bpy.data.objects.get(fr_name)
     if not facerig:
         logger.critical("face rig is not added")
         return False
 
     # check if the face rig is already imported
-    phoneme = bpy.data.objects.get('MBLab_skeleton_phoneme_rig')
+    phoneme = bpy.data.objects.get(pr_name)
     if not phoneme:
         logger.critical("phoneme rig is not added")
         return False
 
-    rm_drivers()
+    rm_drivers(character_name)
 
     # store the original selection
     orig_selection = {}
@@ -304,16 +438,17 @@ def delete_face_rig():
     # delete all the rigs
     facerig.select_set(True)
     phoneme.select_set(True)
+    bpy.ops.object.mode_set(mode="OBJECT")
     bpy.ops.object.delete()
 
     # delete all the collections
-    c = bpy.data.collections.get('Face_Rig')
+    c = bpy.data.collections.get('Face_Rig.'+character_name)
     if c:
        recursive_collection_delete(c)
-    c = bpy.data.collections.get('Facs_Rig')
+    c = bpy.data.collections.get('Facs_Rig.'+character_name)
     if c:
        recursive_collection_delete(c)
-    c = bpy.data.collections.get('Phoneme_Rig')
+    c = bpy.data.collections.get('Phoneme_Rig.'+character_name)
     if c:
        recursive_collection_delete(c)
 
