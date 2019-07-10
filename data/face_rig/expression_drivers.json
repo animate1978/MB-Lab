@@ -204,7 +204,7 @@
             }
         ],
         "driver": {
-            "expression": "(var*5)+(ph_AI/2)+(ph_E/5) + (ph_CDG/6.36)",
+            "expression": "(var*33.5)+(ph_AI/2)+(ph_E/5) + (ph_CDG/6.36)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -294,7 +294,7 @@
             }
         ],
         "driver": {
-            "expression": "(var*5) + (ph_AI/2) + (ph_E/5) + (ph_CDG/6.36)",
+            "expression": "(var*33.5) + (ph_AI/2) + (ph_E/5) + (ph_CDG/6.36)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -384,7 +384,7 @@
             }
         ],
         "driver": {
-            "expression": "(var * 2.6)",
+            "expression": "(var * 19)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -432,7 +432,7 @@
             }
         ],
         "driver": {
-            "expression": "-(var*2.6)",
+            "expression": "-(var*19)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -1866,7 +1866,7 @@
             }
         ],
         "driver": {
-            "expression": "-(var*2.0)",
+            "expression": "-(var*11.0)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -1914,7 +1914,7 @@
             }
         ],
         "driver": {
-            "expression": "(var*2.0)",
+            "expression": "(var*11.0)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -1962,7 +1962,7 @@
             }
         ],
         "driver": {
-            "expression": "(var*2.0)",
+            "expression": "(var*14)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
@@ -2010,7 +2010,7 @@
             }
         ],
         "driver": {
-            "expression": "-(var*2.0)",
+            "expression": "-(var*14)",
             "is_simple_expression": true,
             "is_valid": true,
             "type": "SCRIPTED",
