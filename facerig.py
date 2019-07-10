@@ -225,7 +225,7 @@ def get_root_bone(armat, root):
              return b
     return None
 
-def get_root_bone_x_loc(obj):
+def get_root_bone_xyz_loc(obj):
     # move the Rigs closer to the character
     armat = utils.get_deforming_armature(obj)
     if not armat:
@@ -239,8 +239,10 @@ def get_root_bone_x_loc(obj):
         return 0, False
 
     root_x = root_bone.location[0]
+    root_y = root_bone.location[1]
+    root_z = root_bone.location[2]
 
-    return root_x, True
+    return root_x, root_y, root_z, True
 
 def setup_face_rig(obj):
     face_rig_collName = 'Face_Rig.'+obj.name
@@ -292,7 +294,7 @@ def setup_face_rig(obj):
         drivers = json.load(f)
         add_drivers(drivers, obj.name)
 
-    root_x, rc = get_root_bone_x_loc(obj)
+    root_x, root_y, root_z, rc = get_root_bone_xyz_loc(obj)
     if not rc:
         return True
 
@@ -308,7 +310,9 @@ def setup_face_rig(obj):
         logger.critical("%s does not have a root bone. Ignoring", obj.name)
         return True
 
-    root_bone.location[0] = root_x * 0.7
+    root_bone.location[0] = root_x + 0.5
+    root_bone.location[1] = -root_z
+    root_bone.location[2] = root_y
 
     ph_rig = algorithms.get_object_by_name(ph_rig_name)
     if not face_rig:
@@ -321,7 +325,9 @@ def setup_face_rig(obj):
         logger.critical("%s does not have a root bone. Ignoring", obj.name)
         return True
 
-    root_bone.location[0] = root_x * 0.7
+    root_bone.location[0] = root_x + 0.5
+    root_bone.location[1] = -root_z
+    root_bone.location[2] = root_y
 
     return True
 
@@ -373,7 +379,7 @@ def setup_facs_rig(obj):
             logger.critical("%s".str(e))
             return False
 
-    root_x, rc = get_root_bone_x_loc(obj)
+    root_x, root_y, root_z, rc = get_root_bone_xyz_loc(obj)
     if not rc:
         return True
 
@@ -384,7 +390,9 @@ def setup_facs_rig(obj):
             'facs_rig_frame.'+obj.name)
         return True
 
-    facs_frame.location[0] = root_x * 0.7
+    facs_frame.location[0] = root_x + 0.5
+    facs_frame.location[1] = -root_y
+    facs_frame.location[2] = -root_z + facs_frame.location[2]
 
     return True
 
