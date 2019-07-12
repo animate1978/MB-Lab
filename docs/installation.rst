@@ -8,7 +8,11 @@ Install MB-Lab
 
 **IMPORTANT**
 
-Because of how Github packages releases, this WILL affect how you install MB-Lab if downloading from the release page ONLY!
+The installation of MB-Lab remains one of the most common issues for users, unfortanatly the way Github packages releases, this WILL affect how you install MB-Lab if downloading from the Github release page ONLY!
+
+When downloading a release the ZIP file contains a folder that has the version number in the folder name, this will cause Blender to assume that the addon directory name is a file extension and gets confused.
+
+This is one reason the Auto-Updater was added, so users only have to install once and then just update from within Blender without having to go through the installation process each time MB-Lab updated.
 
 If you download a clone where Github renames it **MB-Lab-master**, you will not have issues.
 
@@ -103,3 +107,16 @@ To update MB-Lab to latest version in the 'master' branch, click on "Update mb_l
 
 You can also set the addon to automatically check, by setting the Interval between checks. There are options for Months, Days, Hours and Minutes. It is recommended to check every 2 weeks to a month based upon the update history of MB-Lab.
 
+===============
+Cloning via GIT
+===============
+
+You can clone the MB-Lab project directly into your addon directory, this is how the developers work for instance.
+
+https://github.com/animate1978/MB-Lab.git
+
+There are two main branches.
+
+Master - This is the "release" code
+
+Dev - This is the development code
