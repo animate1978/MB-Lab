@@ -15,9 +15,23 @@ Icons have been added everywhere now!
 
 .. image:: images/GUI_175.png
 
+* Improved Face Rig
+
+The Face Rig has been updated now, with a new FACS capable Rig
+
+
+
 * Tongue Shader
 
 Now you can edit the skin complexion without changing the color of the tongue.
+
+.. image:: images/tongue_001.png
+
+* Improved Iris shader
+
+This was a very late addition to MB-Lab 1.7.5 but it looks fantastic compared to the first version
+
+.. image:: images/new_iris_001.png
 
 * Animation BVH Files
 

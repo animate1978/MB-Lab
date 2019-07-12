@@ -126,13 +126,15 @@ Iris Color
 
 Currently there is no option in MB-Lab to change the iris color in the MB-Lab Skin Editor, this is a feature that is being looked at but for now there is a couple of ways to change the color.
 
+.. image:: images/new_iris_001.png
+
 Method 1. Change the color in the Node Editor.
 
-.. image:: images/node_ed_iris_col_01.png
+.. image:: images/new_iris_nodes.png
 
 Method 2. Change the color in the Properties Panel.
 
-.. image:: images/prop_iris_col_01.png
+.. image:: images/new_iris_prop.png
 
 Both ways require a small amount of mouse clicking to get to but the shader has been designed to hopefully make changing the iris color easy as possible with current code.
 

@@ -164,6 +164,9 @@ Creating New Assets
 To create a new asset is actually fairly simple procress but certain requirements are needed in order for them to be used in MB-Lab
 
 * Scaled to the MB-Lab Base model
-* Named the same in Outliner as well as filename
-* WIP
 
+The assets need to be scaled to size with an MB-Lab mesh. Use some of the assets found in the MB-Lab project as reference.
+
+* Named the same in Outliner as well as filename 
+
+This is required in order for the addon to recognize the file. (eg: anime_hair and anime_hair.blend)
