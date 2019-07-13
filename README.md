@@ -26,7 +26,7 @@ This fork is an attempt to keep this addon going forward as the original author 
 
 ## Changed
 
-- Improved Iris shader (PENDING)
+- Improved Iris shader
 - Changed descriptions for male and female elf and dwarf characters
 - Changed Blender minimum version to 2.80.74
 - Removed Buggy message from Muscle checkbox because the Blender bug has been fixed
@@ -37,6 +37,7 @@ This fork is an attempt to keep this addon going forward as the original author 
 - Reduced SSS value for EEVEE in human skin shader
 - Edited bump maps
 - Changed "Body Measures" in "Body Measures" to "Measurements" to fix confusion
+- Eyes UV remapped
 
 ## Bug Fixes
 
@@ -47,6 +48,7 @@ This fork is an attempt to keep this addon going forward as the original author 
 - Fix 'Bones rot. offset' in after-creation tools
 - Fixed Skin complexion function related to SSS
 - Toes_R connected bug fixed
+- SSS scale fixed in Teeth shader
 
 ## ManuelBastioniLAB 1.6.1a
 
