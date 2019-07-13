@@ -89,6 +89,41 @@ This controls the overall Sub Surface Scattering of the skin
 .. image:: images/SS_SSS_000.png
 .. image:: images/SS_SSS_100.png
 
+--------------------------
+Bump/displacement controls
+--------------------------
+
+The button "Update displacement" uses an algorithm to produce a displacement map based on a combination of Age, Mass and Tone.
+
+You should use this button to update the bump/displacement each time you change the meta parameters. Note that to see these changes, "Enable displacement preview" needs to be checked in the Display Options of MB-Lab.
+
+Each time the button "Update displacement" is pressed, the system recalculates the displacement map using the values of meta parameters. This map can be saved with the "Save displacement image" button, in order to be usable in external engines or in finalized characters.
+
+.. image:: images/cycles_displace_000_01.png
+.. image:: images/cycles_displace_090_01.png
+
+-------------------
+Eye and Iris Shader
+-------------------
+
+With version 1.7.5 comes a new set of eye shaders. They have been redesigned from the ground up.
+
+Both the eyeball and the iris have a procedural and texture mapped network so users have the option to use either option, or mix together if so chosen.
+
+Currently there is no option in MB-Lab to change the iris color in the MB-Lab Skin Editor, this is a feature that is being looked at but for now there is a couple of ways to change the color.
+
+.. image:: images/new_iris_001.png
+
+Method 1. Change the color in the Node Editor.
+
+.. image:: images/new_iris_nodes.png
+
+Method 2. Change the color in the Properties Panel.
+
+.. image:: images/new_iris_prop.png
+
+Both ways require a small amount of mouse clicking to get to but the shader has been designed to hopefully make changing the iris color easy as possible with current code.
+
 -------
 Eye SSS
 -------
@@ -107,38 +142,35 @@ This controls how much veins are visible on the eyeball
 .. image:: images/SS_eye_veins_000.png
 .. image:: images/SS_eye_veins_100.png
 
---------------------------
-Bump/displacement controls
---------------------------
+------------
+Eye Iris Mix
+------------
 
-The button "Update displacement" uses an algorithm to produce a displacement map based on a combination of Age, Mass and Tone.
+This simply mixes between procedural or texture map networks
 
-You should use this button to update the bump/displacement each time you change the meta parameters. Note that to see these changes, "Enable displacement preview" needs to be checked in the Display Options of MB-Lab.
+--------------
+Eye Shader Mix
+--------------
 
-Each time the button "Update displacement" is pressed, the system recalculates the displacement map using the values of meta parameters. This map can be saved with the "Save displacement image" button, in order to be usable in external engines or in finalized characters.
+Like the Iris shader, this mixes between procedural or texture map networks
 
-.. image:: images/cycles_displace_000_01.png
-.. image:: images/cycles_displace_090_01.png
+--------
+Eyes Hue
+--------
 
----------
-Iris Color
----------
+This changes the color hue of the iris in the texture map network
 
-Currently there is no option in MB-Lab to change the iris color in the MB-Lab Skin Editor, this is a feature that is being looked at but for now there is a couple of ways to change the color.
+---------------
+Eyes Saturation
+---------------
 
-.. image:: images/new_iris_001.png
+This controls the saturation of the iris, can be used in combination with Eye Hue to fine tune the color.
 
-Method 1. Change the color in the Node Editor.
+----------
+Eyes Value
+----------
 
-.. image:: images/new_iris_nodes.png
-
-Method 2. Change the color in the Properties Panel.
-
-.. image:: images/new_iris_prop.png
-
-Both ways require a small amount of mouse clicking to get to but the shader has been designed to hopefully make changing the iris color easy as possible with current code.
-
-Also note that the iris is a procedural generated texture that is not quite perfect yet in design so at close up can look a little weird, it is still considered a WIP.
+This controls the value, or lightness, of the iris. As with Saturation can be used to fine tune the color of the iris.
 
 ======================
 Cell Shader Parameters
