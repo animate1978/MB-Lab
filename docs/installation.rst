@@ -8,15 +8,17 @@ Install MB-Lab
 
 **IMPORTANT**
 
-The installation of MB-Lab remains one of the most common issues for users, unfortanatly the way Github packages releases, this WILL affect how you install MB-Lab if downloading from the Github release page ONLY!
+One of the most common issues is installation of MB-Lab, which we all admit is a pain because of how GitHub packages release ZIP files. Please read CAREFULLY!!
 
-When downloading a release the ZIP file contains a folder that has the version number in the folder name, this will cause Blender to assume that the addon directory name is a file extension and gets confused.
+If you download a clone where Github renames it MB-Lab-master, you will not have issues.
 
-This is one reason the Auto-Updater was added, so users only have to install once and then just update from within Blender without having to go through the installation process each time MB-Lab updated.
+Github packages releases WILL affect how you install MB-Lab if downloading from the release page ONLY!
 
+GitHub packages ZIP files with the version numbers in the name. The folder INSIDE this ZIP file is what needs to be changed, you need to go to that directory and rename it from **MB-Lab 1.x.x** to **MB-Lab-1-x-x** or **MBLAB175** if you want to be simple, **just get rid of the periods in the directory name** and Blender will recognize it and add the addon to the list.
+
+This is because if you install an addon with periods, Blender assumes it is a file extension of some kind and gets confused, which causes confusion in most of installation issues with MB-Lab.
 If you download a clone where Github renames it **MB-Lab-master**, you will not have issues.
 
-You need to go to that directory and rename it from **MB-Lab 1.x.x** to **MB-Lab-1-x-x** or **MBLAB175** if you want to be simple, **just get rid of the periods in the directory name** and Blender will recognize it and add the addon to the list.
 
 * Step 1
 

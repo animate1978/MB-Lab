@@ -1,7 +1,7 @@
 Skin Editor
 ===========
 
-MB-Lab provides a procedural skin editor that can be used with Cycles or EEVEE.
+MB-Lab provides a custom shader editor that can be used with Cycles or EEVEE.
 
 .. image:: images/skin_editor_01.png
 
@@ -11,7 +11,7 @@ These shaders have been developed to simulate the variety of skin tones and work
 
 * An advanced human skin shader
 * An advanced toon skin shader
-* Procedural eyeball and iris shaders
+* An advanced set of eyeball and iris shaders
 * Shaders for the teeth and tongue
 
 The shaders use a combination of texture maps and procedural texture generation, the texture maps are used where procedural generated textures cannot work, while the procedural elements provide details that maps cannot replicate.
@@ -102,75 +102,6 @@ Each time the button "Update displacement" is pressed, the system recalculates t
 .. image:: images/cycles_displace_000_01.png
 .. image:: images/cycles_displace_090_01.png
 
--------------------
-Eye and Iris Shader
--------------------
-
-With version 1.7.5 comes a new set of eye shaders. They have been redesigned from the ground up.
-
-Both the eyeball and the iris have a procedural and texture mapped network so users have the option to use either option, or mix together if so chosen.
-
-Currently there is no option in MB-Lab to change the iris color in the MB-Lab Skin Editor, this is a feature that is being looked at but for now there is a couple of ways to change the color.
-
-.. image:: images/new_iris_001.png
-
-Method 1. Change the color in the Node Editor.
-
-.. image:: images/new_iris_nodes.png
-
-Method 2. Change the color in the Properties Panel.
-
-.. image:: images/new_iris_prop.png
-
-Both ways require a small amount of mouse clicking to get to but the shader has been designed to hopefully make changing the iris color easy as possible with current code.
-
--------
-Eye SSS
--------
-
-This controls how much subsurface scattering of the eye is rendered
-
-.. image:: images/SS_eye_sss_000.png
-.. image:: images/SS_eye_sss_100.png
-
----------------
-Eye Vein Amount
----------------
-
-This controls how much veins are visible on the eyeball
-
-.. image:: images/SS_eye_veins_000.png
-.. image:: images/SS_eye_veins_100.png
-
-------------
-Eye Iris Mix
-------------
-
-This simply mixes between procedural or texture map networks
-
---------------
-Eye Shader Mix
---------------
-
-Like the Iris shader, this mixes between procedural or texture map networks
-
---------
-Eyes Hue
---------
-
-This changes the color hue of the iris in the texture map network
-
----------------
-Eyes Saturation
----------------
-
-This controls the saturation of the iris, can be used in combination with Eye Hue to fine tune the color.
-
-----------
-Eyes Value
-----------
-
-This controls the value, or lightness, of the iris. As with Saturation can be used to fine tune the color of the iris.
 
 ======================
 Cell Shader Parameters
@@ -283,6 +214,63 @@ Skin Saturation
 
 The controls the relative color saturation of the skin, can be used to help fine tune Skin Complexion
 
+===================
+Eye and Iris Shader
+===================
+
+With version 1.7.5 comes a new set of eye shaders. They have been redesigned from the ground up.
+
+Both the eyeball and the iris have a procedural and texture mapped network so users have the option to use either option, or mix together if so chosen.
+
+Currently there is no option in MB-Lab to change the iris color in the MB-Lab Skin Editor, this is a feature that is being looked at but for now there is a couple of ways to change the color.
+
+.. image:: images/new_iris_001.png
+
+Method 1. Change the color in the Node Editor.
+
+.. image:: images/new_iris_nodes.png
+
+Method 2. Change the color in the Properties Panel.
+
+.. image:: images/new_iris_prop.png
+
+Both ways require a small amount of mouse clicking to get to but the shader has been designed to hopefully make changing the iris color easy as possible with current code.
+
+---------------
+Eye Vein Amount
+---------------
+
+This controls how much veins are visible on the procedural eyeball shader
+
+------------
+Eye Iris Mix
+------------
+
+This simply mixes between procedural or texture map networks
+
+--------------
+Eye Shader Mix
+--------------
+
+Like the Iris shader, this mixes between procedural or texture map networks
+
+--------
+Eyes Hue
+--------
+
+This changes the color hue of the iris in the texture map network
+
+---------------
+Eyes Saturation
+---------------
+
+This controls the saturation of the iris, can be used in combination with Eye Hue to fine tune the color.
+
+----------
+Eyes Value
+----------
+
+This controls the value, or lightness, of the iris. As with Saturation can be used to fine tune the color of the iris.
 
 ============
 Texture Maps
