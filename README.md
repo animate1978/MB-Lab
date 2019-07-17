@@ -22,11 +22,11 @@ This fork is an attempt to keep this addon going forward as the original author 
 
 - Added icons and modified GUI
 - Tongue shader added
+- Improved Iris and Eyeball shaders
 - Save/Load BVH Bone Config
 
 ## Changed
 
-- Improved Iris shader
 - Changed descriptions for male and female elf and dwarf characters
 - Changed Blender minimum version to 2.80.74
 - Removed Buggy message from Muscle checkbox because the Blender bug has been fixed
