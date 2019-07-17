@@ -220,11 +220,13 @@ Eye and Iris Shader
 
 With version 1.7.5 comes a new set of eye shaders. They have been redesigned from the ground up.
 
-Both the eyeball and the iris have a procedural and texture mapped network so users have the option to use either option, or mix together if so chosen.
+The Iris shader has both a procedural network where you can change various settings to get the effect you want, as well as a texture map version with controls in MB-Lab that can change the color as well. There is the option to Mix the two together to get some interesting effects.
+
+The Eyeball shader uses a new texture map set.
 
 Currently there is no option in MB-Lab to change the iris color in the MB-Lab Skin Editor, this is a feature that is being looked at but for now there is a couple of ways to change the color.
 
-.. image:: images/new_iris_001.png
+.. image:: images/new_eyes_EEVEE_01.png
 
 Method 1. Change the color in the Node Editor.
 
@@ -236,23 +238,12 @@ Method 2. Change the color in the Properties Panel.
 
 Both ways require a small amount of mouse clicking to get to but the shader has been designed to hopefully make changing the iris color easy as possible with current code.
 
----------------
-Eye Vein Amount
----------------
-
-This controls how much veins are visible on the procedural eyeball shader
 
 ------------
 Eye Iris Mix
 ------------
 
 This simply mixes between procedural or texture map networks
-
---------------
-Eye Shader Mix
---------------
-
-Like the Iris shader, this mixes between procedural or texture map networks
 
 --------
 Eyes Hue
