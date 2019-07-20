@@ -7,9 +7,9 @@ There are six ways to manipulate the character:
 
 * Using the meta parameters: body mass, body tone and age
 * Loading a preset from the character library: types, specialtypes and phenotypes.
-* Modifying the "low level" parameters: nose, eyes, mouth, legs, etc.
 * Using the quasi-random generator.
 * Using the automodelling tool.
+* Modifying the "low level" parameters: nose, eyes, mouth, legs, etc.
 * Using the measure tool.
 
 ===============
@@ -18,7 +18,7 @@ Meta parameters
 
 The metaparameters are the most intuitive way to define a character. Using this technology, the definition of the main traits of the character is matter of few seconds. The user interface is very easy to understand: just three intuitive sliders for the values of age, mass and tone.
 
-.. image:: images/metaparameters01.png
+.. image:: images/metaparam_01.png
 
 * The age can vary from 18 to 80 y.o.
 * The mass can vary from 0% to 100%.
@@ -45,13 +45,13 @@ Another way to quickly define a character is loading the parameters directly fro
 
 A "type" defines in one shot all the main features of the body: bone structure, fat percentage, mass and muscles. Each type is created upon anthropometric data and artistic observations and delineates the body of the character. Types are labelled using simple names, like "ideal fashion", "athletic", "lazy", "hourglass".
 
+.. image:: images/modeltypes_01.png
+
 The system uses this kind of identifiers because they are less difficult to remember and more intuitive than scientific terms utilized in anthropometry.
 
 Types can be selected via the intuitive GUI in the main panel, it's also possible to use the "Mix" option to blend different types.
 
-.. image:: images/mix_types01.png
-
-
+.. image:: images/mixtypes_03.png
 
 A "special-type" differs from the "type" because it can describe non-realistic creatures (as example comic heroes, brute and other people with augmented proportions) or data-only entities (for example "older" and "younger" specialtypes).
 
@@ -71,32 +71,6 @@ There are also types and phenotypes for anime characters
 
 .. image:: images/anime_variations01.png
 
-=================
-Detail Parameters
-=================
-
-Low level parameters are modifiers that act on a small detail of the anatomy like the point of nose, the inner corner of the eyes and the size of the mouth.
-
-There are hundreds of modifiers, hidden by default. The control GUI can be enabled checking the option "Body, face and measure parameters" as indicated in the image below.
-
-.. image:: images/parameters00.png
-
-When enabled, the interface will show a new set of tools.
-
-.. image:: images/parameters02.png
-
-By default, the measures are not enabled and the column shows only the anatomic details. The upper element is the selector for the morphing category.
-
-A morphing category is a body element (for example the head) or a set of morphings (for example the expression units).
-
-Enabling the measures editor, the GUI is divided in two main sections: the column of anatomical parameters and the column of dimensions. The second column is dedicated to measures: see this page for more information.
-
-Depending on the category selected, the panel will show some sliders to increase or decrease a specific feature. In most of cases the parameters are very intuitive, for example increasing or decreasing the length of upper arm, but in some cases you need to try to see what happens, for example increasing or decreasing the dolichocefal value of the head.
-
-The button "Reset category" resets all the sliders of the selected category, setting their value to 0.5.
-
-The button "Reset All" resets all the sliders of all categories, setting their value to 0.5.
-
 
 ================
 Random Generator
@@ -104,7 +78,9 @@ Random Generator
 
 The other way to create characters is using the quasi-random generator, that it's not entirely random, but partially controlled by some parameters.
 
-The engine includes some new algorithms, where the most interesting is probably the "heritage" option, that automatically creates variations of character preserving the prevalent "dna" characteristics.
+.. image:: images/random_02.png
+
+The engine includes some new algorithms, where the most interesting is probably the "phenotype" option, that automatically creates variations of character preserving the prevalent "dna" characteristics.
 
 Another fundamental parameter is the scale of the randomization.
 
@@ -126,14 +102,6 @@ Other constrains are more intuitive: during the generation it's possible to pres
 
 This is very useful, for example if you like the face of the random generated character, but not the body, you can constrain the face and generate new variations.
 
-There is also a special option, the "tone and mass" one.
-
-.. image:: images/generator06.png
-
-Enabling it, a new couple of sliders will appear, to set the body mass and the body tone of the generated characters. These settings will overwrite the effects of the engine selected: for example if you set the mass slider to max, your character will have always the max mass, no matter if the engine says "light" variations.
-
-.. image:: images/generator07.png
-
 
 =============
 Auto-Modeling
@@ -147,7 +115,7 @@ The user quickly modifies the character to vaguely suggest what he has in mind a
 
 With this method, the artist can create his base character practically with two clicks.
 
-.. image:: images/automodelling01.png
+.. image:: images/automodel_01.png
 
 The first button, "auto modeling" corrects the anomalies in order to convert the model in the corresponding realistic human; the button "smooth" normalizes the character, making it more "uniform" and smooth.
 
@@ -164,11 +132,25 @@ Measures
 
 It's possible to define the shape of characters using a set of body measures. This new feature is available only for human characters (i.e. it's not available for anime).
 
-.. image:: images/measures01.png
+By default, the measures are not enabled and the column shows only the anatomic details. The upper element is the selector for the morphing category.
 
-The measures editor is enabled selecting the "Body measures" option.
+A morphing category is a body element (for example the head) or a set of morphings (for example the expression units).
 
-When the measures editor is enabled, the "body parameters" panel contains two main sections: the column of anatomical parameters and the column of measures. The first column is dedicated to anatomical details: see this page for more information. The second column contains the main anthropometric measures used in design, anthropology and tailoring.
+Enabling the measures editor, the GUI is divided in two main sections: the column of anatomical parameters and the column of dimensions. The second column is dedicated to measures: see this page for more information.
+
+Depending on the category selected, the panel will show some sliders to increase or decrease a specific feature. In most of cases the parameters are very intuitive, for example increasing or decreasing the length of upper arm, but in some cases you need to try to see what happens, for example increasing or decreasing the dolichocefal value of the head.
+
+.. image:: images/bodymeasures_01.png
+
+The measures editor is enabled selecting the "Measurements" option.
+
+.. image:: images/bodymeasures_02.png
+
+When the measures editor is enabled, the "body parameters" panel contains two main sections: the column of anatomical parameters and the column of measures. The first column is dedicated to anatomical details. The second column contains the main anthropometric measures used in design, anthropology and tailoring.
+
+.. image:: images/bodymeasures_03.png
+
+There is an option to use "Inches" rather than "Centimeters" as well, converting from one measurement system to another. This updates in realtime.
 
 There are three methods to set the measures of body: direct, indirect and loading a measure file.
 
@@ -190,8 +172,101 @@ Due to this algorithm, the resulting measures can differ a bit from the user inp
 
 The height of the character can't be assigned directly, but is automatically calculated as sum of neck, torso, buttock, upper leg, lower leg and feet height.
 
-.. toctree::
-   :maxdepth: 2
+**Reset**
+The button "Reset category" resets all the sliders of the selected category, setting their value to 0.5.
 
-   model_types
-   phenotypes
+
+===========
+Model Types
+===========
+
+
+A "type" defines in one shot all the main features of the body: bone structure, fat percentage, mass and muscles. Each type is created upon anthropometric data and artistic observations and delineates the body of the character.
+
+Types are labeled using simple names, like "ideal fashion", "athletic", "lazy", "hourglass".
+
+.. image:: images/modeltypes_01.png
+
+The system uses this kind of identifiers because they are less difficult to remember and more intuitive than scientific terms utilized in anthropometry.
+
+Types can be selected via the intuitive GUI in the main panel, it's also possible to use the "Mix" option to blend different types.
+
+.. image:: images/mixtypes_03.png
+
+.. image:: images/gallery_140_28.png
+
+A "special-type" differs from the "type" because it can describe non-realistic creatures (as example comic heroes, brute and other people with augmented proportions) or data-only entities (for example "older" and "younger" special types).
+
+Depending on the features that are modified and the way they are modified, types can be grouped in some big categories:
+
+* Types defined mainly by the variation of muscle and mass percentages
+* Types defined mainly by the variation of proportions
+* Types defined by basic shapes
+
+Examples of types
+
+.. image:: images/gallery_140_25.png
+
+.. image:: images/gallery_140_26.png
+
+.. image:: images/gallery_140_27.png
+
+.. image:: images/gallery_140_12.png
+
+.. image:: images/gallery_140_13.png
+
+
+==========
+Phenotypes
+==========
+
+A "phenotype" defines merely the physical appearance of a class of characters, it's not related to politics, culture, language or history. It's used to describe the variations of human traits in relation to the evolution in a specific geographical area.
+
+MB-Lab supports the most of common human phenotypes to the extent of volumetric modeling features.
+
+The phenotypes are labeled using the geographic location where each phenotype is statistically more diffused.
+
+The available phenotypes depend by the base character selected:
+
+* Afro phenotypes
+
+.. image:: images/phenotypes01.png
+
+.. image:: images/phenotypes02.png
+
+.. image:: images/phenotypes03.png
+
+.. image:: images/phenotypes04.png
+
+* Asian phenotypes
+
+.. image:: images/phenotypes05.png
+
+.. image:: images/phenotypes06.png
+
+.. image:: images/phenotypes07.png
+
+.. image:: images/phenotypes08.png
+
+.. image:: images/phenotypes18.png
+
+.. image:: images/phenotypes09.png
+
+.. image:: images/phenotypes10.png
+
+* Caucasian phenotypes
+
+.. image:: images/phenotypes11.png
+
+.. image:: images/phenotypes12.png
+
+.. image:: images/phenotypes13.png
+
+.. image:: images/phenotypes14.png
+
+.. image:: images/phenotypes15.png
+
+.. image:: images/phenotypes16.png
+
+.. image:: images/phenotypes17.png
+

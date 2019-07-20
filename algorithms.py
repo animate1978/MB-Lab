@@ -144,7 +144,7 @@ def exists_database(lib_path):
             logger.warning("data path %s not found", simple_path(lib_path))
     return result
 
-# TODO: This may be the data input we are looking for?
+# TODO: REVERSE ENGINEERING : This may be the data input we are looking for?
 def length_of_strip(vertices_coords, indices, axis="ALL"):
     strip_length = 0
     for x in range(len(indices)-1):
@@ -393,9 +393,9 @@ def looking_for_humanoid_obj():
     """
     Looking for a mesh that is OK for the lab
     """
-    logger.info("Looking for an humanoid object...")
-    if bpy.app.version < (2, 78, 0):
-        msg = "Sorry, the lab requires official Blender 2.78 or 2.79."
+    logger.info("Looking for a humanoid object ...")
+    if bpy.app.version < (2, 80, 74):
+        msg = "Sorry, MB-Lab requires Blender 2.80"
         logger.warning(msg)
         return("ERROR", msg)
 
@@ -451,7 +451,7 @@ def is_in_list(list1, list2, position="ANY"):
                 return True
     return False
 
-#TODO: Calls from morphengine.py loads JSON file
+#TODO: REVERSE ENGINEERING : Calls from morphengine.py loads JSON file
 def load_json_data(json_path, description=None):
     try:
         time1 = time.time()
@@ -627,11 +627,11 @@ def disable_object_modifiers(obj, types_to_disable=[]):
         modifier_type = modfr.type
         if modifier_type in types_to_disable:
             set_modifier_viewport(modfr, False)
-            logger.info("Modifier %s of %s can create unpredictable fitting results. The lab disabled it",
+            logger.info("Modifier %s of %s can create unpredictable fitting results. MB-Lab has disabled it",
                         modifier_type, obj.name)
         elif types_to_disable == []:
             set_modifier_viewport(modfr, False)
-            logger.info("Modifier %s of %s can create unpredictable fitting results. The lab disabled it",
+            logger.info("Modifier %s of %s can create unpredictable fitting results. MB-Lab has disabled it",
                         modifier_type, obj.name)
 
 

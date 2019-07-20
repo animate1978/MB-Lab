@@ -10,7 +10,7 @@ The base characters are the results of many years of experience in modeling huma
 * The topology is human readable, in order to be easily customized by the artists.
 * The topology is designed to be optimally sculpted with Blender, Mudbox, Zbrush, etc.
 
-All the characters include complete teeth and eye models and all them provide a real geometry eyelashes and eyebrows, in order to be exportable everywhere, without being dependent from Blender particles system.
+All the characters include complete teeth and eye models and all them provide a real geometry eyelashes, in order to be exportable everywhere, without being dependent from Blender particles system.
 
 .. image:: images/base_models00.png
 

@@ -173,10 +173,10 @@ class MorphingEngine:
     def load_bboxes_database(self, bounding_box_path):
         self.bbox_data = algorithms.load_json_data(bounding_box_path,"Bounding box data")
 
-    #TODO: This loads the morphs
+    #TODO: REVERSE ENGINEERING : This loads the morphs
     def load_morphs_database(self, morph_data_path):
         time1 = time.time()
-        m_data = algorithms.load_json_data(morph_data_path,"Morph data") #calls algorithms.py
+        m_data = algorithms.load_json_data(morph_data_path,"Morph data") # calls algorithms.py
         if m_data:
             for morph_name, deltas in m_data.items():
                 morph_deltas = []
