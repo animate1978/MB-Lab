@@ -1,7 +1,7 @@
 Expressions
 ===========
 
-.. image:: images/expressions01.png
+.. image:: images/expressions_01.png
 
 
 When a model is finalized, the after creation tools are enabled. If the user doesn't alter the topology and the shapekeys of the character, the after-creation tool "face expressions" will show a set of intuitive sliders.
@@ -9,7 +9,7 @@ When a model is finalized, the after creation tools are enabled. If the user doe
 This tool is very easy to use: just move the sliders to mix the various expressions.
 
 
-.. image:: images/expressions01a.png
+.. image:: images/expressions_02.png
 
 
 You can also use the button "Insert keyframe" to insert an animation key at the current frame.

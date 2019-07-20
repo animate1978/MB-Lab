@@ -53,7 +53,16 @@ class MaterialEngine:
             "eyes_albedo": character_config["texture_eyes"],
             "body_bump": character_config["texture_bump"],
             "body_subd": character_config["texture_subdermal"],
+            "tongue_albedo": character_config["texture_tongue_albedo"],
+            "tongue_sss": character_config["texture_tongue_sss"],
+            "tongue_bump": character_config["texture_tongue_bump"],
             "freckle_mask": character_config["texture_frecklemask"],
+            "iris_color": character_config["texture_iris_color"],
+            "iris_bump": character_config["texture_iris_bump"],
+            "sclera_color": character_config["texture_sclera_color"],
+            "translucent_mask": character_config["texture_translucent_mask"],
+            "sclera_mask": character_config["texture_sclera_mask"],
+
         }
 
         image_file_paths = {}
@@ -103,12 +112,44 @@ class MaterialEngine:
         return os.path.isfile(self.image_file_paths["body_bump"])
 
     @property
+    def texture_tongue_albedo_exist(self):
+        return os.path.isfile(self.image_file_paths["tongue_albedo"])
+
+    @property
+    def texture_tongue_sss_exist(self):
+        return os.path.isfile(self.image_file_paths["tongue_sss"])
+
+    @property
+    def texture_tongue_bump_exist(self):
+        return os.path.isfile(self.image_file_paths["tongue_bump"])
+
+    @property
     def texture_displace_exist(self):
         return os.path.isfile(self.image_file_paths["displ_data"])
-    
+
     @property
     def texture_frecklemask_exist(self):
         return os.path.isfile(self.image_file_paths["freckle_mask"])
+    
+    @property
+    def texture_iris_color_exist(self):
+        return os.path.isfile(self.image_file_paths["iris_color"])
+    
+    @property
+    def texture_iris_bump(self):
+        return os.path.isfile(self.image_file_paths["iris_bump"])
+    
+    @property
+    def texture_texture_sclera_color_exist(self):
+        return os.path.isfile(self.image_file_paths["sclera_color"])
+    
+    @property
+    def texture_texture_translucent_mask_exist(self):
+        return os.path.isfile(self.image_file_paths["translucent_mask"])
+    
+    @property
+    def texture_texture_sclera_mask_exist(self):
+        return os.path.isfile(self.image_file_paths["sclera_mask"])
 
     @staticmethod
     def calculate_disp_pixels(blender_image, age_factor, tone_factor, mass_factor):
@@ -193,8 +234,26 @@ class MaterialEngine:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["body_bump"])
                     if "_skn_disp" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["body_displ"])
+                    if "_tongue_albedo" in node.name:
+                        self.assign_image_to_node(material.name, node.name, self.image_file_names["tongue_albedo"])
+                    if "_tongue_SSS" in node.name:
+                        self.assign_image_to_node(material.name, node.name, self.image_file_names["tongue_sss"])
+                    if "_tongue_bump" in node.name:
+                        self.assign_image_to_node(material.name, node.name, self.image_file_names["tongue_bump"])
                     if "_skn_frecklemask" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["freckle_mask"])
+                    if "_iris_color" in node.name:
+                        self.assign_image_to_node(material.name, node.name, self.image_file_names["iris_color"])
+                    if "_iris_bump" in node.name:
+                        self.assign_image_to_node(material.name, node.name, self.image_file_names["iris_bump"])
+                    if "_sclera_color" in node.name:
+                        self.assign_image_to_node(material.name, node.name, self.image_file_names["sclera_color"])
+                    if "_translucent_mask" in node.name:
+                        self.assign_image_to_node(material.name, node.name, self.image_file_names["translucent_mask"])
+                    if "_sclera_mask" in node.name:
+                        self.assign_image_to_node(material.name, node.name, self.image_file_names["sclera_mask"])
+
+
 
     def rename_skin_shaders(self, prefix):
         obj = self.get_object()

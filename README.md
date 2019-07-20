@@ -1,10 +1,10 @@
 # MB-Lab
 
-MB-Lab is a community developed and supported project based off ManuelBastioniLAB.
+Character creation tool for Blender
 
 ## Blender 2.8 Support
 
-MB-Lab has been ported to work with Blender 2.80 BETA.
+MB-Lab has been developed to work with Blender 2.80
 
 ## Contributors wanted! Python programmers needed!
 
@@ -12,39 +12,43 @@ We are a small bunch of developers and artists but we always need more! MB-Lab's
 
 ## About
 
-Manuel Bastioni was active in open source projects since 1999.
-
-Member of Blender Artist community since 2002.
-
-He was one of the authors of "The Official Blender 2.3 guide, the open 3D creation suite", writing the chapter "From Blender to YafRay Using YableX"
-
-In 2000 he started Makehuman Project, a free and open source software for the modelling of 3d photo-realistic characters, winner of "Suzanne Award" as the best python script for Blender 3D in 2004. He left the MakeHuman project in 2016.
-
-He is the author of Manuel Bastioni Laboratory, a free and open source add-on for Blender to create 3d humanoids. It includes the results of years of prototyping and studies realized by him during the development of his 3d graphics projects.
+MB-Lab is a community developed and supported project based off ManuelBastioniLAB.
 
 This fork is an attempt to keep this addon going forward as the original author is no longer developing ManuelBastioniLAB
 
-# MB-Lab 1.7.4
+# MB-Lab 1.7.5
 
 ## Added
 
-- New Procedural Eye shaders
-- New Texture Mask for freckles
+- Added icons and modified GUI
+- Tongue shader added
+- Improved Iris and Eyeball shaders
+- Save/Load BVH Bone Config
 
 ## Changed
 
-- Deleted Principled BSDF shader networks for custom surface shaders
-- Minor GUI edits
-- Edited Bump and Albedo texture maps (NOT YET)
-- Changed scaling of sub dermal map
-- Updated Material Engine code for texture masks
-- Added bug warning to Muscle checkbox
-- When transferring weights for proxying, check the vertex is in the group
-- Changed lighting setup using Area lights
+- Changed descriptions for male and female elf and dwarf characters
+- Changed Blender minimum version to 2.80.74
+- Removed Buggy message from Muscle checkbox because the Blender bug has been fixed
+- Changed CREATION TOOLS in GUI to CREATION OPTIONS at startup
+- Documentation updates
+- Changed characters_config.json for tongue shader
+- Rebuilt humanoid_library.blend file for Blender 2.80.74
+- Reduced SSS value for EEVEE in human skin shader
+- Edited bump maps
+- Changed "Body Measures" in "Body Measures" to "Measurements" to fix confusion
+- Eyes UV remapped
 
 ## Bug Fixes
 
-- Set lighting setup default to False, fixing a minor startup bug
+- Fixed API change 'bpy.context.scene.update()' to 'bpy.context.view_layer.update()' in animationengine.py fixing BVH import bug
+- Gloss fix for EEVEE in human skin shader
+- Muscle FK and IK, Skeleton FK and IK roll fixes for various bones in armatures
+- Registration bug that caused errors during unregistering classes
+- Fix 'Bones rot. offset' in after-creation tools
+- Fixed Skin complexion function related to SSS
+- Toes_R connected bug fixed
+- SSS scale fixed in Teeth shader
 
 ## ManuelBastioniLAB 1.6.1a
 

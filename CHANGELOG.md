@@ -2,18 +2,39 @@
 
 All changes will be documented here
 
-# MB-Lab 1.7.5 (DEVELOPMENTAL)
+# MB-Lab 1.7.5
 
 ## Added
+
+- Added icons and modified GUI
+- Tongue shader added
+- Improved Iris and Eyeball shaders
+- Save/Load BVH Bone Config
+
 ## Changed
 
 - Changed descriptions for male and female elf and dwarf characters
-- Changed iris shader to use UV for texture coordinate input
-- Changed Blender minimum version to 2.80.72
+- Changed Blender minimum version to 2.80.74
+- Removed Buggy message from Muscle checkbox because the Blender bug has been fixed
+- Changed CREATION TOOLS in GUI to CREATION OPTIONS at startup
+- Documentation updates
+- Changed characters_config.json for tongue shader
+- Rebuilt humanoid_library.blend file for Blender 2.80.74
+- Reduced SSS value for EEVEE in human skin shader
+- Edited bump maps
+- Changed "Body Measures" in "Body Measures" to "Measurements" to fix confusion
+- Eyes UV remapped
 
 ## Bug Fixes
 
 - Fixed API change 'bpy.context.scene.update()' to 'bpy.context.view_layer.update()' in animationengine.py fixing BVH import bug
+- Gloss fix for EEVEE in human skin shader
+- Muscle FK and IK, Skeleton FK and IK roll fixes for various bones in armatures
+- Registration bug that caused errors during unregistering classes
+- Fix 'Bones rot. offset' in after-creation tools
+- Fixed Skin complexion function related to SSS
+- Toes_R connected bug fixed
+- SSS scale fixed in Teeth shader
 
 # MB-Lab 1.7.4
 
