@@ -27,11 +27,11 @@ Now you can edit the skin complexion without changing the color of the tongue.
 
 .. image:: images/tongue_001.png
 
-* Improved Iris shader
+* Improved Eye and Iris Shaders
 
-This was a very late addition to MB-Lab 1.7.5 but it looks fantastic compared to the first version
+This was a very late addition to MB-Lab 1.7.5 but looks fantastic compared to the previous versions
 
-.. image:: images/new_iris_001.png
+.. image:: images/new_eyes_04.png
 
 * Animation BVH Files
 
