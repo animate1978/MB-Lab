@@ -24,6 +24,7 @@
 import logging
 import json
 import os
+import traceback
 
 import bpy
 
