@@ -47,7 +47,7 @@ bl_info = {
     "blender": (2, 80, 74),
     "location": "View3D > Tools > MB-Lab",
     "description": "A complete lab for character creation",
-    "warning": "Developmental",
+    "warning": "",
     'wiki_url': "https://github.com/animate1978/MB-Lab/wiki",
     'tracker_url': 'https://github.com/animate1978/MB-Lab/issues',
     "category": "Characters"
