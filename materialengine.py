@@ -37,26 +37,20 @@ class MaterialEngine:
     generated_disp_modifier_ID = "mbastlab_displacement"
     generated_disp_texture_name = "mbastlab_displ_texture"
     subdivision_modifier_name = "mbastlab_subdvision"
-    parameter_identifiers = ("skin_", "eyes_") #TODO add Nails
+    parameter_identifiers = ("skin_", "eyes_", "nails_")
 
     def __init__(self, obj_name, character_config):
 
         data_path = algorithms.get_data_path()
         self.obj_name = obj_name
-
+# Look up characters_config.json for textures
         image_file_names = {
             "displ_data": character_config["texture_displacement"],
             "body_derm": character_config["texture_albedo"],
             "body_displ": character_config["name"]+"_displ.png",
-            #"body_spec": character_config["texture_specular"],#remove
-            #"body_rough": character_config["texture_roughness"],#remove
             "eyes_albedo": character_config["texture_eyes"],
-            #"body_bump": character_config["texture_bump"],#remove
-            #"body_subd": character_config["texture_subdermal"],#remove
             "tongue_albedo": character_config["texture_tongue_albedo"],
             "teeth_albedo": character_config["texture_teeth_albedo"],
-            #"tongue_sss": character_config["texture_tongue_sss"],#remove
-            #"tongue_bump": character_config["texture_tongue_bump"],#remove
             "freckle_mask": character_config["texture_frecklemask"],
             "blush": character_config["texture_blush"],
             "sebum": character_config["texture_sebum"],
@@ -92,50 +86,23 @@ class MaterialEngine:
         self.image_file_names[shader_target] = os.path.basename(img_path)
         self.update_shaders()
 
+# Check to see if textures exist
+
     @property
     def texture_dermal_exist(self):
         return os.path.isfile(self.image_file_paths["body_derm"])
-
-    #@property #remove
-    #def texture_spec_exist(self):
-        #return os.path.isfile(self.image_file_paths["body_spec"])
-
-    #@property #remove
-    #def texture_rough_exist(self):
-        #return os.path.isfile(self.image_file_paths["body_rough"])
-
-    #@property #remove
-    #def texture_subd_exist(self):
-        #return os.path.isfile(self.image_file_paths["body_subd"])
-
     @property
     def texture_eyes_exist(self):
         return os.path.isfile(self.image_file_paths["eyes_albedo"])
-
-    #@property #remove
-    #def texture_bump_exist(self):
-        #return os.path.isfile(self.image_file_paths["body_bump"])
-
     @property
     def texture_tongue_albedo_exist(self):
         return os.path.isfile(self.image_file_paths["tongue_albedo"])
-    
     @property
     def texture_teeth_albedo_exist(self):
         return os.path.isfile(self.image_file_paths["teeth_albedo"])
-
-    #@property #remove
-    #def texture_tongue_sss_exist(self):
-        #return os.path.isfile(self.image_file_paths["tongue_sss"])
-
-    #@property #remove
-    #def texture_tongue_bump_exist(self):
-        #return os.path.isfile(self.image_file_paths["tongue_bump"])
-
     @property
     def texture_displace_exist(self):
         return os.path.isfile(self.image_file_paths["displ_data"])
-
     @property
     def texture_frecklemask_exist(self):
         return os.path.isfile(self.image_file_paths["freckle_mask"])
@@ -151,23 +118,18 @@ class MaterialEngine:
     @property
     def texture_thickness_exist(self):
         return os.path.isfile(self.image_file_paths["thickness"])
-
     @property
     def texture_iris_color_exist(self):
-        return os.path.isfile(self.image_file_paths["iris_color"])
-    
+        return os.path.isfile(self.image_file_paths["iris_color"])  
     @property
     def texture_iris_bump(self):
         return os.path.isfile(self.image_file_paths["iris_bump"])
-    
     @property
     def texture_texture_sclera_color_exist(self):
         return os.path.isfile(self.image_file_paths["sclera_color"])
-    
     @property
     def texture_texture_translucent_mask_exist(self):
         return os.path.isfile(self.image_file_paths["translucent_mask"])
-    
     @property
     def texture_texture_sclera_mask_exist(self):
         return os.path.isfile(self.image_file_paths["sclera_mask"])
@@ -225,7 +187,7 @@ class MaterialEngine:
         return material_parameters
 
     def update_shaders(self, material_parameters=[], update_textures_nodes=True):
-
+# Link textures to nodes
         obj = self.get_object()
         for material in algorithms.get_object_materials(obj):
             nodes = algorithms.get_material_nodes(material)
@@ -239,28 +201,16 @@ class MaterialEngine:
                 elif update_textures_nodes:
                     if "_skn_albedo" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["body_derm"])
-                    #if "_skn_specular" in node.name:
-                        #self.assign_image_to_node(material.name, node.name, self.image_file_names["body_spec"])#remove
-                    #if "_skn_roughness" in node.name:
-                        #self.assign_image_to_node(material.name, node.name, self.image_file_names["body_rough"])#remove
-                    #if "_skn_subdermal" in node.name:
-                        #self.assign_image_to_node(material.name, node.name, self.image_file_names["body_subd"])#remove
                     if "_eys_albedo" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["eyes_albedo"])
                     if "_eylsh_albedo" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["body_derm"])
                     if "_tth_albedo" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["teeth_albedo"])
-                    #if "_skn_bump" in node.name:
-                        #self.assign_image_to_node(material.name, node.name, self.image_file_names["body_bump"])#remove
                     if "_skn_disp" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["body_displ"])
                     if "_tongue_albedo" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["tongue_albedo"])
-                    #if "_tongue_SSS" in node.name:
-                        #self.assign_image_to_node(material.name, node.name, self.image_file_names["tongue_sss"])#remove
-                    #if "_tongue_bump" in node.name:
-                        #self.assign_image_to_node(material.name, node.name, self.image_file_names["tongue_bump"])#remove
                     if "_skn_frecklemask" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["freckle_mask"])
                     if "_skn_blush" in node.name:
