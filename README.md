@@ -16,6 +16,8 @@ MB-Lab is a community developed and supported project based off ManuelBastioniLA
 
 This fork is an attempt to keep this addon going forward as the original author is no longer developing ManuelBastioniLAB
 
+# MB-Lab 1.7.6
+
 ## Added
 
 - New Skin Shader, MB-Lab Skin 2 added to the Realistic Humans
