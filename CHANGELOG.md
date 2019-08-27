@@ -8,14 +8,15 @@ All changes will be documented here
 
 - New Skin Shader, MB-Lab Skin 2 added to the Realistic Humans
 - New Tone maps based on character selection
-- New Latino Model Type added to MB-Lab (based off Asian model type)
+- New Latino Model Type added to MB-Lab
 - New South American Phenotype added
 - New texture masks for skin shader
 
 ## Changed
 
 - Material Engine updated for new shader
-
+- Alphabetized the characters list
+- Modified freckle masks
 
 # MB-Lab 1.7.5
 
