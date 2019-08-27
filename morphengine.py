@@ -391,12 +391,3 @@ class MorphingEngine:
                 self.morph_values[morph_name] = val
         else:
             logger.debug("Morph data {0} not found".format(morph_name))
-
-
-
-
-
-
-
-
-

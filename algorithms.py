@@ -395,7 +395,7 @@ def looking_for_humanoid_obj():
     """
     logger.info("Looking for a humanoid object ...")
     if bpy.app.version < (2, 80, 74):
-        msg = "Sorry, MB-Lab requires Blender 2.80"
+        msg = "Sorry, MB-Lab requires Blender 2.80.74 Minimum"
         logger.warning(msg)
         return("ERROR", msg)
 

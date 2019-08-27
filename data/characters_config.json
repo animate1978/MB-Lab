@@ -6,13 +6,13 @@
     "anime_male_base"
   ],
   "character_list": [
-    "f_ca01",
-    "f_as01",
     "f_af01",
+    "f_as01",
+    "f_ca01",
     "f_la01",
-    "m_ca01",
-    "m_as01",
     "m_af01",
+    "m_as01",
+    "m_ca01",
     "m_la01",
     "f_an01",
     "f_an02",

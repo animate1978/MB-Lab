@@ -40,10 +40,9 @@ class MaterialEngine:
     parameter_identifiers = ("skin_", "eyes_", "nails_")
 
     def __init__(self, obj_name, character_config):
-
+# Look up characters_config.json for textures
         data_path = algorithms.get_data_path()
         self.obj_name = obj_name
-# Look up characters_config.json for textures
         image_file_names = {
             "displ_data": character_config["texture_displacement"],
             "body_derm": character_config["texture_albedo"],
