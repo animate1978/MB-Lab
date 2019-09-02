@@ -11,12 +11,14 @@ All changes will be documented here
 - New Latino Model Type added to MB-Lab
 - New South American Phenotype added
 - New texture masks for skin shader
+- New Nails shader added, currently only to the Female base mesh
 
 ## Changed
 
-- Material Engine updated for new shader
+- Material Engine updated for new skin shader
 - Alphabetized the characters list
 - Modified freckle masks
+- Changed structure of humanoid_library.blend
 
 # MB-Lab 1.7.5
 
