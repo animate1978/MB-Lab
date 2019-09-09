@@ -1,7 +1,7 @@
 # MB-Lab
-
+#
 # MB-Lab fork website : https://github.com/animate1978/MB-Lab
-
+#
 # ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
@@ -19,10 +19,12 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
-
+#
+# ManuelbastioniLAB - Copyright (C) 2015-2018 Manuel Bastioni
 
 import logging
 import bpy
+from pathlib import Path
 
 import os
 import time
@@ -443,7 +445,7 @@ class Humanoid:
 
     def save_body_dermal_texture(self, filepath):
         self.mat_engine.save_texture(filepath,"body_derm")
-#TODO NEEDS to be updated!! check materialengine.py!!!
+
     def save_all_textures(self, filepath):
         targets = ["body_derm", "body_displ", "teeth_albedo", "eyes_albedo", "tongue_albedo", "freckle_mask", "blush", "sebum", "lipmap", "thickness", "iris_color", "iris_bump", "sclera_color", "translucent_mask", "sclera_mask"]
         for target in targets:
