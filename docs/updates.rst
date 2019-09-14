@@ -2,6 +2,20 @@ Updates
 =======
 
 ============
+MB-Lab 1.7.6
+============
+
+* Latino model type added
+* South American phenotype added
+* New skin shader, MBLab Skin 2 added
+* New Fingernail shader added
+* Improved Tongue shader
+* Skin tone maps based on character selection added
+* New texture masks for procedural elements in MBLabSkin2 added
+* Edited Freckle masks
+* Removed Specular, SSS, Roughness from texture maps
+
+============
 MB-Lab 1.7.5
 ============
 

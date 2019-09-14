@@ -2,6 +2,29 @@ New Features
 ============
 
 =============
+Version 1.7.6
+=============
+
+This version features a few new features!
+
+* Latino model type
+
+This version includes a new model type, the Latino model type as well as a new South American phenotype
+
+* Skin tone for each model type
+
+Now the skin tones by default will load per model type
+
+* MB-Lab Skin 2
+
+This is a completely new skin shader, using more procedural elements than previous versions, eliminating a lot of texture maps for simple rendering functions (Specular, SSS, Roughness etc...)
+
+* Fingernail shader
+
+This is a new shader for fingernails (current human female base mesh)
+
+
+=============
 Version 1.7.5
 =============
 
