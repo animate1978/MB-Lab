@@ -148,12 +148,12 @@ transformations
 vertices
 ========
 
-Contains vertice info?
+Contains vertex info?
 
 =======
 vgroups
 =======
-Contains vertice group data
+Contains vertex group data
 
     Data seems to be [Polygon Indice, Weight Value]
 

@@ -11,7 +11,7 @@ All changes will be documented here
 - New Latino Model Type added to MB-Lab
 - New South American Phenotype added
 - New texture masks for skin shader
-- New Nails shader added, currently only to the Female base mesh
+- New Nails shader added
 
 ## Changed
 
@@ -19,6 +19,7 @@ All changes will be documented here
 - Alphabetized the characters list
 - Modified freckle masks
 - Changed structure of humanoid_library.blend
+- Added model license types in character selection menu
 
 # MB-Lab 1.7.5
 
