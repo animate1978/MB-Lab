@@ -17,6 +17,7 @@ MB-Lab 1.7.6
 * Changed structure of humanoid_library.blend
 * Added model license types in character selection menu
 * Alphabetized the characters list
+* Added model license types in character selection menu
 
 
 ============
