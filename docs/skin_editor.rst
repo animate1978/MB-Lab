@@ -5,7 +5,7 @@ MB-Lab provides a custom shader editor that can be used with Cycles or EEVEE.
 
 .. image:: images/skin_editor_01.png
 
-Underneath the Skin Editor is a set of complex surface shaders.
+Underneath the Skin Editor are sets of complex surface shaders.
 
 These shaders have been developed to simulate the variety of skin tones and work under any lighting condition. There are currently two sets of shaders, one "photorealistic" set and the "cell" shaders set. Each set of shaders are assigned to specific base models.
 
@@ -30,7 +30,7 @@ The realistic skin shader set are part of the realistic base models.
 Skin Complexion
 ---------------
 
-One of most important parameters is the complexion. It modifies the color in order to vary from very light skin to very dark one. It's not just the brightness, but a complex result obtained using the samples from an image included in the lab data.
+
 
 .. image:: images/gallery_150_13.png
 
@@ -38,19 +38,11 @@ One of most important parameters is the complexion. It modifies the color in ord
 Skin Oil
 --------
 
-This controls the sheen value of the skin oil. The roughness value also affects the visual result of the oil.
+
 
 .. image:: images/SS_oil_00.png
 .. image:: images/SS_oil_90.png
 
---------------
-Skin Roughness
---------------
-
-This controls the micro scale roughness. This value helps control how much skin oil is also visible.
-
-.. image:: images/SS_rough_00.png
-.. image:: images/SS_rough_090.png
 
 ---------
 Skin Bump
@@ -80,14 +72,6 @@ This controls how much procedural veins are added to the skin
 .. image:: images/SS_skinveins_000.png
 .. image:: images/SS_skinveins_100.png
 
---------
-Skin SSS
---------
-
-This controls the overall Sub Surface Scattering of the skin
-
-.. image:: images/SS_SSS_000.png
-.. image:: images/SS_SSS_100.png
 
 --------------------------
 Bump/displacement controls

@@ -41,7 +41,9 @@ class MaterialEngine:
     parameter_identifiers = ("skin_", "eyes_", "nails_")
 
     def __init__(self, obj_name, character_config):
+
 # Look up characters_config.json for textures
+
         data_path = algorithms.get_data_path()
         self.obj_name = obj_name
         image_file_names = {
@@ -51,6 +53,7 @@ class MaterialEngine:
             "eyes_albedo": character_config["texture_eyes"],
             "tongue_albedo": character_config["texture_tongue_albedo"],
             "teeth_albedo": character_config["texture_teeth_albedo"],
+            "nails_albedo": character_config["texture_nails_albedo"],
             "freckle_mask": character_config["texture_frecklemask"],
             "blush": character_config["texture_blush"],
             "sebum": character_config["texture_sebum"],
@@ -101,6 +104,9 @@ class MaterialEngine:
     def texture_teeth_albedo_exist(self):
         return os.path.isfile(self.image_file_paths["teeth_albedo"])
     @property
+    def texture_nails_albedo_exist(self):
+        return os.path.isfile(self.image_file_paths["nails_albedo"])
+    @property
     def texture_displace_exist(self):
         return os.path.isfile(self.image_file_paths["displ_data"])
     @property
@@ -133,6 +139,8 @@ class MaterialEngine:
     @property
     def texture_texture_sclera_mask_exist(self):
         return os.path.isfile(self.image_file_paths["sclera_mask"])
+
+# Calculate Displacement Image based on RGB values
 
     @staticmethod
     def calculate_disp_pixels(blender_image, age_factor, tone_factor, mass_factor):
@@ -186,8 +194,10 @@ class MaterialEngine:
                         material_parameters[node.name] = node_output_val
         return material_parameters
 
+# Link textures to nodes - Update Shaders
+
     def update_shaders(self, material_parameters=[], update_textures_nodes=True):
-# Link textures to nodes
+
         obj = self.get_object()
         for material in algorithms.get_object_materials(obj):
             nodes = algorithms.get_material_nodes(material)
@@ -207,6 +217,8 @@ class MaterialEngine:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["body_derm"])
                     if "_tth_albedo" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["teeth_albedo"])
+                    if "_nail_albedo" in node.name:
+                        self.assign_image_to_node(material.name, node.name, self.image_file_names["nails_albedo"])
                     if "_skn_disp" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["body_displ"])
                     if "_tongue_albedo" in node.name:
@@ -232,7 +244,7 @@ class MaterialEngine:
                     if "_sclera_mask" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["sclera_mask"])
 
-
+# Rename Shaders
 
     def rename_skin_shaders(self, prefix):
         obj = self.get_object()
@@ -244,6 +256,8 @@ class MaterialEngine:
 
     def get_object(self):
         return algorithms.get_object_by_name(self.obj_name)
+
+# Generate Displacement Data Image
 
     def generate_displacement_image(self):
         disp_data_image_name = self.image_file_names["displ_data"]
@@ -259,6 +273,8 @@ class MaterialEngine:
                 logger.warning(
                     "Cannot create the displacement modifier: data image not found: %s",
                     algorithms.simple_path(self.image_file_paths["displ_data"]))
+
+# Calculate Displacement based on age, tone, mass 
 
     def calculate_displacement_texture(self, age_factor, tone_factor, mass_factor):
         time1 = time.time()
