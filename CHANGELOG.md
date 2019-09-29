@@ -21,6 +21,10 @@ All changes will be documented here
 - Changed structure of humanoid_library.blend
 - Added model license types in character selection menu
 
+## Bug Fixes
+
+- Fixed MBLab_fur for EEVEE, renamed to MBLab_eyelash
+
 # MB-Lab 1.7.5
 
 ## Added

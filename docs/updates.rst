@@ -18,7 +18,7 @@ MB-Lab 1.7.6
 * Added model license types in character selection menu
 * Alphabetized the characters list
 * Added model license types in character selection menu
-
+* Fixed MBLab_fur for EEVEE, renamed to MBLab_eyelash
 
 ============
 MB-Lab 1.7.5
