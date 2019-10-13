@@ -2,6 +2,30 @@
 
 All changes will be documented here
 
+# MB-Lab 1.7.6
+
+## Added
+
+- New Skin Shader, MB-Lab Skin 2 added to the Realistic Humans
+- New Tone maps based on character selection
+- New Latino Model Type added to MB-Lab
+- New South American Phenotype added
+- New texture masks for skin shader
+- New Nails shader added
+
+## Changed
+
+- Material Engine updated for new skin shader
+- Alphabetized the characters list
+- Modified freckle masks
+- Changed structure of humanoid_library.blend
+- Added model license types in character selection menu
+
+## Bug Fixes
+
+- Fixed MBLab_fur for EEVEE, renamed to MBLab_eyelash
+- Fixed MBLab_human_eyes SSS rendering artifact in EEVEE
+
 # MB-Lab 1.7.5
 
 ## Added
