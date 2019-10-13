@@ -1,7 +1,7 @@
 # MB-Lab
-
+#
 # MB-Lab fork website : https://github.com/animate1978/MB-Lab
-
+#
 # ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
@@ -19,10 +19,12 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
-
+#
+# ManuelbastioniLAB - Copyright (C) 2015-2018 Manuel Bastioni
 
 import logging
 import bpy
+from pathlib import Path
 
 import os
 import time
@@ -445,7 +447,7 @@ class Humanoid:
         self.mat_engine.save_texture(filepath,"body_derm")
 
     def save_all_textures(self, filepath):
-        targets = ["body_displ","body_derm","body_spec","body_rough","body_subd","body_bump","eyes_albedo"]
+        targets = ["body_derm", "body_displ", "teeth_albedo", "eyes_albedo", "tongue_albedo", "freckle_mask", "blush", "sebum", "lipmap", "thickness", "iris_color", "iris_bump", "sclera_color", "translucent_mask", "sclera_mask"]
         for target in targets:
             dir_path = os.path.dirname(filepath)
             filename = os.path.basename(filepath)
@@ -1193,19 +1195,3 @@ class Humanoid:
         obj = self.get_object()
         parameters = {"show_viewport":True,"invert_vertex_group": True, "vertex_group":"head"}
         algorithms.new_modifier(obj, self.corrective_modifier_name, 'CORRECTIVE_SMOOTH', parameters)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

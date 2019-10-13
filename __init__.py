@@ -1,7 +1,7 @@
 # MB-Lab
-
+#
 # MB-Lab fork website : https://github.com/animate1978/MB-Lab
-
+#
 # ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
@@ -19,6 +19,8 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
+#
+# ManuelbastioniLAB - Copyright (C) 2015-2018 Manuel Bastioni
 
 
 import logging
@@ -26,6 +28,7 @@ import logging
 import time
 import json
 import os
+from pathlib import Path
 
 import bpy
 from bpy.app.handlers import persistent
@@ -43,11 +46,11 @@ logger = logging.getLogger(__name__)
 bl_info = {
     "name": "MB-Lab",
     "author": "Manuel Bastioni, MB-Lab Community",
-    "version": (1, 7, 5),
+    "version": (1, 7, 6),
     "blender": (2, 80, 74),
     "location": "View3D > Tools > MB-Lab",
     "description": "A complete lab for character creation",
-    "warning": "Developmental",
+    "warning": "",
     'wiki_url': "https://github.com/animate1978/MB-Lab/wiki",
     'tracker_url': 'https://github.com/animate1978/MB-Lab/issues',
     "category": "Characters"

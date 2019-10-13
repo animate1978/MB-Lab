@@ -1,7 +1,7 @@
 # MB-Lab
-
+#
 # MB-Lab fork website : https://github.com/animate1978/MB-Lab
-
+#
 # ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
@@ -19,7 +19,8 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
-
+#
+# ManuelbastioniLAB - Copyright (C) 2015-2018 Manuel Bastioni
 
 import logging
 import itertools
@@ -144,7 +145,7 @@ def exists_database(lib_path):
             logger.warning("data path %s not found", simple_path(lib_path))
     return result
 
-# TODO: REVERSE ENGINEERING : This may be the data input we are looking for?
+
 def length_of_strip(vertices_coords, indices, axis="ALL"):
     strip_length = 0
     for x in range(len(indices)-1):
@@ -395,7 +396,7 @@ def looking_for_humanoid_obj():
     """
     logger.info("Looking for a humanoid object ...")
     if bpy.app.version < (2, 80, 74):
-        msg = "Sorry, MB-Lab requires Blender 2.80"
+        msg = "Sorry, MB-Lab requires Blender 2.80.74 Minimum"
         logger.warning(msg)
         return("ERROR", msg)
 
@@ -451,7 +452,7 @@ def is_in_list(list1, list2, position="ANY"):
                 return True
     return False
 
-#TODO: REVERSE ENGINEERING : Calls from morphengine.py loads JSON file
+
 def load_json_data(json_path, description=None):
     try:
         time1 = time.time()

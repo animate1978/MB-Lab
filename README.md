@@ -16,39 +16,29 @@ MB-Lab is a community developed and supported project based off ManuelBastioniLA
 
 This fork is an attempt to keep this addon going forward as the original author is no longer developing ManuelBastioniLAB
 
-# MB-Lab 1.7.5
+# MB-Lab 1.7.6
 
 ## Added
 
-- Added icons and modified GUI
-- Tongue shader added
-- Improved Iris and Eyeball shaders
-- Save/Load BVH Bone Config
+- New Skin Shader, MB-Lab Skin 2 added to the Realistic Humans
+- New Tone maps based on character selection
+- New Latino Model Type added to MB-Lab
+- New South American Phenotype added
+- New texture masks for skin shader
+- New Nails shader added
 
 ## Changed
 
-- Changed descriptions for male and female elf and dwarf characters
-- Changed Blender minimum version to 2.80.74
-- Removed Buggy message from Muscle checkbox because the Blender bug has been fixed
-- Changed CREATION TOOLS in GUI to CREATION OPTIONS at startup
-- Documentation updates
-- Changed characters_config.json for tongue shader
-- Rebuilt humanoid_library.blend file for Blender 2.80.74
-- Reduced SSS value for EEVEE in human skin shader
-- Edited bump maps
-- Changed "Body Measures" in "Body Measures" to "Measurements" to fix confusion
-- Eyes UV remapped
+- Material Engine updated for new skin shader
+- Alphabetized the characters list
+- Modified freckle masks
+- Changed structure of humanoid_library.blend
+- Added model license types in character selection menu
 
 ## Bug Fixes
 
-- Fixed API change 'bpy.context.scene.update()' to 'bpy.context.view_layer.update()' in animationengine.py fixing BVH import bug
-- Gloss fix for EEVEE in human skin shader
-- Muscle FK and IK, Skeleton FK and IK roll fixes for various bones in armatures
-- Registration bug that caused errors during unregistering classes
-- Fix 'Bones rot. offset' in after-creation tools
-- Fixed Skin complexion function related to SSS
-- Toes_R connected bug fixed
-- SSS scale fixed in Teeth shader
+- Fixed MBLab_fur for EEVEE, renamed to MBLab_eyelash
+- Fixed MBLab_human_eyes SSS rendering artifact in EEVEE
 
 ## ManuelBastioniLAB 1.6.1a
 
