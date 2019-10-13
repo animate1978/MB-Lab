@@ -12,7 +12,7 @@ These shaders have been developed to simulate the variety of skin tones and work
 * An advanced human skin shader
 * An advanced toon skin shader
 * An advanced set of eyeball and iris shaders
-* Shaders for the teeth and tongue
+* Shaders for the teeth, tongue and nails
 
 The shaders use a combination of texture maps and procedural texture generation, the texture maps are used where procedural generated textures cannot work, while the procedural elements provide details that maps cannot replicate.
 
@@ -30,7 +30,7 @@ The realistic skin shader set are part of the realistic base models.
 Skin Complexion
 ---------------
 
-
+This changes the skin complexion shade.
 
 .. image:: images/gallery_150_13.png
 
@@ -38,7 +38,7 @@ Skin Complexion
 Skin Oil
 --------
 
-
+This provides a subtle effect of oil on the skin.
 
 .. image:: images/SS_oil_00.png
 .. image:: images/SS_oil_90.png
@@ -58,7 +58,7 @@ This parameter controls the amount of the skin bump. It doesn't affect the true 
 Skin Freckles
 -------------
 
-This parameter controls how much procedural freckles are added, the coverage is affected by a texture mask
+This parameter controls how much procedural freckles are added, the coverage is affected by a texture mask.
 
 .. image:: images/SS_freckles_000.png
 .. image:: images/SS_freckles_100.png
@@ -67,7 +67,7 @@ This parameter controls how much procedural freckles are added, the coverage is 
 Skin Veins
 ----------
 
-This controls how much procedural veins are added to the skin
+This controls how much procedural veins are added to the skin.
 
 .. image:: images/SS_skinveins_000.png
 .. image:: images/SS_skinveins_100.png
@@ -108,7 +108,7 @@ This controls the "oil" size of the cell shader, this effect can bring out the c
 Skin Oil Value
 ---------------
 
-This controls the brightness of the "oil", this is used in combination with Skin Oil Size
+This controls the brightness of the "oil", this is used in combination with Skin Oil Size.
 
 .. image:: images/SS_celloilvalue_025.png
 .. image:: images/SS_celloilvalue_100.png
@@ -117,7 +117,7 @@ This controls the brightness of the "oil", this is used in combination with Skin
 Skin Outline Size
 -----------------
 
-This controls the thickness of the outline of the characters
+This controls the thickness of the outline of the characters.
 
 .. image:: images/SS_outlinesize_085.png
 .. image:: images/SS_outlinesize_098.png
@@ -126,7 +126,7 @@ This controls the thickness of the outline of the characters
 Skin Outline Value
 ------------------
 
-This controls how dark the outline will be
+This controls how dark the outline will be.
 
 .. image:: images/SS_outlinevalue_000.png
 .. image:: images/SS_outlinevalue_100.png
@@ -154,13 +154,13 @@ This changes the color value of the Secondary cell shading. **Note this is only 
 Eyes Hue
 --------
 
-This changes the color hue of the iris in the cell shader
+This changes the color hue of the iris in the cell shader.
 
 ---------------
 Eyes Reflection
 ---------------
 
-Controls how much fake reflection is shown on the eyes
+Controls how much fake reflection is shown on the eyes.
 
 ---------------
 Eyes Saturation
@@ -174,29 +174,6 @@ Eyes Value
 
 This controls the value, or lightness, of the iris. As with Saturation can be used to fine tune the color of the iris.
 
-===============
-Common controls
-===============
-
-The skin hue, value and saturation generally work the same in both the Realistic set and Cell set.
-
---------
-Skin Hue
---------
-
-This controls the Hue, or color value in combination with the texture map, making for some interesting shades of skin
-
-----------
-Skin Value
-----------
-
-This controls the relative lightness of the skin, can be used to fine tune the Skin Complexion
-
----------------
-Skin Saturation
----------------
-
-The controls the relative color saturation of the skin, can be used to help fine tune Skin Complexion
 
 ===================
 Eye and Iris Shader
@@ -227,13 +204,13 @@ Both ways require a small amount of mouse clicking to get to but the shader has 
 Eye Iris Mix
 ------------
 
-This simply mixes between procedural or texture map networks
+This simply mixes between procedural or texture map networks.
 
 --------
 Eyes Hue
 --------
 
-This changes the color hue of the iris in the texture map network
+This changes the color hue of the iris in the texture map network.
 
 ---------------
 Eyes Saturation
