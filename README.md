@@ -33,6 +33,12 @@ This fork is an attempt to keep this addon going forward as the original author 
 - Alphabetized the characters list
 - Modified freckle masks
 - Changed structure of humanoid_library.blend
+- Added model license types in character selection menu
+
+## Bug Fixes
+
+- Fixed MBLab_fur for EEVEE, renamed to MBLab_eyelash
+- Fixed MBLab_human_eyes SSS rendering artifact in EEVEE
 
 ## ManuelBastioniLAB 1.6.1a
 

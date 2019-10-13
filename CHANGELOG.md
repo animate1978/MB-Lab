@@ -24,6 +24,7 @@ All changes will be documented here
 ## Bug Fixes
 
 - Fixed MBLab_fur for EEVEE, renamed to MBLab_eyelash
+- Fixed MBLab_human_eyes SSS rendering artifact in EEVEE
 
 # MB-Lab 1.7.5
 
