@@ -614,7 +614,7 @@ bpy.types.Scene.mblab_template_name = bpy.props.EnumProperty(
 bpy.types.Scene.mblab_character_name = bpy.props.EnumProperty(
     items=mblab_humanoid.humanoid_types,
     name="Select",
-    default="f_ca01")
+    default="f_af01")
 
 bpy.types.Scene.mblab_assets_models = bpy.props.EnumProperty(
     items=get_proxy_items_from_library,
