@@ -31,7 +31,8 @@ from functools import lru_cache
 import mathutils
 import bpy
 
-from . import algorithms
+from . import algorithms, utils, file_ops
+
 from .utils import get_active_armature
 
 logger = logging.getLogger(__name__)
@@ -43,7 +44,7 @@ class RetargetEngine:
         self.has_data = False
         self.femaleposes_exist = False
         self.maleposes_exist = False
-        self.data_path = algorithms.get_data_path()
+        self.data_path = file_ops.get_data_path()
         self.maleposes_path = os.path.join(self.data_path, self.data_path, "poses", "male_poses")
         self.femaleposes_path = os.path.join(self.data_path, self.data_path, "poses", "female_poses")
         if os.path.isdir(self.maleposes_path):
@@ -54,12 +55,12 @@ class RetargetEngine:
         self.body_name = ""
         self.armature_name = ""
         self.skeleton_mapped = {}
-        self.lib_filepath = algorithms.get_blendlibrary_path()
+        self.lib_filepath = file_ops.get_blendlibrary_path()
         self.knowledge_path = os.path.join(self.data_path, "retarget_knowledge.json")
 
         if os.path.isfile(self.lib_filepath) and os.path.isfile(self.knowledge_path):
 
-            self.knowledge_database = algorithms.load_json_data(self.knowledge_path, "Skeleton knowledge data")
+            self.knowledge_database = file_ops.load_json_data(self.knowledge_path, "Skeleton knowledge data")
             self.local_rotation_bones = self.knowledge_database["local_rotation_bones"]
             self.last_selected_bone_name = None
             self.stored_animations = {}
@@ -1294,7 +1295,7 @@ class RetargetEngine:
         self.reset_pose(armat)
 
         if armat:
-            matrix_data = algorithms.load_json_data(data_path, "Pose data")
+            matrix_data = file_ops.load_json_data(data_path, "Pose data")
             algorithms.set_object_visible(armat)
             algorithms.select_and_change_mode(armat, "POSE")
 
@@ -1333,7 +1334,7 @@ class RetargetEngine:
         self.reset_pose(target_armature)
 
         if use_retarget:
-            source_armature = algorithms.import_object_from_lib(
+            source_armature = file_ops.import_object_from_lib(
                 self.lib_filepath, "MBLab_skeleton_base_fk", "temporary_armature")
             if source_armature:
                 self.load_bones_quaternions(source_armature, filepath)
@@ -1402,7 +1403,7 @@ class ExpressionEngineShapeK:
 
     def __init__(self):
         self.has_data = False
-        self.data_path = algorithms.get_data_path()
+        self.data_path = file_ops.get_data_path()
         self.human_expression_path = os.path.join(
             self.data_path,
             "expressions_comb",
@@ -1437,10 +1438,10 @@ class ExpressionEngineShapeK:
     @staticmethod
     def load_expression(filepath):
 
-        charac_data = algorithms.load_json_data(filepath, "Character data")
-        expressions_id = algorithms.simple_path(filepath)
+        charac_data = file_ops.load_json_data(filepath, "Character data")
+        expressions_id = file_ops.simple_path(filepath)
         if "manuellab_vers" in charac_data:
-            if not algorithms.check_version(charac_data["manuellab_vers"]):
+            if not utils.check_version(charac_data["manuellab_vers"]):
                 logger.info("%s created with vers. %s.",
                             expressions_id, charac_data["manuellab_vers"])
         else:
@@ -1456,7 +1457,7 @@ class ExpressionEngineShapeK:
 
     def load_expression_database(self, dirpath):
         expressions_data = {}
-        if algorithms.exists_database(dirpath):
+        if file_ops.exists_database(dirpath):
             for expression_filename in os.listdir(dirpath):
                 expression_filepath = os.path.join(dirpath, expression_filename)
                 e_item, extension = os.path.splitext(expression_filename)

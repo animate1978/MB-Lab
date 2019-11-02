@@ -258,7 +258,7 @@ def setup_face_rig(obj):
         logger.critical("Character already has face rig")
         return False
 
-    data_path = algorithms.get_data_path()
+    data_path = file_ops.get_data_path()
 
     # Load the face rig
     if not data_path:
@@ -300,7 +300,7 @@ def setup_face_rig(obj):
         return True
 
     # set the root of the face and phoneme rigs
-    face_rig = algorithms.get_object_by_name(face_rig_name)
+    face_rig = file_ops.get_object_by_name(face_rig_name)
     if not face_rig:
         logger.critical("Can't find %s. Delete face rig manually",
             face_rig_name)
@@ -315,7 +315,7 @@ def setup_face_rig(obj):
     root_bone.location[1] = -root_z
     root_bone.location[2] = root_y
 
-    ph_rig = algorithms.get_object_by_name(ph_rig_name)
+    ph_rig = file_ops.get_object_by_name(ph_rig_name)
     if not face_rig:
         logger.critical("Can't find %s. Delete face rig manually",
             face_rig_name)
@@ -346,7 +346,7 @@ def setup_facs_rig(obj):
         logger.critical("Character already has face rig")
         return False
 
-    data_path = algorithms.get_data_path()
+    data_path = file_ops.get_data_path()
 
     # Load the face rig
     if not data_path:
@@ -385,7 +385,7 @@ def setup_facs_rig(obj):
         return True
 
     facs_frame = \
-        algorithms.get_object_by_name('facs_rig_frame.'+obj.name)
+        file_ops.get_object_by_name('facs_rig_frame.'+obj.name)
     if not facs_frame:
         logger.critical("FACS frame %s not found",
             'facs_rig_frame.'+obj.name)
