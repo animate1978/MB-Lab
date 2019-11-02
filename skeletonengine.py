@@ -28,7 +28,7 @@ import os
 import bpy
 import mathutils
 
-from . import algorithms
+from . import algorithms, utils
 from .utils import get_object_parent
 
 logger = logging.getLogger(__name__)

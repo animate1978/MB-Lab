@@ -22,6 +22,7 @@
 #
 # ManuelbastioniLAB - Copyright (C) 2015-2018 Manuel Bastioni
 
+# MB-Lab Imports
 
 import logging
 
@@ -36,7 +37,6 @@ from bpy_extras.io_utils import ExportHelper, ImportHelper
 
 from . import facerig
 from . import humanoid, animationengine, proxyengine
-from . import utils
 from . import algorithms
 from . import preferences
 from . import addon_updater_ops
@@ -45,6 +45,8 @@ from . import object_ops
 from . import hairengine
 
 logger = logging.getLogger(__name__)
+
+# MB-Lab Blender Info
 
 bl_info = {
     "name": "MB-Lab",
@@ -69,7 +71,7 @@ gui_err_msg = ""
 gui_active_panel = None
 gui_active_panel_fin = None
 
-
+# BEGIN
 def start_lab_session():
     global mblab_humanoid
     global gui_status, gui_err_msg
@@ -500,6 +502,8 @@ def load_proxy_item(self, context):
 
 
 
+# MB-Lab Properties
+
 bpy.types.Scene.mblab_proxy_library = bpy.props.StringProperty(
     name="Library folder",
     description="Folder with assets blend files",
@@ -734,6 +738,8 @@ bpy.types.Scene.mblab_random_engine = bpy.props.EnumProperty(
 
 bpy.types.Scene.mblab_facs_rig = bpy.props.BoolProperty(
     name="Import FACS Rig")
+
+# MB-Lab Operations
 
 class ButtonParametersOff(bpy.types.Operator):
     bl_label = 'Body Measures'
@@ -1986,7 +1992,7 @@ class OBJECT_OT_particle_hair(bpy.types.Operator):
         try:
             bpy.ops.object.mode_set(mode='POSE')
         except:
-            pass       
+            pass
         return {'FINISHED'}
 
 class OBJECT_OT_manual_hair(bpy.types.Operator):
@@ -2012,7 +2018,7 @@ class OBJECT_OT_manual_hair(bpy.types.Operator):
         try:
             bpy.ops.object.mode_set(mode='POSE')
         except:
-            pass       
+            pass
         return {'FINISHED'}
 
 class StartSession(bpy.types.Operator):
@@ -2045,8 +2051,9 @@ class LoadTemplate(bpy.types.Operator):
                 "template_model"]
         return {'FINISHED'}
 
+# MB-Lab Main GUI
 
-class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
+class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
     bl_label = "MB-Lab {0}.{1}.{2}".format(bl_info["version"][0], bl_info["version"][1], bl_info["version"][2])
     bl_idname = "OBJECT_PT_characters01"
     bl_space_type = 'VIEW_3D'
@@ -2559,7 +2566,7 @@ classes = (
     DeleteFaceRig,
     LoadTemplate,
     preferences.MBPreferences,
-    VIEW3D_PT_tools_ManuelbastioniLAB,
+    VIEW3D_PT_tools_MBLAB,
     OBJECT_OT_humanoid_rot_limits,
     OBJECT_OT_delete_rotations,
     OBJECT_OT_particle_hair,
