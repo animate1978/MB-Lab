@@ -31,7 +31,7 @@ import time
 import json
 import operator
 
-from . import morphengine, skeletonengine, algorithms, proxyengine, materialengine
+from . import morphengine, skeletonengine, algorithms, proxyengine, materialengine, utils
 
 logger = logging.getLogger(__name__)
 
@@ -1074,7 +1074,7 @@ class Humanoid:
         logger.info("Loading character from {0}".format(log_msg_type))
 
         if "manuellab_vers" in charac_data:
-            if not algorithms.check_version(charac_data["manuellab_vers"]):
+            if not utils.check_version(charac_data["manuellab_vers"]):
                 logger.warning("{0} created with vers. {1}. Current vers is {2}".format(log_msg_type,charac_data["manuellab_vers"],self.lab_vers))
         else:
             logger.info("No lab version specified in {0}".format(log_msg_type))

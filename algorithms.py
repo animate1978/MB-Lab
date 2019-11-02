@@ -33,6 +33,7 @@ import array
 import mathutils
 import bpy
 
+from . import utils
 from .utils import get_object_parent
 
 logger = logging.getLogger(__name__)
@@ -394,23 +395,6 @@ def correct_morph(base_form, current_form, morph_deltas, bboxes):
     logger.info("Morphing corrected in %s secs", time.time()-time1)
     return new_morph_deltas
 
-# TODO Change this to 1.7.4?
-def check_version(m_vers, min_version=(1, 5, 0)):
-
-    # m_vers can be a list, tuple, IDfloatarray or str
-    # so it must be converted in a list.
-    if not isinstance(m_vers, str):
-        m_vers = list(m_vers)
-
-    mesh_version = str(m_vers)
-    mesh_version = mesh_version.replace(' ', '')
-    mesh_version = mesh_version.strip("[]()")
-    if len(mesh_version) < 5:
-        logger.warning("The current humanoid has wrong format for version")
-        return False
-
-    mesh_version = (float(mesh_version[0]), float(mesh_version[2]), float(mesh_version[4]))
-    return mesh_version > min_version
 
 
 def looking_for_humanoid_obj():
@@ -1401,7 +1385,7 @@ def link_to_collection(obj):
         logger.error("Cannot link obj %s because it's not in bpy.data.objects", obj.name)
         return
 
-    collection_name = 'ManuelBastioni_Character' #TODO change this to MB_LAB_Character as well as hairengine.py
+    collection_name = 'MB_LAB_Character'
     c = bpy.data.collections.get(collection_name)
     scene = bpy.context.scene
     # collection is already created

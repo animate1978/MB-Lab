@@ -70,3 +70,23 @@ def is_ik_armature(armature=None):
             logger.warning("Cannot get the bones because the obj is not an armature")
             return False
     return False
+
+# MB-Lab version check
+
+def check_version(m_vers, min_version=(1, 5, 0)):
+
+    # m_vers can be a list, tuple, IDfloatarray or str
+    # so it must be converted in a list.
+    if not isinstance(m_vers, str):
+        m_vers = list(m_vers)
+
+    mesh_version = str(m_vers)
+    mesh_version = mesh_version.replace(' ', '')
+    mesh_version = mesh_version.strip("[]()")
+    if len(mesh_version) < 5:
+        logger.warning("The current humanoid has wrong format for version")
+        return False
+
+    mesh_version = (float(mesh_version[0]), float(mesh_version[2]), float(mesh_version[4]))
+    return mesh_version > min_version
+
