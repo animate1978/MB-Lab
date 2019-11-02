@@ -1994,11 +1994,10 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
             box_face_rig.prop(scn, "mblab_facs_rig")
 
             # Humanoid Rotation Limits
-            box = self.layout.box()
-            box.label(text="Humanoid Rotations")
-            box.operator("mbast.humanoid_rot_limits", icon='USER')
-            box.operator('mbast.delete_rotations', icon='CANCEL')
-            box = self.layout.box()
+            box_hmrot = box_post_opt.box()
+            box_hmrot.label(text="Humanoid Rotations")
+            box_hmrot.operator("mbast.humanoid_rot_limits", icon='USER')
+            box_hmrot.operator('mbast.delete_rotations', icon='CANCEL')
 
 
             if gui_active_panel_fin != "expressions":
@@ -2016,7 +2015,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                         for expr_name in sorted(mblab_shapekeys.expressions_data.keys()):
                             if hasattr(obj, expr_name):
                                 if scn.mblab_expression_filter in expr_name:
-                                    box.prop(obj, expr_name)
+                                    box_exp.prop(obj, expr_name)
                     box_exp.operator("mbast.reset_expression", icon="RECOVER_LAST")
                 else:
                     box_exp.enabled = False
@@ -2031,7 +2030,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
 
                 box_asts.prop(scn, 'mblab_proxy_library')
                 box_asts.prop(scn, 'mblab_assets_models')
-                # box.operator('mbast.load_assets_element')
+                # box_asts.operator('mbast.load_assets_element')
                 box_asts.label(text="To adapt the asset, use the proxy fitting tool", icon='INFO')
 
 

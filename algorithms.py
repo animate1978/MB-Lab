@@ -33,8 +33,7 @@ import array
 import mathutils
 import bpy
 
-from . import utils
-#from .utils import get_object_parent
+from . import file_ops, utils
 
 logger = logging.getLogger(__name__)
 
@@ -368,7 +367,7 @@ def kdtree_from_mesh_vertices(mesh):
 
 def import_mesh_from_lib(lib_filepath, name):
     existing_mesh_names = collect_existing_meshes()
-    append_mesh_from_library(lib_filepath, [name])
+    file_ops.append_mesh_from_library(lib_filepath, [name])
     new_mesh = get_newest_mesh(existing_mesh_names)
     return new_mesh
 
@@ -683,7 +682,7 @@ def identify_template(obj):
         if obj.type == 'MESH':
             verts = obj.data.vertices
             polygons = obj.data.polygons
-            config_data = get_configuration()
+            config_data = file_ops.get_configuration()
             # TODO error messages
             if verts and polygons:
                 for template in config_data["templates_list"]:
@@ -696,7 +695,7 @@ def identify_template(obj):
 
 def get_template_model(obj):
     template = identify_template(obj)
-    config_data = get_configuration()
+    config_data = file_ops.get_configuration()
     if template:
         return config_data[template]["template_model"]
     return None
@@ -704,7 +703,7 @@ def get_template_model(obj):
 
 def get_template_polygons(obj):
     template = identify_template(obj)
-    config_data = get_configuration()
+    config_data = file_ops.get_configuration()
     if template:
         return config_data[template]["template_polygons"]
     return None
@@ -1088,7 +1087,7 @@ def has_deformation_vgroups(obj, armat):
 
 
 def is_rigged(obj, armat):
-    # if is_armature_linked(obj, armat):
+    # if file_ops.is_armature_linked(obj, armat):
     return has_deformation_vgroups(obj, armat)
 
 
