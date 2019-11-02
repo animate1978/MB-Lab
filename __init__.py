@@ -36,7 +36,7 @@ from bpy.app.handlers import persistent
 from bpy_extras.io_utils import ExportHelper, ImportHelper
 
 from . import facerig
-from . import humanoid, animationengine, proxyengine
+from . import humanoid, animationengine, proxyengine, file_ops
 from . import algorithms
 from . import preferences
 from . import addon_updater_ops
@@ -84,11 +84,11 @@ def start_lab_session():
     if scn.mblab_use_muscle and scn.mblab_use_ik:
         rigging_type = "muscle_ik"
 
-    lib_filepath = algorithms.get_blendlibrary_path()
+    lib_filepath = file_ops.get_blendlibrary_path()
 
     obj = None
     is_existing = False
-    is_obj = algorithms.looking_for_humanoid_obj()
+    is_obj = file_ops.looking_for_humanoid_obj()
 
     if is_obj[0] == "ERROR":
         gui_status = "ERROR_SESSION"
@@ -97,13 +97,13 @@ def start_lab_session():
 
     if is_obj[0] == "NO_OBJ":
         base_model_name = mblab_humanoid.characters_config[character_identifier]["template_model"]
-        obj = algorithms.import_object_from_lib(lib_filepath, base_model_name, character_identifier)
+        obj = file_ops.import_object_from_lib(lib_filepath, base_model_name, character_identifier)
         obj["manuellab_vers"] = bl_info["version"]
         obj["manuellab_id"] = character_identifier
         obj["manuellab_rig"] = rigging_type
 
     if is_obj[0] == "FOUND":
-        obj = algorithms.get_object_by_name(is_obj[1])
+        obj = file_ops.get_object_by_name(is_obj[1])
         character_identifier = obj["manuellab_id"]
         rigging_type = obj["manuellab_rig"]
         is_existing = True
@@ -124,9 +124,9 @@ def start_lab_session():
                     scn.render.engine = 'BLENDER_EEVEE'
                 if scn.mblab_use_lamps:
                     
-                    algorithms.import_object_from_lib(lib_filepath, "Light_Key")
-                    algorithms.import_object_from_lib(lib_filepath, "Light_Fill")
-                    algorithms.import_object_from_lib(lib_filepath, "Light_Backlight")
+                    file_ops.import_object_from_lib(lib_filepath, "Light_Key")
+                    file_ops.import_object_from_lib(lib_filepath, "Light_Fill")
+                    file_ops.import_object_from_lib(lib_filepath, "Light_Backlight")
                     
             else:
                 scn.render.engine = 'BLENDER_WORKBENCH'
@@ -164,7 +164,7 @@ def check_manuelbastionilab_session(dummy):
         # init_femaleposes_props()
         # init_maleposes_props()
         gui_status = "NEW_SESSION"
-        is_obj = algorithms.looking_for_humanoid_obj()
+        is_obj = file_ops.looking_for_humanoid_obj()
         if is_obj[0] == "FOUND":
             # gui_status = "RECOVERY_SESSION"
             # if scn.do_not_ask_again:
@@ -340,7 +340,7 @@ def init_categories_props(humanoid_instance):
 
 def init_restposes_props(humanoid_instance):
     if humanoid_instance.exists_rest_poses_database():
-        restpose_items = algorithms.generate_items_list(humanoid_instance.restposes_path)
+        restpose_items = file_ops.generate_items_list(humanoid_instance.restposes_path)
         bpy.types.Object.rest_pose = bpy.props.EnumProperty(
             items=restpose_items,
             name="Rest pose",
@@ -352,7 +352,7 @@ def init_maleposes_props():
     global mblab_retarget
     if mblab_retarget.maleposes_exist:
         if not hasattr(bpy.types.Object, 'male_pose'):
-            malepose_items = algorithms.generate_items_list(mblab_retarget.maleposes_path)
+            malepose_items = file_ops.generate_items_list(mblab_retarget.maleposes_path)
             bpy.types.Object.male_pose = bpy.props.EnumProperty(
                 items=malepose_items,
                 name="Male pose",
@@ -364,7 +364,7 @@ def init_femaleposes_props():
     global mblab_retarget
     if mblab_retarget.femaleposes_exist:
         if not hasattr(bpy.types.Object, 'female_pose'):
-            femalepose_items = algorithms.generate_items_list(mblab_retarget.femaleposes_path)
+            femalepose_items = file_ops.generate_items_list(mblab_retarget.femaleposes_path)
             bpy.types.Object.female_pose = bpy.props.EnumProperty(
                 items=femalepose_items,
                 name="Female pose",
@@ -389,7 +389,7 @@ def init_expression_props():
 
 def init_presets_props(humanoid_instance):
     if humanoid_instance.exists_preset_database():
-        preset_items = algorithms.generate_items_list(humanoid_instance.presets_path)
+        preset_items = file_ops.generate_items_list(humanoid_instance.presets_path)
         bpy.types.Object.preset = bpy.props.EnumProperty(
             items=preset_items,
             name="Types",
@@ -398,7 +398,7 @@ def init_presets_props(humanoid_instance):
 
 def init_ethnic_props(humanoid_instance):
     if humanoid_instance.exists_phenotype_database():
-        ethnic_items = algorithms.generate_items_list(humanoid_instance.phenotypes_path)
+        ethnic_items = file_ops.generate_items_list(humanoid_instance.phenotypes_path)
         bpy.types.Object.ethnic = bpy.props.EnumProperty(
             items=ethnic_items,
             name="Phenotype",
@@ -1720,7 +1720,7 @@ class ButtonLoadBvhAdjusments(bpy.types.Operator, ImportHelper):
         global mblab_retarget
         scn = bpy.context.scene
         armature = utils.get_active_armature()
-        matrix_data = algorithms.load_json_data(self.filepath, "BVH config")
+        matrix_data = file_ops.load_json_data(self.filepath, "BVH config")
         # Loop Through Config Adjustments and Apply Changes
         for bone in matrix_data:
             armature.data.bones[bone].select = True
@@ -1892,7 +1892,7 @@ class LoadTemplate(bpy.types.Operator):
         scn = bpy.context.scene
         lib_filepath = algorithms.get_blendlibrary_path()
         base_model_name = mblab_humanoid.characters_config[scn.mblab_template_name]["template_model"]
-        obj = algorithms.import_object_from_lib(lib_filepath, base_model_name, scn.mblab_template_name)
+        obj = file_ops.import_object_from_lib(lib_filepath, base_model_name, scn.mblab_template_name)
         if obj:
             obj["manuellab_proxy_reference"] = mblab_humanoid.characters_config[scn.mblab_template_name][
                 "template_model"]

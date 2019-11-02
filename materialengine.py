@@ -28,7 +28,7 @@ import os
 import time
 
 import bpy
-from . import algorithms, utils
+from . import algorithms, utils, file_ops
 
 
 logger = logging.getLogger(__name__)
@@ -44,7 +44,7 @@ class MaterialEngine:
 
 # Look up characters_config.json for textures
 
-        data_path = algorithms.get_data_path()
+        data_path = file_ops.get_data_path()
         self.obj_name = obj_name
         image_file_names = {
             "displ_data": character_config["texture_displacement"],
@@ -82,10 +82,10 @@ class MaterialEngine:
 
     def load_data_images(self):
         for img_path in self.image_file_paths.values():
-            algorithms.load_image(img_path)
+            file_ops.load_image(img_path)
 
     def load_texture(self, img_path, shader_target):
-        algorithms.load_image(img_path)
+        file_ops.load_image(img_path)
         self.image_file_names[shader_target] = os.path.basename(img_path)
         self.update_shaders()
 
@@ -170,7 +170,7 @@ class MaterialEngine:
     def assign_image_to_node(material_name, node_name, image_name):
         logger.info("Assigning the image %s to node %s", image_name, node_name)
         mat_node = algorithms.get_material_node(material_name, node_name)
-        mat_image = algorithms.get_image(image_name)
+        mat_image = file_ops.get_image(image_name)
         if mat_image:
             algorithms.set_node_image(mat_node, mat_image)
         else:
@@ -255,14 +255,14 @@ class MaterialEngine:
                 material.name = material.name+str(time.time())
 
     def get_object(self):
-        return algorithms.get_object_by_name(self.obj_name)
+        return file_ops.get_object_by_name(self.obj_name)
 
 # Generate Displacement Data Image
 
     def generate_displacement_image(self):
         disp_data_image_name = self.image_file_names["displ_data"]
         if disp_data_image_name != "":
-            disp_data_image = algorithms.get_image(disp_data_image_name)
+            disp_data_image = file_ops.get_image(disp_data_image_name)
             if disp_data_image:
                 disp_size = disp_data_image.size
                 logger.info(
@@ -272,7 +272,7 @@ class MaterialEngine:
             else:
                 logger.warning(
                     "Cannot create the displacement modifier: data image not found: %s",
-                    algorithms.simple_path(self.image_file_paths["displ_data"]))
+                    file_ops.simple_path(self.image_file_paths["displ_data"]))
 
 # Calculate Displacement based on age, tone, mass 
 
@@ -281,7 +281,7 @@ class MaterialEngine:
         disp_data_image_name = self.image_file_names["displ_data"]
 
         if disp_data_image_name != "":
-            disp_data_image = algorithms.get_image(disp_data_image_name)
+            disp_data_image = file_ops.get_image(disp_data_image_name)
 
             if disp_data_image:
 
@@ -303,13 +303,13 @@ class MaterialEngine:
                     logger.info("Displacement calculated in %s seconds", time.time()-time1)
             else:
                 logger.error("Displace data image not found: %s",
-                             algorithms.simple_path(self.image_file_paths["displ_data"]))
+                             file_ops.simple_path(self.image_file_paths["displ_data"]))
 
     def save_texture(self, filepath, shader_target):
         img_name = self.image_file_names[shader_target]
-        logger.info("Saving image %s in %s", img_name, algorithms.simple_path(filepath))
-        algorithms.save_image(img_name, filepath)
-        algorithms.load_image(filepath)  # Load the just saved image to replace the current one
+        logger.info("Saving image %s in %s", img_name, file_ops.simple_path(filepath))
+        file_ops.save_image(img_name, filepath)
+        file_ops.load_image(filepath)  # Load the just saved image to replace the current one
         self.image_file_names[shader_target] = os.path.basename(filepath)
         self.update_shaders()
 

@@ -29,7 +29,7 @@ import os
 import mathutils
 import bpy
 
-from . import algorithms, utils
+from . import algorithms, utils, file_ops
 
 
 logger = logging.getLogger(__name__)
@@ -40,11 +40,11 @@ class ProxyEngine:
 
     def __init__(self):
         self.has_data = False
-        self.data_path = algorithms.get_data_path()
-        self.templates_library = algorithms.get_blendlibrary_path()
+        self.data_path = file_ops.get_data_path()
+        self.templates_library = file_ops.get_blendlibrary_path()
 
         self.assets_path = os.path.join(self.data_path,"assets")
-        self.assets_models = algorithms.generate_items_list(self.assets_path, "blend")
+        self.assets_models = file_ops.generate_items_list(self.assets_path, "blend")
 
         self.corrective_modifier_name = "mbastlab_proxy_smooth_modifier"
         #self.mask_modifier_name = "mbastlab_mask_modifier"
@@ -58,13 +58,13 @@ class ProxyEngine:
         else:
             self.assets_path = os.path.join(self.data_path,"assets")
 
-        self.assets_models = algorithms.generate_items_list(self.assets_path, "blend")
+        self.assets_models = file_ops.generate_items_list(self.assets_path, "blend")
 
 
     def load_asset(self, assetname):
         scn = bpy.context.scene
         asset_path = os.path.join(self.assets_path,assetname+".blend")
-        algorithms.append_object_from_library(asset_path, [assetname])
+        file_ops.append_object_from_library(asset_path, [assetname])
 
 
     def transfer_weights(self, body, proxy):
@@ -224,8 +224,8 @@ class ProxyEngine:
 
             if scn.mblab_fitref_name == scn.mblab_proxy_name:
                 return ["SAME_OBJECTS", None, None]
-            character_obj = algorithms.get_object_by_name(scn.mblab_fitref_name)
-            proxy_obj = algorithms.get_object_by_name(scn.mblab_proxy_name)
+            character_obj = file_ops.get_object_by_name(scn.mblab_fitref_name)
+            proxy_obj = file_ops.get_object_by_name(scn.mblab_proxy_name)
             if character_obj == None:
                 return ["CHARACTER_NOT_FOUND", None, None]
             if proxy_obj == None:
@@ -254,7 +254,7 @@ class ProxyEngine:
 
         polygons_file = algorithms.get_template_polygons(current_body)
         polygons_path = os.path.join(self.data_path,"pgroups",polygons_file)
-        valid_polygons_indxs = algorithms.load_json_data(polygons_path, "Subset of polygons for proxy fitting")
+        valid_polygons_indxs = file_ops.load_json_data(polygons_path, "Subset of polygons for proxy fitting")
 
         basis_proxy_vertices = basis_proxy.data.vertices #In Blender obj.data = basis data
         basis_body_polygons = basis_body.data.polygons
@@ -315,7 +315,7 @@ class ProxyEngine:
 
         polygons_file = algorithms.get_template_polygons(current_body)
         polygons_path = os.path.join(self.data_path,"pgroups",polygons_file)
-        valid_polygons_indxs = algorithms.load_json_data(polygons_path, "Subset of polygons for proxy fitting")
+        valid_polygons_indxs = file_ops.load_json_data(polygons_path, "Subset of polygons for proxy fitting")
 
         basis_proxy_vertices = basis_proxy.data.vertices #In Blender obj.data = basis data
         basis_body_polygons = basis_body.data.polygons
@@ -383,7 +383,7 @@ class ProxyEngine:
             algorithms.disable_object_modifiers(body, ['ARMATURE','SUBSURF','MASK'])
 
 
-            basis_body = algorithms.import_object_from_lib(self.templates_library, template_name, stop_import = False)
+            basis_body = file_ops.import_object_from_lib(self.templates_library, template_name, stop_import = False)
 
             proxy_shapekey = algorithms.new_shapekey(proxy,"mbastlab_proxyfit")
 
@@ -444,7 +444,7 @@ class ProxyEngine:
 
         polygons_file = algorithms.get_template_polygons(current_body)
         polygons_path = os.path.join(self.data_path,"pgroups",polygons_file)
-        valid_polygons_indxs = algorithms.load_json_data(polygons_path, "Subset of polygons for proxy fitting")
+        valid_polygons_indxs = file_ops.load_json_data(polygons_path, "Subset of polygons for proxy fitting")
 
         if len(basis_body_polygons) == len(current_body_polygons):
 
@@ -483,7 +483,7 @@ class ProxyEngine:
 
         polygons_file = algorithms.get_template_polygons(body)
         polygons_path = os.path.join(self.data_path,"pgroups",polygons_file)
-        valid_polygons_indxs = algorithms.load_json_data(polygons_path, "Subset of polygons for proxy fitting")
+        valid_polygons_indxs = file_ops.load_json_data(polygons_path, "Subset of polygons for proxy fitting")
         body_tree = algorithms.kdtree_from_obj_polygons(body, valid_polygons_indxs)
 
 

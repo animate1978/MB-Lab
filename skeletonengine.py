@@ -28,7 +28,7 @@ import os
 import bpy
 import mathutils
 
-from . import algorithms, utils
+from . import algorithms, utils, file_ops
 from .utils import get_object_parent
 
 logger = logging.getLogger(__name__)
@@ -39,7 +39,7 @@ class SkeletonEngine:
 
     def __init__(self, obj_body, character_config, rigging_type):
         self.has_data = False
-        self.data_path = algorithms.get_data_path()
+        self.data_path = file_ops.get_data_path()
         #characters_config = algorithms.get_configuration()
         #character_config = characters_config[character_identifier]
 
@@ -67,14 +67,14 @@ class SkeletonEngine:
             joints_offset_data_path = os.path.join(self.data_path, "joints", self.joints_offset_filename)
             vgroup_data_path = os.path.join(self.data_path, "vgroups", self.groups_filename)
 
-            self.lib_filepath = algorithms.get_blendlibrary_path()
-            self.joints_database = algorithms.load_json_data(joints_data_path, "Joints data")
-            self.joints_offset_database = algorithms.load_json_data(joints_offset_data_path, "Joints offset data")
+            self.lib_filepath = file_ops.get_blendlibrary_path()
+            self.joints_database = file_ops.load_json_data(joints_data_path, "Joints data")
+            self.joints_offset_database = file_ops.load_json_data(joints_offset_data_path, "Joints offset data")
 
             if self.check_skeleton(obj_body):
                 obj_armat = get_object_parent(obj_body)
             else:
-                obj_armat = algorithms.import_object_from_lib(
+                obj_armat = file_ops.import_object_from_lib(
                     self.lib_filepath, self.skeleton_template_name, skeleton_name)
 
             if obj_armat is not None:
@@ -125,11 +125,11 @@ class SkeletonEngine:
 
     @staticmethod
     def error_msg(path):
-        logger.error("Database file not found: %s", algorithms.simple_path(path))
+        logger.error("Database file not found: %s", file_ops.simple_path(path))
 
     def store_z_axis(self):
         logger.info("Importing temporary original skeleton to store z axis")
-        native_armature = algorithms.import_object_from_lib(
+        native_armature = file_ops.import_object_from_lib(
             self.lib_filepath, self.skeleton_template_name, "temp_armature")
 
         if native_armature:
@@ -150,7 +150,7 @@ class SkeletonEngine:
     def load_groups(self, filepath, use_weights=True, clear_all=True):
         if self.has_data:
             obj = self.get_body()
-            g_data = algorithms.load_json_data(filepath, "Vertgroups data")
+            g_data = file_ops.load_json_data(filepath, "Vertgroups data")
 
             if clear_all:
                 algorithms.remove_vertgroups_all(obj)
@@ -170,18 +170,18 @@ class SkeletonEngine:
                             else:
                                 logger.info("Error: wrong format for vert group")
 
-                logger.info("Group loaded from %s", algorithms.simple_path(filepath))
+                logger.info("Group loaded from %s", file_ops.simple_path(filepath))
             else:
-                logger.warning("Vgroup file problem %s", algorithms.simple_path(filepath))
+                logger.warning("Vgroup file problem %s", file_ops.simple_path(filepath))
 
     def get_body(self):
         if self.has_data:
-            return algorithms.get_object_by_name(self.body_name)
+            return file_ops.get_object_by_name(self.body_name)
         return None
 
     def get_armature(self):
         if self.has_data:
-            return algorithms.get_object_by_name(self.armature_name)
+            return file_ops.get_object_by_name(self.armature_name)
         return None
 
     def __bool__(self):
