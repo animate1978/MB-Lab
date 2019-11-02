@@ -37,6 +37,7 @@ from . import utils
 from . import algorithms
 from . import preferences
 from . import addon_updater_ops
+from . import humanoid_rotations
 
 logger = logging.getLogger(__name__)
 
@@ -1228,6 +1229,19 @@ class EnableDisplacement(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class ButtonAddParticleHair(bpy.types.Operator):
+    bl_label = 'UTILITIES'
+    bl_idname = 'mbast.button_utilities_on'
+    bl_description = 'Open utilities panel'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_fin
+        gui_active_panel_fin = "utilities"
+        return {'FINISHED'}
+
+
 class FinalizeCharacterAndImages(bpy.types.Operator, ExportHelper):
     """
         Convert the character in a standard Blender model
@@ -1858,6 +1872,30 @@ class DeleteFaceRig(bpy.types.Operator):
             self.report({'ERROR'}, "failed to delete face rig")
         return {'FINISHED'}
 
+class OBJECT_OT_humanoid_rot_limits(bpy.types.Operator):
+    """Add Humanoid Rotation Limits to Character"""
+    bl_idname = "mbast.humanoid_rot_limits"
+    bl_label = "Humanoid Rotations"
+    bl_options = {'REGISTER', 'INTERNAL', 'UNDO'}
+
+    def execute(self, context):
+        armature = humanoid_rotations.get_skeleton()
+        pb = armature.pose.bones
+        humanoid_rotations.limit_bone_rotation(humanoid_rotations.ragdoll_dict, pb)
+        humanoid_rotations.limit_finger_rotation(humanoid_rotations.fd, pb)
+        return {'FINISHED'}
+
+class OBJECT_OT_delete_rotations(bpy.types.Operator):
+    """Delete Humanoid Rotation Limits for Character"""
+    bl_idname = "mbast.delete_rotations"
+    bl_label = "Delete Humanoid Rotations"
+    bl_options = {'REGISTER', 'INTERNAL', 'UNDO'}
+
+    def execute(self, context):
+        armature = humanoid_rotations.get_skeleton()
+        pb = armature.pose.bones
+        humanoid_rotations.remove_bone_constraints('LIMIT_ROTATION', pb)
+        return {'FINISHED'}
 
 class StartSession(bpy.types.Operator):
     bl_idname = "mbast.init_character"
@@ -1944,6 +1982,14 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
             box.operator('mbast.delete_face_rig', icon='CANCEL')
             box.prop(scn, "mblab_facs_rig")
             box = self.layout.box()
+
+            # Humanoid Rotation Limits
+            box = self.layout.box()
+            box.label(text="Humanoid Rotations")
+            box.operator("mbast.humanoid_rot_limits", icon='USER')
+            box.operator('mbast.delete_rotations', icon='CANCEL')
+            box = self.layout.box()
+
 
             if gui_active_panel_fin != "expressions":
                 box.operator('mbast.button_expressions_on', icon=icon_expand)
@@ -2377,6 +2423,8 @@ classes = (
     LoadTemplate,
     preferences.MBPreferences,
     VIEW3D_PT_tools_ManuelbastioniLAB,
+    OBJECT_OT_humanoid_rot_limits,
+    OBJECT_OT_delete_rotations,
 )
 
 def register():
