@@ -2432,13 +2432,7 @@ classes = (
     DeleteFaceRig,
     LoadTemplate,
     preferences.MBPreferences,
-<<<<<<< HEAD
     VIEW3D_PT_tools_MBLAB,
-=======
-    VIEW3D_PT_tools_ManuelbastioniLAB,
-    OBJECT_OT_humanoid_rot_limits,
-    OBJECT_OT_delete_rotations,
->>>>>>> f1277fbcbcef6e622af85c49a1e18822229a70dc
 )
 
 def register():
