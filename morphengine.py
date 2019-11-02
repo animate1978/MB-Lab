@@ -27,7 +27,7 @@ import bpy
 
 import mathutils
 
-from . import algorithms, proxyengine
+from . import algorithms, utils, proxyengine
 
 import time, json
 import operator

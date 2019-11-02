@@ -31,7 +31,8 @@ from functools import lru_cache
 import mathutils
 import bpy
 
-from . import algorithms
+from . import algorithms, utils
+
 from .utils import get_active_armature
 
 logger = logging.getLogger(__name__)
@@ -1440,7 +1441,7 @@ class ExpressionEngineShapeK:
         charac_data = algorithms.load_json_data(filepath, "Character data")
         expressions_id = algorithms.simple_path(filepath)
         if "manuellab_vers" in charac_data:
-            if not algorithms.check_version(charac_data["manuellab_vers"]):
+            if not utils.check_version(charac_data["manuellab_vers"]):
                 logger.info("%s created with vers. %s.",
                             expressions_id, charac_data["manuellab_vers"])
         else:

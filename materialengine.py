@@ -28,7 +28,7 @@ import os
 import time
 
 import bpy
-from . import algorithms
+from . import algorithms, utils
 
 
 logger = logging.getLogger(__name__)
