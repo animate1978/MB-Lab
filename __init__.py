@@ -124,11 +124,11 @@ def start_lab_session():
                 else:
                     scn.render.engine = 'BLENDER_EEVEE'
                 if scn.mblab_use_lamps:
-                    
+
                     file_ops.import_object_from_lib(lib_filepath, "Light_Key")
                     file_ops.import_object_from_lib(lib_filepath, "Light_Fill")
                     file_ops.import_object_from_lib(lib_filepath, "Light_Backlight")
-                    
+
             else:
                 scn.render.engine = 'BLENDER_WORKBENCH'
 
@@ -1740,7 +1740,7 @@ class ButtonLoadBvhAdjusments(bpy.types.Operator, ImportHelper):
             armature.data.bones[bone].select = True
             rot_x = matrix_data[bone][0]
             rot_y = matrix_data[bone][1]
-            rot_z = matrix_data[bone][2]            
+            rot_z = matrix_data[bone][2]
             mblab_retarget.correct_bone_angle(0, rot_x)
             mblab_retarget.correct_bone_angle(1, rot_y)
             mblab_retarget.correct_bone_angle(2, rot_z)
@@ -1781,7 +1781,7 @@ class ButtonSaveBvhAdjustments(bpy.types.Operator, ExportHelper):
             else:
                 data = json.dumps(dict, indent=1, ensure_ascii=True)
                 with open(self.filepath, 'w') as outfile:
-                    outfile.write(data + '\n')    
+                    outfile.write(data + '\n')
 
         return {'FINISHED'}
 
@@ -1956,42 +1956,42 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
         scn = bpy.context.scene
         icon_expand = "DISCLOSURE_TRI_RIGHT"
         icon_collapse = "DISCLOSURE_TRI_DOWN"
-        
-        box = self.layout.box()
-        box.label(text="https://github.com/animate1978/MB-Lab")
+
+        box_info = self.layout.box()
+        box_info.label(text="https://github.com/animate1978/MB-Lab")
 
         if gui_status == "ERROR_SESSION":
-            box = self.layout.box()
-            box.label(text=gui_err_msg, icon="INFO")
+            box_err = self.layout.box()
+            box_err.label(text=gui_err_msg, icon="INFO")
 
         if gui_status == "NEW_SESSION":
-            
-            self.layout.label(text="CREATION OPTIONS", icon='RNA_ADD')
-            box = self.layout.box()
-            box.prop(scn, 'mblab_character_name')
-            
-            if mblab_humanoid.is_ik_rig_available(scn.mblab_character_name):
-                box.prop(scn, 'mblab_use_ik', icon='BONE_DATA')
-            if mblab_humanoid.is_muscle_rig_available(scn.mblab_character_name):
-                box.prop(scn, 'mblab_use_muscle', icon='BONE_DATA')
 
-            box.prop(scn, 'mblab_use_cycles', icon='SHADING_RENDERED')
-            box.prop(scn, 'mblab_use_eevee', icon='SHADING_RENDERED')
+            self.layout.label(text="CREATION OPTIONS", icon='RNA_ADD')
+            box_new_opt = self.layout.box()
+            box_new_opt.prop(scn, 'mblab_character_name')
+
+            if mblab_humanoid.is_ik_rig_available(scn.mblab_character_name):
+                box_new_opt.prop(scn, 'mblab_use_ik', icon='BONE_DATA')
+            if mblab_humanoid.is_muscle_rig_available(scn.mblab_character_name):
+                box_new_opt.prop(scn, 'mblab_use_muscle', icon='BONE_DATA')
+
+            box_new_opt.prop(scn, 'mblab_use_cycles', icon='SHADING_RENDERED')
+            box_new_opt.prop(scn, 'mblab_use_eevee', icon='SHADING_RENDERED')
             if scn.mblab_use_cycles or scn.mblab_use_eevee:
-                box.prop(scn, 'mblab_use_lamps', icon='LIGHT_DATA')
-            box.operator('mbast.init_character', icon='ARMATURE_DATA')
+                box_new_opt.prop(scn, 'mblab_use_lamps', icon='LIGHT_DATA')
+            box_new_opt.operator('mbast.init_character', icon='ARMATURE_DATA')
 
         if gui_status != "ACTIVE_SESSION":
             self.layout.label(text=" ")
             self.layout.label(text="AFTER-CREATION TOOLS", icon='MODIFIER_ON')
 
+            box_post_opt = self.layout.box()
             # Face Rig
-            box = self.layout.box()
-            box.label(text="Face Rig")
-            box.operator('mbast.create_face_rig', icon='USER')
-            box.operator('mbast.delete_face_rig', icon='CANCEL')
-            box.prop(scn, "mblab_facs_rig")
-            box = self.layout.box()
+            box_face_rig = box_post_opt.box()
+            box_face_rig.label(text="Face Rig")
+            box_face_rig.operator('mbast.create_face_rig', icon='USER')
+            box_face_rig.operator('mbast.delete_face_rig', icon='CANCEL')
+            box_face_rig.prop(scn, "mblab_facs_rig")
 
             # Humanoid Rotation Limits
             box = self.layout.box()
@@ -2002,142 +2002,142 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
 
 
             if gui_active_panel_fin != "expressions":
-                box.operator('mbast.button_expressions_on', icon=icon_expand)
+                box_post_opt.operator('mbast.button_expressions_on', icon=icon_expand)
             else:
-                self.layout.operator('mbast.button_expressions_off', icon=icon_collapse)
-                box = self.layout.box()
+                box_post_opt.operator('mbast.button_expressions_off', icon=icon_collapse)
+                box_exp = box_post_opt.box()
                 mblab_shapekeys.update_expressions_data()
                 if mblab_shapekeys.model_type != "NONE":
-                    box.enabled = True
-                    box.prop(scn, 'mblab_expression_filter')
-                    box.operator("mbast.keyframe_expression", icon="ACTION")
+                    box_exp.enabled = True
+                    box_exp.prop(scn, 'mblab_expression_filter')
+                    box_exp.operator("mbast.keyframe_expression", icon="ACTION")
                     if mblab_shapekeys.expressions_data:
                         obj = algorithms.get_active_body()
                         for expr_name in sorted(mblab_shapekeys.expressions_data.keys()):
                             if hasattr(obj, expr_name):
                                 if scn.mblab_expression_filter in expr_name:
                                     box.prop(obj, expr_name)
-                    box.operator("mbast.reset_expression", icon="RECOVER_LAST")
+                    box_exp.operator("mbast.reset_expression", icon="RECOVER_LAST")
                 else:
-                    box.enabled = False
-                    box.label(text="No express. shapekeys", icon='INFO')
-                    
+                    box_exp.enabled = False
+                    box_exp.label(text="No express. shapekeys", icon='INFO')
+
             if gui_active_panel_fin != "assets":
-                box.operator('mbast.button_assets_on', icon=icon_expand)
+                box_post_opt.operator('mbast.button_assets_on', icon=icon_expand)
             else:
-                box.operator('mbast.button_assets_off', icon=icon_collapse)
+                box_post_opt.operator('mbast.button_assets_off', icon=icon_collapse)
                 # assets_status = mblab_proxy.validate_assets_fitting()
-                box = self.layout.box()
+                box_asts = box_post_opt.box()
 
-                box.prop(scn, 'mblab_proxy_library')
-                box.prop(scn, 'mblab_assets_models')
+                box_asts.prop(scn, 'mblab_proxy_library')
+                box_asts.prop(scn, 'mblab_assets_models')
                 # box.operator('mbast.load_assets_element')
-                box.label(text="To adapt the asset, use the proxy fitting tool", icon='INFO')
+                box_asts.label(text="To adapt the asset, use the proxy fitting tool", icon='INFO')
 
-            
+
             if gui_active_panel_fin != "proxy_fit":
-                box.operator('mbast.button_proxy_fit_on', icon=icon_expand)
+                box_post_opt.operator('mbast.button_proxy_fit_on', icon=icon_expand)
             else:
-                box.operator('mbast.button_proxy_fit_off', icon=icon_collapse)
+                box_post_opt.operator('mbast.button_proxy_fit_off', icon=icon_collapse)
                 fitting_status, proxy_obj, reference_obj = mblab_proxy.get_proxy_fitting_ingredients()
 
-                box = self.layout.box()
-                box.label(text="PROXY FITTING")
-                box.label(text="Please select character and proxy:")
-                box.prop(scn, 'mblab_fitref_name')
-                box.prop(scn, 'mblab_proxy_name')
+                box_prox = box_post_opt.box()
+                box_prox.label(text="PROXY FITTING")
+                box_prox.label(text="Please select character and proxy:")
+                box_prox.prop(scn, 'mblab_fitref_name')
+                box_prox.prop(scn, 'mblab_proxy_name')
                 if fitting_status == "NO_REFERENCE":
-                    # box.enabled = False
-                    box.label(text="Character not valid.", icon="ERROR")
-                    box.label(text="Possible reasons:")
-                    box.label(text="- Character created with a different lab version")
-                    box.label(text="- Character topology altered by custom modelling")
-                    box.label(text="- Character topology altered by modifiers (decimator,subsurf, etc..)")
+                    # box_prox.enabled = False
+                    box_prox.label(text="Character not valid.", icon="ERROR")
+                    box_prox.label(text="Possible reasons:")
+                    box_prox.label(text="- Character created with a different lab version")
+                    box_prox.label(text="- Character topology altered by custom modelling")
+                    box_prox.label(text="- Character topology altered by modifiers (decimator,subsurf, etc..)")
                 if fitting_status == "SAME_OBJECTS":
-                    box.label(text="Proxy and character cannot be the same object", icon="ERROR")
+                    box_prox.label(text="Proxy and character cannot be the same object", icon="ERROR")
                 if fitting_status == "CHARACTER_NOT_FOUND":
-                    box.label(text="Character not found", icon="ERROR")
+                    box_prox.label(text="Character not found", icon="ERROR")
                 if fitting_status == "PROXY_NOT_FOUND":
-                    box.label(text="Proxy not found", icon="ERROR")
+                    box_prox.label(text="Proxy not found", icon="ERROR")
                 if fitting_status == 'OK':
-                    box.label(text="The proxy is ready for fitting.", icon="INFO")
+                    box_prox.label(text="The proxy is ready for fitting.", icon="INFO")
                     proxy_compatib = mblab_proxy.validate_assets_compatibility(proxy_obj, reference_obj)
 
                     if proxy_compatib == "WARNING":
-                        box.label(text="The proxy seems not designed for the selected character.", icon="ERROR")
+                        box_prox.label(text="The proxy seems not designed for the selected character.", icon="ERROR")
 
-                    box.prop(scn, 'mblab_proxy_offset')
-                    box.prop(scn, 'mblab_proxy_threshold')
-                    box.prop(scn, 'mblab_add_mask_group')
-                    box.prop(scn, 'mblab_transfer_proxy_weights')
-                    box.operator("mbast.proxy_fit", icon="MOD_CLOTH")
-                    box.operator("mbast.proxy_removefit", icon="MOD_CLOTH")
+                    box_prox.prop(scn, 'mblab_proxy_offset')
+                    box_prox.prop(scn, 'mblab_proxy_threshold')
+                    box_prox.prop(scn, 'mblab_add_mask_group')
+                    box_prox.prop(scn, 'mblab_transfer_proxy_weights')
+                    box_prox.operator("mbast.proxy_fit", icon="MOD_CLOTH")
+                    box_prox.operator("mbast.proxy_removefit", icon="MOD_CLOTH")
                 if fitting_status == 'WRONG_SELECTION':
-                    box.enabled = False
-                    box.label(text="Please select only two objects: humanoid and proxy", icon="INFO")
+                    box_prox.enabled = False
+                    box_prox.label(text="Please select only two objects: humanoid and proxy", icon="INFO")
                 if fitting_status == 'NO_REFERENCE_SELECTED':
-                    box.enabled = False
-                    box.label(text="No valid humanoid template selected", icon="INFO")
+                    box_prox.enabled = False
+                    box_prox.label(text="No valid humanoid template selected", icon="INFO")
                 if fitting_status == 'NO_MESH_SELECTED':
-                    box.enabled = False
-                    box.label(text="Selected proxy is not a mesh", icon="INFO")
-                    
+                    box_prox.enabled = False
+                    box_prox.label(text="Selected proxy is not a mesh", icon="INFO")
+
             if gui_active_panel_fin != "pose":
-                box.operator('mbast.button_pose_on', icon=icon_expand)
+                box_post_opt.operator('mbast.button_pose_on', icon=icon_expand)
             else:
-                self.layout.operator('mbast.button_pose_off', icon=icon_collapse)
-                box = self.layout.box()
+                box_post_opt.operator('mbast.button_pose_off', icon=icon_collapse)
+                box_pose = box_post_opt.box()
 
                 armature = utils.get_active_armature()
                 if armature is not None and not utils.is_ik_armature(armature):
-                    box.enabled = True
+                    box_pose.enabled = True
                     sel_gender = algorithms.get_selected_gender()
                     if sel_gender == "FEMALE":
                         if mblab_retarget.femaleposes_exist:
-                            box.prop(armature, "female_pose")
+                            box_pose.prop(armature, "female_pose")
                     if sel_gender == "MALE":
                         if mblab_retarget.maleposes_exist:
-                            box.prop(armature, "male_pose")
-                    box.operator("mbast.pose_load", icon='IMPORT')
-                    box.operator("mbast.pose_save", icon='EXPORT')
-                    box.operator("mbast.pose_reset", icon='ARMATURE_DATA')
-                    box.operator("mbast.load_animation", icon='IMPORT')
+                            box_pose.prop(armature, "male_pose")
+                    box_pose.operator("mbast.pose_load", icon='IMPORT')
+                    box_pose.operator("mbast.pose_save", icon='EXPORT')
+                    box_pose.operator("mbast.pose_reset", icon='ARMATURE_DATA')
+                    box_pose.operator("mbast.load_animation", icon='IMPORT')
                 else:
-                    box.enabled = False
-                    box.label(text="Please select the lab character (IK not supported)", icon='INFO')
-                    
+                    box_pose.enabled = False
+                    box_pose.label(text="Please select the lab character (IK not supported)", icon='INFO')
+
             if gui_active_panel_fin != "utilities":
-                box.operator('mbast.button_utilities_on', icon=icon_expand)
+                box_post_opt.operator('mbast.button_utilities_on', icon=icon_expand)
             else:
-                self.layout.operator('mbast.button_utilities_off', icon=icon_collapse)
+                box_post_opt.operator('mbast.button_utilities_off', icon=icon_collapse)
 
-                box = self.layout.box()
-                box.label(text="Choose a proxy reference")
-                box.prop(scn, 'mblab_template_name')
-                box.operator('mbast.load_base_template')
+                box_util_prox = box_post_opt.box()
+                box_util_prox.label(text="Choose a proxy reference")
+                box_util_prox.prop(scn, 'mblab_template_name')
+                box_util_prox.operator('mbast.load_base_template')
 
-                box = self.layout.box()
-                box.label(text="Bones rot. offset")
-                box.operator('mbast.button_adjustrotation', icon='BONE_DATA')
-                box.operator('mbast.button_save_bvh_adjustments', icon='EXPORT')
-                box.operator('mbast.button_load_bvh_adjustments', icon='IMPORT')
+                box_util_bvh = box_post_opt.box()
+                box_util_bvh.label(text="Bones rot. offset")
+                box_util_bvh.operator('mbast.button_adjustrotation', icon='BONE_DATA')
+                box_util_bvh.operator('mbast.button_save_bvh_adjustments', icon='EXPORT')
+                box_util_bvh.operator('mbast.button_load_bvh_adjustments', icon='IMPORT')
                 mblab_retarget.check_correction_sync()
                 if mblab_retarget.is_animated_bone == "VALID_BONE":
                     if mblab_retarget.correction_is_sync:
-                        box.prop(scn, 'mblab_rot_offset_0')
-                        box.prop(scn, 'mblab_rot_offset_1')
-                        box.prop(scn, 'mblab_rot_offset_2')
+                        box_util_bvh.prop(scn, 'mblab_rot_offset_0')
+                        box_util_bvh.prop(scn, 'mblab_rot_offset_1')
+                        box_util_bvh.prop(scn, 'mblab_rot_offset_2')
                 else:
-                    box.label(text=mblab_retarget.is_animated_bone)
+                    box_util_bvh.label(text=mblab_retarget.is_animated_bone)
 
         if gui_status == "ACTIVE_SESSION":
             obj = mblab_humanoid.get_object()
             armature = mblab_humanoid.get_armature()
             if obj and armature:
-                # box = self.layout.box()
+                self.layout.label(text="CREATION TOOLS", icon="RNA")
+                box_act_opt = self.layout.box()
 
                 if mblab_humanoid.exists_transform_database():
-                    self.layout.label(text="CREATION TOOLS", icon="RNA")
                     x_age = getattr(obj, 'character_age', 0)
                     x_mass = getattr(obj, 'character_mass', 0)
                     x_tone = getattr(obj, 'character_tone', 0)
@@ -2145,64 +2145,62 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                     mass_lbl = round(50 * (x_mass + 1))
                     tone_lbl = round(50 * (x_tone + 1))
                     lbl_text = "Age : {0} yr.  Mass : {1}%  Tone : {2}% ".format(age_lbl, mass_lbl, tone_lbl)
-                    box = self.layout.box()
-                    box.label(text=lbl_text)
+                    box_act_opt.label(text=lbl_text)
 
                     for meta_data_prop in sorted(mblab_humanoid.character_metaproperties.keys()):
                         if "last" not in meta_data_prop:
-                            self.layout.prop(obj, meta_data_prop)
-                    self.layout.operator("mbast.reset_allproperties", icon="RECOVER_LAST")
+                            box_act_opt.prop(obj, meta_data_prop)
+                    box_act_opt.operator("mbast.reset_allproperties", icon="RECOVER_LAST")
 
                     #if mblab_humanoid.get_subd_visibility() == True:
                         #self.layout.label(text="Tip: for slow PC, disable the subdivision in Display Options below", icon='INFO')
-                    box = self.layout.box()
 
                 if gui_active_panel != "library":
-                    self.layout.operator('mbast.button_library_on', icon=icon_expand)
+                    box_act_opt.operator('mbast.button_library_on', icon=icon_expand)
                 else:
-                    self.layout.operator('mbast.button_library_off', icon=icon_collapse)
-                    box = self.layout.box()
+                    box_act_opt.operator('mbast.button_library_off', icon=icon_collapse)
+                    box_lib = box_act_opt.box()
 
-                    box.label(text="Characters library", icon='ARMATURE_DATA')
+                    box_lib.label(text="Characters library", icon='ARMATURE_DATA')
                     if mblab_humanoid.exists_preset_database():
-                        box.prop(obj, "preset")
+                        box_lib.prop(obj, "preset")
                     if mblab_humanoid.exists_phenotype_database():
-                        box.prop(obj, "ethnic")
-                    box.prop(scn, 'mblab_mix_characters', icon='FORCE_CHARGE')
+                        box_lib.prop(obj, "ethnic")
+                    box_lib.prop(scn, 'mblab_mix_characters', icon='FORCE_CHARGE')
 
                 if gui_active_panel != "random":
-                    self.layout.operator('mbast.button_random_on', icon=icon_expand)
+                    box_act_opt.operator('mbast.button_random_on', icon=icon_expand)
                 else:
-                    self.layout.operator('mbast.button_random_off', icon=icon_collapse)
+                    box_act_opt.operator('mbast.button_random_off', icon=icon_collapse)
 
-                    box = self.layout.box()
-                    box.prop(scn, "mblab_random_engine")
-                    box.prop(scn, "mblab_set_tone_and_mass")
+                    box_rand = box_act_opt.box()
+                    box_rand.prop(scn, "mblab_random_engine")
+                    box_rand.prop(scn, "mblab_set_tone_and_mass")
                     if scn.mblab_set_tone_and_mass:
-                        box.prop(scn, "mblab_body_mass")
-                        box.prop(scn, "mblab_body_tone")
+                        box_rand.prop(scn, "mblab_body_mass")
+                        box_rand.prop(scn, "mblab_body_tone")
 
-                    box.label(text="Preserve:")
-                    box.prop(scn, "mblab_preserve_mass")
-                    box.prop(scn, "mblab_preserve_height")
-                    box.prop(scn, "mblab_preserve_tone")
-                    box.prop(scn, "mblab_preserve_body")
-                    box.prop(scn, "mblab_preserve_face")
-                    box.prop(scn, "mblab_preserve_phenotype")
-                    box.prop(scn, "mblab_preserve_fantasy")
+                    box_rand.label(text="Preserve:")
+                    box_rand.prop(scn, "mblab_preserve_mass")
+                    box_rand.prop(scn, "mblab_preserve_height")
+                    box_rand.prop(scn, "mblab_preserve_tone")
+                    box_rand.prop(scn, "mblab_preserve_body")
+                    box_rand.prop(scn, "mblab_preserve_face")
+                    box_rand.prop(scn, "mblab_preserve_phenotype")
+                    box_rand.prop(scn, "mblab_preserve_fantasy")
 
-                    box.operator('mbast.character_generator', icon="FILE_REFRESH")
+                    box_rand.operator('mbast.character_generator', icon="FILE_REFRESH")
 
                 if gui_active_panel != "parameters":
-                    self.layout.operator('mbast.button_parameters_on', icon=icon_expand)
+                    box_act_opt.operator('mbast.button_parameters_on', icon=icon_expand)
                 else:
-                    self.layout.operator('mbast.button_parameters_off', icon=icon_collapse)
+                    box_act_opt.operator('mbast.button_parameters_off', icon=icon_collapse)
 
-                    box = self.layout.box()
+                    box_param = box_act_opt.box()
                     mblab_humanoid.bodydata_realtime_activated = True
                     if mblab_humanoid.exists_measure_database():
-                        box.prop(scn, 'mblab_show_measures', icon='SNAP_INCREMENT')
-                    split = box.split()
+                        box_param.prop(scn, 'mblab_show_measures', icon='SNAP_INCREMENT')
+                    split = box_param.split()
 
                     col = split.column()
                     col.label(text="PARAMETERS")
@@ -2236,121 +2234,121 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                         col.operator("mbast.export_measures", icon='EXPORT')
                         col.operator("mbast.import_measures", icon='IMPORT')
 
-                    sub = box.box()
+                    sub = box_param.box()
                     sub.label(text="RESET")
                     sub.operator("mbast.reset_categoryonly", icon="RECOVER_LAST")
 
                 if mblab_humanoid.exists_measure_database():
                     if gui_active_panel != "automodelling":
-                        self.layout.operator('mbast.button_automodelling_on', icon=icon_expand)
+                        box_act_opt.operator('mbast.button_automodelling_on', icon=icon_expand)
                     else:
-                        self.layout.operator('mbast.button_automodelling_off', icon=icon_collapse)
-                        box = self.layout.box()
-                        box.operator("mbast.auto_modelling", icon='OUTLINER_DATA_MESH')
-                        box.operator("mbast.auto_modelling_mix", icon='OUTLINER_OB_MESH')
+                        box_act_opt.operator('mbast.button_automodelling_off', icon=icon_collapse)
+                        box_auto = box_act_opt.box()
+                        box_auto.operator("mbast.auto_modelling", icon='OUTLINER_DATA_MESH')
+                        box_auto.operator("mbast.auto_modelling_mix", icon='OUTLINER_OB_MESH')
                 else:
-                    box = self.layout.box()
-                    box.enabled = False
-                    box.label(text="Automodelling not available for this character", icon='INFO')
+                    box_auto = box_act_opt.box()
+                    box_auto.enabled = False
+                    box_auto.label(text="Automodelling not available for this character", icon='INFO')
 
                 if mblab_humanoid.exists_rest_poses_database():
                     if gui_active_panel != "rest_pose":
-                        self.layout.operator('mbast.button_rest_pose_on', icon=icon_expand)
+                        box_act_opt.operator('mbast.button_rest_pose_on', icon=icon_expand)
                     else:
-                        self.layout.operator('mbast.button_rest_pose_off', icon=icon_collapse)
-                        box = self.layout.box()
+                        box_act_opt.operator('mbast.button_rest_pose_off', icon=icon_collapse)
+                        box_act_pose = box_act_opt.box()
 
                         if utils.is_ik_armature(armature):
-                            box.enabled = False
-                            box.label(text="Rest poses are not available for IK armatures", icon='INFO')
+                            box_act_pose.enabled = False
+                            box_act_pose.label(text="Rest poses are not available for IK armatures", icon='INFO')
                         else:
-                            box.enabled = True
-                            box.prop(armature, "rest_pose")
+                            box_act_pose.enabled = True
+                            box_act_pose.prop(armature, "rest_pose")
 
-                            box.operator("mbast.restpose_load", icon='IMPORT')
-                            box.operator("mbast.restpose_save", icon='EXPORT')
+                            box_act_pose.operator("mbast.restpose_load", icon='IMPORT')
+                            box_act_pose.operator("mbast.restpose_save", icon='EXPORT')
 
                 if gui_active_panel != "skin":
-                    self.layout.operator('mbast.button_skin_on', icon=icon_expand)
+                    box_act_opt.operator('mbast.button_skin_on', icon=icon_expand)
                 else:
-                    self.layout.operator('mbast.button_skin_off', icon=icon_collapse)
+                    box_act_opt.operator('mbast.button_skin_off', icon=icon_collapse)
 
-                    box = self.layout.box()
-                    box.enabled = True
+                    box_skin = box_act_opt.box()
+                    box_skin.enabled = True
                     if scn.render.engine != 'CYCLES' and scn.render.engine != 'BLENDER_EEVEE':
-                        box.enabled = False
-                        box.label(text="Skin editor requires Cycles or EEVEE", icon='INFO')
+                        box_skin.enabled = False
+                        box_skin.label(text="Skin editor requires Cycles or EEVEE", icon='INFO')
 
                     if mblab_humanoid.exists_displace_texture():
-                        box.operator("mbast.skindisplace_calculate", icon='MOD_DISPLACE')
-                        box.label(text="Enable Displacement Preview to view updates", icon='INFO')
+                        box_skin.operator("mbast.skindisplace_calculate", icon='MOD_DISPLACE')
+                        box_skin.label(text="Enable Displacement Preview to view updates", icon='INFO')
 
                     for material_data_prop in sorted(mblab_humanoid.character_material_properties.keys()):
-                        box.prop(obj, material_data_prop)
-                        
+                        box_skin.prop(obj, material_data_prop)
+
                 if gui_active_panel != "finalize":
-                    self.layout.operator('mbast.button_finalize_on', icon=icon_expand)
+                    box_act_opt.operator('mbast.button_finalize_on', icon=icon_expand)
                 else:
-                    self.layout.operator('mbast.button_finalize_off', icon=icon_collapse)
-                    box = self.layout.box()
-                    box.prop(scn, 'mblab_save_images_and_backup', icon='EXPORT')
-                    box.prop(scn, 'mblab_remove_all_modifiers', icon='CANCEL')
-                    box.prop(scn, 'mblab_final_prefix')
+                    box_act_opt.operator('mbast.button_finalize_off', icon=icon_collapse)
+                    box_fin = box_act_opt.box()
+                    box_fin.prop(scn, 'mblab_save_images_and_backup', icon='EXPORT')
+                    box_fin.prop(scn, 'mblab_remove_all_modifiers', icon='CANCEL')
+                    box_fin.prop(scn, 'mblab_final_prefix')
                     if scn.mblab_save_images_and_backup:
-                        box.operator("mbast.finalize_character_and_images", icon='FREEZE')
+                        box_fin.operator("mbast.finalize_character_and_images", icon='FREEZE')
                     else:
-                        box.operator("mbast.finalize_character", icon='FREEZE')
-                
+                        box_fin.operator("mbast.finalize_character", icon='FREEZE')
+
                 if gui_active_panel != "file":
-                    self.layout.operator('mbast.button_file_on', icon=icon_expand)
+                    box_act_opt.operator('mbast.button_file_on', icon=icon_expand)
                 else:
-                    self.layout.operator('mbast.button_file_off', icon=icon_collapse)
-                    box = self.layout.box()
-                    box.prop(scn, 'mblab_show_texture_load_save', icon='TEXTURE')
+                    box_act_opt.operator('mbast.button_file_off', icon=icon_collapse)
+                    box_file = box_act_opt.box()
+                    box_file.prop(scn, 'mblab_show_texture_load_save', icon='TEXTURE')
                     if scn.mblab_show_texture_load_save:
 
                         if mblab_humanoid.exists_dermal_texture():
-                            sub = box.box()
-                            sub.label(text="Dermal texture")
-                            sub.operator("mbast.export_dermimage", icon='EXPORT')
-                            sub.operator("mbast.import_dermal", icon='IMPORT')
+                            box_file_drtx = box_file.box()
+                            box_file_drtx.label(text="Dermal texture")
+                            box_file_drtx.operator("mbast.export_dermimage", icon='EXPORT')
+                            box_file_drtx.operator("mbast.import_dermal", icon='IMPORT')
 
                         if mblab_humanoid.exists_displace_texture():
-                            sub = box.box()
-                            sub.label(text="Displacement texture")
-                            sub.operator("mbast.export_dispimage", icon='EXPORT')
-                            sub.operator("mbast.import_displacement", icon='IMPORT')
+                            box_file_dstx = box_file.box()
+                            box_file_dstx.label(text="Displacement texture")
+                            box_file_dstx.operator("mbast.export_dispimage", icon='EXPORT')
+                            box_file_dstx.operator("mbast.import_displacement", icon='IMPORT')
 
-                        sub = box.box()
-                        sub.label(text="Export all images used in skin shader")
-                        sub.operator("mbast.export_allimages", icon='EXPORT')
-                    box.prop(scn, 'mblab_export_proportions', icon='PRESET')
-                    box.prop(scn, 'mblab_export_materials', icon='MATERIAL')
-                    box.operator("mbast.export_character", icon='EXPORT')
-                    box.operator("mbast.import_character", icon='IMPORT')
+                        box_file_exp = box_file.box()
+                        box_file_exp.label(text="Export all images used in skin shader")
+                        box_file_exp.operator("mbast.export_allimages", icon='EXPORT')
+                    box_file.prop(scn, 'mblab_export_proportions', icon='PRESET')
+                    box_file.prop(scn, 'mblab_export_materials', icon='MATERIAL')
+                    box_file.operator("mbast.export_character", icon='EXPORT')
+                    box_file.operator("mbast.import_character", icon='IMPORT')
 
 
                 if gui_active_panel != "display_opt":
-                    self.layout.operator('mbast.button_display_on', icon=icon_expand)
+                    box_act_opt.operator('mbast.button_display_on', icon=icon_expand)
                 else:
-                    self.layout.operator('mbast.button_display_off', icon=icon_collapse)
-                    box = self.layout.box()
+                    box_act_opt.operator('mbast.button_display_off', icon=icon_collapse)
+                    box_disp = box_act_opt.box()
 
                     if mblab_humanoid.exists_displace_texture():
                         if mblab_humanoid.get_disp_visibility() == False:
-                            box.operator("mbast.displacement_enable", icon='MOD_DISPLACE')
+                            box_disp.operator("mbast.displacement_enable", icon='MOD_DISPLACE')
                         else:
-                            box.operator("mbast.displacement_disable", icon='X')
+                            box_disp.operator("mbast.displacement_disable", icon='X')
                     if mblab_humanoid.get_subd_visibility() == False:
-                        box.operator("mbast.subdivision_enable", icon='MOD_SUBSURF')
-                        box.label(text="Subd. preview is very CPU intensive", icon='INFO')
+                        box_disp.operator("mbast.subdivision_enable", icon='MOD_SUBSURF')
+                        box_disp.label(text="Subd. preview is very CPU intensive", icon='INFO')
                     else:
-                        box.operator("mbast.subdivision_disable", icon='X')
-                        box.label(text="Disable subdivision to increase performance", icon='ERROR')
+                        box_disp.operator("mbast.subdivision_disable", icon='X')
+                        box_disp.label(text="Disable subdivision to increase performance", icon='ERROR')
                     if mblab_humanoid.get_smooth_visibility() == False:
-                        box.operator("mbast.corrective_enable", icon='MOD_SMOOTH')
+                        box_disp.operator("mbast.corrective_enable", icon='MOD_SMOOTH')
                     else:
-                        box.operator("mbast.corrective_disable", icon='X')
+                        box_disp.operator("mbast.corrective_disable", icon='X')
 
                 self.layout.label(text=" ")
                 self.layout.label(text="AFTER-CREATION TOOLS", icon="MODIFIER_ON")
