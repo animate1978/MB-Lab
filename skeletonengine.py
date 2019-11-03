@@ -121,6 +121,8 @@ class SkeletonEngine:
             obj = self.get_body()
             algorithms.select_and_change_mode(armat, 'POSE')
             bpy.ops.pose.armature_apply()
+            algorithms.apply_auto_align_bones(armat)
+            algorithms.update_bendy_bones(armat)
             algorithms.select_and_change_mode(obj, 'OBJECT')
 
     @staticmethod
@@ -233,5 +235,6 @@ class SkeletonEngine:
 
             algorithms.select_and_change_mode(armat, "OBJECT")
             self.align_bones_z_axis()
+            algorithms.apply_auto_align_bones(armat)
             algorithms.update_bendy_bones(armat)
             algorithms.set_active_object(current_active_obj)

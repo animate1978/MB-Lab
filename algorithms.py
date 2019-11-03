@@ -1158,7 +1158,7 @@ def get_edit_bones(armature):
 
 
 def get_pose_bones(armature):
-    if bpy.context.mode != 'POSE':
+    if bpy.context.mode == 'EDIT_ARMATURE':
         logger.warning("Cannot get the pose bones because the obj is not in pose mode")
         return None
     return armature.pose.bones
@@ -1302,17 +1302,71 @@ def has_shapekeys(obj):
     return hasattr(obj.data.shape_keys, 'key_blocks')
 
 
+def get_stretch_to_targets(armat):
+    mapping = dict()
+    if armat:
+        for p_bone in get_pose_bones(armat):
+            stretch_to_constraint = get_bone_constraint_by_type(p_bone, 'STRETCH_TO')
+            if stretch_to_constraint:
+                mapping[p_bone.name] = stretch_to_constraint.subtarget
+    return mapping
+
+
+def apply_stretch_to(armat, mapping):
+    if armat:
+        edit_bones = get_edit_bones(armat)
+        for name, target_name in mapping.items():
+            edit_bones[name].tail = edit_bones[target_name].head
+
+
+def update_stretch_to_length(armat):
+    if armat:
+        for p_bone in get_pose_bones(armat):
+            stretch_to_constraint = get_bone_constraint_by_type(p_bone, 'STRETCH_TO')
+            set_bone_constraint_parameter(stretch_to_constraint, 'rest_length', p_bone.bone.length)
+
+
 def update_bendy_bones(armat):
+    if armat:
+        select_and_change_mode(armat, "OBJECT")
+        stretch_targets = get_stretch_to_targets(armat)
+        select_and_change_mode(armat, "EDIT")
+        apply_stretch_to(armat, stretch_targets)
+        select_and_change_mode(armat, "OBJECT")
+        update_stretch_to_length(armat)
+
+
+def apply_auto_align_bones(armat):
+    align_table = {
+        "upperarm_twist_L": "upperarm_L",
+        "upperarm_twist_R": "upperarm_R",
+        "lowerarm_twist_L": "lowerarm_L",
+        "lowerarm_twist_R": "lowerarm_R",
+        "thigh_twist_L": "thigh_L",
+        "thigh_twist_R": "thigh_R",
+        "calf_twist_L": "calf_L",
+        "calf_twist_R": "calf_R",
+        "rot_helper01_L": "calf_L",
+        "rot_helper01_R": "calf_R",
+        "rot_helper02_L": "lowerarm_L",
+        "rot_helper02_R": "lowerarm_R",
+        "rot_helper03_L": "thigh_L",
+        "rot_helper03_R": "thigh_R",
+        "rot_helper04_L": "foot_L",
+        "rot_helper04_R": "foot_R",
+        "rot_helper06_L": "thigh_L",
+        "rot_helper06_R": "thigh_R",
+    }
 
     if armat:
-        armature_rest_lengths = get_rest_lengths(armat)
-        select_and_change_mode(armat, 'POSE')
-        pose_bones = get_pose_bones(armat)
-        for p_bone in pose_bones:
-            if p_bone.name in armature_rest_lengths:
-                length = armature_rest_lengths[p_bone.name]
-                stretch_to_constraint = get_bone_constraint_by_type(p_bone, 'STRETCH_TO')
-                set_bone_constraint_parameter(stretch_to_constraint, 'rest_length', length)
+        select_and_change_mode(armat, "EDIT")
+        edit_bones = get_edit_bones(armat)
+        for name, target_name in align_table.items():
+            bone = edit_bones.get(name)
+            if bone:
+                bone_target = edit_bones[target_name]
+                bone.tail = bone.head + bone_target.vector.normalized() * bone.length
+                bone.roll = bone_target.roll
 
 
 def link_to_collection(obj):
