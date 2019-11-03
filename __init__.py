@@ -41,6 +41,8 @@ from . import algorithms
 from . import preferences
 from . import addon_updater_ops
 from . import humanoid_rotations
+from . import object_ops
+from . import hairengine
 
 logger = logging.getLogger(__name__)
 
@@ -1875,6 +1877,7 @@ class DeleteFaceRig(bpy.types.Operator):
             self.report({'ERROR'}, "failed to delete face rig")
         return {'FINISHED'}
 
+# Add Limit Rotations Constraint
 class OBJECT_OT_humanoid_rot_limits(bpy.types.Operator):
     """Add Humanoid Rotation Limits to Character"""
     bl_idname = "mbast.humanoid_rot_limits"
@@ -1888,6 +1891,7 @@ class OBJECT_OT_humanoid_rot_limits(bpy.types.Operator):
         humanoid_rotations.limit_finger_rotation(humanoid_rotations.fd, pb)
         return {'FINISHED'}
 
+# Delete Limit Rotations Constraint
 class OBJECT_OT_delete_rotations(bpy.types.Operator):
     """Delete Humanoid Rotation Limits for Character"""
     bl_idname = "mbast.delete_rotations"
@@ -1900,6 +1904,38 @@ class OBJECT_OT_delete_rotations(bpy.types.Operator):
         humanoid_rotations.remove_bone_constraints('LIMIT_ROTATION', pb)
         return {'FINISHED'}
 
+#Add Hair Op
+class OBJECT_OT_add_hair(bpy.types.Operator):
+    """Add Hair to Character"""
+    bl_idname = "mbast.add_hair"
+    bl_label = "Add Hair"
+    bl_options = {'REGISTER', 'INTERNAL', 'UNDO'}
+
+    def execute(self, context):
+        scn = bpy.context.scene
+        character_id = scn.mblab_character_name
+        actv = bpy.context.view_layer.objects.active
+        #get_mode = bpy.ops.object.mode_get()
+        skeleton = object_ops.get_skeleton()
+        bpy.ops.object.mode_set(mode='OBJECT')
+        skeleton.select_set(state=False)
+        body = object_ops.get_body_mesh()
+        body.select_set(state=True)
+        bpy.context.view_layer.objects.active = body
+        faces = hairengine.get_hair_data(character_id)
+        hairengine.sel_faces(faces)
+        hairengine.add_scalp()
+        hairengine.hair_armature_mod(skeleton)
+        hairengine.add_hair()
+        bpy.ops.object.mode_set(mode='OBJECT')
+        bpy.context.view_layer.objects.active = actv
+        try:
+            bpy.ops.object.mode_set(mode='POSE')
+        except:
+            pass       
+        return {'FINISHED'}
+
+      
 class StartSession(bpy.types.Operator):
     bl_idname = "mbast.init_character"
     bl_label = "Create character"
@@ -1986,12 +2022,18 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
             box_face_rig.operator('mbast.delete_face_rig', icon='CANCEL')
             box_face_rig.prop(scn, "mblab_facs_rig")
 
+            # Add Hair
+            hair_box = self.layout.box()
+            hair_box.label(text="Add Hair")
+            hair_box.operator("mbast.add_hair", icon='USER')
+            #hair_box = self.layout.box()
+
             # Humanoid Rotation Limits
-            box = self.layout.box()
-            box.label(text="Humanoid Rotations")
-            box.operator("mbast.humanoid_rot_limits", icon='USER')
-            box.operator('mbast.delete_rotations', icon='CANCEL')
-            box = self.layout.box()
+            rot_box = self.layout.box()
+            rot_box.label(text="Humanoid Rotations")
+            rot_box.operator("mbast.humanoid_rot_limits", icon='USER')
+            rot_box.operator('mbast.delete_rotations', icon='CANCEL')
+            #rot_box = self.layout.box()
 
 
             if gui_active_panel_fin != "expressions":
@@ -2426,6 +2468,7 @@ classes = (
     VIEW3D_PT_tools_ManuelbastioniLAB,
     OBJECT_OT_humanoid_rot_limits,
     OBJECT_OT_delete_rotations,
+    OBJECT_OT_add_hair,
 )
 
 def register():
