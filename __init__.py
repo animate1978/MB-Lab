@@ -2020,18 +2020,17 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
             box = self.layout.box()
 
             # Add Hair
-            box = self.layout.box()
-            box.label(text="Humanoid Rotations")
-            box.operator("mbast.add_hair", icon='USER')
-            #box.operator('mbast.delete_rotations', icon='CANCEL')
-            box = self.layout.box()
+            hair_box = self.layout.box()
+            hair_box.label(text="Humanoid Rotations")
+            hair_box.operator("mbast.add_hair", icon='USER')
+            #hair_box = self.layout.box()
 
             # Humanoid Rotation Limits
-            box = self.layout.box()
-            box.label(text="Humanoid Rotations")
-            box.operator("mbast.humanoid_rot_limits", icon='USER')
-            box.operator('mbast.delete_rotations', icon='CANCEL')
-            box = self.layout.box()
+            rot_box = self.layout.box()
+            rot_box.label(text="Humanoid Rotations")
+            rot_box.operator("mbast.humanoid_rot_limits", icon='USER')
+            rot_box.operator('mbast.delete_rotations', icon='CANCEL')
+            #rot_box = self.layout.box()
 
 
             if gui_active_panel_fin != "expressions":
