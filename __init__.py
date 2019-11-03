@@ -2021,7 +2021,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
 
             # Add Hair
             hair_box = self.layout.box()
-            hair_box.label(text="Humanoid Rotations")
+            hair_box.label(text="Add Hair")
             hair_box.operator("mbast.add_hair", icon='USER')
             #hair_box = self.layout.box()
 
