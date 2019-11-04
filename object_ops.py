@@ -30,7 +30,6 @@ from copy import deepcopy as dc
 from . import algorithms
 
 
-
 def get_body_mesh():
     if bpy.context.object.type == 'ARMATURE':
         return bpy.context.object.children[0]
@@ -92,7 +91,73 @@ def obj_new(Name, co, faces, collection):
     bpy.data.objects["Obj"].name = Name #"Hair"
     bpy.data.meshes[bpy.data.objects[Name].data.name].name = Name
 
+#delete objects from list
+def obj_del(List):
+    bpy.ops.object.select_all(action='DESELECT')
+    for o in List:
+        obj[o].select_set(state=True)
+        bpy.ops.object.delete()
+
+#set active object and select objects from list
+def active_ob(object, objects):
+        bpy.ops.object.select_all(action='DESELECT')
+        bpy.data.objects[object].select_set(state=True)
+        bpy.context.view_layer.objects.active = bpy.data.objects[object]
+        if objects is not None:
+            for o in objects:
+                bpy.data.objects[o].select_set(state=True)
+
 # ------------------------------------------------------------------------ 
+#Create Capsule
+def capsule_data(length, radius, cap_coord):
+    sc = np.eye(3)
+    sc[0][0] = radius
+    sc[1][1] = radius
+    sc[2][2] = length/4
+    coord = np.array([[i[0], i[1], i[2] + 2] for i in cap_coord])
+    nc = coord @ sc
+    return nc
+
+def add_rd_capsule(Name, length, radius, cap_coord, faces, collection):
+    cor = capsule_data(length, radius, cap_coord)
+    obj_new(Name, cor, [], faces, collection)
+    try:
+        bpy.ops.rigidbody.objects_add(type='ACTIVE')        
+    except:
+        pass
+
+# ------------------------------------------------------------------------ 
+
+#Rotation Matrix
+def rotation_matrix(xrot, yrot, zrot):
+    rot_mat = np.array(
+                        [ [np.cos(zrot)*np.cos(yrot), -np.sin(zrot)*np.cos(xrot) + np.cos(zrot)*np.sin(yrot)*np.sin(xrot), np.sin(zrot)*np.sin(xrot) + np.cos(zrot)*np.sin(yrot)*np.cos(xrot)],
+                        [-np.sin(yrot), np.cos(yrot)*np.sin(xrot), np.cos(yrot)*np.cos(xrot)] ]
+                        )
+    return rot_mat
+
+
+#Rotation Matrix X 90 degrees
+def rot_mat_x_90(List):
+    rmx90 = rotation_matrix(radians(90), 0, 0)
+    new_co = [i @ rmx90 for i in List]
+    return new_co
+
+def rot_obj(object, rot_mat):
+    vt = obj[object].data.vertices
+    countv = len(vt)
+    co = np.empty(countv * 3, dtype=np.float32)
+    vt.foreach_get('co', co)
+    np.round(co, 5)
+    co.shape = (countv, 3)
+    List = co.tolist()
+    #rm = rot_mat_x_90(List)
+    #vt.foreach_set('co', rm)
+    for i, v in enumerate(rm):
+        vt[i].co = v 
+
+# ------------------------------------------------------------------------ 
+
 #vertex group index list
 def vg_idx_list(vgn):
     return([v.index for v in bpy.context.object.data.vertices if v.select and bpy.context.object.vertex_groups[vgn].index in [vg.group for vg in v.groups]])
@@ -136,4 +201,14 @@ def copy_wt(Name, viw, vid):
     transfer_vt(Name, viw)
     add_wt(Name, vid)
 
+# ------------------------------------------------------------------------ 
+
+#get a list of all objects in collection
+def collection_object_list(collection):
+    return [o.name for o in bpy.data.collections[collection].objects[:]]
+
+#Add new collections
+def new_collection(Name):
+    new_coll = bpy.data.collections.new(Name)
+    bpy.context.scene.collection.children.link(new_coll)
 
