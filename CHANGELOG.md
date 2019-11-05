@@ -2,6 +2,22 @@
 
 All changes will be documented here
 
+# MB-Lab 1.7.7
+
+## Added
+
+- Hair System added
+
+## Changed
+
+- Afro Female now the default character on startup
+
+## Bug Fixes
+
+- Certain bones have to be precisely aligned to the rotation of a specific other bone, which required new code.
+- Stretch to has to be applied to the muscle bones while fitting.
+- B-Bone handles and certain constraints have to be fixed in the library file via a script.
+
 # MB-Lab 1.7.6
 
 ## Added

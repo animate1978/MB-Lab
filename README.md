@@ -16,29 +16,21 @@ MB-Lab is a community developed and supported project based off ManuelBastioniLA
 
 This fork is an attempt to keep this addon going forward as the original author is no longer developing ManuelBastioniLAB
 
-# MB-Lab 1.7.6
+# MB-Lab 1.7.7
 
 ## Added
 
-- New Skin Shader, MB-Lab Skin 2 added to the Realistic Humans
-- New Tone maps based on character selection
-- New Latino Model Type added to MB-Lab
-- New South American Phenotype added
-- New texture masks for skin shader
-- New Nails shader added
+- Hair System added
 
 ## Changed
 
-- Material Engine updated for new skin shader
-- Alphabetized the characters list
-- Modified freckle masks
-- Changed structure of humanoid_library.blend
-- Added model license types in character selection menu
+
 
 ## Bug Fixes
 
-- Fixed MBLab_fur for EEVEE, renamed to MBLab_eyelash
-- Fixed MBLab_human_eyes SSS rendering artifact in EEVEE
+- Certain bones have to be precisely aligned to the rotation of a specific other bone, which required new code.
+- Stretch to has to be applied to the muscle bones while fitting.
+- B-Bone handles and certain constraints have to be fixed in the library file via a script.
 
 ## ManuelBastioniLAB 1.6.1a
 
