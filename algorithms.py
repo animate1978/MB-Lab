@@ -155,6 +155,28 @@ def length_of_strip(vertices_coords, indices, axis="ALL"):
     return strip_length
 
 
+def closest_point_on_triangle(point, tri_p1, tri_p2, tri_p3):
+    # TODO: Added in 2.82 - simplify once released.
+    builtin = getattr(mathutils.geometry, 'closest_point_on_tri', None)
+
+    if builtin:
+        return builtin(point, tri_p1, tri_p2, tri_p3)
+
+    hit_point = mathutils.geometry.intersect_point_tri(point, tri_p1, tri_p2, tri_p3)
+
+    if hit_point:
+        return hit_point
+
+    line_points = [
+        mathutils.geometry.intersect_point_line(point, tri_p1, tri_p2),
+        mathutils.geometry.intersect_point_line(point, tri_p1, tri_p3),
+        mathutils.geometry.intersect_point_line(point, tri_p2, tri_p3),
+    ]
+    candidates = [tri_p1, tri_p2, tri_p3, *(co for co, fac in line_points if 0 < fac < 1)]
+
+    return min(candidates, key = lambda co: (point - co).length)
+
+
 def function_modifier_a(val_x):
     return 2 * val_x - 1 if val_x > 0.5 else 0.0
 
@@ -510,6 +532,17 @@ def kdtree_from_obj_polygons(obj, indices_of_polygons_subset=None):
         research_tree.insert(polyg.center, polyg.index)
     research_tree.balance()
     return research_tree
+
+
+def bvhtree_from_obj_polygons(obj, indices_of_polygons_subset=None):
+    polygons = []
+    if indices_of_polygons_subset is not None:
+        for idx in indices_of_polygons_subset:
+            polygons.append(obj.data.polygons[idx].vertices)
+    else:
+        polygons = [ poly.vertices for poly in obj.data.polygons ]
+    vertices = [ vert.co for vert in obj.data.vertices ]
+    return mathutils.bvhtree.BVHTree.FromPolygons(vertices, polygons)
 
 
 def kdtree_from_mesh_vertices(mesh):
