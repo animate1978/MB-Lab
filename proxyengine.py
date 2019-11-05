@@ -306,7 +306,7 @@ class ProxyEngine:
 
 
 
-    def fit_near_vertices(self, basis_proxy,basis_body,proxy_shapekey,current_body, proxy_threshold = 0.025):
+    def fit_near_vertices(self, basis_proxy,basis_body,proxy_shapekey,current_body, proxy_threshold = 0.025, all_faces = False):
 
         #basis_proxy = proxy in basis shape, without shapekey applied
         #proxy_shapekey = shapekey to modify as final result
@@ -315,7 +315,11 @@ class ProxyEngine:
 
         polygons_file = algorithms.get_template_polygons(current_body)
         polygons_path = os.path.join(self.data_path,"pgroups",polygons_file)
-        valid_polygons_indxs = algorithms.load_json_data(polygons_path, "Subset of polygons for proxy fitting")
+
+        if all_faces:
+            valid_polygons_indxs = None # all polygons
+        else:
+            valid_polygons_indxs = algorithms.load_json_data(polygons_path, "Subset of polygons for proxy fitting")
 
         basis_proxy_vertices = basis_proxy.data.vertices #In Blender obj.data = basis data
         basis_body_polygons = basis_body.data.polygons
@@ -407,7 +411,7 @@ class ProxyEngine:
 
 
 
-    def fit_proxy_object(self,proxy_offset=0.0, proxy_threshold = 0.5, create_proxy_mask = False, transfer_w = True):
+    def fit_proxy_object(self,proxy_offset=0.0, proxy_threshold = 0.5, create_proxy_mask = False, transfer_w = True, reverse = False, all_faces = False, smoothing = True):
         scn = bpy.context.scene
         status, proxy, body = self.get_proxy_fitting_ingredients()
         if status == "OK":
@@ -434,14 +438,19 @@ class ProxyEngine:
 
             proxy_shapekey = algorithms.new_shapekey(proxy,"mbastlab_proxyfit")
 
+            if reverse:
+                from_body, to_body = body, basis_body
+            else:
+                from_body, to_body = basis_body, body
 
-            self.fit_distant_vertices(proxy,basis_body,proxy_shapekey,body)
+            self.fit_distant_vertices(proxy,from_body,proxy_shapekey,to_body)
+            self.fit_near_vertices(proxy,from_body,proxy_shapekey,to_body,proxy_threshold,all_faces)
+            self.proxy_offset(proxy,from_body,proxy_shapekey,to_body,proxy_offset)
 
-            self.fit_near_vertices(proxy,basis_body,proxy_shapekey,body,proxy_threshold)
-            self.proxy_offset(proxy,basis_body,proxy_shapekey,body,proxy_offset)
-            self.calculate_finishing_morph(proxy, "mbastlab_proxyfit")
+            if smoothing:
+                self.calculate_finishing_morph(proxy, "mbastlab_proxyfit")
 
-            if create_proxy_mask:
+            if create_proxy_mask and not reverse:
                 self.add_body_mask(body, proxy_shapekey, mask_name)
             else:
                 self.remove_body_mask(body, mask_name)
@@ -449,26 +458,28 @@ class ProxyEngine:
             #algorithms.remove_mesh(basis_body_mesh, True)
             algorithms.remove_object(basis_body, True, True)
 
-            armature_mod = self.add_proxy_armature_modfr(proxy, armat)
+            if not reverse:
+                armature_mod = self.add_proxy_armature_modfr(proxy, armat)
 
-            if transfer_w == True:
-                algorithms.remove_vertgroups_all(proxy)
-                self.transfer_weights(body, proxy)
+                if transfer_w == True:
+                    algorithms.remove_vertgroups_all(proxy)
+                    self.transfer_weights(body, proxy)
 
             algorithms.set_object_modifiers_visibility(proxy, proxy_modfs_status)
             algorithms.set_object_modifiers_visibility(body, body_modfs_status)
             self.disable_extra_armature_modfr(proxy)
 
-            parameters = {"show_viewport":True}
+            if not reverse:
+                if smoothing:
+                    parameters = {"show_viewport":True}
 
-            correct_smooth_mod = algorithms.new_modifier(proxy, self.corrective_modifier_name, 'CORRECTIVE_SMOOTH', parameters)
+                    correct_smooth_mod = algorithms.new_modifier(proxy, self.corrective_modifier_name, 'CORRECTIVE_SMOOTH', parameters)
 
+                    for i in range(10):
+                        algorithms.move_up_modifier(proxy, correct_smooth_mod)
 
-            for i in range(10):
-                algorithms.move_up_modifier(proxy, correct_smooth_mod)
-
-            for i in range(10):
-                algorithms.move_up_modifier(proxy, armature_mod)
+                for i in range(10):
+                    algorithms.move_up_modifier(proxy, armature_mod)
 
 
             for obj_name in selected_objs_names:
