@@ -1000,7 +1000,7 @@ def get_vertgroup_verts(obj, vgroup_name):
 def set_object_visible(obj):
     if obj:
         logger.debug("Turn the visibility of %s ON", obj.name)
-        obj.hide_select = False
+        obj.hide_set(False)
 
         # TODO: I don't think this is needed in blender 2.8
         # bpy.context.scene.layers = obj.layers in some cases this return DAG zero error (with old depsgraph)!
