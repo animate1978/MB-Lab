@@ -1905,17 +1905,16 @@ class OBJECT_OT_delete_rotations(bpy.types.Operator):
         return {'FINISHED'}
 
 #Add Hair Op
-class OBJECT_OT_add_hair(bpy.types.Operator):
+class OBJECT_OT_particle_hair(bpy.types.Operator):
     """Add Hair to Character"""
-    bl_idname = "mbast.add_hair"
-    bl_label = "Add Hair"
+    bl_idname = "mbast.particle_hair"
+    bl_label = "Particle Hair"
     bl_options = {'REGISTER', 'INTERNAL', 'UNDO'}
 
     def execute(self, context):
+        self.hair_Name = "Head_Hair"
         scn = bpy.context.scene
         character_id = scn.mblab_character_name
-        actv = bpy.context.view_layer.objects.active
-        #get_mode = bpy.ops.object.mode_get()
         skeleton = object_ops.get_skeleton()
         bpy.ops.object.mode_set(mode='OBJECT')
         skeleton.select_set(state=False)
@@ -1924,11 +1923,39 @@ class OBJECT_OT_add_hair(bpy.types.Operator):
         bpy.context.view_layer.objects.active = body
         faces = hairengine.get_hair_data(character_id)
         hairengine.sel_faces(faces)
-        hairengine.add_scalp()
-        hairengine.hair_armature_mod(skeleton)
-        hairengine.add_hair()
+        hairengine.add_scalp(self.hair_Name)
+        hair = bpy.data.objects[self.hair_Name]
+        hairengine.hair_armature_mod(skeleton, hair)
+        hairengine.add_hair(hair)
         bpy.ops.object.mode_set(mode='OBJECT')
-        bpy.context.view_layer.objects.active = skeleton
+        object_ops.add_parent(skeleton.name, [self.hair_Name])
+        object_ops.active_ob(skeleton.name, None)
+        try:
+            bpy.ops.object.mode_set(mode='POSE')
+        except:
+            pass       
+        return {'FINISHED'}
+
+class OBJECT_OT_manual_hair(bpy.types.Operator):
+    """Add Hair to Character from Selected Polygons"""
+    bl_idname = "mbast.manual_hair"
+    bl_label = "Hair from Selected"
+    bl_options = {'REGISTER', 'INTERNAL', 'UNDO'}
+
+    def execute(self, context):
+        self.hair_name = "Hairs"
+        scn = bpy.context.scene
+        character_id = scn.mblab_character_name
+        get_mode = bpy.context.object.mode
+        skeleton = object_ops.get_skeleton()
+        hairengine.add_scalp(self.hair_name)
+        hair = bpy.data.objects[self.hair_name]
+        hairengine.hair_armature_mod(skeleton, hair)
+        hairengine.add_hair(hair)
+        bpy.ops.object.mode_set(mode='EDIT')
+        bpy.ops.object.mode_set(mode='OBJECT')
+        object_ops.add_parent(skeleton.name, [self.hair_name])
+        object_ops.active_ob(skeleton.name, None)
         try:
             bpy.ops.object.mode_set(mode='POSE')
         except:
@@ -2054,7 +2081,8 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                 # box.operator('mbast.load_assets_element')
                 box_asts.label(text="To adapt the asset, use the proxy fitting tool", icon='INFO')
                 # Add Particle Hair
-                box_asts.operator("mbast.add_hair", icon='USER')
+                box_asts.operator("mbast.particle_hair", icon='USER')
+                box_asts.operator("mbast.manual_hair", icon='USER')
 
 
             if gui_active_panel_fin != "proxy_fit":
@@ -2458,7 +2486,8 @@ classes = (
     VIEW3D_PT_tools_ManuelbastioniLAB,
     OBJECT_OT_humanoid_rot_limits,
     OBJECT_OT_delete_rotations,
-    OBJECT_OT_add_hair,
+    OBJECT_OT_particle_hair,
+    OBJECT_OT_manual_hair,
 )
 
 def register():
