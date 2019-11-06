@@ -19,7 +19,8 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
-
+#
+# Written by Noizirom
 
 
 import bpy
@@ -72,7 +73,7 @@ def add_scalp():
     gs = object_ops.get_sel()
     viw = object_ops.vg_idx_dict(gs)
     vid = object_ops.vidx_dict()
-    object_ops.obj_new('Hair', gs[0], gs[1], "ManuelBastioni_Character")
+    object_ops.obj_new('Hair', gs[0], gs[1], "ManuelBastioni_Character") #TODO change this to MB_LAB_Character
     try:
         object_ops.copy_wt("Hair", viw, vid)
     except:

@@ -7,6 +7,7 @@ All changes will be documented here
 ## Added
 
 - Hair System added
+- Human Rotation Limits added
 
 ## Changed
 
@@ -17,6 +18,8 @@ All changes will be documented here
 - Certain bones have to be precisely aligned to the rotation of a specific other bone, which required new code.
 - Stretch to has to be applied to the muscle bones while fitting.
 - B-Bone handles and certain constraints have to be fixed in the library file via a script.
+- Replaced obj.hide_select = False with obj.hide_set(False) fixing Age update bug.
+- Minor GUI edits to fix drawing issues.
 
 # MB-Lab 1.7.6
 

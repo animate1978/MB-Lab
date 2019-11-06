@@ -194,7 +194,8 @@ class MaterialEngine:
                         material_parameters[node.name] = node_output_val
         return material_parameters
 
-# Link textures to nodes - Update Shaders
+
+# Link Textures to Nodes - Update Shaders
 
     def update_shaders(self, material_parameters=[], update_textures_nodes=True):
 
