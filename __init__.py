@@ -555,7 +555,28 @@ bpy.types.Scene.mblab_proxy_threshold = bpy.props.FloatProperty(
     name="Influence",
     min=0,
     max=1000,
-    default=20)
+    default=20,
+    description="Maximum distance threshold for proxy vertices to closely follow the body surface")
+
+bpy.types.Scene.mblab_proxy_use_advanced = bpy.props.BoolProperty(
+    name="Advanced",
+    default=False,
+    description="Use advanced options")
+
+bpy.types.Scene.mblab_proxy_reverse_fit = bpy.props.BoolProperty(
+    name="Reversed fitting",
+    default=False,
+    description="Refit the mesh from the character to the base mesh, as a step in converting a character-specific item to a generic proxy")
+
+bpy.types.Scene.mblab_proxy_use_all_faces = bpy.props.BoolProperty(
+    name="Use all faces",
+    default=False,
+    description="Use all base mesh faces for close fitting, including insides of the mouth etc")
+
+bpy.types.Scene.mblab_proxy_no_smoothing = bpy.props.BoolProperty(
+    name="Disable smoothing",
+    default=False,
+    description="Disable additional smoothing applied to the fitting results")
 
 bpy.types.Scene.mblab_use_ik = bpy.props.BoolProperty(
     name="Use Inverse Kinematic",
@@ -1591,13 +1612,21 @@ class FitProxy(bpy.types.Operator):
     bl_idname = 'mbast.proxy_fit'
     bl_description = 'Fit the selected proxy to the character'
     bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
+    bl_options = {'UNDO', 'INTERNAL'}
 
     def execute(self, context):
         scn = bpy.context.scene
         offset = scn.mblab_proxy_offset / 1000
         threshold = scn.mblab_proxy_threshold / 1000
-        mblab_proxy.fit_proxy_object(offset, threshold, scn.mblab_add_mask_group, scn.mblab_transfer_proxy_weights)
+        advanced = scn.mblab_proxy_use_advanced
+        mblab_proxy.fit_proxy_object(
+            offset, threshold,
+            create_proxy_mask = scn.mblab_add_mask_group,
+            transfer_w = scn.mblab_transfer_proxy_weights,
+            reverse = advanced and scn.mblab_proxy_reverse_fit,
+            all_faces = advanced and scn.mblab_proxy_use_all_faces,
+            smoothing = not (advanced and scn.mblab_proxy_no_smoothing),
+        )
         return {'FINISHED'}
 
 
@@ -1606,7 +1635,7 @@ class RemoveProxy(bpy.types.Operator):
     bl_idname = 'mbast.proxy_removefit'
     bl_description = 'Remove fitting, so the proxy can be modified and then fitted again'
     bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
+    bl_options = {'UNDO', 'INTERNAL'}
 
     def execute(self, context):
         scn = bpy.context.scene
@@ -2102,8 +2131,16 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
 
                     box_prox.prop(scn, 'mblab_proxy_offset')
                     box_prox.prop(scn, 'mblab_proxy_threshold')
-                    box_prox.prop(scn, 'mblab_add_mask_group')
-                    box_prox.prop(scn, 'mblab_transfer_proxy_weights')
+                    box_prox.prop(scn, 'mblab_proxy_use_advanced')
+                    if scn.mblab_proxy_use_advanced:
+                        col = box_prox.column()
+                        col.prop(scn, 'mblab_proxy_reverse_fit')
+                        col.prop(scn, 'mblab_proxy_use_all_faces')
+                        col.prop(scn, 'mblab_proxy_no_smoothing')
+                    col = box_prox.column()
+                    col.active = not (scn.mblab_proxy_use_advanced and scn.mblab_proxy_reverse_fit)
+                    col.prop(scn, 'mblab_add_mask_group')
+                    col.prop(scn, 'mblab_transfer_proxy_weights')
                     box_prox.operator("mbast.proxy_fit", icon="MOD_CLOTH")
                     box_prox.operator("mbast.proxy_removefit", icon="MOD_CLOTH")
                 if fitting_status == 'WRONG_SELECTION':
