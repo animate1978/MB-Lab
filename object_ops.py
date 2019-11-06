@@ -42,7 +42,6 @@ def get_skeleton():
     else:
         return bpy.context.object.parent
 
-
 #get selected verts, edges, and faces information
 def get_sel():
     mode = bpy.context.active_object.mode
@@ -71,6 +70,10 @@ def get_sel():
     new_f = [[nv_Dict[i] for i in nest] for nest in fac[selfa]]
     return dc([co[selv], new_f, nv_Dict])
 
+
+###############################################################################################################################
+#OBJECT CREATION
+
 #creates new mesh
 def obj_mesh(co, faces, collection):
     cur = bpy.context.object
@@ -88,7 +91,7 @@ def obj_mesh(co, faces, collection):
 #creates new object
 def obj_new(Name, co, faces, collection):
     obj_mesh(co, faces, collection)
-    bpy.data.objects["Obj"].name = Name #"Hair"
+    bpy.data.objects["Obj"].name = Name 
     bpy.data.meshes[bpy.data.objects[Name].data.name].name = Name
 
 #delete objects from list
@@ -106,6 +109,16 @@ def active_ob(object, objects):
         if objects is not None:
             for o in objects:
                 bpy.data.objects[o].select_set(state=True)
+
+
+# ------------------------------------------------------------------------ 
+#Create Target
+def add_empty(Name, collection, matrix_final):
+    obj_empty = bpy.data.objects.new(Name, None)
+    bpy.data.collections[collection].objects.link(obj_empty)
+    #draw size
+    obj_empty.empty_display_size = 0.01
+    obj_empty.matrix_world = matrix_final
 
 # ------------------------------------------------------------------------ 
 #Create Capsule
@@ -126,7 +139,8 @@ def add_rd_capsule(Name, length, radius, cap_coord, faces, collection):
     except:
         pass
 
-# ------------------------------------------------------------------------ 
+###############################################################################################################################
+#MATH OPS
 
 #Rotation Matrix
 def rotation_matrix(xrot, yrot, zrot):
@@ -156,7 +170,17 @@ def rot_obj(object, rot_mat):
     for i, v in enumerate(rm):
         vt[i].co = v 
 
-# ------------------------------------------------------------------------ 
+###############################################################################################################################
+#VERTEX_GROUP OPS
+
+#Create Vertex Group
+def add_vert_group(object, vgroup, index):
+    nvg = bpy.data.objects[object].vertex_groups.new(name=vgroup)
+    nvg.add(index, 1.0, "ADD") 
+
+#Set Vertex Weight
+def set_weight(object, index, weight):
+    bpy.data.meshes[object].vertices[index].groups[0].weight = weight
 
 #vertex group index list
 def vg_idx_list(vgn):
@@ -201,7 +225,8 @@ def copy_wt(Name, viw, vid):
     transfer_vt(Name, viw)
     add_wt(Name, vid)
 
-# ------------------------------------------------------------------------ 
+###############################################################################################################################
+#COLLECTION OPS
 
 #get a list of all objects in collection
 def collection_object_list(collection):
@@ -211,4 +236,43 @@ def collection_object_list(collection):
 def new_collection(Name):
     new_coll = bpy.data.collections.new(Name)
     bpy.context.scene.collection.children.link(new_coll)
+
+###############################################################################################################################
+#PARENTING OPS
+
+def adoption(parent, child, type, index):
+    '''types: OBJECT, ARMATURE, LATTICE, VERTEX, VERTEX_3, BONE'''
+    par = bpy.data.objects[parent]
+    ch = bpy.data.objects[child]
+    ch.parent = par
+    ch.matrix_world = par.matrix_world @ par.matrix_world.inverted()
+    ch.parent_type = type
+    if type == 'VERTEX':
+        ch.parent_vertices[0] = index
+    if type == 'BONE':
+        ch.parent_bone = index
+
+def add_parent(parent, children):
+    active_ob(parent, children)
+    bpy.ops.object.parent_set(type='OBJECT', keep_transform=True)
+    bpy.ops.object.select_all(action='DESELECT')
+
+
+
+###############################################################################################################################
+#MODIFIER OPS
+
+#Add modifier
+def add_modifier(Object, Name, Type):
+    Object.modifiers.new(Name, type=Type)
+
+#Apply Modifier
+def apply_mod(Ref):
+    act = bpy.context.view_layer.objects.active
+    for o in bpy.context.view_layer.objects:
+        for m in o.modifiers:
+            if Ref in m.name:
+                bpy.context.view_layer.objects.active = o
+                bpy.ops.object.modifier_apply(modifier=m.name)
+    bpy.context.view_layer.objects.active = act
 
