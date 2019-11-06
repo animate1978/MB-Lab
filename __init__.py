@@ -499,7 +499,6 @@ def load_proxy_item(self, context):
     mblab_proxy.load_asset(scn.mblab_assets_models)
 
 
-# init_expression_props()
 
 bpy.types.Scene.mblab_proxy_library = bpy.props.StringProperty(
     name="Library folder",
@@ -2035,7 +2034,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
             rot_box.operator('mbast.delete_rotations', icon='CANCEL')
             #rot_box = self.layout.box()
 
-
+            # Expressions
             if gui_active_panel_fin != "expressions":
                 box_post_opt.operator('mbast.button_expressions_on', icon=icon_expand)
             else:
@@ -2056,7 +2055,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                 else:
                     box_exp.enabled = False
                     box_exp.label(text="No express. shapekeys", icon='INFO')
-
+            # Proxy Fitting
             if gui_active_panel_fin != "assets":
                 box_post_opt.operator('mbast.button_assets_on', icon=icon_expand)
             else:
@@ -2117,6 +2116,8 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                     box_prox.enabled = False
                     box_prox.label(text="Selected proxy is not a mesh", icon="INFO")
 
+            # Pose
+
             if gui_active_panel_fin != "pose":
                 box_post_opt.operator('mbast.button_pose_on', icon=icon_expand)
             else:
@@ -2141,6 +2142,8 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                     box_pose.enabled = False
                     box_pose.label(text="Please select the lab character (IK not supported)", icon='INFO')
 
+            # Utilities
+
             if gui_active_panel_fin != "utilities":
                 box_post_opt.operator('mbast.button_utilities_on', icon=icon_expand)
             else:
@@ -2164,6 +2167,8 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                         box_util_bvh.prop(scn, 'mblab_rot_offset_2')
                 else:
                     box_util_bvh.label(text=mblab_retarget.is_animated_bone)
+
+        # Pre-Finalized State
 
         if gui_status == "ACTIVE_SESSION":
             obj = mblab_humanoid.get_object()

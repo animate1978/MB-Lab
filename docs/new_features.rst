@@ -2,6 +2,26 @@ New Features
 ============
 
 =============
+Version 1.7.7
+=============
+
+This version is was largely done by contributors in the MB-Lab community!
+
+* Hair Engine
+
+There is now the option to add particle Hair to Finalized models
+
+* Human Rotation Limits
+
+Adds rotation limits to MB-Lab armatures (need to be in POSE mode)
+
+* Muscle System fixed
+
+There were some serious bugs related to the Muscle system of MB-Lab that had gone unnoticed for some time
+These have been fixed with this version.
+
+
+=============
 Version 1.7.6
 =============
 

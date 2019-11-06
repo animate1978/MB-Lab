@@ -39,6 +39,9 @@ logger = logging.getLogger(__name__)
 
 DEBUG_LEVEL = 3
 
+# ------------------------------------------------------------------------
+#    Print Log
+# ------------------------------------------------------------------------
 
 def print_log_report(level, text_to_write):
     import warnings
@@ -50,7 +53,6 @@ def print_log_report(level, text_to_write):
     if l >= DEBUG_LEVEL:
         print(level + ": " + text_to_write)
 
-
 def is_writeable(filepath):
     try:
         with open(filepath, 'w'):
@@ -58,7 +60,6 @@ def is_writeable(filepath):
     except IOError:
         logger.warning("Writing permission denied for %s", filepath)
     return False
-
 
 def get_data_path():
     addon_directory = os.path.dirname(os.path.realpath(__file__))
@@ -371,7 +372,7 @@ def correct_morph(base_form, current_form, morph_deltas, bboxes):
     logger.info("Morphing corrected in %s secs", time.time()-time1)
     return new_morph_deltas
 
-
+# TODO Change this to 1.7.4?
 def check_version(m_vers, min_version=(1, 5, 0)):
 
     # m_vers can be a list, tuple, IDfloatarray or str
@@ -400,15 +401,7 @@ def looking_for_humanoid_obj():
         logger.warning(msg)
         return("ERROR", msg)
 
-#        if bpy.app.version >= (2,80,0):
-#            msg = "Sorry, this version of lab does no work with Blender 2.8"
-#            logger.warning(sg)
-#            return("ERROR",msg)
-
-#       if bpy.app.version > (2,79,0):
-#            msg = "The lab is not designed to work with unstable Blender build {0}".format(str(bpy.app.version))
-#            logger.warning(sg)
-        # return("ERROR",msg)
+# deleted obsolete function
 
     human_obj = None
     name = ""
@@ -1375,7 +1368,7 @@ def link_to_collection(obj):
         logger.error("Cannot link obj %s because it's not in bpy.data.objects", obj.name)
         return
 
-    collection_name = 'ManuelBastioni_Character'
+    collection_name = 'ManuelBastioni_Character' #TODO change this to MB_LAB_Character as well as hairengine.py
     c = bpy.data.collections.get(collection_name)
     scene = bpy.context.scene
     # collection is already created

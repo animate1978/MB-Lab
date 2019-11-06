@@ -401,9 +401,9 @@ def recursive_collection_delete(head):
     for c in head.children:
         recursive_collection_delete(c)
 
-    head.hide_select = False
-    head.hide_render = False
-    head.hide_viewport = False
+    head.hide_select = False #TODO Replace head.hide_select = False with head.hide_set(False)
+    head.hide_render = False #TODO check this
+    head.hide_viewport = False #TODO also check this
 
     for obj in head.all_objects:
         obj.select_set(True)

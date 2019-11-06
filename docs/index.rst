@@ -28,6 +28,7 @@ Contents
    after_creation_tools
    expressions
    proxy
+   hair_system
    pose
    save_export
    license
