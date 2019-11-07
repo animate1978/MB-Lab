@@ -5,7 +5,7 @@ New Features
 Version 1.7.7
 =============
 
-This version is was largely done by contributors in the MB-Lab community!
+This version was improved mainly by contributors in the MB-Lab community!
 
 * Hair Engine
 
@@ -20,6 +20,9 @@ Adds rotation limits to MB-Lab armatures (need to be in POSE mode)
 There were some serious bugs related to the Muscle system of MB-Lab that had gone unnoticed for some time
 These have been fixed with this version.
 
+* Proxy Engine update
+
+The Proxy engine has been improved. 
 
 =============
 Version 1.7.6
