@@ -2091,7 +2091,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                         for expr_name in sorted(mblab_shapekeys.expressions_data.keys()):
                             if hasattr(obj, expr_name):
                                 if scn.mblab_expression_filter in expr_name:
-                                    box.prop(obj, expr_name)
+                                    box_exp.prop(obj, expr_name)
                     box_exp.operator("mbast.reset_expression", icon="RECOVER_LAST")
                 else:
                     box_exp.enabled = False
