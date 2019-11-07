@@ -1915,8 +1915,8 @@ class OBJECT_OT_humanoid_rot_limits(bpy.types.Operator):
     def execute(self, context):
         armature = humanoid_rotations.get_skeleton()
         pb = armature.pose.bones
-        humanoid_rotations.limit_bone_rotation(humanoid_rotations.ragdoll_dict, pb)
-        humanoid_rotations.limit_finger_rotation(humanoid_rotations.fd, pb)
+        humanoid_rotations.limit_bone_rotation(humanoid_rotations.rotation_limits_dict, pb)
+        humanoid_rotations.limit_bone_rotation(humanoid_rotations.fd, pb)
         return {'FINISHED'}
 
 # Delete Limit Rotations Constraint
@@ -1933,17 +1933,16 @@ class OBJECT_OT_delete_rotations(bpy.types.Operator):
         return {'FINISHED'}
 
 #Add Hair Op
-class OBJECT_OT_add_hair(bpy.types.Operator):
+class OBJECT_OT_particle_hair(bpy.types.Operator):
     """Add Hair to Character"""
-    bl_idname = "mbast.add_hair"
-    bl_label = "Add Hair"
+    bl_idname = "mbast.particle_hair"
+    bl_label = "Particle Hair"
     bl_options = {'REGISTER', 'INTERNAL', 'UNDO'}
 
     def execute(self, context):
+        self.hair_Name = "Head_Hair"
         scn = bpy.context.scene
         character_id = scn.mblab_character_name
-        actv = bpy.context.view_layer.objects.active
-        #get_mode = bpy.ops.object.mode_get()
         skeleton = object_ops.get_skeleton()
         bpy.ops.object.mode_set(mode='OBJECT')
         skeleton.select_set(state=False)
@@ -1952,18 +1951,45 @@ class OBJECT_OT_add_hair(bpy.types.Operator):
         bpy.context.view_layer.objects.active = body
         faces = hairengine.get_hair_data(character_id)
         hairengine.sel_faces(faces)
-        hairengine.add_scalp()
-        hairengine.hair_armature_mod(skeleton)
-        hairengine.add_hair()
+        hairengine.add_scalp(self.hair_Name)
+        hair = bpy.data.objects[self.hair_Name]
+        hairengine.hair_armature_mod(skeleton, hair)
+        hairengine.add_hair(hair)
         bpy.ops.object.mode_set(mode='OBJECT')
-        bpy.context.view_layer.objects.active = actv
+        object_ops.add_parent(skeleton.name, [self.hair_Name])
+        object_ops.active_ob(skeleton.name, None)
         try:
             bpy.ops.object.mode_set(mode='POSE')
         except:
             pass       
         return {'FINISHED'}
 
-      
+class OBJECT_OT_manual_hair(bpy.types.Operator):
+    """Add Hair to Character from Selected Polygons"""
+    bl_idname = "mbast.manual_hair"
+    bl_label = "Hair from Selected"
+    bl_options = {'REGISTER', 'INTERNAL', 'UNDO'}
+
+    def execute(self, context):
+        self.hair_name = "Hairs"
+        scn = bpy.context.scene
+        character_id = scn.mblab_character_name
+        get_mode = bpy.context.object.mode
+        skeleton = object_ops.get_skeleton()
+        hairengine.add_scalp(self.hair_name)
+        hair = bpy.data.objects[self.hair_name]
+        hairengine.hair_armature_mod(skeleton, hair)
+        hairengine.add_hair(hair)
+        bpy.ops.object.mode_set(mode='EDIT')
+        bpy.ops.object.mode_set(mode='OBJECT')
+        object_ops.add_parent(skeleton.name, [self.hair_name])
+        object_ops.active_ob(skeleton.name, None)
+        try:
+            bpy.ops.object.mode_set(mode='POSE')
+        except:
+            pass       
+        return {'FINISHED'}
+
 class StartSession(bpy.types.Operator):
     bl_idname = "mbast.init_character"
     bl_label = "Create character"
@@ -2050,20 +2076,6 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
             box_face_rig.operator('mbast.delete_face_rig', icon='CANCEL')
             box_face_rig.prop(scn, "mblab_facs_rig")
 
-            # Add Hair
-            hair_box = self.layout.box()
-            hair_box.label(text="Add Hair")
-            hair_box.operator("mbast.add_hair", icon='USER')
-            #hair_box = self.layout.box()
-
-            # Humanoid Rotation Limits
-            rot_box = self.layout.box()
-            rot_box.label(text="Humanoid Rotations")
-            rot_box.operator("mbast.humanoid_rot_limits", icon='USER')
-            rot_box.operator('mbast.delete_rotations', icon='CANCEL')
-            #rot_box = self.layout.box()
-
-            # Expressions
             if gui_active_panel_fin != "expressions":
                 box_post_opt.operator('mbast.button_expressions_on', icon=icon_expand)
             else:
@@ -2084,7 +2096,6 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                 else:
                     box_exp.enabled = False
                     box_exp.label(text="No express. shapekeys", icon='INFO')
-            # Proxy Fitting
             if gui_active_panel_fin != "assets":
                 box_post_opt.operator('mbast.button_assets_on', icon=icon_expand)
             else:
@@ -2096,6 +2107,9 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                 box_asts.prop(scn, 'mblab_assets_models')
                 # box.operator('mbast.load_assets_element')
                 box_asts.label(text="To adapt the asset, use the proxy fitting tool", icon='INFO')
+                # Add Particle Hair
+                box_asts.operator("mbast.particle_hair", icon='USER')
+                box_asts.operator("mbast.manual_hair", icon='USER')
 
 
             if gui_active_panel_fin != "proxy_fit":
@@ -2175,6 +2189,9 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                     box_pose.operator("mbast.pose_save", icon='EXPORT')
                     box_pose.operator("mbast.pose_reset", icon='ARMATURE_DATA')
                     box_pose.operator("mbast.load_animation", icon='IMPORT')
+                    # Humanoid Rotations
+                    box_pose.operator("mbast.humanoid_rot_limits", icon='USER')
+                    box_pose.operator('mbast.delete_rotations', icon='CANCEL')
                 else:
                     box_pose.enabled = False
                     box_pose.label(text="Please select the lab character (IK not supported)", icon='INFO')
@@ -2510,7 +2527,8 @@ classes = (
     VIEW3D_PT_tools_ManuelbastioniLAB,
     OBJECT_OT_humanoid_rot_limits,
     OBJECT_OT_delete_rotations,
-    OBJECT_OT_add_hair,
+    OBJECT_OT_particle_hair,
+    OBJECT_OT_manual_hair,
 )
 
 def register():
