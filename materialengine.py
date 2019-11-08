@@ -33,6 +33,9 @@ from . import algorithms
 
 logger = logging.getLogger(__name__)
 
+# ------------------------------------------------------------------------
+#    Material Engine
+# ------------------------------------------------------------------------
 
 class MaterialEngine:
     generated_disp_modifier_ID = "mbastlab_displacement"

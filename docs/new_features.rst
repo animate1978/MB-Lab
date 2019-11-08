@@ -9,7 +9,7 @@ This version was improved mainly by contributors in the MB-Lab community!
 
 * Hair Engine
 
-There is now the option to add particle Hair to Finalized models
+The long awaited Hair Engine allows you to add particle hair to finalized MB-Lab characters.
 
 * Human Rotation Limits
 
@@ -22,7 +22,7 @@ These have been fixed with this version.
 
 * Proxy Engine update
 
-The Proxy engine has been improved. 
+The Proxy engine has been improved. Fixed fitting of meshes that are very close to the skin. New option to fit in reverse direction to convert a character-specific mesh to a generic proxy.
 
 =============
 Version 1.7.6

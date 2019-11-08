@@ -751,7 +751,7 @@ class ButtonParametersOff(bpy.types.Operator):
 class ButtonParametersOn(bpy.types.Operator):
     bl_label = 'Body Measures'
     bl_idname = 'mbast.button_parameters_on'
-    bl_description = 'Open details panel (head,nose,hands, measures etc...)'
+    bl_description = 'Open details panel'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -909,9 +909,9 @@ class ButtoPoseOff(bpy.types.Operator):
 
 
 class ButtonAssetsOn(bpy.types.Operator):
-    bl_label = 'ASSETS LIBRARY'
+    bl_label = 'ASSETS AND HAIR'
     bl_idname = 'mbast.button_assets_on'
-    bl_description = 'Open assets panel'
+    bl_description = 'Open assets and hair panel'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -922,9 +922,9 @@ class ButtonAssetsOn(bpy.types.Operator):
 
 
 class ButtoAssetsOff(bpy.types.Operator):
-    bl_label = 'ASSETS LIBRARY'
+    bl_label = 'ASSETS AND HAIR'
     bl_idname = 'mbast.button_assets_off'
-    bl_description = 'Close assets panel'
+    bl_description = 'Close assets and hair panel'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -2076,6 +2076,8 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
             box_face_rig.operator('mbast.delete_face_rig', icon='CANCEL')
             box_face_rig.prop(scn, "mblab_facs_rig")
 
+            # Expressions
+
             if gui_active_panel_fin != "expressions":
                 box_post_opt.operator('mbast.button_expressions_on', icon=icon_expand)
             else:
@@ -2111,6 +2113,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                 box_asts.operator("mbast.particle_hair", icon='USER')
                 box_asts.operator("mbast.manual_hair", icon='USER')
 
+            # Proxy Fitting
 
             if gui_active_panel_fin != "proxy_fit":
                 box_post_opt.operator('mbast.button_proxy_fit_on', icon=icon_expand)
