@@ -9,8 +9,6 @@ This rig controls various expressions of a MB-Lab character by using the control
 
 .. image:: images/facerig_GUI.png
 
-This feature started as an experiment in MB-Lab 1.7.1 and has been updated for this release.
-
 To add the rig, just click on the Add Face Rig button for your finalized character.
 
 To delete the rig, you need to select your finalized character first, then click the Delete Face Rig button.

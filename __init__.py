@@ -869,7 +869,7 @@ class ButtonAutomodellingOn(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class ButtoRestPoseOff(bpy.types.Operator):
+class ButtonRestPoseOff(bpy.types.Operator):
     bl_label = 'Rest Pose'
     bl_idname = 'mbast.button_rest_pose_off'
     bl_description = 'Close rest pose panel'
@@ -921,7 +921,7 @@ class ButtonAssetsOn(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class ButtoAssetsOff(bpy.types.Operator):
+class ButtonAssetsOff(bpy.types.Operator):
     bl_label = 'ASSETS AND HAIR'
     bl_idname = 'mbast.button_assets_off'
     bl_description = 'Close assets and hair panel'
@@ -2467,11 +2467,11 @@ classes = (
     ButtonRandomOn,
     ButtonAutomodellingOff,
     ButtonAutomodellingOn,
-    ButtoRestPoseOff,
+    ButtonRestPoseOff,
     ButtonRestPoseOn,
     ButtoPoseOff,
     ButtonAssetsOn,
-    ButtoAssetsOff,
+    ButtonAssetsOff,
     ButtonPoseOn,
     ButtonSkinOff,
     ButtonSkinOn,
