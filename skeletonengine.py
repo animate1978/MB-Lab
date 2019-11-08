@@ -33,6 +33,9 @@ from .utils import get_object_parent
 
 logger = logging.getLogger(__name__)
 
+# ------------------------------------------------------------------------
+#    Skeleton Engine
+# ------------------------------------------------------------------------
 
 class SkeletonEngine:
     armature_modifier_name = "mbastlab_armature"

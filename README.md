@@ -25,7 +25,10 @@ This fork is an attempt to keep this addon going forward as the original author 
 
 ## Changed
 
-
+- Afro Female now the default character on startup
+- New option to fit in reverse direction to convert a character-specific mesh to a generic proxy.
+- Fixed fitting of meshes that are very close to the skin.
+- New options to do more precise fitting by turning off some normally useful smoothing passes.
 
 ## Bug Fixes
 
@@ -34,6 +37,7 @@ This fork is an attempt to keep this addon going forward as the original author 
 - B-Bone handles and certain constraints have to be fixed in the library file via a script.
 - Replaced obj.hide_select = False with obj.hide_set(False) fixing Age update bug.
 - Minor GUI edits to fix drawing issues.
+- Fixed Bump and Displacement issues in MBLab_Skin2
 
 ## ManuelBastioniLAB 1.6.1a
 

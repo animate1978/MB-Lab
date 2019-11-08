@@ -36,6 +36,9 @@ from .utils import get_active_armature
 
 logger = logging.getLogger(__name__)
 
+# ------------------------------------------------------------------------
+#    Animation Engine
+# ------------------------------------------------------------------------
 
 class RetargetEngine:
 

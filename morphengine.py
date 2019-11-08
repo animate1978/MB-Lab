@@ -36,6 +36,10 @@ import operator
 
 logger = logging.getLogger(__name__)
 
+# ------------------------------------------------------------------------
+#    Morph Engine
+# ------------------------------------------------------------------------
+
 class MorphingEngine:
 
     def __init__(self, obj_name, character_config):
