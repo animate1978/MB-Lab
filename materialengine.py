@@ -169,6 +169,8 @@ class MaterialEngine:
             result_img.pixels = np_img1 * np_img2 * blending_factor + (np_img1 * (1.0 - blending_factor))
         logger.info('finish: multiply_images %s', result_name)
 
+# Link Textures to Nodes
+
     @staticmethod
     def assign_image_to_node(material_name, node_name, image_name):
         logger.info("Assigning the image %s to node %s", image_name, node_name)
@@ -198,7 +200,7 @@ class MaterialEngine:
         return material_parameters
 
 
-# Link Textures to Nodes - Update Shaders
+# Update Shaders
 
     def update_shaders(self, material_parameters=[], update_textures_nodes=True):
 
