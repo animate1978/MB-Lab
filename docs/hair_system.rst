@@ -3,11 +3,12 @@ Hair System
 
 The new Hair Engine allows the ability to add particle hair to a MB-Lab character after finalization.
 
+Features
 
-Hair is now parented to armature.
-Also added option to add hair from selected polygons.
-Now can add unlimited hair objects.
+Add hair from selected polygons.
 
-NOTE:
+This adds the ability to create custom hair objects on virtually any part of the body.
 
-After applying the particle hair, no shader is assigned to it. It is recommended to create a new shader using the Principled Hair BDSF.
+Add unlimited hair objects.
+
+You can add as many particle Hair systems as you want!

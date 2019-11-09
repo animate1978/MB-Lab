@@ -13,8 +13,6 @@ To add the rig, just click on the Add Face Rig button for your finalized charact
 
 To delete the rig, you need to select your finalized character first, then click the Delete Face Rig button.
 
-There is a known bug that pops up when you try to delete the rig without having your character selected first, this is being investigated.
-
 The Face Rig also has the option to import the FACS rig, which is an advanced rig for automated lip sync using these other Blender addons.
 
 .. image:: images/FACS_GUI.png
