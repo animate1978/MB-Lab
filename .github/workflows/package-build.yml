@@ -3,7 +3,7 @@ name: Package Builder
 on: [push]
 
 jobs:
-  build:
+  python_build:
 
     runs-on: ubuntu-latest
     strategy:
