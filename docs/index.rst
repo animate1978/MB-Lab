@@ -26,6 +26,7 @@ Contents
    skin_editor
    finalize
    after_creation_tools
+   face_rig
    expressions
    proxy
    hair_system

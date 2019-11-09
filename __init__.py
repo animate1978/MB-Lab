@@ -947,7 +947,7 @@ class ButtonAssetsOff(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class ButtoPoseOff(bpy.types.Operator):
+class ButtonPoseOff(bpy.types.Operator):
     bl_label = 'POSE AND ANIMATION'
     bl_idname = 'mbast.button_pose_off'
     bl_description = 'Close pose panel'
@@ -2501,7 +2501,7 @@ classes = (
     ButtonAutomodellingOn,
     ButtonRestPoseOff,
     ButtonRestPoseOn,
-    ButtoPoseOff,
+    ButtonPoseOff,
     ButtonAssetsOn,
     ButtonAssetsOff,
     ButtonPoseOn,
