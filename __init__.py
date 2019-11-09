@@ -788,6 +788,32 @@ class ButtonUtilitiesOn(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class ButtonFaceRigOff(bpy.types.Operator):
+    bl_label = 'FACE RIG'
+    bl_idname = 'mbast.button_facerig_off'
+    bl_description = 'Close face rig panel'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_fin
+        gui_active_panel_fin = None
+        return {'FINISHED'}
+
+
+class ButtonFaceRigOn(bpy.types.Operator):
+    bl_label = 'FACE RIG'
+    bl_idname = 'mbast.button_facerig_on'
+    bl_description = 'Open face rig panel'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_fin
+        gui_active_panel_fin = "face_rig"
+        return {'FINISHED'}
+
+
 class ButtonExpressionsOff(bpy.types.Operator):
     bl_label = 'FACE EXPRESSIONS'
     bl_idname = 'mbast.button_expressions_off'
@@ -895,19 +921,6 @@ class ButtonRestPoseOn(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class ButtoPoseOff(bpy.types.Operator):
-    bl_label = 'POSE AND ANIMATION'
-    bl_idname = 'mbast.button_pose_off'
-    bl_description = 'Close pose panel'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_fin
-        gui_active_panel_fin = None
-        return {'FINISHED'}
-
-
 class ButtonAssetsOn(bpy.types.Operator):
     bl_label = 'ASSETS AND HAIR'
     bl_idname = 'mbast.button_assets_on'
@@ -933,6 +946,18 @@ class ButtonAssetsOff(bpy.types.Operator):
         gui_active_panel_fin = None
         return {'FINISHED'}
 
+
+class ButtoPoseOff(bpy.types.Operator):
+    bl_label = 'POSE AND ANIMATION'
+    bl_idname = 'mbast.button_pose_off'
+    bl_description = 'Close pose panel'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_fin
+        gui_active_panel_fin = None
+        return {'FINISHED'}
 
 class ButtonPoseOn(bpy.types.Operator):
     bl_label = 'POSE AND ANIMATION'
@@ -2069,12 +2094,17 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
             self.layout.label(text="AFTER-CREATION TOOLS", icon='MODIFIER_ON')
 
             box_post_opt = self.layout.box()
+            if gui_active_panel_fin != "face_rig":
+                box_post_opt.operator('mbast.button_facerig_on', icon=icon_expand)
+            else:
+                box_post_opt.operator('mbast.button_facerig_off', icon=icon_collapse)
+
             # Face Rig
-            box_face_rig = box_post_opt.box()
-            box_face_rig.label(text="Face Rig")
-            box_face_rig.operator('mbast.create_face_rig', icon='USER')
-            box_face_rig.operator('mbast.delete_face_rig', icon='CANCEL')
-            box_face_rig.prop(scn, "mblab_facs_rig")
+                box_face_rig = box_post_opt.box()
+                #box_face_rig.label(text="Face Rig")
+                box_face_rig.operator('mbast.create_face_rig', icon='USER')
+                box_face_rig.operator('mbast.delete_face_rig', icon='CANCEL')
+                box_face_rig.prop(scn, "mblab_facs_rig")
 
             # Expressions
 
@@ -2459,6 +2489,8 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
 classes = (
     ButtonParametersOff,
     ButtonParametersOn,
+    ButtonFaceRigOff,
+    ButtonFaceRigOn,
     ButtonUtilitiesOff,
     ButtonUtilitiesOn,
     ButtonExpressionsOff,
