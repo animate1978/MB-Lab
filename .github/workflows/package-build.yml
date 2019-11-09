@@ -1,4 +1,4 @@
-name: Python package
+name: Package Builder
 
 on: [push]
 
