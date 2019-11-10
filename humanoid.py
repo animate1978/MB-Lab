@@ -31,7 +31,8 @@ import time
 import json
 import operator
 
-from . import morphengine, skeletonengine, algorithms, proxyengine, materialengine
+
+from . import morphengine, skeletonengine, algorithms, proxyengine, materialengine, utils, file_ops
 
 logger = logging.getLogger(__name__)
 
@@ -167,9 +168,9 @@ class Humanoid:
         self.lab_vers = list(lab_version)
         self.has_data = False
         self.obj_name = ""
-        self.data_path = algorithms.get_data_path()
-        self.characters_config = algorithms.get_configuration()
-        self.lib_filepath = algorithms.get_blendlibrary_path()
+        self.data_path = file_ops.get_data_path()
+        self.characters_config = file_ops.get_configuration()
+        self.lib_filepath = file_ops.get_blendlibrary_path()
         if self.characters_config:
             self.humanoid_types = self.build_items_list("character_list")
             self.template_types = self.build_items_list("templates_list")
@@ -220,9 +221,9 @@ class Humanoid:
 
         self.transformations_data_path = os.path.join(self.data_path,"transformations",self.transformation_filename)
 
-        self.exists_rest_poses_data = algorithms.exists_database(self.restposes_path)
-        self.exists_preset_data = algorithms.exists_database(self.presets_path)
-        self.exists_phenotype_data = algorithms.exists_database(self.phenotypes_path)
+        self.exists_rest_poses_data = file_ops.exists_database(self.restposes_path)
+        self.exists_preset_data = file_ops.exists_database(self.presets_path)
+        self.exists_phenotype_data = file_ops.exists_database(self.phenotypes_path)
         self.exists_transform_data = os.path.isfile(self.transformations_data_path)
 
         self.corrective_modifier_name = "mbastlab_corrective_modifier"
@@ -263,9 +264,9 @@ class Humanoid:
 
     def add_displacement_modifier(self):
         obj = self.get_object()
-        disp_img = algorithms.get_image(self.mat_engine.image_file_names["body_displ"])
+        disp_img = file_ops.get_image(self.mat_engine.image_file_names["body_displ"])
         if disp_img:
-            disp_tex = algorithms.new_texture(self.mat_engine.generated_disp_modifier_ID, disp_img)
+            disp_tex = file_ops.new_texture(self.mat_engine.generated_disp_modifier_ID, disp_img)
             parameters = {"texture_coords":'UV', "strength":0.01, "show_viewport":False, "texture":disp_tex}
             displacement_modifier = algorithms.new_modifier(obj, self.mat_engine.generated_disp_modifier_ID,'DISPLACE', parameters)
 
@@ -295,7 +296,7 @@ class Humanoid:
         return self.sk_engine.get_armature()
 
     def load_transformation_database(self):
-        self.transformations_data = algorithms.load_json_data(self.transformations_data_path, "Transformations database")
+        self.transformations_data = file_ops.load_json_data(self.transformations_data_path, "Transformations database")
 
     def get_categories(self):
         categories = self.categories.values()
@@ -464,7 +465,7 @@ class Humanoid:
         filename_root = os.path.splitext(filename)[0]
         new_filename = filename_root + 'backup.json'
         new_filepath = os.path.join(dir_path,new_filename)
-        logger.info("Saving backup character {0}".format(algorithms.simple_path(new_filepath)))
+        logger.info("Saving backup character {0}".format(file_ops.simple_path(new_filepath)))
         self.save_character(new_filepath, export_proportions=False, export_materials=True, export_metadata = True)
 
 
@@ -845,7 +846,7 @@ class Humanoid:
                     props_to_process.remove(prop)
 
         for prop in props_to_process:
-            new_val = algorithms.generate_parameter(
+            new_val = file_ops.generate_parameter(
                 self.character_data[prop],
                 random_value,
                 prv_phenotype)
@@ -1020,7 +1021,7 @@ class Humanoid:
 
 
     def save_character(self, filepath, export_proportions=True, export_materials=True, export_metadata = True):
-        logger.info("Exporting character to {0}".format(algorithms.simple_path(filepath)))
+        logger.info("Exporting character to {0}".format(file_ops.simple_path(filepath)))
         obj = self.get_object()
         char_data = {"manuellab_vers": self.lab_vers, "structural":dict(), "metaproperties":dict(), "materialproperties":dict()}
 
@@ -1047,7 +1048,7 @@ class Humanoid:
             output_file.close()
 
     def export_measures(self, filepath):
-        logger.info("Exporting measures to {0}".format(algorithms.simple_path(filepath)))
+        logger.info("Exporting measures to {0}".format(file_ops.simple_path(filepath)))
         obj = self.get_object()
         char_data = {"manuellab_vers": self.lab_vers, "measures":dict()}
         if obj:
@@ -1066,15 +1067,15 @@ class Humanoid:
         log_msg_type = "character data"
 
         if type(data_source) == str:  #TODO: better check of types
-            log_msg_type = algorithms.simple_path(data_source)
-            charac_data = algorithms.load_json_data(data_source,"Character data")
+            log_msg_type = file_ops.simple_path(data_source)
+            charac_data = file_ops.load_json_data(data_source,"Character data")
         else:
             charac_data = data_source
 
         logger.info("Loading character from {0}".format(log_msg_type))
 
         if "manuellab_vers" in charac_data:
-            if not algorithms.check_version(charac_data["manuellab_vers"]):
+            if not utils.check_version(charac_data["manuellab_vers"]):
                 logger.warning("{0} created with vers. {1}. Current vers is {2}".format(log_msg_type,charac_data["manuellab_vers"],self.lab_vers))
         else:
             logger.info("No lab version specified in {0}".format(log_msg_type))
@@ -1126,9 +1127,9 @@ class Humanoid:
         self.update_character(mode = update_mode)
 
     def load_measures(self, filepath):
-        char_data = algorithms.load_json_data(filepath, "Measures data")
+        char_data = file_ops.load_json_data(filepath, "Measures data")
         if not ("measures" in char_data):
-            logger.error("This json has not the measures info, {0}".format(algorithms.simple_path(filepath)))
+            logger.error("This json has not the measures info, {0}".format(file_ops.simple_path(filepath)))
             return None
         c_data = char_data["measures"]
         return c_data

@@ -33,7 +33,8 @@ import array
 import mathutils
 import bpy
 
-from .utils import get_object_parent
+from . import utils
+#from .utils import get_object_parent
 
 logger = logging.getLogger(__name__)
 
@@ -53,64 +54,6 @@ def print_log_report(level, text_to_write):
     if l >= DEBUG_LEVEL:
         print(level + ": " + text_to_write)
 
-def is_writeable(filepath):
-    try:
-        with open(filepath, 'w'):
-            return True
-    except IOError:
-        logger.warning("Writing permission denied for %s", filepath)
-    return False
-
-def get_data_path():
-    addon_directory = os.path.dirname(os.path.realpath(__file__))
-    data_dir = os.path.join(addon_directory, "data")
-    logger.info("Looking for the retarget data in the folder %s...", simple_path(data_dir))
-
-    if not os.path.isdir(data_dir):
-        logger.critical("Tools data not found. Please check your Blender addons directory.")
-        return None
-
-    return data_dir
-
-
-def get_configuration():
-    data_path = get_data_path()
-
-    if data_path:
-        configuration_path = os.path.join(data_path, "characters_config.json")
-        if os.path.isfile(configuration_path):
-            return load_json_data(configuration_path, "Characters definition")
-
-    logger.critical("Configuration database not found. Please check your Blender addons directory.")
-    return None
-
-
-def get_blendlibrary_path():
-    data_path = get_data_path()
-    if data_path:
-        return os.path.join(data_path, "humanoid_library.blend")
-
-    logger.critical("Models library not found. Please check your Blender addons directory.")
-    return None
-
-
-def simple_path(input_path, use_basename=True, max_len=50):
-    """
-    Return the last part of long paths
-    """
-    if use_basename:
-        return os.path.basename(input_path)
-
-    if len(input_path) > max_len:
-        return f"[Trunked]..{input_path[len(input_path)-max_len:]}"
-
-    return input_path
-
-
-def json_booleans_to_python(value):
-    return value == 0
-
-
 def quick_dist(p_1, p_2):
     return ((p_1[0]-p_2[0])**2) + ((p_1[1]-p_2[1])**2) + ((p_1[2]-p_2[2])**2)
 
@@ -128,55 +71,6 @@ def full_dist(vert1, vert2, axis="ALL"):
         return abs(v1[1]-v2[1])
     # if axis == "Z":
     return abs(v1[2]-v2[2])
-
-
-def exists_database(lib_path):
-    result = False
-    if simple_path(lib_path) != "":
-        if os.path.isdir(lib_path):
-            if os.listdir(lib_path):
-                for database_file in os.listdir(lib_path):
-                    _, extension = os.path.splitext(database_file)
-                    if "json" in extension or "bvh" in extension:
-                        result = True
-                    else:
-                        logger.warning("Unknow file extension in %s", simple_path(lib_path))
-
-        else:
-            logger.warning("data path %s not found", simple_path(lib_path))
-    return result
-
-
-def length_of_strip(vertices_coords, indices, axis="ALL"):
-    strip_length = 0
-    for x in range(len(indices)-1):
-        v1 = vertices_coords[indices[x]]
-        v2 = vertices_coords[indices[x+1]]
-        strip_length += full_dist(v1, v2, axis)
-    return strip_length
-
-
-def closest_point_on_triangle(point, tri_p1, tri_p2, tri_p3):
-    # TODO: Added in 2.82 - simplify once released.
-    builtin = getattr(mathutils.geometry, 'closest_point_on_tri', None)
-
-    if builtin:
-        return builtin(point, tri_p1, tri_p2, tri_p3)
-
-    hit_point = mathutils.geometry.intersect_point_tri(point, tri_p1, tri_p2, tri_p3)
-
-    if hit_point:
-        return hit_point
-
-    line_points = [
-        mathutils.geometry.intersect_point_line(point, tri_p1, tri_p2),
-        mathutils.geometry.intersect_point_line(point, tri_p1, tri_p3),
-        mathutils.geometry.intersect_point_line(point, tri_p2, tri_p3),
-    ]
-    candidates = [tri_p1, tri_p2, tri_p3, *(co for co, fac in line_points if 0 < fac < 1)]
-
-    return min(candidates, key = lambda co: (point - co).length)
-
 
 def function_modifier_a(val_x):
     return 2 * val_x - 1 if val_x > 0.5 else 0.0
@@ -394,53 +288,8 @@ def correct_morph(base_form, current_form, morph_deltas, bboxes):
     logger.info("Morphing corrected in %s secs", time.time()-time1)
     return new_morph_deltas
 
-# TODO Change this to 1.7.4?
-def check_version(m_vers, min_version=(1, 5, 0)):
-
-    # m_vers can be a list, tuple, IDfloatarray or str
-    # so it must be converted in a list.
-    if not isinstance(m_vers, str):
-        m_vers = list(m_vers)
-
-    mesh_version = str(m_vers)
-    mesh_version = mesh_version.replace(' ', '')
-    mesh_version = mesh_version.strip("[]()")
-    if len(mesh_version) < 5:
-        logger.warning("The current humanoid has wrong format for version")
-        return False
-
-    mesh_version = (float(mesh_version[0]), float(mesh_version[2]), float(mesh_version[4]))
-    return mesh_version > min_version
 
 
-def looking_for_humanoid_obj():
-    """
-    Looking for a mesh that is OK for the lab
-    """
-    logger.info("Looking for a humanoid object ...")
-    if bpy.app.version < (2, 80, 74):
-        msg = "Sorry, MB-Lab requires Blender 2.80.74 Minimum"
-        logger.warning(msg)
-        return("ERROR", msg)
-
-# deleted obsolete function
-
-    human_obj = None
-    name = ""
-    for obj in bpy.data.objects:
-        if obj.type == "MESH":
-            if "manuellab_vers" in get_object_keys(obj):
-                if check_version(obj["manuellab_vers"]):
-                    human_obj = obj
-                    name = human_obj.name
-                    break
-
-    if not human_obj:
-        msg = "No lab humanoids in the scene"
-        logger.info(msg)
-        return "NO_OBJ", msg
-
-    return "FOUND", name
 
 
 def is_string_in_string(b_string, b_name):
@@ -468,24 +317,7 @@ def is_in_list(list1, list2, position="ANY"):
     return False
 
 
-def load_json_data(json_path, description=None):
-    try:
-        time1 = time.time()
-        with open(json_path, "r") as j_file:
-            j_database = json.load(j_file)
-            if not description:
-                logger.info("Json database %s loaded in %s secs",
-                            simple_path(json_path), time.time()-time1)
-            else:
-                logger.info("%s loaded from %s in %s secs",
-                            description, simple_path(json_path), time.time()-time1)
-            return j_database
-    except IOError:
-        if simple_path(json_path) != "":
-            logger.warning("File not found: %s", simple_path(json_path))
-    except json.JSONDecodeError:
-        logger.warning("Errors in json file: %s", simple_path(json_path))
-    return None
+
 
 
 def less_boundary_verts(obj, verts_idx, iterations=1):
@@ -780,11 +612,6 @@ def get_selected_objs_names():
     return [obj.name for obj in bpy.context.selected_objects]
 
 
-def select_object_by_name(name):
-    obj = get_object_by_name(name)
-    if obj:
-        obj.select_set(True)
-
 
 def set_selected_objs_by_name(names):
     for name in names:
@@ -806,8 +633,6 @@ def set_active_object(obj):
         bpy.context.view_layer.objects.active = obj
 
 
-def get_object_by_name(name):
-    return bpy.data.objects.get(name)
 
 
 def is_object(obj):
@@ -853,13 +678,6 @@ def collect_existing_objects():
             existing_obj_names.append(name)
     return existing_obj_names
 
-
-def get_newest_object(existing_obj_names):
-    for obj in bpy.data.objects:
-        name = obj.name
-        if name not in existing_obj_names:
-            return get_object_by_name(name)
-    return None
 
 
 def get_selected_gender():
@@ -1033,83 +851,13 @@ def set_object_visible(obj):
         #n = bpy.context.scene.active_layer
         # set_object_layer(obj,n) #TODO not perfect because it changes the layer
 
-
-def load_vertices_database(vertices_path):
-    vertices = []
-    verts = load_json_data(vertices_path, "Vertices data")
-    if verts:
-        for vert_co in verts:
-            vertices.append(mathutils.Vector(vert_co))
-    return vertices
-
-
-def set_verts_coords_from_file(obj, vertices_path):
-    new_vertices = load_vertices_database(vertices_path)
-    if obj:
-        if len(new_vertices) == len(obj.data.vertices):
-            for i, vert in enumerate(obj.data.vertices):
-                vert.co = new_vertices[i]
-
-
-def generate_items_list(folderpath, file_type="json"):
-    items_list = []
-    if os.path.isdir(folderpath):
-        for database_file in os.listdir(folderpath):
-            the_item, extension = os.path.splitext(database_file)
-            if file_type in extension:
-                if the_item not in items_list:
-                    the_descr = "Load and apply {0} from lab library".format(the_item)
-                    items_list.append((the_item, the_item, the_descr))
-        items_list.sort()
-    return items_list
-
-
-def load_image(filepath):
-    if os.path.isfile(filepath):
-        logger.info("Loading image %s", os.path.basename(filepath))
-        img = bpy.data.images.load(filepath, check_existing=True)
-        img.reload()
-    else:
-        logger.info("Image %s not found", os.path.basename(filepath))
-
-
-def get_image(name):
-    if name:
-        if name in bpy.data.images:
-            # Some check for log
-            if bpy.data.images[name].source == "FILE":
-                if os.path.basename(bpy.data.images[name].filepath) != name:
-                    logger.warning("Image named %s is from file: %s",
-                                   name, os.path.basename(bpy.data.images[name].filepath))
-            return bpy.data.images[name]
-        logger.warning("Getting image failed. Image %s not found in bpy.data.images", name)
-        return None
-
-    logger.warning("Getting image failed. Image name is %s", name)
-    return None
-
-
-def save_image(name, filepath, fileformat='PNG'):
-    img = get_image(name)
-    scn = bpy.context.scene
-    if img:
-        current_format = scn.render.image_settings.file_format
-        scn.render.image_settings.file_format = fileformat
-        img.save_render(filepath)
-        scn.render.image_settings.file_format = current_format
-    else:
-        logger.warning(
-            "The image %s cannot be saved because it's not present in bpy.data.images.", name)
-
-
-def new_texture(name, image=None):
-    if name not in bpy.data.textures:
-        _new_texture = bpy.data.textures.new(name, type='IMAGE')
-    else:
-        _new_texture = bpy.data.textures[name]
-    if image:
-        _new_texture.image = image
-    return _new_texture
+def length_of_strip(vertices_coords, indices, axis="ALL"):
+    strip_length = 0
+    for x in range(len(indices)-1):
+        v1 = vertices_coords[indices[x]]
+        v2 = vertices_coords[indices[x+1]]
+        strip_length += full_dist(v1, v2, axis)
+    return strip_length
 
 
 def image_to_array(blender_image):
@@ -1394,104 +1142,6 @@ def apply_auto_align_bones(armat):
                 bone.tail = bone.head + bone_target.vector.normalized() * bone.length
                 bone.roll = bone_target.roll
 
-
-def link_to_collection(obj):
-    # sanity check
-    if obj.name not in bpy.data.objects:
-        logger.error("Cannot link obj %s because it's not in bpy.data.objects", obj.name)
-        return
-
-    collection_name = 'ManuelBastioni_Character' #TODO change this to MB_LAB_Character as well as hairengine.py
-    c = bpy.data.collections.get(collection_name)
-    scene = bpy.context.scene
-    # collection is already created
-    if c is not None:
-        if obj.name not in c.objects:
-            c.objects.link(obj)
-        else:
-            logger.warning("The object %s is already linked to the scene", obj.name)
-    else:
-        # create the collection, link collection to scene and link obj to collection
-        c = bpy.data.collections.new(collection_name)
-        scene.collection.children.link(c)
-        c.objects.link(obj)
-
-
-def import_object_from_lib(lib_filepath, name, final_name=None, stop_import=True):
-    if name != "":
-        if stop_import:
-            logger.info("Appending object %s from %s", name, simple_path(lib_filepath))
-            if name in bpy.data.objects:
-                logger.warning("Object %s already in the scene. Import stopped", name)
-                return None
-
-            if final_name:
-                if final_name in bpy.data.objects:
-                    logger.warning("Object %s already in the scene. Import stopped", final_name)
-                    return None
-
-        append_object_from_library(lib_filepath, [name])
-        obj = get_object_by_name(name)
-        if obj:
-            logger.info("Object '%s' imported", name)
-            if final_name:
-                obj.name = final_name
-                logger.info("Object '%s' renamed as '%s'", name, final_name)
-            return obj
-
-        logger.warning("Object %s not found in library %s", name, simple_path(lib_filepath))
-    return None
-
-
-def append_object_from_library(lib_filepath, obj_names, suffix=None):
-
-    try:
-        with bpy.data.libraries.load(lib_filepath) as (data_from, data_to):
-            if suffix:
-                names_to_append = [name for name in data_from.objects if suffix in name]
-                data_to.objects = names_to_append
-            else:
-                names_to_append = obj_names
-                data_to.objects = [name for name in names_to_append if name in data_from.objects]
-    except OSError:
-        logger.critical("lib %s not found", lib_filepath)
-
-    for obj in data_to.objects:
-        link_to_collection(obj)
-        obj_parent = get_object_parent(obj)
-        if obj_parent:
-            link_to_collection(obj_parent)
-
-
-def append_mesh_from_library(lib_filepath, mesh_names, suffix=None):
-
-    try:
-        with bpy.data.libraries.load(lib_filepath) as (data_from, data_to):
-            if suffix:
-                names_to_append = [name for name in data_from.meshes if suffix in name]
-                data_to.meshes = names_to_append
-            else:
-                names_to_append = mesh_names
-                data_to.meshes = [name for name in names_to_append if name in data_from.meshes]
-    except OSError:
-        logger.critical("lib %s not found", lib_filepath)
-
-
-def read_object_names_from_library(lib_filepath):
-    try:
-        with bpy.data.libraries.load(lib_filepath) as (data_from, data_to):
-            for name in data_from.objects:
-                print("OBJ_LIB: ", name)
-    except OSError:
-        logger.critical("lib %s not found", lib_filepath)
-
-
-def is_armature_linked(obj, armat):
-    if obj.type == 'MESH':
-        for modfr in obj.modifiers:
-            if modfr.type == 'ARMATURE' and modfr.object == armat:
-                return True
-    return False
 
 
 def has_deformation_vgroups(obj, armat):
