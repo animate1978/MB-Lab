@@ -172,7 +172,7 @@ class addon_updater_install_popup(bpy.types.Operator):
         if updater.invalidupdater is True:
             return {'CANCELLED'}
 
-        if updater.manual_only == True:
+        if updater.manual_only is True:
             bpy.ops.wm.url_open(url=updater.website)
         elif updater.update_ready is True:
 
@@ -662,7 +662,7 @@ def background_update_callback(update_ready):
         return
     if updater_run_install_popup_handler not in \
             bpy.app.handlers.scene_update_post and \
-            ran_autocheck_install_popup == False:
+            ran_autocheck_install_popup is False:
         bpy.app.handlers.scene_update_post.append(
             updater_run_install_popup_handler)
         ran_autocheck_install_popup = True
@@ -679,7 +679,7 @@ def post_update_callback(res=None):
     if updater.invalidupdater is True:
         return
 
-    if res == None:
+    if res is None:
         # this is the same code as in conditional at the end of the register function
         # ie if "auto_reload_post_update" is True, comment out this code
         if updater.verbose:
@@ -798,7 +798,7 @@ def showReloadPopup():
 
         if updater_run_success_popup_handler not in \
                 bpy.app.handlers.scene_update_post \
-                and ran_update_sucess_popup == False:
+                and ran_update_sucess_popup is False:
             bpy.app.handlers.scene_update_post.append(
                 updater_run_success_popup_handler)
             ran_update_sucess_popup = True
@@ -849,7 +849,7 @@ def update_notice_box_ui(self, context):
     colL.operator(addon_updater_ignore.bl_idname, icon="X", text="Ignore")
     colR = split.column(align=True)
     colR.scale_y = 1.5
-    if updater.manual_only == False:
+    if updater.manual_only is False:
         colR.operator(addon_updater_update_now.bl_idname,
                       text="Update", icon="LOOP_FORWARDS")
         col.operator("wm.url_open", text="Open website").url = updater.website
@@ -870,7 +870,7 @@ def update_settings_ui(self, context, element=None):
     """
 
     # element is a UI element, such as layout, a row, column, or box
-    if element == None:
+    if element is None:
         element = self.layout
     box = element.box()
 
@@ -900,7 +900,7 @@ def update_settings_ui(self, context, element=None):
     subcol.prop(settings, "auto_check_update")
     subcol = split.column()
 
-    if settings.auto_check_update == False:
+    if settings.auto_check_update is False:
         subcol.enabled = False
     subrow = subcol.row()
     subrow.label(text="Interval between checks")
@@ -951,9 +951,9 @@ def update_settings_ui(self, context, element=None):
         split.operator(addon_updater_end_background.bl_idname,
                        text="", icon="X")
 
-    elif updater.include_branches == True and \
+    elif updater.include_branches is True and \
             len(updater.tags) == len(updater.include_branch_list) and \
-            updater.manual_only == False:
+            updater.manual_only is False:
         # no releases found, but still show the appropriate branch
         subcol = col.row(align=True)
         subcol.scale_y = 1
@@ -966,7 +966,7 @@ def update_settings_ui(self, context, element=None):
         split.operator(addon_updater_check_now.bl_idname,
                        text="", icon="FILE_REFRESH")
 
-    elif (updater.update_ready == True) and (updater.manual_only == False):
+    elif (updater.update_ready is True) and (updater.manual_only is False):
         subcol = col.row(align=True)
         subcol.scale_y = 1
         split = subcol.split(align=True)
@@ -978,7 +978,7 @@ def update_settings_ui(self, context, element=None):
         split.operator(addon_updater_check_now.bl_idname,
                        text="", icon="FILE_REFRESH")
 
-    elif (updater.update_ready == True) and (updater.manual_only == True):
+    elif (updater.update_ready is True) and (updater.manual_only is True):
         col.scale_y = 2
         col.operator("wm.url_open",
                      text="Download "+str(updater.update_version)).url = updater.website
@@ -1090,9 +1090,9 @@ def update_settings_ui_condensed(self, context, element=None):
         split.operator(addon_updater_end_background.bl_idname,
                        text="", icon="X")
 
-    elif updater.include_branches == True \
+    elif updater.include_branches is True \
         and len(updater.tags) == len(updater.include_branch_list) \
-        and updater.manual_only == False:
+        and updater.manual_only is False:
 
         # no releases found, but still show the appropriate branch
         subcol = col.row(align=True)
@@ -1106,7 +1106,7 @@ def update_settings_ui_condensed(self, context, element=None):
         split.operator(addon_updater_check_now.bl_idname,
                        text="", icon="FILE_REFRESH")
 
-    elif (updater.update_ready == True) and (updater.manual_only == False):
+    elif (updater.update_ready is True) and (updater.manual_only is False):
         subcol = col.row(align=True)
         subcol.scale_y = 1
         split = subcol.split(align=True)
@@ -1118,7 +1118,7 @@ def update_settings_ui_condensed(self, context, element=None):
         split.operator(addon_updater_check_now.bl_idname,
                        text="", icon="FILE_REFRESH")
 
-    elif (updater.update_ready == True) and (updater.manual_only == True):
+    elif (updater.update_ready is True) and (updater.manual_only is True):
         col.scale_y = 2
         col.operator("wm.url_open",
                      text="Download "+str(updater.update_version)).url = updater.website

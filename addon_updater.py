@@ -203,7 +203,7 @@ class Singleton_updater(object):
         return self._current_version
     @current_version.setter
     def current_version(self, tuple_values):
-        if tuple_values == None:
+        if tuple_values is None:
             self._current_version = None
             return
         elif type(tuple_values) is not tuple:
@@ -324,7 +324,7 @@ class Singleton_updater(object):
         return self._engine.token
     @private_token.setter
     def private_token(self, value):
-        if value == None:
+        if value is None:
             self._engine.token = None
         else:
             self._engine.token = str(value)
@@ -518,7 +518,7 @@ class Singleton_updater(object):
         if type(minutes) is not int:
             raise ValueError("Minutes must be an integer value")
 
-        if enable == False:
+        if enable is False:
             self._check_interval_enable = False
         else:
             self._check_interval_enable = True
@@ -567,7 +567,7 @@ class Singleton_updater(object):
 
         # pre-process to skip tags
         if self.skip_tag is not None:
-            self._tags = [tg for tg in all_tags if self.skip_tag(self, tg) == False]
+            self._tags = [tg for tg in all_tags if self.skip_tag(self, tg) is False]
         else:
             self._tags = all_tags
 
@@ -600,8 +600,8 @@ class Singleton_updater(object):
             if self._verbose:
                 branch = self._include_branch_list[0]
                 print("{} branch found, no releases".format(branch), self._tags[0])
-        elif (len(self._tags)-len(self._include_branch_list) == 0 and self._include_branches == True) \
-                or (len(self._tags) == 0 and self._include_branches == False) \
+        elif (len(self._tags)-len(self._include_branch_list) == 0 and self._include_branches is True) \
+                or (len(self._tags) == 0 and self._include_branches is False) \
                 and self._prefiltered_tag_count > 0:
             self._tag_latest = None
             self._error = "No releases available"
@@ -719,7 +719,7 @@ class Singleton_updater(object):
             self._error_msg = "Error: {}".format(error)
             return False
 
-        if self._backup_current == True:
+        if self._backup_current is True:
             self.create_backup()
         if self._verbose: print("Now retrieving the new source zip")
 
@@ -902,7 +902,7 @@ class Singleton_updater(object):
         # note: will not delete the update.json, update folder, staging, or staging
         # but will delete all other folders/files in addon directory
         error = None
-        if clean == True:
+        if clean is True:
             try:
                 # implement clearing of all folders/files, except the
                 # updater folder and updater json
@@ -1044,7 +1044,7 @@ class Singleton_updater(object):
         segments = []
         tmp = ''
         for l in str(text):
-            if l.isdigit() == False:
+            if l.isdigit() is False:
                 if len(tmp) > 0:
                     segments.append(int(tmp))
                     tmp = ''
@@ -1125,7 +1125,7 @@ class Singleton_updater(object):
 
         self.set_updater_json()  # self._json
 
-        if now is False and self.past_interval_timestamp() == False:
+        if now is False and self.past_interval_timestamp() is False:
             if self._verbose:
                 print("Aborting check for updated, check interval not reached")
             return (False, None, None)
@@ -1259,7 +1259,7 @@ class Singleton_updater(object):
             self._update_ready = False
             res = True  # fake "success" zip download flag
 
-        elif force == False:
+        elif force is False:
             if self._update_ready is not True:
                 if self._verbose: print("Update stopped, new version not ready")
                 return "Update stopped, new version not ready"
@@ -1268,13 +1268,13 @@ class Singleton_updater(object):
                 if self._verbose: print("Update stopped, update link unavailable")
                 return "Update stopped, update link unavailable"
 
-            if self._verbose and revert_tag == None:
+            if self._verbose and revert_tag is None:
                 print("Staging update")
             elif self._verbose:
                 print("Staging install")
 
             res = self.stage_repository(self._update_link)
-            if res != True:
+            if res is not True:
                 print("Error in staging repository: "+str(res))
                 if callback is not None: callback(self._error_msg)
                 return self._error_msg
@@ -1287,7 +1287,7 @@ class Singleton_updater(object):
             if self._verbose: print("Forcing update")
 
             res = self.stage_repository(self._update_link)
-            if res != True:
+            if res is not True:
                 print("Error in staging repository: "+str(res))
                 if callback is not None: callback(self._error_msg)
                 return self._error_msg
