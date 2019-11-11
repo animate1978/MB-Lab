@@ -1193,7 +1193,7 @@ class DisableSubdivision(bpy.types.Operator):
         global mblab_humanoid
         scn = bpy.context.scene
 
-        if mblab_humanoid.get_subd_visibility() == True:
+        if mblab_humanoid.get_subd_visibility() is True:
             mblab_humanoid.set_subd_visibility(False)
         return {'FINISHED'}
 
@@ -1228,7 +1228,7 @@ class DisableSmooth(bpy.types.Operator):
         global mblab_humanoid
         scn = bpy.context.scene
 
-        if mblab_humanoid.get_smooth_visibility() == True:
+        if mblab_humanoid.get_smooth_visibility() is True:
             mblab_humanoid.set_smooth_visibility(False)
         return {'FINISHED'}
 
@@ -1263,7 +1263,7 @@ class DisableDisplacement(bpy.types.Operator):
         global mblab_humanoid
         scn = bpy.context.scene
 
-        if mblab_humanoid.get_disp_visibility() == True:
+        if mblab_humanoid.get_disp_visibility() is True:
             mblab_humanoid.set_disp_visibility(False)
         return {'FINISHED'}
 
@@ -2288,7 +2288,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                             box_act_opt.prop(obj, meta_data_prop)
                     box_act_opt.operator("mbast.reset_allproperties", icon="RECOVER_LAST")
 
-                    #if mblab_humanoid.get_subd_visibility() == True:
+                    #if mblab_humanoid.get_subd_visibility() is True:
                         #self.layout.label(text="Tip: for slow PC, disable the subdivision in Display Options below", icon='INFO')
 
                 if gui_active_panel != "library":
