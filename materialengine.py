@@ -28,6 +28,7 @@ import os
 import time
 
 import bpy
+from . import material_ops
 from . import algorithms, utils, file_ops
 
 
@@ -174,10 +175,10 @@ class MaterialEngine:
     @staticmethod
     def assign_image_to_node(material_name, node_name, image_name):
         logger.info("Assigning the image %s to node %s", image_name, node_name)
-        mat_node = algorithms.get_material_node(material_name, node_name)
+        mat_node = material_ops.get_material_node(material_name, node_name)
         mat_image = file_ops.get_image(image_name)
         if mat_image:
-            algorithms.set_node_image(mat_node, mat_image)
+            material_ops.set_node_image(mat_node, mat_image)
         else:
             logger.warning("Node assignment failed. Image not found: %s", image_name)
 
@@ -186,16 +187,16 @@ class MaterialEngine:
         material_parameters = {}
 
         obj = self.get_object()
-        for material in algorithms.get_object_materials(obj):
+        for material in material_ops.get_object_materials(obj):
             if material.node_tree:
-                for node in algorithms.get_material_nodes(material):
+                for node in material_ops.get_material_nodes(material):
                     is_parameter = False
                     for param_identifier in self.parameter_identifiers:
                         if param_identifier in node.name:
                             is_parameter = True
                             break
                     if is_parameter:
-                        node_output_val = algorithms.get_node_output_value(node, 0)
+                        node_output_val = material_ops.get_node_output_value(node, 0)
                         material_parameters[node.name] = node_output_val
         return material_parameters
 
@@ -205,15 +206,15 @@ class MaterialEngine:
     def update_shaders(self, material_parameters=[], update_textures_nodes=True):
 
         obj = self.get_object()
-        for material in algorithms.get_object_materials(obj):
-            nodes = algorithms.get_material_nodes(material)
+        for material in material_ops.get_object_materials(obj):
+            nodes = material_ops.get_material_nodes(material)
             if not nodes:
                 continue
 
             for node in nodes:
                 if node.name in material_parameters:
                     value = material_parameters[node.name]
-                    algorithms.set_node_output_value(node, 0, value)
+                    material_ops.set_node_output_value(node, 0, value)
                 elif update_textures_nodes:
                     if "_skn_albedo" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["body_derm"])
@@ -254,7 +255,7 @@ class MaterialEngine:
 
     def rename_skin_shaders(self, prefix):
         obj = self.get_object()
-        for material in algorithms.get_object_materials(obj):
+        for material in material_ops.get_object_materials(obj):
             if prefix != "":
                 material.name = prefix + "_" + material.name
             else:
