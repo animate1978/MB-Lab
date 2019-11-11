@@ -29,7 +29,7 @@ import os
 import json as js
 from copy import deepcopy as dc
 
-from . import algorithms
+from . import file_ops
 from . import object_ops
 
 
@@ -39,7 +39,7 @@ from . import object_ops
 # ------------------------------------------------------------------------
 
 def get_hair_data(fileName):
-    data_dir = algorithms.get_data_path()
+    data_dir = file_ops.get_data_path()
     hair_dir = os.path.join(data_dir, "Particle_Hair")
     fn = fileName + '_hair.json'
     fpath = os.path.join(hair_dir, fn)
@@ -69,7 +69,7 @@ def add_scalp(Name):
     gs = object_ops.get_sel()
     viw = object_ops.vg_idx_dict(gs)
     vid = object_ops.vidx_dict()
-    object_ops.obj_new(Name, gs[0], gs[1], "ManuelBastioni_Character")
+    object_ops.obj_new(Name, gs[0], gs[1], "MB_LAB_Character")
     try:
         object_ops.copy_wt(Name, viw, vid)
     except:

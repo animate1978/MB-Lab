@@ -7,7 +7,7 @@ The Face Rig is designed to help animate the facial expressions using a custom r
 
 This rig controls various expressions of a MB-Lab character by using the controls shown above.
 
-.. image:: images/facerig_GUI.png
+.. image:: images/GUI_facerig_01.png
 
 To add the rig, just click on the Add Face Rig button for your finalized character.
 
