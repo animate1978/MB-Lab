@@ -30,30 +30,30 @@ from math import radians, degrees
 # ------------------------------------------------------------------------
 
 MB_list = [
-        "root",        #0
-        "head",        #1
-        "neck",        #2
-        "clavicle_L",  #3
-        "clavicle_R",  #4
-        "breast_L",    #5
-        "breast_R",    #6
-        "spine03",     #7
-        "spine02",     #8
-        "spine01",     #9
-        "pelvis",      #10
-        "thigh_L",     #11
-        "calf_L",      #12
-        "foot_L",      #13
-        "thigh_R",     #14
-        "calf_R",      #15
-        "foot_R",      #16
-        "upperarm_L",  #17
-        "lowerarm_L",  #18
-        "hand_L",      #19
-        "upperarm_R",  #20
-        "lowerarm_R",  #21
-        "hand_R"       #22
-        ]
+    "root",        #0
+    "head",        #1
+    "neck",        #2
+    "clavicle_L",  #3
+    "clavicle_R",  #4
+    "breast_L",    #5
+    "breast_R",    #6
+    "spine03",     #7
+    "spine02",     #8
+    "spine01",     #9
+    "pelvis",      #10
+    "thigh_L",     #11
+    "calf_L",      #12
+    "foot_L",      #13
+    "thigh_R",     #14
+    "calf_R",      #15
+    "foot_R",      #16
+    "upperarm_L",  #17
+    "lowerarm_L",  #18
+    "hand_L",      #19
+    "upperarm_R",  #20
+    "lowerarm_R",  #21
+    "hand_R"       #22
+    ]
 
 #left hand
 thumb_l = ["thumb01_L", "thumb02_L", "thumb03_L"]
@@ -71,36 +71,36 @@ pinky_r = ["pinky00_R", "pinky01_R", "pinky02_R", "pinky03_R"]
 fingers = thumb_l + index_l + middle_l + ring_l + pinky_l + thumb_r + index_r + middle_r + ring_r + pinky_r
 
 rotation_limits_dict = {
-        MB_list[1]: [-22, 37, -45, 45, -30, 30],    #"head"
-        MB_list[2]: [-22, 37, -45, 45, -30, 30],    #"neck"
-        MB_list[3]: [-30, 30, 0, 0, -30, 10],       #"clavicle_L"
-        MB_list[4]: [-30, 30, 0, 0, -10, 30],       #"clavicle_R"
-        #MB_list[10]: [-22, 45, -45, 45, -15, 15],   #"pelvis"
-        MB_list[9]: [-45, 68, -45, 45, -30, 30],    #"spine01"
-        MB_list[8]: [-45, 68, -45, 45, -30, 30],    #"spine02"
-        MB_list[7]: [-45, 22, -45, 45, -30, 30],    #"spine03"
-        MB_list[17]: [-58, 95, -15, 30, -60, 105],  #"upperarm_L"
-        MB_list[20]: [-58, 95, -30, 15, -105, 60],  #"upperarm_R"
-        MB_list[18]: [0, 146, 0, 15, 0, 0],        #"lowerarm_L"
-        MB_list[21]: [0, 146, -15, 0, 0, 0],       #"lowerarm_R"
-        MB_list[19]: [-45, 45, -90, 86, -25, 36],   #"hand_L"
-        MB_list[22]: [-45, 45, -86, 90, -36, 25],   #"hand_R"
-        MB_list[11]: [-90, 45, -15, 15, -22, 17],   #"thigh_L"
-        MB_list[14]: [-90, 45, -15, 15, -22, 17],   #"thigh_R"
-        MB_list[12]: [-150, 0, 0, 0, 0, 0],         #"calf_L"
-        MB_list[15]: [-150, 0, 0, 0, 0, 0],         #"calf_R"
-        MB_list[13]: [-44, 45, -26, 26, -15, 74],   #"foot_L"
-        MB_list[16]: [-45, 44, -26, 26, -74, 15],   #"foot_R"
-        }
+    MB_list[1]: [-22, 37, -45, 45, -30, 30],    #"head"
+    MB_list[2]: [-22, 37, -45, 45, -30, 30],    #"neck"
+    MB_list[3]: [-30, 30, 0, 0, -30, 10],       #"clavicle_L"
+    MB_list[4]: [-30, 30, 0, 0, -10, 30],       #"clavicle_R"
+    #MB_list[10]: [-22, 45, -45, 45, -15, 15],   #"pelvis"
+    MB_list[9]: [-45, 68, -45, 45, -30, 30],    #"spine01"
+    MB_list[8]: [-45, 68, -45, 45, -30, 30],    #"spine02"
+    MB_list[7]: [-45, 22, -45, 45, -30, 30],    #"spine03"
+    MB_list[17]: [-58, 95, -15, 30, -60, 105],  #"upperarm_L"
+    MB_list[20]: [-58, 95, -30, 15, -105, 60],  #"upperarm_R"
+    MB_list[18]: [0, 146, 0, 15, 0, 0],        #"lowerarm_L"
+    MB_list[21]: [0, 146, -15, 0, 0, 0],       #"lowerarm_R"
+    MB_list[19]: [-45, 45, -90, 86, -25, 36],   #"hand_L"
+    MB_list[22]: [-45, 45, -86, 90, -36, 25],   #"hand_R"
+    MB_list[11]: [-90, 45, -15, 15, -22, 17],   #"thigh_L"
+    MB_list[14]: [-90, 45, -15, 15, -22, 17],   #"thigh_R"
+    MB_list[12]: [-150, 0, 0, 0, 0, 0],         #"calf_L"
+    MB_list[15]: [-150, 0, 0, 0, 0, 0],         #"calf_R"
+    MB_list[13]: [-44, 45, -26, 26, -15, 74],   #"foot_L"
+    MB_list[16]: [-45, 44, -26, 26, -74, 15],   #"foot_R"
+    }
 
 #Dictionary for fingers
 def finger_dict(fingers):
     fd = {}
     for finger in fingers:
         if "00_" in finger:
-            fd.update({finger: [0,0,0,0,-5,5]})
+            fd.update({finger: [0, 0, 0, 0, -5, 5]})
         else:
-            fd.update({finger: [-90,0,0,0,-5,5]})
+            fd.update({finger: [-90, 0, 0, 0, -5, 5]})
     return fd
 
 fd = finger_dict(fingers)

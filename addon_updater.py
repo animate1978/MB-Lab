@@ -81,7 +81,7 @@ class Singleton_updater(object):
         self._backup_ignore_patterns = None
 
         # set patterns for what files to overwrite on update
-        self._overwrite_patterns = ["*.py","*.pyc"]
+        self._overwrite_patterns = ["*.py", "*.pyc"]
         self._remove_pre_update_patterns = []
 
         # by default, don't auto enable/disable the addon on update
@@ -110,7 +110,7 @@ class Singleton_updater(object):
         self._addon = __package__.lower()
         self._addon_package = __package__  # must not change
         self._updater_path = os.path.join(os.path.dirname(__file__),
-                                        self._addon+"_updater")
+                                          self._addon+"_updater")
         self._addon_root = os.path.dirname(__file__)
         self._json = {}
         self._error = None
@@ -185,7 +185,7 @@ class Singleton_updater(object):
         if value is None:
             self._backup_ignore_patterns = None
             return
-        elif type(value) != type(['list']):
+        elif not isinstance(value, list):
             raise ValueError("Backup pattern must be in list format")
         else:
             self._backup_ignore_patterns = value
@@ -203,19 +203,19 @@ class Singleton_updater(object):
         return self._current_version
     @current_version.setter
     def current_version(self, tuple_values):
-        if tuple_values==None:
+        if tuple_values is None:
             self._current_version = None
             return
-        elif type(tuple_values) is not tuple:
+        elif not isinstance(tuple_values, tuple):
             try:
                 tuple(tuple_values)
             except:
                 raise ValueError(
-                "Not a tuple! current_version must be a tuple of integers")
+                    "Not a tuple! current_version must be a tuple of integers")
         for i in tuple_values:
-            if type(i) is not int:
+            if not isinstance(i, int):
                 raise ValueError(
-                "Not an integer! current_version must be a tuple of integers")
+                    "Not an integer! current_version must be a tuple of integers")
         self._current_version = tuple(tuple_values)
 
     @property
@@ -223,11 +223,11 @@ class Singleton_updater(object):
         return self._engine.name
     @engine.setter
     def engine(self, value):
-        if value.lower()=="github":
+        if value.lower() == "github":
             self._engine = GithubEngine()
-        elif value.lower()=="gitlab":
+        elif value.lower() == "gitlab":
             self._engine = GitlabEngine()
-        elif value.lower()=="bitbucket":
+        elif value.lower() == "bitbucket":
             self._engine = BitbucketEngine()
         else:
             raise ValueError("Invalid engine selection")
@@ -245,7 +245,7 @@ class Singleton_updater(object):
         return self._fake_install
     @fake_install.setter
     def fake_install(self, value):
-        if type(value) != type(False):
+        if not isinstance(value, bool):
             raise ValueError("fake_install must be a boolean value")
         self._fake_install = bool(value)
 
@@ -268,7 +268,7 @@ class Singleton_updater(object):
         try:
             if value is None:
                 self._include_branch_list = ['master']
-            elif type(value) != type(['master']) or value==[]:
+            elif not isinstance(value, list) or value == []:
                 raise ValueError("include_branch_list should be a list of valid branches")
             else:
                 self._include_branch_list = value
@@ -313,8 +313,8 @@ class Singleton_updater(object):
     @overwrite_patterns.setter
     def overwrite_patterns(self, value):
         if value is None:
-            self._overwrite_patterns = ["*.py","*.pyc"]
-        elif type(value) != type(['']):
+            self._overwrite_patterns = ["*.py", "*.pyc"]
+        elif not isinstance(value, list):
             raise ValueError("overwrite_patterns needs to be in a list format")
         else:
             self._overwrite_patterns = value
@@ -324,7 +324,7 @@ class Singleton_updater(object):
         return self._engine.token
     @private_token.setter
     def private_token(self, value):
-        if value==None:
+        if value is None:
             self._engine.token = None
         else:
             self._engine.token = str(value)
@@ -336,7 +336,7 @@ class Singleton_updater(object):
     def remove_pre_update_patterns(self, value):
         if value is None:
             self._remove_pre_update_patterns = []
-        elif type(value) != type(['']):
+        elif not isinstance(value, list):
             raise ValueError("remove_pre_update_patterns needs to be in a list format")
         else:
             self._remove_pre_update_patterns = value
@@ -452,10 +452,10 @@ class Singleton_updater(object):
         if value is None:
             self._version_max_update = None
             return
-        if type(value) != type((1,2,3)):
+        if not isinstance(value, tuple):
             raise ValueError("Version maximum must be a tuple")
         for subvalue in value:
-            if type(subvalue) != int:
+            if not isinstance(subvalue, int):
                 raise ValueError("Version elements must be integers")
         self._version_max_update = value
 
@@ -467,10 +467,10 @@ class Singleton_updater(object):
         if value is None:
             self._version_min_update = None
             return
-        if type(value) != type((1,2,3)):
+        if not isinstance(value, tuple):
             raise ValueError("Version minimum must be a tuple")
         for subvalue in value:
-            if type(subvalue) != int:
+            if not isinstance(subvalue, int):
                 raise ValueError("Version elements must be integers")
         self._version_min_update = value
 
@@ -503,22 +503,22 @@ class Singleton_updater(object):
             tag_names.append(tag["name"])
         return tag_names
 
-    def set_check_interval(self,enable=False,months=0,days=14,hours=0,minutes=0):
+    def set_check_interval(self, enable=False, months=0, days=14, hours=0, minutes=0):
         # enabled = False, default initially will not check against frequency
         # if enabled, default is then 2 weeks
 
-        if type(enable) is not bool:
+        if not isinstance(enable, bool):
             raise ValueError("Enable must be a boolean value")
-        if type(months) is not int:
+        if not isinstance(months, int):
             raise ValueError("Months must be an integer value")
-        if type(days) is not int:
+        if not isinstance(days, int):
             raise ValueError("Days must be an integer value")
-        if type(hours) is not int:
+        if not isinstance(hours, int):
             raise ValueError("Hours must be an integer value")
-        if type(minutes) is not int:
+        if not isinstance(minutes, int):
             raise ValueError("Minutes must be an integer value")
 
-        if enable==False:
+        if enable is False:
             self._check_interval_enable = False
         else:
             self._check_interval_enable = True
@@ -535,8 +535,9 @@ class Singleton_updater(object):
 
     def __str__(self):
         return "Updater, with user: {a}, repository: {b}, url: {c}".format(
-                        a=self._user,
-                        b=self._repo, c=self.form_repo_url())
+            a=self._user,
+            b=self._repo,
+            c=self.form_repo_url())
 
 
     # -------------------------------------------------------------------------
@@ -566,7 +567,7 @@ class Singleton_updater(object):
 
         # pre-process to skip tags
         if self.skip_tag is not None:
-            self._tags = [tg for tg in all_tags if self.skip_tag(self, tg)==False]
+            self._tags = [tg for tg in all_tags if self.skip_tag(self, tg) is False]
         else:
             self._tags = all_tags
 
@@ -578,8 +579,8 @@ class Singleton_updater(object):
             for branch in temp_branches:
                 request = self.form_branch_url(branch)
                 include = {
-                    "name":branch.title(),
-                    "zipball_url":request
+                    "name": branch.title(),
+                    "zipball_url": request
                 }
                 self._tags = [include] + self._tags  # append to front
 
@@ -599,8 +600,8 @@ class Singleton_updater(object):
             if self._verbose:
                 branch = self._include_branch_list[0]
                 print("{} branch found, no releases".format(branch), self._tags[0])
-        elif (len(self._tags)-len(self._include_branch_list)==0 and self._include_branches==True) \
-                or (len(self._tags)==0 and self._include_branches==False) \
+        elif (len(self._tags)-len(self._include_branch_list) == 0 and self._include_branches is True) \
+                or (len(self._tags) == 0 and self._include_branches is False) \
                 and self._prefiltered_tag_count > 0:
             self._tag_latest = None
             self._error = "No releases available"
@@ -609,12 +610,14 @@ class Singleton_updater(object):
         else:
             if self._include_branches is False:
                 self._tag_latest = self._tags[0]
-                if self._verbose: print("Most recent tag found:",self._tags[0]['name'])
+                if self._verbose:
+                    print("Most recent tag found:", self._tags[0]['name'])
             else:
                 # don't return branch if in list
                 n = len(self._include_branch_list)
                 self._tag_latest = self._tags[n]  # guaranteed at least len()=n+1
-                if self._verbose: print("Most recent tag found:",self._tags[n]['name'])
+                if self._verbose:
+                    print("Most recent tag found:", self._tags[n]['name'])
 
 
     # all API calls to base url
@@ -631,7 +634,7 @@ class Singleton_updater(object):
         # setup private request headers if appropriate
         if self._engine.token is not None:
             if self._engine.name == "gitlab":
-                request.add_header('PRIVATE-TOKEN',self._engine.token)
+                request.add_header('PRIVATE-TOKEN', self._engine.token)
             else:
                 if self._verbose: print("Tokens not setup for engine yet")
 
@@ -690,12 +693,13 @@ class Singleton_updater(object):
     # create a working directory and download the new files
     def stage_repository(self, url):
 
-        local = os.path.join(self._updater_path,"update_staging")
+        local = os.path.join(self._updater_path, "update_staging")
         error = None
 
         # make/clear the staging folder
         # ensure the folder is always "clean"
-        if self._verbose: print("Preparing staging folder for download:\n",local)
+        if self._verbose:
+            print("Preparing staging folder for download:\n", local)
         if os.path.isdir(local) is True:
             try:
                 shutil.rmtree(local)
@@ -709,16 +713,17 @@ class Singleton_updater(object):
                 error = "failed to create staging directory"
 
         if error is not None:
-            if self._verbose: print("Error: Aborting update, "+error)
+            if self._verbose:
+                print("Error: Aborting update, "+error)
             self._error = "Update aborted, staging path error"
             self._error_msg = "Error: {}".format(error)
             return False
 
-        if self._backup_current==True:
+        if self._backup_current is True:
             self.create_backup()
         if self._verbose: print("Now retrieving the new source zip")
 
-        self._source_zip = os.path.join(local,"source.zip")
+        self._source_zip = os.path.join(local, "source.zip")
 
         if self._verbose: print("Starting download update zip")
         try:
@@ -728,10 +733,10 @@ class Singleton_updater(object):
             # setup private token if appropriate
             if self._engine.token is not None:
                 if self._engine.name == "gitlab":
-                    request.add_header('PRIVATE-TOKEN',self._engine.token)
+                    request.add_header('PRIVATE-TOKEN', self._engine.token)
                 else:
                     if self._verbose: print("Tokens not setup for selected engine yet")
-            self.urlretrieve(urllib.request.urlopen(request,context=context), self._source_zip)
+            self.urlretrieve(urllib.request.urlopen(request, context=context), self._source_zip)
             # add additional checks on file size being non-zero
             if self._verbose: print("Successfully downloaded update zip")
             return True
@@ -746,54 +751,58 @@ class Singleton_updater(object):
 
     def create_backup(self):
         if self._verbose: print("Backing up current addon folder")
-        local = os.path.join(self._updater_path,"backup")
-        tempdest = os.path.join(self._addon_root,
-                        os.pardir,
-                        self._addon+"_updater_backup_temp")
+        local = os.path.join(self._updater_path, "backup")
+        tempdest = os.path.join(
+            self._addon_root,
+            os.pardir,
+            self._addon+"_updater_backup_temp")
 
-        if self._verbose: print("Backup destination path: ",local)
+        if self._verbose:
+            print("Backup destination path: ", local)
 
         if os.path.isdir(local):
             try:
                 shutil.rmtree(local)
             except:
-                if self._verbose:print("Failed to removed previous backup folder, contininuing")
+                if self._verbose:
+                    print("Failed to removed previous backup folder, contininuing")
 
         # remove the temp folder; shouldn't exist but could if previously interrupted
         if os.path.isdir(tempdest):
             try:
                 shutil.rmtree(tempdest)
             except:
-                if self._verbose:print("Failed to remove existing temp folder, contininuing")
+                if self._verbose:
+                    print("Failed to remove existing temp folder, contininuing")
         # make the full addon copy, which temporarily places outside the addon folder
         if self._backup_ignore_patterns is not None:
             shutil.copytree(
-                self._addon_root,tempdest,
+                self._addon_root, tempdest,
                 ignore=shutil.ignore_patterns(*self._backup_ignore_patterns))
         else:
-            shutil.copytree(self._addon_root,tempdest)
-        shutil.move(tempdest,local)
+            shutil.copytree(self._addon_root, tempdest)
+        shutil.move(tempdest, local)
 
         # save the date for future ref
         now = datetime.now()
         self._json["backup_date"] = "{m}-{d}-{yr}".format(
-                m=now.strftime("%B"),d=now.day,yr=now.year)
+            m=now.strftime("%B"), d=now.day, yr=now.year)
         self.save_updater_json()
 
     def restore_backup(self):
         if self._verbose: print("Restoring backup")
 
         if self._verbose: print("Backing up current addon folder")
-        backuploc = os.path.join(self._updater_path,"backup")
+        backuploc = os.path.join(self._updater_path, "backup")
         tempdest = os.path.join(self._addon_root,
-                        os.pardir,
-                        self._addon+"_updater_backup_temp")
+                                os.pardir,
+                                self._addon+"_updater_backup_temp")
         tempdest = os.path.abspath(tempdest)
 
         # make the copy
-        shutil.move(backuploc,tempdest)
+        shutil.move(backuploc, tempdest)
         shutil.rmtree(self._addon_root)
-        os.rename(tempdest,self._addon_root)
+        os.rename(tempdest, self._addon_root)
 
         self._json["backup_date"] = ""
         self._json["just_restored"] = True
@@ -802,32 +811,36 @@ class Singleton_updater(object):
 
         self.reload_addon()
 
-    def unpack_staged_zip(self,clean=False):
+    def unpack_staged_zip(self, clean=False):
 
         if os.path.isfile(self._source_zip) is False:
-            if self._verbose: print("Error, update zip not found")
+            if self._verbose:
+                print("Error, update zip not found")
             return -1
 
         # clear the existing source folder in case previous files remain
         try:
-            shutil.rmtree(os.path.join(self._updater_path,"source"))
-            os.makedirs(os.path.join(self._updater_path,"source"))
-            if self._verbose: print("Source folder cleared and recreated")
+            shutil.rmtree(os.path.join(self._updater_path, "source"))
+            os.makedirs(os.path.join(self._updater_path, "source"))
+            if self._verbose:
+                print("Source folder cleared and recreated")
         except:
             pass
 
-        if self._verbose: print("Begin extracting source")
+        if self._verbose:
+            print("Begin extracting source")
         if zipfile.is_zipfile(self._source_zip):
             with zipfile.ZipFile(self._source_zip) as zf:
                 # extractall is no longer a security hazard, below is safe
-                zf.extractall(os.path.join(self._updater_path,"source"))
+                zf.extractall(os.path.join(self._updater_path, "source"))
         else:
             if self._verbose:
                 print("Not a zip file, future add support for just .py files")
             raise ValueError("Resulting file is not a zip")
-        if self._verbose: print("Extracted source")
+        if self._verbose:
+            print("Extracted source")
 
-        unpath = os.path.join(self._updater_path,"source")
+        unpath = os.path.join(self._updater_path, "source")
         if not os.path.isdir(unpath):
             self._error = "Install failed"
             self._error_msg = "Extracted path does not exist"
@@ -839,9 +852,9 @@ class Singleton_updater(object):
             self._subfolder_path.replace('\\', os.path.sep)
 
         # either directly in root of zip/one subfolder, or use specified path
-        if os.path.isfile(os.path.join(unpath,"__init__.py")) is False:
+        if os.path.isfile(os.path.join(unpath, "__init__.py")) is False:
             dirlist = os.listdir(unpath)
-            if len(dirlist)>0:
+            if len(dirlist) > 0:
                 if self._subfolder_path == "" or self._subfolder_path is None:
                     unpath = os.path.join(unpath, dirlist[0])
                 else:
@@ -849,7 +862,7 @@ class Singleton_updater(object):
 
             # smarter check for additional sub folders for a single folder
             # containing __init__.py
-            if os.path.isfile(os.path.join(unpath,"__init__.py")) is False:
+            if os.path.isfile(os.path.join(unpath, "__init__.py")) is False:
                 if self._verbose:
                     print("not a valid addon found")
                     print("Paths:")
@@ -871,7 +884,7 @@ class Singleton_updater(object):
 
 
     # merge folder 'merger' into folder 'base' without deleting existing
-    def deepMergeDirectory(self,base,merger,clean=False):
+    def deepMergeDirectory(self, base, merger, clean=False):
         if not os.path.exists(base):
             if self._verbose:
                 print("Base path does not exist:", base)
@@ -882,14 +895,14 @@ class Singleton_updater(object):
             return -1
 
         # paths to be aware of and not overwrite/remove/etc
-        staging_path = os.path.join(self._updater_path,"update_staging")
-        backup_path = os.path.join(self._updater_path,"backup")
+        staging_path = os.path.join(self._updater_path, "update_staging")
+        backup_path = os.path.join(self._updater_path, "backup")
 
         # If clean install is enabled, clear existing files ahead of time
         # note: will not delete the update.json, update folder, staging, or staging
         # but will delete all other folders/files in addon directory
         error = None
-        if clean==True:
+        if clean is True:
             try:
                 # implement clearing of all folders/files, except the
                 # updater folder and updater json
@@ -899,16 +912,17 @@ class Singleton_updater(object):
                 if self._verbose: print("clean=True, clearing addon folder to fresh install state")
 
                 # remove root files and folders (except update folder)
-                files = [f for f in os.listdir(base) if os.path.isfile(os.path.join(base,f))]
-                folders = [f for f in os.listdir(base) if os.path.isdir(os.path.join(base,f))]
+                files = [f for f in os.listdir(base) if os.path.isfile(os.path.join(base, f))]
+                folders = [f for f in os.listdir(base) if os.path.isdir(os.path.join(base, f))]
 
                 for f in files:
-                    os.remove(os.path.join(base,f))
-                    print("Clean removing file {}".format(os.path.join(base,f)))
+                    os.remove(os.path.join(base, f))
+                    print("Clean removing file {}".format(os.path.join(base, f)))
                 for f in folders:
-                    if os.path.join(base,f)==self._updater_path: continue
-                    shutil.rmtree(os.path.join(base,f))
-                    print("Clean removing folder and contents {}".format(os.path.join(base,f)))
+                    if os.path.join(base, f) == self._updater_path:
+                        continue
+                    shutil.rmtree(os.path.join(base, f))
+                    print("Clean removing folder and contents {}".format(os.path.join(base, f)))
 
             except Exception as err:
                 error = "failed to create clean existing addon folder"
@@ -918,14 +932,15 @@ class Singleton_updater(object):
         # but avoid removing/altering backup and updater file
         for path, dirs, files in os.walk(base):
             # prune ie skip updater folder
-            dirs[:] = [d for d in dirs if os.path.join(path,d) not in [self._updater_path]]
+            dirs[:] = [d for d in dirs if os.path.join(path, d) not in [self._updater_path]]
             for file in files:
                 for ptrn in self.remove_pre_update_patterns:
-                    if fnmatch.filter([file],ptrn):
+                    if fnmatch.filter([file], ptrn):
                         try:
-                            fl = os.path.join(path,file)
+                            fl = os.path.join(path, file)
                             os.remove(fl)
-                            if self._verbose: print("Pre-removed file "+file)
+                            if self._verbose:
+                                print("Pre-removed file "+file)
                         except OSError:
                             print("Failed to pre-remove "+file)
 
@@ -935,7 +950,7 @@ class Singleton_updater(object):
         # actual file copying/replacements
         for path, dirs, files in os.walk(merger):
             # verify this structure works to prune updater sub folder overwriting
-            dirs[:] = [d for d in dirs if os.path.join(path,d) not in [self._updater_path]]
+            dirs[:] = [d for d in dirs if os.path.join(path, d) not in [self._updater_path]]
             relPath = os.path.relpath(path, merger)
             destPath = os.path.join(base, relPath)
             if not os.path.exists(destPath):
@@ -949,28 +964,32 @@ class Singleton_updater(object):
                 # decide whether to replace if file already exists, and copy new over
                 if os.path.isfile(destFile):
                     # otherwise, check each file to see if matches an overwrite pattern
-                    replaced=False
+                    replaced = False
                     for ptrn in self._overwrite_patterns:
-                        if fnmatch.filter([destFile],ptrn):
-                            replaced=True
+                        if fnmatch.filter([destFile], ptrn):
+                            replaced = True
                             break
                     if replaced:
                         os.remove(destFile)
                         os.rename(srcFile, destFile)
-                        if self._verbose: print("Overwrote file "+os.path.basename(destFile))
+                        if self._verbose:
+                            print("Overwrote file "+os.path.basename(destFile))
                     else:
-                        if self._verbose: print("Pattern not matched to "+os.path.basename(destFile)+", not overwritten")
+                        if self._verbose:
+                            print("Pattern not matched to "+os.path.basename(destFile)+", not overwritten")
                 else:
                     # file did not previously exist, simply move it over
                     os.rename(srcFile, destFile)
-                    if self._verbose: print("New file "+os.path.basename(destFile))
+                    if self._verbose:
+                        print("New file "+os.path.basename(destFile))
 
         # now remove the temp staging folder and downloaded zip
         try:
             shutil.rmtree(staging_path)
         except:
             error = "Error: Failed to remove existing staging directory, consider manually removing "+staging_path
-            if self._verbose: print(error)
+            if self._verbose:
+                print(error)
 
 
     def reload_addon(self):
@@ -1017,7 +1036,7 @@ class Singleton_updater(object):
         f.close()
 
 
-    def version_tuple_from_text(self,text):
+    def version_tuple_from_text(self, text):
         if text is None: return ()
 
         # should go through string and remove all non-integers,
@@ -1025,27 +1044,28 @@ class Singleton_updater(object):
         segments = []
         tmp = ''
         for l in str(text):
-            if l.isdigit()==False:
-                if len(tmp)>0:
+            if l.isdigit() is False:
+                if len(tmp) > 0:
                     segments.append(int(tmp))
                     tmp = ''
             else:
-                tmp+=l
-        if len(tmp)>0:
+                tmp += l
+        if len(tmp) > 0:
             segments.append(int(tmp))
 
-        if len(segments)==0:
-            if self._verbose: print("No version strings found text: ",text)
+        if len(segments) == 0:
+            if self._verbose:
+                print("No version strings found text: ", text)
             if self._include_branches is False:
                 return ()
             else:
-                return (text)
+                return (text,)
         return tuple(segments)
 
     # called for running check in a background thread
     def check_for_update_async(self, callback=None):
 
-        if self._json is not None and "update_ready" in self._json and self._json["version_text"]!={}:
+        if self._json is not None and "update_ready" in self._json and self._json["version_text"] != {}:
             if self._json["update_ready"] is True:
                 self._update_ready = True
                 self._update_link = self._json["version_text"]["link"]
@@ -1058,7 +1078,8 @@ class Singleton_updater(object):
         if self._check_interval_enable is False:
             return
         elif self._async_checking is True:
-            if self._verbose: print("Skipping async check, already started")
+            if self._verbose:
+                print("Skipping async check, already started")
             return  # already running the bg thread
         elif self._update_ready is None:
             self.start_async_check_update(False, callback)
@@ -1093,7 +1114,7 @@ class Singleton_updater(object):
         # avoid running again in, just return past result if found
         # but if force now check, then still do it
         if self._update_ready is not None and now is False:
-            return (self._update_ready,self._update_version,self._update_link)
+            return (self._update_ready, self._update_version, self._update_link)
 
         if self._current_version is None:
             raise ValueError("current_version not yet defined")
@@ -1104,7 +1125,7 @@ class Singleton_updater(object):
 
         self.set_updater_json()  # self._json
 
-        if now is False and self.past_interval_timestamp()==False:
+        if now is False and self.past_interval_timestamp() is False:
             if self._verbose:
                 print("Aborting check for updated, check interval not reached")
             return (False, None, None)
@@ -1129,7 +1150,7 @@ class Singleton_updater(object):
         # can be () or ('master') in addition to branches, and version tag
         new_version = self.version_tuple_from_text(self.tag_latest)
 
-        if len(self._tags)==0:
+        if len(self._tags) == 0:
             self._update_ready = False
             self._update_version = None
             self._update_link = None
@@ -1138,7 +1159,7 @@ class Singleton_updater(object):
             link = self.select_link(self, self._tags[0])
         else:
             n = len(self._include_branch_list)
-            if len(self._tags)==n:
+            if len(self._tags) == n:
                 # effectively means no tags found on repo
                 # so provide the first one as default
                 link = self.select_link(self, self._tags[0])
@@ -1194,7 +1215,7 @@ class Singleton_updater(object):
         return (False, None, None)
 
 
-    def set_tag(self,name):
+    def set_tag(self, name):
         tg = None
         for tag in self._tags:
             if name == tag["name"]:
@@ -1207,7 +1228,7 @@ class Singleton_updater(object):
         self._update_link = self.select_link(self, tg)
 
 
-    def run_update(self,force=False,revert_tag=None,clean=False,callback=None):
+    def run_update(self, force=False, revert_tag=None, clean=False, callback=None):
         # revert_tag: could e.g. get from drop down list
         # different versions of the addon to revert back to
         # clean: not used, but in future could use to totally refresh addon
@@ -1238,7 +1259,7 @@ class Singleton_updater(object):
             self._update_ready = False
             res = True  # fake "success" zip download flag
 
-        elif force==False:
+        elif force is False:
             if self._update_ready is not True:
                 if self._verbose: print("Update stopped, new version not ready")
                 return "Update stopped, new version not ready"
@@ -1247,13 +1268,13 @@ class Singleton_updater(object):
                 if self._verbose: print("Update stopped, update link unavailable")
                 return "Update stopped, update link unavailable"
 
-            if self._verbose and revert_tag==None:
+            if self._verbose and revert_tag is None:
                 print("Staging update")
             elif self._verbose:
                 print("Staging install")
 
             res = self.stage_repository(self._update_link)
-            if res !=True:
+            if res is not True:
                 print("Error in staging repository: "+str(res))
                 if callback is not None: callback(self._error_msg)
                 return self._error_msg
@@ -1266,7 +1287,7 @@ class Singleton_updater(object):
             if self._verbose: print("Forcing update")
 
             res = self.stage_repository(self._update_link)
-            if res !=True:
+            if res is not True:
                 print("Error in staging repository: "+str(res))
                 if callback is not None: callback(self._error_msg)
                 return self._error_msg
@@ -1289,7 +1310,7 @@ class Singleton_updater(object):
         else:
             now = datetime.now()
             last_check = datetime.strptime(self._json["last_check"],
-                                        "%Y-%m-%d %H:%M:%S.%f")
+                                           "%Y-%m-%d %H:%M:%S.%f")
             next_check = last_check
             offset = timedelta(
                 days=self._check_interval_days + 30*self._check_interval_months,
@@ -1313,7 +1334,7 @@ class Singleton_updater(object):
         Will also rename old file paths to addon-specific path if found
         """
         json_path = os.path.join(self._updater_path,
-            "{}_updater_status.json".format(self._addon_package))
+                                 "{}_updater_status.json".format(self._addon_package))
         old_json_path = os.path.join(self._updater_path, "updater_status.json")
 
         # rename old file if it exists
@@ -1343,12 +1364,12 @@ class Singleton_updater(object):
         else:
             # set data structure
             self._json = {
-                "last_check":"",
-                "backup_date":"",
-                "update_ready":False,
-                "ignore":False,
-                "just_restored":False,
-                "just_updated":False,
+                "last_check": "",
+                "backup_date": "",
+                "update_ready": False,
+                "ignore": False,
+                "just_restored": False,
+                "just_updated": False,
                 "version_text":{}
             }
             self.save_updater_json()
@@ -1357,10 +1378,10 @@ class Singleton_updater(object):
     def save_updater_json(self):
         # first save the state
         if self._update_ready is True:
-            if type(self._update_version) == type((0,0,0)):
+            if isinstance(self._update_version, tuple):
                 self._json["update_ready"] = True
-                self._json["version_text"]["link"]=self._update_link
-                self._json["version_text"]["version"]=self._update_version
+                self._json["version_text"]["link"] = self._update_link
+                self._json["version_text"]["version"] = self._update_version
             else:
                 self._json["update_ready"] = False
                 self._json["version_text"] = {}
@@ -1369,7 +1390,7 @@ class Singleton_updater(object):
             self._json["version_text"] = {}
 
         jpath = self.get_json_path()
-        outf = open(jpath,'w')
+        outf = open(jpath, 'w')
         data_out = json.dumps(self._json, indent=4)
         outf.write(data_out)
         outf.close()
@@ -1407,7 +1428,7 @@ class Singleton_updater(object):
             print("{} updater: Starting background checking thread".format(
                 self._addon))
         check_thread = threading.Thread(target=self.async_check_update,
-                                        args=(now,callback,))
+                                        args=(now, callback,))
         check_thread.daemon = True
         self._check_thread = check_thread
         check_thread.start()
@@ -1500,21 +1521,21 @@ class GithubEngine(object):
         self.name = "github"
 
     def form_repo_url(self, updater):
-        return "{}{}{}{}{}".format(self.api_url,"/repos/",updater.user,
-                                "/",updater.repo)
+        return "{}{}{}{}{}".format(self.api_url, "/repos/", updater.user,
+                                   "/",updater.repo)
 
     def form_tags_url(self, updater):
         if updater.use_releases:
-            return "{}{}".format(self.form_repo_url(updater),"/releases")
+            return "{}{}".format(self.form_repo_url(updater), "/releases")
         else:
-            return "{}{}".format(self.form_repo_url(updater),"/tags")
+            return "{}{}".format(self.form_repo_url(updater), "/tags")
 
     def form_branch_list_url(self, updater):
-        return "{}{}".format(self.form_repo_url(updater),"/branches")
+        return "{}{}".format(self.form_repo_url(updater), "/branches")
 
     def form_branch_url(self, branch, updater):
         return "{}{}{}".format(self.form_repo_url(updater),
-                            "/zipball/",branch)
+                               "/zipball/", branch)
 
     def parse_tags(self, response, updater):
         if response is None:
@@ -1531,10 +1552,10 @@ class GitlabEngine(object):
         self.name = "gitlab"
 
     def form_repo_url(self, updater):
-        return "{}{}{}".format(self.api_url,"/api/v4/projects/",updater.repo)
+        return "{}{}{}".format(self.api_url, "/api/v4/projects/", updater.repo)
 
     def form_tags_url(self, updater):
-        return "{}{}".format(self.form_repo_url(updater),"/repository/tags")
+        return "{}{}".format(self.form_repo_url(updater), "/repository/tags")
 
     def form_branch_list_url(self, updater):
         # does not validate branch name.
