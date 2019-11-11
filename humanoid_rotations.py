@@ -92,7 +92,7 @@ rotation_limits_dict = {
         MB_list[13]: [-44, 45, -26, 26, -15, 74],   #"foot_L"
         MB_list[16]: [-45, 44, -26, 26, -74, 15],   #"foot_R"
         }
-            
+
 #Dictionary for fingers
 def finger_dict(fingers):
     fd = {}
@@ -103,7 +103,7 @@ def finger_dict(fingers):
             fd.update({finger: [-90,0,0,0,-5,5]})
     return fd
 
-fd = finger_dict(fingers) 
+fd = finger_dict(fingers)
 
 
 ###############################################################################################################################
@@ -125,7 +125,7 @@ def limit_bone_rotation(Dict, pb):
             bc.max_y = radians(Dict[bone.name][3])
             bc.min_z = radians(Dict[bone.name][4])
             bc.max_z = radians(Dict[bone.name][5])
-           
+
 
 #************************************************************REMOVE BONE CONSTRAINT
 
@@ -138,7 +138,7 @@ def remove_bone_constraints(constraint, pb):
 
 ###############################################################################################################################
 #MAIN
-       
+
 def get_skeleton():
     if bpy.context.object.type == 'ARMATURE':
         return bpy.context.object
@@ -150,4 +150,3 @@ def get_skeleton():
 #     pb = armature.pose.bones
 #     limit_bone_rotation(ragdoll_dict, pb)
 #     limit_finger_rotation(fd, pb)
-

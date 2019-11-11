@@ -45,7 +45,7 @@ def get_hair_data(fileName):
     fpath = os.path.join(hair_dir, fn)
     with open(fpath, 'r') as f:
         data = js.load(f)
-    return data   
+    return data
 
 def js_face_sel(faces):
     bpy.ops.object.mode_set(mode='EDIT')
@@ -90,4 +90,3 @@ def add_hair(hair_object):
     p_sys.settings.child_type = 'INTERPOLATED'
     bpy.context.object.show_instancer_for_viewport = False
     bpy.ops.particle.connect_hair(all=True)
- 
