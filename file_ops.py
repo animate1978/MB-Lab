@@ -283,42 +283,6 @@ def get_newest_object(existing_obj_names):
 def json_booleans_to_python(value):
     return value == 0
 
-def looking_for_humanoid_obj():
-    """
-    Looking for a mesh that is OK for the lab
-    """
-    logger.info("Looking for a humanoid object ...")
-    if bpy.app.version < (2, 80, 74):
-        msg = "Sorry, MB-Lab requires Blender 2.80.74 Minimum"
-        logger.warning(msg)
-        return("ERROR", msg)
-
-#        if bpy.app.version >= (2,80,0):
-#            msg = "Sorry, this version of lab does no work with Blender 2.8"
-#            logger.warning(sg)
-#            return("ERROR",msg)
-
-#       if bpy.app.version > (2,79,0):
-#            msg = "The lab is not designed to work with unstable Blender build {0}".format(str(bpy.app.version))
-#            logger.warning(sg)
-        # return("ERROR",msg)
-
-    human_obj = None
-    name = ""
-    for obj in bpy.data.objects:
-        if obj.type == "MESH":
-            if "manuellab_vers" in get_object_keys(obj):
-                if check_version(obj["manuellab_vers"]):
-                    human_obj = obj
-                    name = human_obj.name
-                    break
-
-    if not human_obj:
-        msg = "No lab humanoids in the scene"
-        logger.info(msg)
-        return "NO_OBJ", msg
-
-    return "FOUND", name
 
 def load_image(filepath):
     if os.path.isfile(filepath):
