@@ -1066,7 +1066,7 @@ class Humanoid:
         obj = self.get_object()
         log_msg_type = "character data"
 
-        if type(data_source) == str:  #TODO: better check of types
+        if isinstance(data_source, str):
             log_msg_type = file_ops.simple_path(data_source)
             charac_data = file_ops.load_json_data(data_source, "Character data")
         else:

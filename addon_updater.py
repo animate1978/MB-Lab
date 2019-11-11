@@ -185,7 +185,7 @@ class Singleton_updater(object):
         if value is None:
             self._backup_ignore_patterns = None
             return
-        elif type(value) != type(['list']):
+        elif not isinstance(value, list):
             raise ValueError("Backup pattern must be in list format")
         else:
             self._backup_ignore_patterns = value
@@ -206,14 +206,14 @@ class Singleton_updater(object):
         if tuple_values is None:
             self._current_version = None
             return
-        elif type(tuple_values) is not tuple:
+        elif not isinstance(tuple_values, tuple):
             try:
                 tuple(tuple_values)
             except:
                 raise ValueError(
                     "Not a tuple! current_version must be a tuple of integers")
         for i in tuple_values:
-            if type(i) is not int:
+            if not isinstance(i, int):
                 raise ValueError(
                     "Not an integer! current_version must be a tuple of integers")
         self._current_version = tuple(tuple_values)
@@ -245,7 +245,7 @@ class Singleton_updater(object):
         return self._fake_install
     @fake_install.setter
     def fake_install(self, value):
-        if type(value) != type(False):
+        if not isinstance(value, bool):
             raise ValueError("fake_install must be a boolean value")
         self._fake_install = bool(value)
 
@@ -268,7 +268,7 @@ class Singleton_updater(object):
         try:
             if value is None:
                 self._include_branch_list = ['master']
-            elif type(value) != type(['master']) or value == []:
+            elif not isinstance(value, list) or value == []:
                 raise ValueError("include_branch_list should be a list of valid branches")
             else:
                 self._include_branch_list = value
@@ -314,7 +314,7 @@ class Singleton_updater(object):
     def overwrite_patterns(self, value):
         if value is None:
             self._overwrite_patterns = ["*.py", "*.pyc"]
-        elif type(value) != type(['']):
+        elif not isinstance(value, list):
             raise ValueError("overwrite_patterns needs to be in a list format")
         else:
             self._overwrite_patterns = value
@@ -336,7 +336,7 @@ class Singleton_updater(object):
     def remove_pre_update_patterns(self, value):
         if value is None:
             self._remove_pre_update_patterns = []
-        elif type(value) != type(['']):
+        elif not isinstance(value, list):
             raise ValueError("remove_pre_update_patterns needs to be in a list format")
         else:
             self._remove_pre_update_patterns = value
@@ -452,10 +452,10 @@ class Singleton_updater(object):
         if value is None:
             self._version_max_update = None
             return
-        if type(value) != type((1, 2, 3)):
+        if not isinstance(value, tuple):
             raise ValueError("Version maximum must be a tuple")
         for subvalue in value:
-            if type(subvalue) != int:
+            if not isinstance(subvalue, int):
                 raise ValueError("Version elements must be integers")
         self._version_max_update = value
 
@@ -467,10 +467,10 @@ class Singleton_updater(object):
         if value is None:
             self._version_min_update = None
             return
-        if type(value) != type((1, 2, 3)):
+        if not isinstance(value, tuple):
             raise ValueError("Version minimum must be a tuple")
         for subvalue in value:
-            if type(subvalue) != int:
+            if not isinstance(subvalue, int):
                 raise ValueError("Version elements must be integers")
         self._version_min_update = value
 
@@ -507,15 +507,15 @@ class Singleton_updater(object):
         # enabled = False, default initially will not check against frequency
         # if enabled, default is then 2 weeks
 
-        if type(enable) is not bool:
+        if not isinstance(enable, bool):
             raise ValueError("Enable must be a boolean value")
-        if type(months) is not int:
+        if not isinstance(months, int):
             raise ValueError("Months must be an integer value")
-        if type(days) is not int:
+        if not isinstance(days, int):
             raise ValueError("Days must be an integer value")
-        if type(hours) is not int:
+        if not isinstance(hours, int):
             raise ValueError("Hours must be an integer value")
-        if type(minutes) is not int:
+        if not isinstance(minutes, int):
             raise ValueError("Minutes must be an integer value")
 
         if enable is False:
@@ -1378,7 +1378,7 @@ class Singleton_updater(object):
     def save_updater_json(self):
         # first save the state
         if self._update_ready is True:
-            if type(self._update_version) == type((0, 0, 0)):
+            if isinstance(self._update_version, tuple):
                 self._json["update_ready"] = True
                 self._json["version_text"]["link"] = self._update_link
                 self._json["version_text"]["version"] = self._update_version
