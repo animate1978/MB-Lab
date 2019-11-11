@@ -29,6 +29,7 @@ import traceback
 import bpy
 
 from . import algorithms
+from . import file_ops
 from . import utils
 
 logger = logging.getLogger(__name__)
@@ -466,4 +467,3 @@ def delete_face_rig(obj):
         ob.select_set(orig_selection[ob.name])
 
     return True
-
