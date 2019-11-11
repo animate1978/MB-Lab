@@ -148,7 +148,7 @@ class Singleton_updater(object):
         return self._engine.api_url
     @api_url.setter
     def api_url(self, value):
-        if self.check_is_url(value) == False:
+        if self.check_is_url(value) is False:
             raise ValueError("Not a valid URL: " + value)
         self._engine.api_url = value
 
@@ -479,7 +479,7 @@ class Singleton_updater(object):
         return self._website
     @website.setter
     def website(self, value):
-        if self.check_is_url(value) == False:
+        if self.check_is_url(value) is False:
             raise ValueError("Not a valid URL: " + value)
         self._website = value
 
@@ -588,7 +588,7 @@ class Singleton_updater(object):
             self._tag_latest = None
             self._tags = []
             return
-        elif self._prefiltered_tag_count == 0 and self._include_branches == False:
+        elif self._prefiltered_tag_count == 0 and self._include_branches is False:
             self._tag_latest = None
             if self._error is None: # if not None, could have had no internet
                 self._error = "No releases found"
@@ -607,7 +607,7 @@ class Singleton_updater(object):
             self._error_msg = "No versions found within compatible version range"
             if self._verbose: print("No versions found within compatible version range")
         else:
-            if self._include_branches == False:
+            if self._include_branches is False:
                 self._tag_latest = self._tags[0]
                 if self._verbose: print("Most recent tag found:",self._tags[0]['name'])
             else:
@@ -804,7 +804,7 @@ class Singleton_updater(object):
 
     def unpack_staged_zip(self,clean=False):
 
-        if os.path.isfile(self._source_zip) == False:
+        if os.path.isfile(self._source_zip) is False:
             if self._verbose: print("Error, update zip not found")
             return -1
 
@@ -839,7 +839,7 @@ class Singleton_updater(object):
             self._subfolder_path.replace('\\', os.path.sep)
 
         # either directly in root of zip/one subfolder, or use specified path
-        if os.path.isfile(os.path.join(unpath,"__init__.py")) == False:
+        if os.path.isfile(os.path.join(unpath,"__init__.py")) is False:
             dirlist = os.listdir(unpath)
             if len(dirlist)>0:
                 if self._subfolder_path == "" or self._subfolder_path is None:
@@ -849,7 +849,7 @@ class Singleton_updater(object):
 
             # smarter check for additional sub folders for a single folder
             # containing __init__.py
-            if os.path.isfile(os.path.join(unpath,"__init__.py")) == False:
+            if os.path.isfile(os.path.join(unpath,"__init__.py")) is False:
                 if self._verbose:
                     print("not a valid addon found")
                     print("Paths:")
@@ -976,7 +976,7 @@ class Singleton_updater(object):
     def reload_addon(self):
         # if post_update false, skip this function
         # else, unload/reload addon & trigger popup
-        if self._auto_reload_post_update == False:
+        if self._auto_reload_post_update is False:
             print("Restart blender to reload addon and complete update")
             return
 
@@ -1036,7 +1036,7 @@ class Singleton_updater(object):
 
         if len(segments)==0:
             if self._verbose: print("No version strings found text: ",text)
-            if self._include_branches == False:
+            if self._include_branches is False:
                 return ()
             else:
                 return (text)
@@ -1055,7 +1055,7 @@ class Singleton_updater(object):
                 return
 
         # do the check
-        if self._check_interval_enable == False:
+        if self._check_interval_enable is False:
             return
         elif self._async_checking is True:
             if self._verbose: print("Skipping async check, already started")
@@ -1092,7 +1092,7 @@ class Singleton_updater(object):
 
         # avoid running again in, just return past result if found
         # but if force now check, then still do it
-        if self._update_ready is not None and now == False:
+        if self._update_ready is not None and now is False:
             return (self._update_ready,self._update_version,self._update_link)
 
         if self._current_version is None:
@@ -1104,7 +1104,7 @@ class Singleton_updater(object):
 
         self.set_updater_json()  # self._json
 
-        if now == False and self.past_interval_timestamp()==False:
+        if now is False and self.past_interval_timestamp()==False:
             if self._verbose:
                 print("Aborting check for updated, check interval not reached")
             return (False, None, None)
@@ -1134,7 +1134,7 @@ class Singleton_updater(object):
             self._update_version = None
             self._update_link = None
             return (False, None, None)
-        if self._include_branches == False:
+        if self._include_branches is False:
             link = self.select_link(self, self._tags[0])
         else:
             n = len(self._include_branch_list)
@@ -1154,7 +1154,7 @@ class Singleton_updater(object):
             # handle situation where master/whichever branch is included
             # however, this code effectively is not triggered now
             # as new_version will only be tag names, not branch names
-            if self._include_branch_autocheck == False:
+            if self._include_branch_autocheck is False:
                 # don't offer update as ready,
                 # but set the link for the default
                 # branch for installing
@@ -1281,7 +1281,7 @@ class Singleton_updater(object):
 
 
     def past_interval_timestamp(self):
-        if self._check_interval_enable == False:
+        if self._check_interval_enable is False:
             return True  # ie this exact feature is disabled
 
         if "last_check" not in self._json or self._json["last_check"] == "":
@@ -1330,7 +1330,7 @@ class Singleton_updater(object):
         """Load or initialize json dictionary data for updater state"""
         if self._updater_path is None:
             raise ValueError("updater_path is not defined")
-        elif os.path.isdir(self._updater_path) == False:
+        elif os.path.isdir(self._updater_path) is False:
             os.makedirs(self._updater_path)
 
         jpath = self.get_json_path()
