@@ -44,6 +44,7 @@ from . import addon_updater_ops
 from . import humanoid_rotations
 from . import object_ops
 from . import hairengine
+from . import utils
 
 logger = logging.getLogger(__name__)
 
@@ -1192,7 +1193,7 @@ class DisableSubdivision(bpy.types.Operator):
         global mblab_humanoid
         scn = bpy.context.scene
 
-        if mblab_humanoid.get_subd_visibility() == True:
+        if mblab_humanoid.get_subd_visibility() is True:
             mblab_humanoid.set_subd_visibility(False)
         return {'FINISHED'}
 
@@ -1211,7 +1212,7 @@ class EnableSubdivision(bpy.types.Operator):
         global mblab_humanoid
         scn = bpy.context.scene
 
-        if mblab_humanoid.get_subd_visibility() == False:
+        if mblab_humanoid.get_subd_visibility() is False:
             mblab_humanoid.set_subd_visibility(True)
         return {'FINISHED'}
 
@@ -1227,7 +1228,7 @@ class DisableSmooth(bpy.types.Operator):
         global mblab_humanoid
         scn = bpy.context.scene
 
-        if mblab_humanoid.get_smooth_visibility() == True:
+        if mblab_humanoid.get_smooth_visibility() is True:
             mblab_humanoid.set_smooth_visibility(False)
         return {'FINISHED'}
 
@@ -1243,7 +1244,7 @@ class EnableSmooth(bpy.types.Operator):
         global mblab_humanoid
         scn = bpy.context.scene
 
-        if mblab_humanoid.get_smooth_visibility() == False:
+        if mblab_humanoid.get_smooth_visibility() is False:
             mblab_humanoid.set_smooth_visibility(True)
         return {'FINISHED'}
 
@@ -1262,7 +1263,7 @@ class DisableDisplacement(bpy.types.Operator):
         global mblab_humanoid
         scn = bpy.context.scene
 
-        if mblab_humanoid.get_disp_visibility() == True:
+        if mblab_humanoid.get_disp_visibility() is True:
             mblab_humanoid.set_disp_visibility(False)
         return {'FINISHED'}
 
@@ -1281,7 +1282,7 @@ class EnableDisplacement(bpy.types.Operator):
         global mblab_humanoid
         scn = bpy.context.scene
 
-        if mblab_humanoid.get_disp_visibility() == False:
+        if mblab_humanoid.get_disp_visibility() is False:
             mblab_humanoid.set_disp_visibility(True)
         return {'FINISHED'}
 
@@ -2287,7 +2288,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                             box_act_opt.prop(obj, meta_data_prop)
                     box_act_opt.operator("mbast.reset_allproperties", icon="RECOVER_LAST")
 
-                    #if mblab_humanoid.get_subd_visibility() == True:
+                    #if mblab_humanoid.get_subd_visibility() is True:
                         #self.layout.label(text="Tip: for slow PC, disable the subdivision in Display Options below", icon='INFO')
 
                 if gui_active_panel != "library":
@@ -2470,17 +2471,17 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                     box_disp = box_act_opt.box()
 
                     if mblab_humanoid.exists_displace_texture():
-                        if mblab_humanoid.get_disp_visibility() == False:
+                        if mblab_humanoid.get_disp_visibility() is False:
                             box_disp.operator("mbast.displacement_enable", icon='MOD_DISPLACE')
                         else:
                             box_disp.operator("mbast.displacement_disable", icon='X')
-                    if mblab_humanoid.get_subd_visibility() == False:
+                    if mblab_humanoid.get_subd_visibility() is False:
                         box_disp.operator("mbast.subdivision_enable", icon='MOD_SUBSURF')
                         box_disp.label(text="Subd. preview is very CPU intensive", icon='INFO')
                     else:
                         box_disp.operator("mbast.subdivision_disable", icon='X')
                         box_disp.label(text="Disable subdivision to increase performance", icon='ERROR')
-                    if mblab_humanoid.get_smooth_visibility() == False:
+                    if mblab_humanoid.get_smooth_visibility() is False:
                         box_disp.operator("mbast.corrective_enable", icon='MOD_SMOOTH')
                     else:
                         box_disp.operator("mbast.corrective_disable", icon='X')

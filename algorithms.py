@@ -33,6 +33,7 @@ import array
 import mathutils
 import bpy
 
+from . import file_ops
 from . import utils
 #from .utils import get_object_parent
 
@@ -313,7 +314,7 @@ def looking_for_humanoid_obj():
     for obj in bpy.data.objects:
         if obj.type == "MESH":
             if "manuellab_vers" in get_object_keys(obj):
-                if check_version(obj["manuellab_vers"]):
+                if utils.check_version(obj["manuellab_vers"]):
                     human_obj = obj
                     name = human_obj.name
                     break
@@ -417,7 +418,7 @@ def kdtree_from_mesh_vertices(mesh):
 #TODO Put this in file_ops
 def import_mesh_from_lib(lib_filepath, name):
     existing_mesh_names = collect_existing_meshes()
-    append_mesh_from_library(lib_filepath, [name])
+    file_ops.append_mesh_from_library(lib_filepath, [name])
     new_mesh = get_newest_mesh(existing_mesh_names)
     return new_mesh
 
@@ -732,7 +733,7 @@ def identify_template(obj):
         if obj.type == 'MESH':
             verts = obj.data.vertices
             polygons = obj.data.polygons
-            config_data = get_configuration()
+            config_data = file_ops.get_configuration()
             # TODO error messages
             if verts and polygons:
                 for template in config_data["templates_list"]:
@@ -745,7 +746,7 @@ def identify_template(obj):
 
 def get_template_model(obj):
     template = identify_template(obj)
-    config_data = get_configuration()
+    config_data = file_ops.get_configuration()
     if template:
         return config_data[template]["template_model"]
     return None
@@ -753,7 +754,7 @@ def get_template_model(obj):
 
 def get_template_polygons(obj):
     template = identify_template(obj)
-    config_data = get_configuration()
+    config_data = file_ops.get_configuration()
     if template:
         return config_data[template]["template_polygons"]
     return None
