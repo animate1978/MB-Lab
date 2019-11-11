@@ -129,7 +129,7 @@ class MaterialEngine:
         return os.path.isfile(self.image_file_paths["thickness"])
     @property
     def texture_iris_color_exist(self):
-        return os.path.isfile(self.image_file_paths["iris_color"])  
+        return os.path.isfile(self.image_file_paths["iris_color"])
     @property
     def texture_iris_bump(self):
         return os.path.isfile(self.image_file_paths["iris_bump"])
@@ -280,7 +280,7 @@ class MaterialEngine:
                     "Cannot create the displacement modifier: data image not found: %s",
                     file_ops.simple_path(self.image_file_paths["displ_data"]))
 
-# Calculate Displacement based on age, tone, mass 
+# Calculate Displacement based on age, tone, mass
 
     def calculate_displacement_texture(self, age_factor, tone_factor, mass_factor):
         time1 = time.time()

@@ -89,4 +89,3 @@ def check_version(m_vers, min_version=(1, 5, 0)):
 
     mesh_version = (float(mesh_version[0]), float(mesh_version[2]), float(mesh_version[4]))
     return mesh_version > min_version
-

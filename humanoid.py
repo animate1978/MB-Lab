@@ -1098,7 +1098,7 @@ class Humanoid:
             logger.info("No metaproperties data in  {0}".format(log_msg_type))
             meta_data = {}
 
-        if char_data != None:
+        if char_data is not None:
             for name in self.character_data.keys():
                 if reset_string in name:
                     self.character_data[name] = 0.5
