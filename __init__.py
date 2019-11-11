@@ -36,8 +36,9 @@ from bpy.app.handlers import persistent
 from bpy_extras.io_utils import ExportHelper, ImportHelper
 
 from . import facerig
-from . import humanoid, animationengine, proxyengine, file_ops
+from . import humanoid, animationengine, proxyengine
 from . import algorithms
+from . import file_ops
 from . import preferences
 from . import addon_updater_ops
 from . import humanoid_rotations
@@ -91,7 +92,7 @@ def start_lab_session():
 
     obj = None
     is_existing = False
-    is_obj = file_ops.looking_for_humanoid_obj()
+    is_obj = algorithms.looking_for_humanoid_obj()
 
     if is_obj[0] == "ERROR":
         gui_status = "ERROR_SESSION"
@@ -167,7 +168,7 @@ def check_manuelbastionilab_session(dummy):
         # init_femaleposes_props()
         # init_maleposes_props()
         gui_status = "NEW_SESSION"
-        is_obj = file_ops.looking_for_humanoid_obj()
+        is_obj = algorithms.looking_for_humanoid_obj()
         if is_obj[0] == "FOUND":
             # gui_status = "RECOVERY_SESSION"
             # if scn.do_not_ask_again:
