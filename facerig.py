@@ -203,7 +203,7 @@ def append_rig(rig_name, data_path):
 
 def find_collLayer(layerColl, collName):
     found = None
-    if (layerColl.name == collName):
+    if layerColl.name == collName:
         return layerColl
     for layer in layerColl.children:
         found = find_collLayer(layer, collName)
@@ -232,7 +232,7 @@ def get_root_bone_xyz_loc(obj):
     armat = utils.get_deforming_armature(obj)
     if not armat:
         logger.critical("No aramature found for character %s. Ignoring",
-            obj.name)
+                        obj.name)
         return 0, False
 
     root_bone = get_root_bone(armat, 'root')
@@ -304,7 +304,7 @@ def setup_face_rig(obj):
     face_rig = file_ops.get_object_by_name(face_rig_name)
     if not face_rig:
         logger.critical("Can't find %s. Delete face rig manually",
-            face_rig_name)
+                        face_rig_name)
         return False
 
     root_bone = get_root_bone(face_rig, 'root')
@@ -319,7 +319,7 @@ def setup_face_rig(obj):
     ph_rig = file_ops.get_object_by_name(ph_rig_name)
     if not face_rig:
         logger.critical("Can't find %s. Delete face rig manually",
-            face_rig_name)
+                        face_rig_name)
         return False
 
     root_bone = get_root_bone(ph_rig, 'root')
@@ -389,7 +389,7 @@ def setup_facs_rig(obj):
         file_ops.get_object_by_name('facs_rig_frame.'+obj.name)
     if not facs_frame:
         logger.critical("FACS frame %s not found",
-            'facs_rig_frame.'+obj.name)
+                        'facs_rig_frame.'+obj.name)
         return True
 
     facs_frame.location[0] = root_x + 0.5
@@ -420,7 +420,7 @@ def delete_face_rig(obj):
     if 'MBLab_skeleton_face_rig.' in obj.name:
         character_name = obj.name.replace('MBLab_skeleton_face_rig.', '')
     elif 'MBLab_skeleton_phoneme_rig.' in obj.name:
-        character_name = obj.name.replace('MBLab_skeleton_phoneme_rig.','')
+        character_name = obj.name.replace('MBLab_skeleton_phoneme_rig.', '')
 
     fr_name = 'MBLab_skeleton_face_rig.'+character_name
     pr_name = 'MBLab_skeleton_phoneme_rig.'+character_name

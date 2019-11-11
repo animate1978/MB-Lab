@@ -402,8 +402,8 @@ def bvhtree_from_obj_polygons(obj, indices_of_polygons_subset=None):
         for idx in indices_of_polygons_subset:
             polygons.append(obj.data.polygons[idx].vertices)
     else:
-        polygons = [ poly.vertices for poly in obj.data.polygons ]
-    vertices = [ vert.co for vert in obj.data.vertices ]
+        polygons = [poly.vertices for poly in obj.data.polygons]
+    vertices = [vert.co for vert in obj.data.vertices]
     return mathutils.bvhtree.BVHTree.FromPolygons(vertices, polygons)
 
 
