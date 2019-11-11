@@ -49,7 +49,7 @@ def print_log_report(level, text_to_write):
     import warnings
     warnings.warn("print_log_report deprecated, use python logging", DeprecationWarning)
     l = 0
-    levels = {"INFO": 0, "DEBUG": 1, "WARNING": 2, "ERROR": 3, "CRITICAL": 4, }
+    levels = {"INFO": 0, "DEBUG": 1, "WARNING": 2, "ERROR": 3, "CRITICAL": 4,}
     if level in levels:
         l = levels[level]
     if l >= DEBUG_LEVEL:

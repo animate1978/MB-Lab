@@ -579,8 +579,8 @@ class Singleton_updater(object):
             for branch in temp_branches:
                 request = self.form_branch_url(branch)
                 include = {
-                    "name":branch.title(),
-                    "zipball_url":request
+                    "name": branch.title(),
+                    "zipball_url": request
                 }
                 self._tags = [include] + self._tags  # append to front
 
@@ -1364,12 +1364,12 @@ class Singleton_updater(object):
         else:
             # set data structure
             self._json = {
-                "last_check":"",
-                "backup_date":"",
-                "update_ready":False,
-                "ignore":False,
-                "just_restored":False,
-                "just_updated":False,
+                "last_check": "",
+                "backup_date": "",
+                "update_ready": False,
+                "ignore": False,
+                "just_restored": False,
+                "just_updated": False,
                 "version_text":{}
             }
             self.save_updater_json()

@@ -230,12 +230,12 @@ class Humanoid:
         self.morph_engine = morphengine.MorphingEngine(self.obj_name, self.characters_config[character_identifier])
         self.mat_engine = materialengine.MaterialEngine(self.obj_name, self.characters_config[character_identifier])
         self.character_data = {}
-        self.character_metaproperties = {"last_character_age":0.0,
-                                         "character_age":0.0,
-                                         "last_character_mass":0.0,
-                                         "character_mass":0.0,
-                                         "last_character_tone":0.0,
-                                         "character_tone":0.0}
+        self.character_metaproperties = {"last_character_age": 0.0,
+                                         "character_age": 0.0,
+                                         "last_character_mass": 0.0,
+                                         "character_mass": 0.0,
+                                         "last_character_tone": 0.0,
+                                         "character_tone": 0.0}
         self.character_material_properties = self.mat_engine.get_material_parameters()
 
         self.metadata_realtime_activated = True
@@ -259,7 +259,7 @@ class Humanoid:
 
     def add_subdivision_modifier(self):
         obj = self.get_object()
-        parameters = {"levels":1, "render_levels":2, "show_viewport":True, "show_in_editmode":False}
+        parameters = {"levels": 1, "render_levels": 2, "show_viewport": True, "show_in_editmode": False}
         algorithms.new_modifier(obj, self.mat_engine.subdivision_modifier_name, 'SUBSURF', parameters)
 
     def add_displacement_modifier(self):
@@ -267,7 +267,7 @@ class Humanoid:
         disp_img = file_ops.get_image(self.mat_engine.image_file_names["body_displ"])
         if disp_img:
             disp_tex = file_ops.new_texture(self.mat_engine.generated_disp_modifier_ID, disp_img)
-            parameters = {"texture_coords":'UV', "strength":0.01, "show_viewport":False, "texture":disp_tex}
+            parameters = {"texture_coords":'UV', "strength": 0.01, "show_viewport": False, "texture": disp_tex}
             displacement_modifier = algorithms.new_modifier(obj, self.mat_engine.generated_disp_modifier_ID, 'DISPLACE', parameters)
 
     def rename_obj(self, prefix):
@@ -1023,7 +1023,7 @@ class Humanoid:
     def save_character(self, filepath, export_proportions=True, export_materials=True, export_metadata=True):
         logger.info("Exporting character to {0}".format(file_ops.simple_path(filepath)))
         obj = self.get_object()
-        char_data = {"manuellab_vers": self.lab_vers, "structural":dict(), "metaproperties":dict(), "materialproperties":dict()}
+        char_data = {"manuellab_vers": self.lab_vers, "structural": dict(), "metaproperties": dict(), "materialproperties": dict()}
 
         if obj:
 
@@ -1050,7 +1050,7 @@ class Humanoid:
     def export_measures(self, filepath):
         logger.info("Exporting measures to {0}".format(file_ops.simple_path(filepath)))
         obj = self.get_object()
-        char_data = {"manuellab_vers": self.lab_vers, "measures":dict()}
+        char_data = {"manuellab_vers": self.lab_vers, "measures": dict()}
         if obj:
             measures = self.morph_engine.calculate_measures()
             for measure, measure_val in measures.items():
@@ -1195,5 +1195,5 @@ class Humanoid:
 
     def add_corrective_smooth_modifier(self):
         obj = self.get_object()
-        parameters = {"show_viewport":True, "invert_vertex_group": True, "vertex_group":"head"}
+        parameters = {"show_viewport": True, "invert_vertex_group": True, "vertex_group": "head"}
         algorithms.new_modifier(obj, self.corrective_modifier_name, 'CORRECTIVE_SMOOTH', parameters)
