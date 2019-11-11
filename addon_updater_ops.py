@@ -152,7 +152,7 @@ class addon_updater_install_popup(bpy.types.Operator):
             row = col.row()
             row.prop(self,"ignore_enum",expand=True)
             col.split()
-        elif updater.update_ready == False:
+        elif updater.update_ready is False:
             col = layout.column()
             col.scale_y = 0.7
             col.label(text="No updates available")
@@ -294,7 +294,7 @@ class addon_updater_update_now(bpy.types.Operator):
             atr = addon_updater_install_popup.bl_idname.split(".")
             getattr(getattr(bpy.ops, atr[0]),atr[1])('INVOKE_DEFAULT')
 
-        elif updater.update_ready == False:
+        elif updater.update_ready is False:
             self.report({'INFO'}, "Nothing to update")
         else:
             self.report({'ERROR'}, "Encountered problem while trying to update")
@@ -479,7 +479,7 @@ class addon_updater_updated_successful(bpy.types.Operator):
                 icon="BLANK1"
                 ).url=updater.website
             # manual download button here
-        elif updater.auto_reload_post_update == False:
+        elif updater.auto_reload_post_update is False:
             # tell user to restart blender
             if "just_restored" in saved and saved["just_restored"] is True:
                 col = layout.column()
@@ -655,7 +655,7 @@ def background_update_callback(update_ready):
     # in case of error importing updater
     if updater.invalidupdater is True:
         return
-    if updater.showpopups == False:
+    if updater.showpopups is False:
         return
     if update_ready is not True:
         return
@@ -670,7 +670,7 @@ def background_update_callback(update_ready):
 def post_update_callback(res=None):
     """Callback for once the updater has completed
 
-    Only makes sense to use this if "auto_reload_post_update" == False,
+    Only makes sense to use this if "auto_reload_post_update" is False,
     i.e. don't auto-restart the addon
     """
 
@@ -790,7 +790,7 @@ def showReloadPopup():
         updater.json_reset_postupdate() # so this only runs once
 
         # no handlers in this case
-        if updater.auto_reload_post_update == False: return
+        if updater.auto_reload_post_update is False: return
 
         if updater_run_success_popup_handler not in \
                     bpy.app.handlers.scene_update_post \
@@ -817,7 +817,7 @@ def update_notice_box_ui(self, context):
         return
 
     saved_state = updater.json
-    if updater.auto_reload_post_update == False:
+    if updater.auto_reload_post_update is False:
         if "just_updated" in saved_state and saved_state["just_updated"] is True:
             layout = self.layout
             box = layout.box()
@@ -885,7 +885,7 @@ def update_settings_ui(self, context, element=None):
     row = box.row()
 
     # special case to tell user to restart blender, if set that way
-    if updater.auto_reload_post_update == False:
+    if updater.auto_reload_post_update is False:
         saved_state = updater.json
         if "just_updated" in saved_state and saved_state["just_updated"] is True:
             row.label(text="Restart blender to complete update", icon="ERROR")
@@ -931,7 +931,7 @@ def update_settings_ui(self, context, element=None):
         split.operator(addon_updater_check_now.bl_idname,
                         text = "", icon="FILE_REFRESH")
 
-    elif updater.update_ready is None and updater.async_checking == False:
+    elif updater.update_ready is None and updater.async_checking is False:
         col.scale_y = 2
         col.operator(addon_updater_check_now.bl_idname)
     elif updater.update_ready is None: # async is running
@@ -978,7 +978,7 @@ def update_settings_ui(self, context, element=None):
         col.scale_y = 2
         col.operator("wm.url_open",
                 text="Download "+str(updater.update_version)).url=updater.website
-    else: # i.e. that updater.update_ready == False
+    else: # i.e. that updater.update_ready is False
         subcol = col.row(align=True)
         subcol.scale_y = 1
         split = subcol.split(align=True)
@@ -991,7 +991,7 @@ def update_settings_ui(self, context, element=None):
         split.operator(addon_updater_check_now.bl_idname,
                         text = "", icon="FILE_REFRESH")
 
-    if updater.manual_only == False:
+    if updater.manual_only is False:
         col = row.column(align=True)
         #col.operator(addon_updater_update_target.bl_idname,
         if updater.include_branches is True and len(updater.include_branch_list)>0:
@@ -1045,7 +1045,7 @@ def update_settings_ui_condensed(self, context, element=None):
         return
 
     # special case to tell user to restart blender, if set that way
-    if updater.auto_reload_post_update == False:
+    if updater.auto_reload_post_update is False:
         saved_state = updater.json
         if "just_updated" in saved_state and saved_state["just_updated"] is True:
             row.label(text="Restart blender to complete update", icon="ERROR")
@@ -1070,7 +1070,7 @@ def update_settings_ui_condensed(self, context, element=None):
         split.operator(addon_updater_check_now.bl_idname,
                         text = "", icon="FILE_REFRESH")
 
-    elif updater.update_ready is None and updater.async_checking == False:
+    elif updater.update_ready is None and updater.async_checking is False:
         col.scale_y = 2
         col.operator(addon_updater_check_now.bl_idname)
     elif updater.update_ready is None: # async is running
@@ -1117,7 +1117,7 @@ def update_settings_ui_condensed(self, context, element=None):
         col.scale_y = 2
         col.operator("wm.url_open",
                 text="Download "+str(updater.update_version)).url=updater.website
-    else: # i.e. that updater.update_ready == False
+    else: # i.e. that updater.update_ready is False
         subcol = col.row(align=True)
         subcol.scale_y = 1
         split = subcol.split(align=True)
