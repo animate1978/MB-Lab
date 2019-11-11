@@ -463,7 +463,7 @@ class ProxyEngine:
             if not reverse:
                 armature_mod = self.add_proxy_armature_modfr(proxy, armat)
 
-                if transfer_w == True:
+                if transfer_w is True:
                     algorithms.remove_vertgroups_all(proxy)
                     self.transfer_weights(body, proxy)
 

@@ -355,7 +355,7 @@ class MorphingEngine:
     def update(self, update_all_verts=False):
         obj = self.get_object()
         vertices = obj.data.vertices
-        if update_all_verts == True:
+        if update_all_verts is True:
             for i in range(len(self.final_form)):
                 vertices[i].co = self.final_form[i]
         else:

@@ -439,7 +439,7 @@ class Singleton_updater(object):
     def verbose(self, value):
         try:
             self._verbose = bool(value)
-            if self._verbose == True:
+            if self._verbose is True:
                 print(self._addon+" updater verbose is enabled")
         except:
             raise ValueError("Verbose must be a boolean value")
@@ -572,7 +572,7 @@ class Singleton_updater(object):
 
         # get additional branches too, if needed, and place in front
         # Does NO checking here whether branch is valid
-        if self._include_branches == True:
+        if self._include_branches is True:
             temp_branches = self._include_branch_list.copy()
             temp_branches.reverse()
             for branch in temp_branches:
@@ -594,7 +594,7 @@ class Singleton_updater(object):
                 self._error = "No releases found"
                 self._error_msg = "No releases or tags found on this repository"
             if self._verbose: print("No releases or tags found on this repository")
-        elif self._prefiltered_tag_count == 0 and self._include_branches == True:
+        elif self._prefiltered_tag_count == 0 and self._include_branches is True:
             if not self._error: self._tag_latest = self._tags[0]
             if self._verbose:
                 branch = self._include_branch_list[0]
@@ -696,7 +696,7 @@ class Singleton_updater(object):
         # make/clear the staging folder
         # ensure the folder is always "clean"
         if self._verbose: print("Preparing staging folder for download:\n",local)
-        if os.path.isdir(local) == True:
+        if os.path.isdir(local) is True:
             try:
                 shutil.rmtree(local)
                 os.makedirs(local)
@@ -1046,7 +1046,7 @@ class Singleton_updater(object):
     def check_for_update_async(self, callback=None):
 
         if self._json != None and "update_ready" in self._json and self._json["version_text"]!={}:
-            if self._json["update_ready"] == True:
+            if self._json["update_ready"] is True:
                 self._update_ready = True
                 self._update_link = self._json["version_text"]["link"]
                 self._update_version = str(self._json["version_text"]["version"])
@@ -1057,7 +1057,7 @@ class Singleton_updater(object):
         # do the check
         if self._check_interval_enable == False:
             return
-        elif self._async_checking == True:
+        elif self._async_checking is True:
             if self._verbose: print("Skipping async check, already started")
             return  # already running the bg thread
         elif self._update_ready == None:
@@ -1071,7 +1071,7 @@ class Singleton_updater(object):
 
         if self._verbose:
             print("Check update pressed, first getting current status")
-        if self._async_checking == True:
+        if self._async_checking is True:
             if self._verbose: print("Skipping async check, already started")
             return  # already running the bg thread
         elif self._update_ready == None:
@@ -1111,7 +1111,7 @@ class Singleton_updater(object):
 
         # check if using tags or releases
         # note that if called the first time, this will pull tags from online
-        if self._fake_install == True:
+        if self._fake_install is True:
             if self._verbose:
                 print("fake_install = True, setting fake version as ready")
             self._update_ready = True
@@ -1225,21 +1225,21 @@ class Singleton_updater(object):
 
         if self._verbose: print("Running update")
 
-        if self._fake_install == True:
+        if self._fake_install is True:
             # change to True, to trigger the reload/"update installed" handler
             if self._verbose:
                 print("fake_install=True")
                 print("Just reloading and running any handler triggers")
             self._json["just_updated"] = True
             self.save_updater_json()
-            if self._backup_current == True:
+            if self._backup_current is True:
                 self.create_backup()
             self.reload_addon()
             self._update_ready = False
             res = True  # fake "success" zip download flag
 
         elif force==False:
-            if self._update_ready != True:
+            if self._update_ready is not True:
                 if self._verbose: print("Update stopped, new version not ready")
                 return "Update stopped, new version not ready"
             elif self._update_link == None:
@@ -1356,7 +1356,7 @@ class Singleton_updater(object):
 
     def save_updater_json(self):
         # first save the state
-        if self._update_ready == True:
+        if self._update_ready is True:
             if type(self._update_version) == type((0,0,0)):
                 self._json["update_ready"] = True
                 self._json["version_text"]["link"]=self._update_link
