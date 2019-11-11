@@ -24,6 +24,13 @@ These have been fixed with this version.
 
 The Proxy engine has been improved. Fixed fitting of meshes that are very close to the skin. New option to fit in reverse direction to convert a character-specific mesh to a generic proxy.
 
+* GUI updated
+
+With the new features added the GUI started to get a little crowded, this version has been updated slightly to shrink it down
+
+.. image:: images/GUI_MBLAB177_01.png
+
+
 =============
 Version 1.7.6
 =============

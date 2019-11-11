@@ -121,4 +121,4 @@ There are two main branches.
 
 Master - This is the "release" code
 
-Dev - This is the development code
+dev - This is the development code
