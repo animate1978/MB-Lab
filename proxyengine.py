@@ -160,7 +160,7 @@ class ProxyEngine:
         # algorithms.new_modifier(body, mask_name, 'MASK', parameters)
 
     def calibrate_proxy_object(self,proxy):
-        if proxy != None:
+        if proxy is not None:
             old_version_sk = algorithms.get_shapekey(proxy,"Fitted")
             if old_version_sk:
                 old_version_sk.value = 0
@@ -207,8 +207,8 @@ class ProxyEngine:
         proxy_template =  self.get_proxy_template_design(proxy_obj)
         id_template = algorithms.get_template_model(reference_obj)
 
-        if proxy_template != None:
-            if id_template != None:
+        if proxy_template is not None:
+            if id_template is not None:
                 if proxy_template in id_template:
                     return "OK"
                 else:
@@ -228,9 +228,9 @@ class ProxyEngine:
                 return ["SAME_OBJECTS", None, None]
             character_obj = file_ops.get_object_by_name(scn.mblab_fitref_name)
             proxy_obj = file_ops.get_object_by_name(scn.mblab_proxy_name)
-            if character_obj == None:
+            if character_obj is None:
                 return ["CHARACTER_NOT_FOUND", None, None]
-            if proxy_obj == None:
+            if proxy_obj is None:
                 return ["PROXY_NOT_FOUND", None, None]
             if not algorithms.is_a_lab_character(character_obj):
                 return ["NO_REFERENCE", None, None]

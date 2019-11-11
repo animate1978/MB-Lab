@@ -233,7 +233,7 @@ class MorphingEngine:
 
     def calculate_proportions(self, measures):
 
-        if measures == None:
+        if measures is None:
             measures = self.measures
         if "body_height_Z" in measures:
             if "buttock_girth" in measures:
