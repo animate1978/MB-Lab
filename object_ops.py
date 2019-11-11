@@ -81,7 +81,7 @@ def obj_mesh(co, faces, collection):
     mesh = bpy.data.meshes.new("Obj")
     mesh.from_pydata(co, [], faces)
     mesh.validate()
-    mesh.update(calc_edges = True)
+    mesh.update(calc_edges=True)
     Object = bpy.data.objects.new("Obj", mesh)
     Object.data = mesh
     bpy.data.collections[collection].objects.link(Object)
@@ -104,12 +104,12 @@ def obj_del(objects: list):
 
 #set active object and select objects from list
 def active_ob(object, objects):
-        bpy.ops.object.select_all(action='DESELECT')
-        bpy.data.objects[object].select_set(state=True)
-        bpy.context.view_layer.objects.active = bpy.data.objects[object]
-        if objects is not None:
-            for o in objects:
-                bpy.data.objects[o].select_set(state=True)
+    bpy.ops.object.select_all(action='DESELECT')
+    bpy.data.objects[object].select_set(state=True)
+    bpy.context.view_layer.objects.active = bpy.data.objects[object]
+    if objects is not None:
+        for o in objects:
+            bpy.data.objects[o].select_set(state=True)
 
 
 # ------------------------------------------------------------------------
@@ -145,10 +145,10 @@ def add_rd_capsule(Name, length, radius, cap_coord, faces, collection):
 
 #Rotation Matrix
 def rotation_matrix(xrot, yrot, zrot):
-    rot_mat = np.array(
-                        [ [np.cos(zrot)*np.cos(yrot), -np.sin(zrot)*np.cos(xrot) + np.cos(zrot)*np.sin(yrot)*np.sin(xrot), np.sin(zrot)*np.sin(xrot) + np.cos(zrot)*np.sin(yrot)*np.cos(xrot)],
-                        [-np.sin(yrot), np.cos(yrot)*np.sin(xrot), np.cos(yrot)*np.cos(xrot)] ]
-                        )
+    rot_mat = np.array([
+        [np.cos(zrot)*np.cos(yrot), -np.sin(zrot)*np.cos(xrot) + np.cos(zrot)*np.sin(yrot)*np.sin(xrot), np.sin(zrot)*np.sin(xrot) + np.cos(zrot)*np.sin(yrot)*np.cos(xrot)],
+        [-np.sin(yrot), np.cos(yrot)*np.sin(xrot), np.cos(yrot)*np.cos(xrot)]
+        ])
     return rot_mat
 
 

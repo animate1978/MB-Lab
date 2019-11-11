@@ -49,7 +49,7 @@ def print_log_report(level, text_to_write):
     import warnings
     warnings.warn("print_log_report deprecated, use python logging", DeprecationWarning)
     l = 0
-    levels = {"INFO": 0, "DEBUG": 1, "WARNING": 2, "ERROR": 3, "CRITICAL": 4, }
+    levels = {"INFO": 0, "DEBUG": 1, "WARNING": 2, "ERROR": 3, "CRITICAL": 4,}
     if level in levels:
         l = levels[level]
     if l >= DEBUG_LEVEL:
@@ -402,8 +402,8 @@ def bvhtree_from_obj_polygons(obj, indices_of_polygons_subset=None):
         for idx in indices_of_polygons_subset:
             polygons.append(obj.data.polygons[idx].vertices)
     else:
-        polygons = [ poly.vertices for poly in obj.data.polygons ]
-    vertices = [ vert.co for vert in obj.data.vertices ]
+        polygons = [poly.vertices for poly in obj.data.polygons]
+    vertices = [vert.co for vert in obj.data.vertices]
     return mathutils.bvhtree.BVHTree.FromPolygons(vertices, polygons)
 
 
