@@ -26,6 +26,7 @@ import bpy
 import numpy as np
 
 from copy import deepcopy as dc
+from math import radians
 
 from . import algorithms
 
@@ -91,13 +92,13 @@ def obj_mesh(co, faces, collection):
 #creates new object
 def obj_new(Name, co, faces, collection):
     obj_mesh(co, faces, collection)
-    bpy.data.objects["Obj"].name = Name 
+    bpy.data.objects["Obj"].name = Name
     bpy.data.meshes[bpy.data.objects[Name].data.name].name = Name
 
 #delete objects from list
-def obj_del(List):
+def obj_del(objects: list):
     bpy.ops.object.select_all(action='DESELECT')
-    for o in List:
+    for obj in objects:
         obj[o].select_set(state=True)
         bpy.ops.object.delete()
 
@@ -111,7 +112,7 @@ def active_ob(object, objects):
                 bpy.data.objects[o].select_set(state=True)
 
 
-# ------------------------------------------------------------------------ 
+# ------------------------------------------------------------------------
 #Create Target
 def add_empty(Name, collection, matrix_final):
     obj_empty = bpy.data.objects.new(Name, None)
@@ -120,7 +121,7 @@ def add_empty(Name, collection, matrix_final):
     obj_empty.empty_display_size = 0.01
     obj_empty.matrix_world = matrix_final
 
-# ------------------------------------------------------------------------ 
+# ------------------------------------------------------------------------
 #Create Capsule
 def capsule_data(length, radius, cap_coord):
     sc = np.eye(3)
@@ -135,7 +136,7 @@ def add_rd_capsule(Name, length, radius, cap_coord, faces, collection):
     cor = capsule_data(length, radius, cap_coord)
     obj_new(Name, cor, [], faces, collection)
     try:
-        bpy.ops.rigidbody.objects_add(type='ACTIVE')        
+        bpy.ops.rigidbody.objects_add(type='ACTIVE')
     except:
         pass
 
@@ -157,8 +158,8 @@ def rot_mat_x_90(List):
     new_co = [i @ rmx90 for i in List]
     return new_co
 
-def rot_obj(object, rot_mat):
-    vt = obj[object].data.vertices
+def rot_obj(obj, rot_mat):
+    vt = obj.data.vertices
     countv = len(vt)
     co = np.empty(countv * 3, dtype=np.float32)
     vt.foreach_get('co', co)
@@ -167,8 +168,8 @@ def rot_obj(object, rot_mat):
     List = co.tolist()
     #rm = rot_mat_x_90(List)
     #vt.foreach_set('co', rm)
-    for i, v in enumerate(rm):
-        vt[i].co = v 
+    for i, v in enumerate(List):
+        vt[i].co = v
 
 ###############################################################################################################################
 #VERTEX_GROUP OPS
@@ -176,7 +177,7 @@ def rot_obj(object, rot_mat):
 #Create Vertex Group
 def add_vert_group(object, vgroup, index):
     nvg = bpy.data.objects[object].vertex_groups.new(name=vgroup)
-    nvg.add(index, 1.0, "ADD") 
+    nvg.add(index, 1.0, "ADD")
 
 #Set Vertex Weight
 def set_weight(object, index, weight):
@@ -205,7 +206,7 @@ def vidx_dict():
     vdd = {k: vd[k] for k in vd if vd[k] != []}
     return dc(vdd)
 
-# ------------------------------------------------------------------------ 
+# ------------------------------------------------------------------------
 
 #transfer vertex weight to new object
 def transfer_vt(Name, viw):
@@ -275,4 +276,3 @@ def apply_mod(Ref):
                 bpy.context.view_layer.objects.active = o
                 bpy.ops.object.modifier_apply(modifier=m.name)
     bpy.context.view_layer.objects.active = act
-
