@@ -1825,7 +1825,7 @@ class ButtonSaveBvhAdjustments(bpy.types.Operator, ExportHelper):
             saveBone.append(offsets[0])
             saveBone.append(offsets[1])
             saveBone.append(offsets[2])
-            dict = { selected_bone: saveBone }
+            dict = {selected_bone: saveBone}
 
             if os.path.exists(self.filepath):
                 with open(self.filepath, 'r+') as f:

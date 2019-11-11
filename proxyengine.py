@@ -151,12 +151,12 @@ class ProxyEngine:
                 if modfr.name == self.proxy_armature_modifier:
                     algorithms.remove_modifier(proxy, self.proxy_armature_modifier)
 
-        parameters = {"object":armat}
+        parameters = {"object": armat}
         armature_modifier = algorithms.new_modifier(proxy, self.proxy_armature_modifier,'ARMATURE', parameters)
         return armature_modifier
 
     # def add_mask_modifier(self, body, mask_name):
-        # parameters = {"vertex_group":mask_name,"invert_vertex_group":True}
+        # parameters = {"vertex_group": mask_name,"invert_vertex_group": True}
         # algorithms.new_modifier(body, mask_name, 'MASK', parameters)
 
     def calibrate_proxy_object(self,proxy):
@@ -384,9 +384,9 @@ class ProxyEngine:
                 # Find the three closest vertices of the quad.
                 basis_body_verts_coords = algorithms.get_polygon_vertices_coords(basis_body,body_polygon_index)
 
-                vert_distances = [ (coord - vert_co).length for coord in basis_body_verts_coords ]
+                vert_distances = [(coord - vert_co).length for coord in basis_body_verts_coords]
 
-                index_map = [ 0, 1, 2, 3 ]
+                index_map = [0, 1, 2, 3]
                 index_map.remove(max(range(4), key = lambda i: vert_distances[i]))
 
                 p1 = basis_body_verts_coords[index_map[0]]
@@ -473,7 +473,7 @@ class ProxyEngine:
 
             if not reverse:
                 if smoothing:
-                    parameters = {"show_viewport":True}
+                    parameters = {"show_viewport": True}
 
                     correct_smooth_mod = algorithms.new_modifier(proxy, self.corrective_modifier_name, 'CORRECTIVE_SMOOTH', parameters)
 
@@ -573,7 +573,7 @@ class ProxyEngine:
                 mask_group.add([vert.index], 1.0, 'REPLACE')
 
         #self.add_mask_modifier(body, mask_name)
-        parameters = {"vertex_group":mask_name,"invert_vertex_group":True}
+        parameters = {"vertex_group": mask_name,"invert_vertex_group": True}
         algorithms.new_modifier(body, mask_name, 'MASK', parameters)
 
     def remove_body_mask(self, body, mask_name):
