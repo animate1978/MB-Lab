@@ -43,7 +43,7 @@ class SkeletonEngine:
     def __init__(self, obj_body, character_config, rigging_type):
         self.has_data = False
         self.data_path = file_ops.get_data_path()
-        #characters_config = algorithms.get_configuration()
+        #characters_config = file_ops.get_configuration()
         #character_config = characters_config[character_identifier]
 
         if obj_body:

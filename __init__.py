@@ -44,6 +44,7 @@ from . import addon_updater_ops
 from . import humanoid_rotations
 from . import object_ops
 from . import hairengine
+from . import utils
 
 logger = logging.getLogger(__name__)
 
