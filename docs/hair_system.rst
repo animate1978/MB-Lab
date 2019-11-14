@@ -3,6 +3,12 @@ Hair System
 
 The new Hair Engine allows the ability to add particle hair to a MB-Lab character after finalization.
 
+.. image:: images/hair_full_render_002.png
+
+The particle hair can be accessed in ASSETS AND HAIR.
+
+.. image:: images/GUI_hair_01.png
+
 Features
 
 - Add hair from selected polygons.
@@ -59,7 +65,7 @@ Add more Hair!
 NOTES
 =====
 
-The Hair Engine is a brnad new feature and is evolving at a fast pace, expect the code to change
+The Hair Engine is a brand new feature and is evolving at a fast pace, expect the code to change
 
 Currently there is no shader assigned to the Hair system upon creation, this is actively being worked on and should appear soon.
 

@@ -158,11 +158,6 @@ def generate_items_list(folderpath, file_type="json"):
     return items_list
 
 
-
-
-
-
-
 # Append humanoid objects
 
 def import_object_from_lib(lib_filepath, name, final_name=None, stop_import=True):

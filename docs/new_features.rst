@@ -9,11 +9,15 @@ This version was improved mainly by contributors in the MB-Lab community!
 
 * Hair Engine
 
+.. image:: images/hair_render_002.png
+
 The long awaited Hair Engine allows you to add particle hair to finalized MB-Lab characters.
 
 * Human Rotation Limits
 
 Adds rotation limits to MB-Lab armatures (need to be in POSE mode)
+
+.. image:: images/GUI_hum_rotate_01.png
 
 * Muscle System fixed
 
