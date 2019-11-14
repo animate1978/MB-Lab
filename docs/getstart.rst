@@ -27,7 +27,7 @@ Pressing the "create character" button, Blender will create the selected model, 
 
 MB-Lab was redesigned for Blender 2.80 and now has shading networks for both Cycles and EEVEE. Choosing either option will also select the render engine required.
 
-The option "Use portrait studio lights" is to create a set of lights in order to reproduce a professional studio setup.
+The option "Use portrait studio lights" creates a set of lights.
 
 .. image:: images/threepoint_arealights_01.png
 
