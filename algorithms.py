@@ -33,77 +33,29 @@ import array
 import mathutils
 import bpy
 
+from . import file_ops
+from . import utils
+
 from .utils import get_object_parent
 
 logger = logging.getLogger(__name__)
 
 DEBUG_LEVEL = 3
 
+# ------------------------------------------------------------------------
+#    Print Log
+# ------------------------------------------------------------------------
 
 def print_log_report(level, text_to_write):
     import warnings
     warnings.warn("print_log_report deprecated, use python logging", DeprecationWarning)
     l = 0
-    levels = {"INFO": 0, "DEBUG": 1, "WARNING": 2, "ERROR": 3, "CRITICAL": 4, }
+    levels = {"INFO": 0, "DEBUG": 1, "WARNING": 2, "ERROR": 3, "CRITICAL": 4,}
     if level in levels:
         l = levels[level]
     if l >= DEBUG_LEVEL:
         print(level + ": " + text_to_write)
 
-
-def is_writeable(filepath):
-    try:
-        with open(filepath, 'w'):
-            return True
-    except IOError:
-        logger.warning("Writing permission denied for %s", filepath)
-    return False
-
-
-def get_data_path():
-    addon_directory = os.path.dirname(os.path.realpath(__file__))
-    data_dir = os.path.join(addon_directory, "data")
-    logger.info("Looking for the retarget data in the folder %s...", simple_path(data_dir))
-
-    if not os.path.isdir(data_dir):
-        logger.critical("Tools data not found. Please check your Blender addons directory.")
-        return None
-
-    return data_dir
-
-
-def get_configuration():
-    data_path = get_data_path()
-
-    if data_path:
-        configuration_path = os.path.join(data_path, "characters_config.json")
-        if os.path.isfile(configuration_path):
-            return load_json_data(configuration_path, "Characters definition")
-
-    logger.critical("Configuration database not found. Please check your Blender addons directory.")
-    return None
-
-
-def get_blendlibrary_path():
-    data_path = get_data_path()
-    if data_path:
-        return os.path.join(data_path, "humanoid_library.blend")
-
-    logger.critical("Models library not found. Please check your Blender addons directory.")
-    return None
-
-
-def simple_path(input_path, use_basename=True, max_len=50):
-    """
-    Return the last part of long paths
-    """
-    if use_basename:
-        return os.path.basename(input_path)
-
-    if len(input_path) > max_len:
-        return f"[Trunked]..{input_path[len(input_path)-max_len:]}"
-
-    return input_path
 
 
 def json_booleans_to_python(value):
@@ -127,23 +79,6 @@ def full_dist(vert1, vert2, axis="ALL"):
         return abs(v1[1]-v2[1])
     # if axis == "Z":
     return abs(v1[2]-v2[2])
-
-
-def exists_database(lib_path):
-    result = False
-    if simple_path(lib_path) != "":
-        if os.path.isdir(lib_path):
-            if os.listdir(lib_path):
-                for database_file in os.listdir(lib_path):
-                    _, extension = os.path.splitext(database_file)
-                    if "json" in extension or "bvh" in extension:
-                        result = True
-                    else:
-                        logger.warning("Unknow file extension in %s", simple_path(lib_path))
-
-        else:
-            logger.warning("data path %s not found", simple_path(lib_path))
-    return result
 
 
 def length_of_strip(vertices_coords, indices, axis="ALL"):
@@ -392,24 +327,6 @@ def correct_morph(base_form, current_form, morph_deltas, bboxes):
             logger.warning("Index %s not in bounding box database", idx)
     logger.info("Morphing corrected in %s secs", time.time()-time1)
     return new_morph_deltas
-
-
-def check_version(m_vers, min_version=(1, 5, 0)):
-
-    # m_vers can be a list, tuple, IDfloatarray or str
-    # so it must be converted in a list.
-    if not isinstance(m_vers, str):
-        m_vers = list(m_vers)
-
-    mesh_version = str(m_vers)
-    mesh_version = mesh_version.replace(' ', '')
-    mesh_version = mesh_version.strip("[]()")
-    if len(mesh_version) < 5:
-        logger.warning("The current humanoid has wrong format for version")
-        return False
-
-    mesh_version = (float(mesh_version[0]), float(mesh_version[2]), float(mesh_version[4]))
-    return mesh_version > min_version
 
 
 def looking_for_humanoid_obj():
