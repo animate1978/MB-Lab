@@ -354,7 +354,7 @@ def looking_for_humanoid_obj():
     for obj in bpy.data.objects:
         if obj.type == "MESH":
             if "manuellab_vers" in get_object_keys(obj):
-                if check_version(obj["manuellab_vers"]):
+                if utils.check_version(obj["manuellab_vers"]):
                     human_obj = obj
                     name = human_obj.name
                     break
@@ -391,25 +391,6 @@ def is_in_list(list1, list2, position="ANY"):
                 return True
     return False
 
-
-def load_json_data(json_path, description=None):
-    try:
-        time1 = time.time()
-        with open(json_path, "r") as j_file:
-            j_database = json.load(j_file)
-            if not description:
-                logger.info("Json database %s loaded in %s secs",
-                            simple_path(json_path), time.time()-time1)
-            else:
-                logger.info("%s loaded from %s in %s secs",
-                            description, simple_path(json_path), time.time()-time1)
-            return j_database
-    except IOError:
-        if simple_path(json_path) != "":
-            logger.warning("File not found: %s", simple_path(json_path))
-    except json.JSONDecodeError:
-        logger.warning("Errors in json file: %s", simple_path(json_path))
-    return None
 
 
 def less_boundary_verts(obj, verts_idx, iterations=1):
