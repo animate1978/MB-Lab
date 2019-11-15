@@ -941,7 +941,7 @@ def set_object_visible(obj):
 
 def load_vertices_database(vertices_path):
     vertices = []
-    verts = load_json_data(vertices_path, "Vertices data")
+    verts = file_ops.load_json_data(vertices_path, "Vertices data")
     if verts:
         for vert_co in verts:
             vertices.append(mathutils.Vector(vert_co))
@@ -1320,75 +1320,6 @@ def link_to_collection(obj):
         c = bpy.data.collections.new(collection_name)
         scene.collection.children.link(c)
         c.objects.link(obj)
-
-
-def import_object_from_lib(lib_filepath, name, final_name=None, stop_import=True):
-    if name != "":
-        if stop_import:
-            logger.info("Appending object %s from %s", name, simple_path(lib_filepath))
-            if name in bpy.data.objects:
-                logger.warning("Object %s already in the scene. Import stopped", name)
-                return None
-
-            if final_name:
-                if final_name in bpy.data.objects:
-                    logger.warning("Object %s already in the scene. Import stopped", final_name)
-                    return None
-
-        append_object_from_library(lib_filepath, [name])
-        obj = get_object_by_name(name)
-        if obj:
-            logger.info("Object '%s' imported", name)
-            if final_name:
-                obj.name = final_name
-                logger.info("Object '%s' renamed as '%s'", name, final_name)
-            return obj
-
-        logger.warning("Object %s not found in library %s", name, simple_path(lib_filepath))
-    return None
-
-
-def append_object_from_library(lib_filepath, obj_names, suffix=None):
-
-    try:
-        with bpy.data.libraries.load(lib_filepath) as (data_from, data_to):
-            if suffix:
-                names_to_append = [name for name in data_from.objects if suffix in name]
-                data_to.objects = names_to_append
-            else:
-                names_to_append = obj_names
-                data_to.objects = [name for name in names_to_append if name in data_from.objects]
-    except OSError:
-        logger.critical("lib %s not found", lib_filepath)
-
-    for obj in data_to.objects:
-        link_to_collection(obj)
-        obj_parent = get_object_parent(obj)
-        if obj_parent:
-            link_to_collection(obj_parent)
-
-
-def append_mesh_from_library(lib_filepath, mesh_names, suffix=None):
-
-    try:
-        with bpy.data.libraries.load(lib_filepath) as (data_from, data_to):
-            if suffix:
-                names_to_append = [name for name in data_from.meshes if suffix in name]
-                data_to.meshes = names_to_append
-            else:
-                names_to_append = mesh_names
-                data_to.meshes = [name for name in names_to_append if name in data_from.meshes]
-    except OSError:
-        logger.critical("lib %s not found", lib_filepath)
-
-
-def read_object_names_from_library(lib_filepath):
-    try:
-        with bpy.data.libraries.load(lib_filepath) as (data_from, data_to):
-            for name in data_from.objects:
-                print("OBJ_LIB: ", name)
-    except OSError:
-        logger.critical("lib %s not found", lib_filepath)
 
 
 def is_armature_linked(obj, armat):
