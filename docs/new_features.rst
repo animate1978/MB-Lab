@@ -21,6 +21,8 @@ Adds rotation limits to MB-Lab armatures (need to be in POSE mode)
 
 * Muscle System fixed
 
+.. image:: images/muscle_code_01.png
+
 There were some serious bugs related to the Muscle system of MB-Lab that had gone unnoticed for some time
 These have been fixed with this version.
 
