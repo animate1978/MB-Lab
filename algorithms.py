@@ -802,7 +802,7 @@ def identify_template(obj):
         if obj.type == 'MESH':
             verts = obj.data.vertices
             polygons = obj.data.polygons
-            config_data = get_configuration()
+            config_data = file_ops.get_configuration()
             # TODO error messages
             if verts and polygons:
                 for template in config_data["templates_list"]:
@@ -815,7 +815,7 @@ def identify_template(obj):
 
 def get_template_model(obj):
     template = identify_template(obj)
-    config_data = get_configuration()
+    config_data = file_ops.get_configuration()
     if template:
         return config_data[template]["template_model"]
     return None
@@ -823,7 +823,7 @@ def get_template_model(obj):
 
 def get_template_polygons(obj):
     template = identify_template(obj)
-    config_data = get_configuration()
+    config_data = file_ops.get_configuration()
     if template:
         return config_data[template]["template_polygons"]
     return None
