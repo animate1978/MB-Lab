@@ -2186,7 +2186,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
 
                     box_prox.prop(scn, 'mblab_proxy_offset')
                     box_prox.prop(scn, 'mblab_proxy_threshold')
-                    box_prox.prop(scn, 'mblab_proxy_use_advanced')
+                    box_prox.prop(scn, 'mblab_proxy_use_advanced', icon="PLUS")
                     if scn.mblab_proxy_use_advanced:
                         col = box_prox.column()
                         col.prop(scn, 'mblab_proxy_reverse_fit')

@@ -15,7 +15,7 @@ All changes will be documented here
 - New option to fit in reverse direction to convert a character-specific mesh to a generic proxy.
 - Fixed fitting of meshes that are very close to the skin.
 - New options to do more precise fitting by turning off some normally useful smoothing passes.
-- Changed Face Rig GUI layout
+- Updated GUI
 
 ## Bug Fixes
 
