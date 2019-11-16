@@ -454,7 +454,7 @@ def kdtree_from_mesh_vertices(mesh):
 
 def import_mesh_from_lib(lib_filepath, name):
     existing_mesh_names = collect_existing_meshes()
-    append_mesh_from_library(lib_filepath, [name])
+    file_ops.append_mesh_from_library(lib_filepath, [name])
     new_mesh = get_newest_mesh(existing_mesh_names)
     return new_mesh
 
@@ -978,45 +978,6 @@ def load_image(filepath):
         logger.info("Image %s not found", os.path.basename(filepath))
 
 
-def get_image(name):
-    if name:
-        if name in bpy.data.images:
-            # Some check for log
-            if bpy.data.images[name].source == "FILE":
-                if os.path.basename(bpy.data.images[name].filepath) != name:
-                    logger.warning("Image named %s is from file: %s",
-                                   name, os.path.basename(bpy.data.images[name].filepath))
-            return bpy.data.images[name]
-        logger.warning("Getting image failed. Image %s not found in bpy.data.images", name)
-        return None
-
-    logger.warning("Getting image failed. Image name is %s", name)
-    return None
-
-
-def save_image(name, filepath, fileformat='PNG'):
-    img = get_image(name)
-    scn = bpy.context.scene
-    if img:
-        current_format = scn.render.image_settings.file_format
-        scn.render.image_settings.file_format = fileformat
-        img.save_render(filepath)
-        scn.render.image_settings.file_format = current_format
-    else:
-        logger.warning(
-            "The image %s cannot be saved because it's not present in bpy.data.images.", name)
-
-
-def new_texture(name, image=None):
-    if name not in bpy.data.textures:
-        _new_texture = bpy.data.textures.new(name, type='IMAGE')
-    else:
-        _new_texture = bpy.data.textures[name]
-    if image:
-        _new_texture.image = image
-    return _new_texture
-
-
 def image_to_array(blender_image):
     return array.array('f', blender_image.pixels[:])
 
@@ -1025,60 +986,6 @@ def array_to_image(pixel_array, blender_image):
     blender_image.pixels = pixel_array.tolist()
 
 
-def set_node_image(mat_node, mat_image):
-    if mat_node:
-        mat_node.image = mat_image
-    else:
-        logger.warning("Node assignment failed. Image not found: %s", mat_image)
-
-
-def get_material(material_name):
-    for material in bpy.data.materials:
-        if material.name == material_name:
-            return material
-    logger.warning("Material %s not found", material_name)
-    return None
-
-
-def get_material_nodes(material):
-    if material.node_tree:
-        return material.node_tree.nodes
-
-    logger.warning("Material %s has not nodes", material.name)
-    return None
-
-
-def get_material_node(material_name, node_name):
-    material_node = None
-    material = get_material(material_name)
-    if material:
-        if node_name in material.node_tree.nodes:
-            material_node = material.node_tree.nodes[node_name]
-    if not material_node:
-        logger.warning("Node not found: %s in material %s", node_name, material_name)
-    return material_node
-
-
-def get_node_output_value(node, index):
-    if index < len(node.outputs):
-        if hasattr(node.outputs[index], "default_value"):
-            return node.outputs[index].default_value
-
-        logger.warning("Socket [%s] has not default_value attribute", index)
-        return None
-
-    logger.warning("Socket [%s] not in range of node %s outputs", index, node.name)
-    return None
-
-
-def set_node_output_value(node, index, value):
-    if index < len(node.outputs):
-        if hasattr(node.outputs[index], "default_value"):
-            node.outputs[index].default_value = value
-        else:
-            logger.warning("Socket [%s] has not default_value attribute", index)
-    else:
-        logger.warning("Socket[%s] not in range of node %s outputs", index, node.name)
 
 
 def get_edit_bones(armature):
@@ -1306,7 +1213,7 @@ def link_to_collection(obj):
         logger.error("Cannot link obj %s because it's not in bpy.data.objects", obj.name)
         return
 
-    collection_name = 'ManuelBastioni_Character'
+    collection_name = 'MB_LAB_Character'
     c = bpy.data.collections.get(collection_name)
     scene = bpy.context.scene
     # collection is already created

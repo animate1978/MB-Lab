@@ -26,6 +26,10 @@ All changes will be documented here
 - Minor GUI edits to fix drawing issues.
 - Fixed Bump and Displacement issues in MBLab_Skin2
 
+## Known Issues
+
+- IK rigs for the feet deform strangely
+
 # MB-Lab 1.7.6
 
 ## Added

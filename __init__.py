@@ -1480,8 +1480,7 @@ class CharacterGenerator(bpy.types.Operator):
         b_mass = scn.mblab_body_mass
         p_fantasy = scn.mblab_preserve_fantasy
 
-        mblab_humanoid.generate_character(rnd_val, p_face, p_body, p_mass, p_tone,
-                                          p_height, p_phenotype, set_tone_mass, b_mass, b_tone, p_fantasy)
+        mblab_humanoid.generate_character(rnd_val, p_face, p_body, p_mass, p_tone, p_height, p_phenotype, set_tone_mass, b_mass, b_tone, p_fantasy)
         return {'FINISHED'}
 
 
