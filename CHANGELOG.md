@@ -25,10 +25,11 @@ All changes will be documented here
 - Replaced obj.hide_select = False with obj.hide_set(False) fixing Age update bug.
 - Minor GUI edits to fix drawing issues.
 - Fixed Bump and Displacement issues in MBLab_Skin2
+- Fixed IK and IK/Muscle bugs
 
 ## Known Issues
 
-- IK rigs for the feet deform strangely
+
 
 # MB-Lab 1.7.6
 
