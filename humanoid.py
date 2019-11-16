@@ -441,6 +441,8 @@ class Humanoid:
                 if "armature" not in modf.name:
                     obj.modifiers.remove(modf)
 
+#TODO Move to file_ops.py
+
     def save_body_displacement_texture(self, filepath):
         self.mat_engine.save_texture(filepath, "body_displ")
 
