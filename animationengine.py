@@ -1342,7 +1342,7 @@ class RetargetEngine:
             if source_armature:
                 self.load_bones_quaternions(source_armature, filepath)
                 self.retarget(target_armature, source_armature, bake_animation=True)
-                algorithms.remove_object(source_armature)
+                object_ops.remove_object(source_armature)
                 algorithms.stop_animation()
         else:
             self.load_bones_quaternions(target_armature, filepath)
@@ -1362,7 +1362,7 @@ class RetargetEngine:
             if source_armature:
                 if not debug_mode:
                     self.retarget(target_armature, source_armature, True)
-                    algorithms.remove_object(source_armature)
+                    object_ops.remove_object(source_armature)
                 else:
                     self.retarget(target_armature, source_armature, False)
                 algorithms.play_animation()
@@ -1395,11 +1395,11 @@ class RetargetEngine:
             self.remove_armature_constraints(target_armature)
             self.add_armature_constraints(target_armature, source_armature)
             if bake_animation:
-                scene_modifiers_status = object_ops.get_scene_modifiers_status()
-                object_ops.set_scene_modifiers_status(False)
-                object_ops.set_scene_modifiers_status_by_type('ARMATURE', True)
+                scene_modifiers_status = algorithms.get_scene_modifiers_status()
+                algorithms.set_scene_modifiers_status(False)
+                algorithms.set_scene_modifiers_status_by_type('ARMATURE', True)
                 self.bake_animation(target_armature, source_armature)
-                object_ops.set_scene_modifiers_status(False, scene_modifiers_status)
+                algorithms.set_scene_modifiers_status(False, scene_modifiers_status)
 
 
 class ExpressionEngineShapeK:

@@ -139,7 +139,7 @@ class SkeletonEngine:
 
         if native_armature:
             self.armature_z_axis = algorithms.get_all_bones_z_axis(native_armature)
-            algorithms.remove_object(native_armature)
+            object_ops.remove_object(native_armature)
 
     def align_bones_z_axis(self):
         target_armature = self.get_armature()
