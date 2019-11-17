@@ -28,7 +28,7 @@ import os
 import bpy
 import mathutils
 
-from . import algorithms, utils, file_ops
+from . import algorithms, utils, file_ops, object_ops
 from .utils import get_object_parent
 
 logger = logging.getLogger(__name__)
@@ -102,21 +102,21 @@ class SkeletonEngine:
             obj = self.get_body()
             armat = self.get_armature()
             parameters = {"object": armat}
-            algorithms.new_modifier(obj, self.armature_modifier_name, 'ARMATURE', parameters)
+            object_ops.new_modifier(obj, self.armature_modifier_name, 'ARMATURE', parameters)
 
     def move_up_armature_modifier(self):
         if self.has_data:
             obj = self.get_body()
-            armature_modifier = algorithms.get_modifier(obj, self.armature_modifier_name)
+            armature_modifier = object_ops.get_modifier(obj, self.armature_modifier_name)
             if armature_modifier:
-                algorithms.move_up_modifier(obj, armature_modifier)
+                object_ops.move_up_modifier(obj, armature_modifier)
 
     def apply_armature_modifier(self):
         if self.has_data:
             obj = self.get_body()
-            armature_modifier = algorithms.get_modifier(obj, self.armature_modifier_name)
+            armature_modifier = object_ops.get_modifier(obj, self.armature_modifier_name)
             if armature_modifier:
-                algorithms.apply_modifier(obj, armature_modifier)
+                object_ops.apply_modifier(obj, armature_modifier)
 
     def apply_pose_as_rest_pose(self):
         if self.has_data:

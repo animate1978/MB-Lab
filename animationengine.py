@@ -31,7 +31,7 @@ from functools import lru_cache
 import mathutils
 import bpy
 
-from . import algorithms, utils, file_ops
+from . import algorithms, utils, file_ops, object_ops
 
 from .utils import get_active_armature
 
@@ -1395,11 +1395,11 @@ class RetargetEngine:
             self.remove_armature_constraints(target_armature)
             self.add_armature_constraints(target_armature, source_armature)
             if bake_animation:
-                scene_modifiers_status = algorithms.get_scene_modifiers_status()
-                algorithms.set_scene_modifiers_status(False)
-                algorithms.set_scene_modifiers_status_by_type('ARMATURE', True)
+                scene_modifiers_status = object_ops.get_scene_modifiers_status()
+                object_ops.set_scene_modifiers_status(False)
+                object_ops.set_scene_modifiers_status_by_type('ARMATURE', True)
                 self.bake_animation(target_armature, source_armature)
-                algorithms.set_scene_modifiers_status(False, scene_modifiers_status)
+                object_ops.set_scene_modifiers_status(False, scene_modifiers_status)
 
 
 class ExpressionEngineShapeK:

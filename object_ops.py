@@ -73,7 +73,7 @@ def get_sel():
 
 
 ###############################################################################################################################
-#OBJECT CREATION
+# OBJECT CREATION
 
 #creates new mesh
 def obj_mesh(co, faces, collection):
@@ -141,7 +141,7 @@ def add_rd_capsule(Name, length, radius, cap_coord, faces, collection):
         pass
 
 ###############################################################################################################################
-#MATH OPS
+# MATH OPS
 
 #Rotation Matrix
 def rotation_matrix(xrot, yrot, zrot):
@@ -172,7 +172,7 @@ def rot_obj(obj, rot_mat):
         vt[i].co = v
 
 ###############################################################################################################################
-#VERTEX_GROUP OPS
+# VERTEX_GROUP OPS
 
 #Create Vertex Group
 def add_vert_group(object, vgroup, index):
@@ -227,7 +227,7 @@ def copy_wt(Name, viw, vid):
     add_wt(Name, vid)
 
 ###############################################################################################################################
-#COLLECTION OPS
+# COLLECTION OPS
 
 #get a list of all objects in collection
 def collection_object_list(collection):
@@ -239,7 +239,7 @@ def new_collection(Name):
     bpy.context.scene.collection.children.link(new_coll)
 
 ###############################################################################################################################
-#PARENTING OPS
+# PARENTING OPS
 
 def adoption(parent, child, type, index):
     '''types: OBJECT, ARMATURE, LATTICE, VERTEX, VERTEX_3, BONE'''
@@ -261,7 +261,7 @@ def add_parent(parent, children):
 
 
 ###############################################################################################################################
-#MODIFIER OPS
+# MODIFIER OPS
 
 #Add modifier
 def add_modifier(Object, Name, Type):
@@ -276,3 +276,139 @@ def apply_mod(Ref):
                 bpy.context.view_layer.objects.active = o
                 bpy.ops.object.modifier_apply(modifier=m.name)
     bpy.context.view_layer.objects.active = act
+
+#
+def set_scene_modifiers_status_by_type(modfr_type, visib):
+    for obj in bpy.data.objects:
+        for modfr in obj.modifiers:
+            if modfr.type == modfr_type:
+                set_modifier_viewport(modfr, visib)
+
+#
+def set_scene_modifiers_status(visib, status_data=None):
+    if not status_data:
+        for obj in bpy.data.objects:
+            for modfr in obj.modifiers:
+                set_modifier_viewport(modfr, visib)
+    else:
+        for obj in bpy.data.objects:
+            obj_name = obj.name
+            if obj_name in status_data:
+                modifier_status = status_data[obj_name]
+                set_object_modifiers_visibility(obj, modifier_status)
+
+#
+def disable_object_modifiers(obj, types_to_disable=[]):
+    for modfr in obj.modifiers:
+        modifier_type = modfr.type
+        if modifier_type in types_to_disable:
+            set_modifier_viewport(modfr, False)
+            logger.info("Modifier %s of %s can create unpredictable fitting results. MB-Lab has disabled it",
+                        modifier_type, obj.name)
+        elif types_to_disable == []:
+            set_modifier_viewport(modfr, False)
+            logger.info("Modifier %s of %s can create unpredictable fitting results. MB-Lab has disabled it",
+                        modifier_type, obj.name)
+
+#
+def get_object_modifiers_visibility(obj):
+    # Store the viewport visibility for all modifiers of the obj
+    obj_modifiers_status = {}
+    for modfr in obj.modifiers:
+        modfr_name = get_modifier_name(modfr)
+        modfr_status = get_modifier_viewport(modfr)
+        if modfr_name:
+            obj_modifiers_status[modfr_name] = modfr_status
+    return obj_modifiers_status
+
+#
+def set_object_modifiers_visibility(obj, modifier_status):
+    # Store the viewport visibility for all modifiers of the obj
+    for modfr in obj.modifiers:
+        modfr_name = get_modifier_name(modfr)
+        if modfr_name in modifier_status:
+            set_modifier_viewport(modfr, modifier_status[modfr_name])
+
+#
+def get_modifier(obj, modifier_name):
+    return obj.modifiers.get(modifier_name)
+
+#
+def get_modifier_name(modfr):
+    return getattr(modfr, 'name')
+
+#
+def apply_modifier(obj, modifier):
+    modifier_name = get_modifier_name(modifier)
+    if modifier_name in obj.modifiers:
+        set_active_object(obj)
+        try:
+            bpy.ops.object.modifier_apply(apply_as='DATA', modifier=modifier_name)
+        except AttributeError:
+            logger.warning("Problems in applying %s. Is the modifier disabled?", modifier_name)
+
+#
+def move_up_modifier(obj, modifier):
+    modifier_name = get_modifier_name(modifier)
+    set_active_object(obj)
+    for n in range(len(obj.modifiers)):
+        bpy.ops.object.modifier_move_up(modifier=modifier_name)
+
+#
+def move_down_modifier(obj, modifier):
+    modifier_name = get_modifier_name(modifier)
+    set_active_object(obj)
+    for n in range(len(obj.modifiers)):
+        bpy.ops.object.modifier_move_down(modifier=modifier_name)
+
+#
+def remove_modifier(obj, modifier_name):
+    print("Removing ", modifier_name)
+    if modifier_name in obj.modifiers:
+        obj.modifiers.remove(obj.modifiers[modifier_name])
+
+#
+def disable_modifier(modfr):
+    logger.info("Disable %s", modfr.name)
+    for mdf in ('show_viewport', 'show_render', 'show_in_editmode', 'show_on_cage'):
+        if hasattr(modfr, mdf):
+            setattr(modfr, mdf, False)
+
+#
+def get_modifier_viewport(modfr):
+    return getattr(modfr, 'show_viewport', None)
+
+#
+def set_modifier_viewport(modfr, value):
+    if hasattr(modfr, 'show_viewport'):
+        modfr.show_viewport = value
+
+#
+def new_modifier(obj, name, modifier_type, parameters):
+    if name in obj.modifiers:
+        logger.info("Modifier %s already present in %s", modifier_type, obj.name)
+        return obj.modifiers[name]
+    _new_modifier = obj.modifiers.new(name, modifier_type)
+    for parameter, value in parameters.items():
+        if hasattr(_new_modifier, parameter):
+            try:
+                setattr(_new_modifier, parameter, value)
+            except AttributeError:
+                logger.info("Setattr failed for attribute '%s' of modifier %s", parameter, name)
+    return _new_modifier
+
+#
+def set_modifier_parameter(modifier, parameter, value):
+    if hasattr(modifier, parameter):
+        try:
+            setattr(modifier, parameter, value)
+        except AttributeError:
+            logger.info("Setattr failed for attribute '%s' of modifier %s", parameter, modifier)
+
+
+###############################################################################################################################
+# ARMATURE OPS
+
+###############################################################################################################################
+# SHAPEKEY OPS
+
