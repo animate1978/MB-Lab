@@ -22,13 +22,17 @@
 
 
 
+import logging
 import bpy
 import numpy as np
+import mathutils
 
 from copy import deepcopy as dc
 from math import radians
 
 from . import algorithms
+
+logger = logging.getLogger(__name__)
 
 
 def get_body_mesh():
@@ -277,133 +281,6 @@ def apply_mod(Ref):
                 bpy.ops.object.modifier_apply(modifier=m.name)
     bpy.context.view_layer.objects.active = act
 
-#
-def set_scene_modifiers_status_by_type(modfr_type, visib):
-    for obj in bpy.data.objects:
-        for modfr in obj.modifiers:
-            if modfr.type == modfr_type:
-                set_modifier_viewport(modfr, visib)
-
-#
-def set_scene_modifiers_status(visib, status_data=None):
-    if not status_data:
-        for obj in bpy.data.objects:
-            for modfr in obj.modifiers:
-                set_modifier_viewport(modfr, visib)
-    else:
-        for obj in bpy.data.objects:
-            obj_name = obj.name
-            if obj_name in status_data:
-                modifier_status = status_data[obj_name]
-                set_object_modifiers_visibility(obj, modifier_status)
-
-#
-def disable_object_modifiers(obj, types_to_disable=[]):
-    for modfr in obj.modifiers:
-        modifier_type = modfr.type
-        if modifier_type in types_to_disable:
-            set_modifier_viewport(modfr, False)
-            logger.info("Modifier %s of %s can create unpredictable fitting results. MB-Lab has disabled it",
-                        modifier_type, obj.name)
-        elif types_to_disable == []:
-            set_modifier_viewport(modfr, False)
-            logger.info("Modifier %s of %s can create unpredictable fitting results. MB-Lab has disabled it",
-                        modifier_type, obj.name)
-
-#
-def get_object_modifiers_visibility(obj):
-    # Store the viewport visibility for all modifiers of the obj
-    obj_modifiers_status = {}
-    for modfr in obj.modifiers:
-        modfr_name = get_modifier_name(modfr)
-        modfr_status = get_modifier_viewport(modfr)
-        if modfr_name:
-            obj_modifiers_status[modfr_name] = modfr_status
-    return obj_modifiers_status
-
-#
-def set_object_modifiers_visibility(obj, modifier_status):
-    # Store the viewport visibility for all modifiers of the obj
-    for modfr in obj.modifiers:
-        modfr_name = get_modifier_name(modfr)
-        if modfr_name in modifier_status:
-            set_modifier_viewport(modfr, modifier_status[modfr_name])
-
-#
-def get_modifier(obj, modifier_name):
-    return obj.modifiers.get(modifier_name)
-
-#
-def get_modifier_name(modfr):
-    return getattr(modfr, 'name')
-
-#
-def apply_modifier(obj, modifier):
-    modifier_name = get_modifier_name(modifier)
-    if modifier_name in obj.modifiers:
-        set_active_object(obj)
-        try:
-            bpy.ops.object.modifier_apply(apply_as='DATA', modifier=modifier_name)
-        except AttributeError:
-            logger.warning("Problems in applying %s. Is the modifier disabled?", modifier_name)
-
-#
-def move_up_modifier(obj, modifier):
-    modifier_name = get_modifier_name(modifier)
-    set_active_object(obj)
-    for n in range(len(obj.modifiers)):
-        bpy.ops.object.modifier_move_up(modifier=modifier_name)
-
-#
-def move_down_modifier(obj, modifier):
-    modifier_name = get_modifier_name(modifier)
-    set_active_object(obj)
-    for n in range(len(obj.modifiers)):
-        bpy.ops.object.modifier_move_down(modifier=modifier_name)
-
-#
-def remove_modifier(obj, modifier_name):
-    print("Removing ", modifier_name)
-    if modifier_name in obj.modifiers:
-        obj.modifiers.remove(obj.modifiers[modifier_name])
-
-#
-def disable_modifier(modfr):
-    logger.info("Disable %s", modfr.name)
-    for mdf in ('show_viewport', 'show_render', 'show_in_editmode', 'show_on_cage'):
-        if hasattr(modfr, mdf):
-            setattr(modfr, mdf, False)
-
-#
-def get_modifier_viewport(modfr):
-    return getattr(modfr, 'show_viewport', None)
-
-#
-def set_modifier_viewport(modfr, value):
-    if hasattr(modfr, 'show_viewport'):
-        modfr.show_viewport = value
-
-#
-def new_modifier(obj, name, modifier_type, parameters):
-    if name in obj.modifiers:
-        logger.info("Modifier %s already present in %s", modifier_type, obj.name)
-        return obj.modifiers[name]
-    _new_modifier = obj.modifiers.new(name, modifier_type)
-    for parameter, value in parameters.items():
-        if hasattr(_new_modifier, parameter):
-            try:
-                setattr(_new_modifier, parameter, value)
-            except AttributeError:
-                logger.info("Setattr failed for attribute '%s' of modifier %s", parameter, name)
-    return _new_modifier
-
-#
-def set_modifier_parameter(modifier, parameter, value):
-    if hasattr(modifier, parameter):
-        try:
-            setattr(modifier, parameter, value)
-        except AttributeError:
-            logger.info("Setattr failed for attribute '%s' of modifier %s", parameter, modifier)
 
 
 ###############################################################################################################################
@@ -411,4 +288,102 @@ def set_modifier_parameter(modifier, parameter, value):
 
 ###############################################################################################################################
 # SHAPEKEY OPS
+
+###############################################################################################################################
+# OBJECT OPS
+
+
+def remove_mesh(mesh, remove_materials=False):
+    if remove_materials:
+        for material in mesh.materials:
+            if material:
+                bpy.data.materials.remove(material, do_unlink=True)
+    bpy.data.meshes.remove(mesh, do_unlink=True)
+
+def remove_object(obj, delete_mesh=False, delete_materials=False):
+    if obj:
+        mesh_to_remove = None
+        if obj.type == 'MESH':
+            mesh_to_remove = obj.data
+
+        bpy.data.objects.remove(obj, do_unlink=True)
+        if delete_mesh:
+            if mesh_to_remove is not None:
+                remove_mesh(mesh_to_remove, delete_materials)
+
+def set_object_layer(obj, n):
+    if obj:
+        if hasattr(obj, 'layers'):
+            n_layer = len(obj.layers)
+            for i in range(n_layer):
+                obj.layers[i] = False
+            if n in range(n_layer):
+                obj.layers[n] = True
+
+def apply_object_matrix(obj):
+    negative_matrix = False
+    for val in obj.scale:
+        if val < 0:
+            negative_matrix = True
+
+    m = obj.matrix_world
+    obj.data.transform(m)
+    if negative_matrix and obj.type == 'MESH':
+        obj.data.flip_normals()
+    obj.matrix_world = mathutils.Matrix()
+
+
+def less_boundary_verts(obj, verts_idx, iterations=1):
+    polygons = obj.data.polygons
+
+    while iterations != 0:
+        verts_to_remove = set()
+        for poly in polygons:
+            poly_verts_idx = poly.vertices
+            for v_idx in poly_verts_idx:
+                if v_idx not in verts_idx:
+                    for _v_idx in poly_verts_idx:
+                        verts_to_remove.add(_v_idx)
+                    break
+        verts_idx.difference_update(verts_to_remove)
+        iterations -= 1
+
+def kdtree_from_mesh_polygons(mesh):
+    polygons = mesh.polygons
+    research_tree = mathutils.kdtree.KDTree(len(polygons))
+    for polyg in polygons:
+        research_tree.insert(polyg.center, polyg.index)
+    research_tree.balance()
+    return research_tree
+
+def kdtree_from_mesh_vertices(mesh):
+    vertices = mesh.vertices
+    research_tree = mathutils.kdtree.KDTree(len(vertices))
+    for idx, vert in enumerate(vertices):
+        research_tree.insert(vert.co, idx)
+    research_tree.balance()
+    return research_tree
+
+def kdtree_from_obj_polygons(obj, indices_of_polygons_subset=None):
+    polygons = []
+    if indices_of_polygons_subset is not None:
+        for idx in indices_of_polygons_subset:
+            polygons.append(obj.data.polygons[idx])
+    else:
+        polygons = obj.data.polygons
+    research_tree = mathutils.kdtree.KDTree(len(polygons))
+    for polyg in polygons:
+        research_tree.insert(polyg.center, polyg.index)
+    research_tree.balance()
+    return research_tree
+
+def bvhtree_from_obj_polygons(obj, indices_of_polygons_subset=None):
+    polygons = []
+    if indices_of_polygons_subset is not None:
+        for idx in indices_of_polygons_subset:
+            polygons.append(obj.data.polygons[idx].vertices)
+    else:
+        polygons = [ poly.vertices for poly in obj.data.polygons ]
+    vertices = [ vert.co for vert in obj.data.vertices ]
+    return mathutils.bvhtree.BVHTree.FromPolygons(vertices, polygons)
 

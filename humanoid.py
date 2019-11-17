@@ -260,7 +260,7 @@ class Humanoid:
     def add_subdivision_modifier(self):
         obj = self.get_object()
         parameters = {"levels": 1, "render_levels": 2, "show_viewport": True, "show_in_editmode": False}
-        object_ops.new_modifier(obj, self.mat_engine.subdivision_modifier_name, 'SUBSURF', parameters)
+        algorithms.new_modifier(obj, self.mat_engine.subdivision_modifier_name, 'SUBSURF', parameters)
 
     def add_displacement_modifier(self):
         obj = self.get_object()
@@ -268,7 +268,7 @@ class Humanoid:
         if disp_img:
             disp_tex = file_ops.new_texture(self.mat_engine.generated_disp_modifier_ID, disp_img)
             parameters = {"texture_coords":'UV', "strength": 0.01, "show_viewport": False, "texture": disp_tex}
-            displacement_modifier = object_ops.new_modifier(obj, self.mat_engine.generated_disp_modifier_ID, 'DISPLACE', parameters)
+            displacement_modifier = algorithms.new_modifier(obj, self.mat_engine.generated_disp_modifier_ID, 'DISPLACE', parameters)
 
     def rename_obj(self, prefix):
         obj = self.get_object()

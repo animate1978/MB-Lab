@@ -71,7 +71,7 @@ class ProxyEngine:
 
     def transfer_weights(self, body, proxy):
 
-        body_kd_tree = algorithms.kdtree_from_mesh_vertices(body.data)
+        body_kd_tree = object_ops.kdtree_from_mesh_vertices(body.data)
 
         fit_shapekey = algorithms.get_shapekey(proxy, "mbastlab_proxyfit")
         if fit_shapekey:
@@ -143,21 +143,21 @@ class ProxyEngine:
         for modfr in proxy.modifiers:
             if modfr.type == 'ARMATURE':
                 if modfr.name != self.proxy_armature_modifier:
-                    object_ops.disable_modifier(modfr)
+                    algorithms.disable_modifier(modfr)
 
     def add_proxy_armature_modfr(self, proxy, armat):
         for modfr in proxy.modifiers:
             if modfr.type == 'ARMATURE':
                 if modfr.name == self.proxy_armature_modifier:
-                    object_ops.remove_modifier(proxy, self.proxy_armature_modifier)
+                    algorithms.remove_modifier(proxy, self.proxy_armature_modifier)
 
         parameters = {"object": armat}
-        armature_modifier = object_ops.new_modifier(proxy, self.proxy_armature_modifier,'ARMATURE', parameters)
+        armature_modifier = algorithms.new_modifier(proxy, self.proxy_armature_modifier,'ARMATURE', parameters)
         return armature_modifier
 
     # def add_mask_modifier(self, body, mask_name):
         # parameters = {"vertex_group": mask_name,"invert_vertex_group": True}
-        # object_ops.new_modifier(body, mask_name, 'MASK', parameters)
+        # algorithms.new_modifier(body, mask_name, 'MASK', parameters)
 
     def calibrate_proxy_object(self,proxy):
         if proxy is not None:
@@ -267,7 +267,7 @@ class ProxyEngine:
         involved_current_body_polygons_coords = []
 
         if len(basis_body_polygons) == len(current_body_polygons):
-            basis_body_tree = algorithms.kdtree_from_obj_polygons(basis_body, valid_polygons_indxs)
+            basis_body_tree = object_ops.kdtree_from_obj_polygons(basis_body, valid_polygons_indxs)
 
             for i,basis_proxy_vert in enumerate(basis_proxy_vertices):
 
@@ -328,7 +328,7 @@ class ProxyEngine:
         current_body_polygons = current_body.data.polygons
 
         if len(basis_body_polygons) == len(current_body_polygons) and proxy_threshold > 0:
-            basis_body_bvhtree = algorithms.bvhtree_from_obj_polygons(basis_body, valid_polygons_indxs)
+            basis_body_bvhtree = object_ops.bvhtree_from_obj_polygons(basis_body, valid_polygons_indxs)
             basis_body_kdtree = None
 
             for i,basis_proxy_vert in enumerate(basis_proxy_vertices):
@@ -347,7 +347,7 @@ class ProxyEngine:
                 # If the polygon is facing wrong, do a manual search with a normal check:
                 if basis_proxy_vert.normal.dot(hit_normal) <= 0:
                     if basis_body_kdtree is None:
-                        basis_body_kdtree = algorithms.kdtree_from_obj_polygons(basis_body, valid_polygons_indxs)
+                        basis_body_kdtree = object_ops.kdtree_from_obj_polygons(basis_body, valid_polygons_indxs)
 
                     nearest_body_polygons_data = basis_body_kdtree.find_n(vert_co, 25)
 
@@ -429,11 +429,11 @@ class ProxyEngine:
             logger.info("Fitting proxy {0}".format(proxy.name))
             selected_objs_names = algorithms.get_objects_selected_names()
 
-            body_modfs_status = object_ops.get_object_modifiers_visibility(body)
-            proxy_modfs_status = object_ops.get_object_modifiers_visibility(proxy)
+            body_modfs_status = algorithms.get_object_modifiers_visibility(body)
+            proxy_modfs_status = algorithms.get_object_modifiers_visibility(proxy)
 
-            object_ops.disable_object_modifiers(proxy, ['ARMATURE','SUBSURF','MASK'])
-            object_ops.disable_object_modifiers(body, ['ARMATURE','SUBSURF','MASK'])
+            algorithms.disable_object_modifiers(proxy, ['ARMATURE','SUBSURF','MASK'])
+            algorithms.disable_object_modifiers(body, ['ARMATURE','SUBSURF','MASK'])
 
 
             basis_body = file_ops.import_object_from_lib(self.templates_library, template_name, stop_import = False)
@@ -457,8 +457,8 @@ class ProxyEngine:
             else:
                 self.remove_body_mask(body, mask_name)
 
-            #algorithms.remove_mesh(basis_body_mesh, True)
-            algorithms.remove_object(basis_body, True, True)
+            #object_ops.remove_mesh(basis_body_mesh, True)
+            object_ops.remove_object(basis_body, True, True)
 
             if not reverse:
                 armature_mod = self.add_proxy_armature_modfr(proxy, armat)
@@ -467,21 +467,21 @@ class ProxyEngine:
                     algorithms.remove_vertgroups_all(proxy)
                     self.transfer_weights(body, proxy)
 
-            object_ops.set_object_modifiers_visibility(proxy, proxy_modfs_status)
-            object_ops.set_object_modifiers_visibility(body, body_modfs_status)
+            algorithms.set_object_modifiers_visibility(proxy, proxy_modfs_status)
+            algorithms.set_object_modifiers_visibility(body, body_modfs_status)
             self.disable_extra_armature_modfr(proxy)
 
             if not reverse:
                 if smoothing:
                     parameters = {"show_viewport": True}
 
-                    correct_smooth_mod = object_ops.new_modifier(proxy, self.corrective_modifier_name, 'CORRECTIVE_SMOOTH', parameters)
+                    correct_smooth_mod = algorithms.new_modifier(proxy, self.corrective_modifier_name, 'CORRECTIVE_SMOOTH', parameters)
 
                     for i in range(10):
-                        object_ops.move_up_modifier(proxy, correct_smooth_mod)
+                        algorithms.move_up_modifier(proxy, correct_smooth_mod)
 
                 for i in range(10):
-                    object_ops.move_up_modifier(proxy, armature_mod)
+                    algorithms.move_up_modifier(proxy, armature_mod)
 
 
             for obj_name in selected_objs_names:
@@ -508,8 +508,8 @@ class ProxyEngine:
 
         if len(basis_body_polygons) == len(current_body_polygons):
 
-            #current_body_tree = algorithms.kdtree_from_mesh_polygons(current_body)
-            current_body_tree = algorithms.kdtree_from_obj_polygons(current_body, valid_polygons_indxs)
+            #current_body_tree = object_ops.kdtree_from_mesh_polygons(current_body)
+            current_body_tree = object_ops.kdtree_from_obj_polygons(current_body, valid_polygons_indxs)
 
             for i in range(len(basis_proxy_vertices)):
                 proxy_shapekey_vert = proxy_shapekey.data[i]
@@ -544,7 +544,7 @@ class ProxyEngine:
         polygons_file = algorithms.get_template_polygons(body)
         polygons_path = os.path.join(self.data_path,"pgroups",polygons_file)
         valid_polygons_indxs = file_ops.load_json_data(polygons_path, "Subset of polygons for proxy fitting")
-        body_tree = algorithms.kdtree_from_obj_polygons(body, valid_polygons_indxs)
+        body_tree = object_ops.kdtree_from_obj_polygons(body, valid_polygons_indxs)
 
 
         algorithms.remove_vertgroup(body, mask_name)
@@ -566,7 +566,7 @@ class ProxyEngine:
                 for v_idx in body_polygon.vertices:
                     masked_verts_idx.add(v_idx)
 
-        algorithms.less_boundary_verts(body, masked_verts_idx, iterations=2)
+        object_ops.less_boundary_verts(body, masked_verts_idx, iterations=2)
 
         for i,vert in enumerate(body.data.vertices):
             if i in masked_verts_idx:
@@ -574,10 +574,10 @@ class ProxyEngine:
 
         #self.add_mask_modifier(body, mask_name)
         parameters = {"vertex_group": mask_name,"invert_vertex_group": True}
-        object_ops.new_modifier(body, mask_name, 'MASK', parameters)
+        algorithms.new_modifier(body, mask_name, 'MASK', parameters)
 
     def remove_body_mask(self, body, mask_name):
-        object_ops.remove_modifier(body, mask_name)
+        algorithms.remove_modifier(body, mask_name)
         algorithms.remove_vertgroup(body, mask_name)
 
 
