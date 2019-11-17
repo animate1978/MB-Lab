@@ -29,7 +29,7 @@ import os
 import mathutils
 import bpy
 
-from . import algorithms, utils, file_ops
+from . import algorithms, utils, file_ops, object_ops
 
 
 logger = logging.getLogger(__name__)
@@ -143,21 +143,21 @@ class ProxyEngine:
         for modfr in proxy.modifiers:
             if modfr.type == 'ARMATURE':
                 if modfr.name != self.proxy_armature_modifier:
-                    algorithms.disable_modifier(modfr)
+                    object_ops.disable_modifier(modfr)
 
     def add_proxy_armature_modfr(self, proxy, armat):
         for modfr in proxy.modifiers:
             if modfr.type == 'ARMATURE':
                 if modfr.name == self.proxy_armature_modifier:
-                    algorithms.remove_modifier(proxy, self.proxy_armature_modifier)
+                    object_ops.remove_modifier(proxy, self.proxy_armature_modifier)
 
         parameters = {"object": armat}
-        armature_modifier = algorithms.new_modifier(proxy, self.proxy_armature_modifier,'ARMATURE', parameters)
+        armature_modifier = object_ops.new_modifier(proxy, self.proxy_armature_modifier,'ARMATURE', parameters)
         return armature_modifier
 
     # def add_mask_modifier(self, body, mask_name):
         # parameters = {"vertex_group": mask_name,"invert_vertex_group": True}
-        # algorithms.new_modifier(body, mask_name, 'MASK', parameters)
+        # object_ops.new_modifier(body, mask_name, 'MASK', parameters)
 
     def calibrate_proxy_object(self,proxy):
         if proxy is not None:
@@ -429,11 +429,11 @@ class ProxyEngine:
             logger.info("Fitting proxy {0}".format(proxy.name))
             selected_objs_names = algorithms.get_objects_selected_names()
 
-            body_modfs_status = algorithms.get_object_modifiers_visibility(body)
-            proxy_modfs_status = algorithms.get_object_modifiers_visibility(proxy)
+            body_modfs_status = object_ops.get_object_modifiers_visibility(body)
+            proxy_modfs_status = object_ops.get_object_modifiers_visibility(proxy)
 
-            algorithms.disable_object_modifiers(proxy, ['ARMATURE','SUBSURF','MASK'])
-            algorithms.disable_object_modifiers(body, ['ARMATURE','SUBSURF','MASK'])
+            object_ops.disable_object_modifiers(proxy, ['ARMATURE','SUBSURF','MASK'])
+            object_ops.disable_object_modifiers(body, ['ARMATURE','SUBSURF','MASK'])
 
 
             basis_body = file_ops.import_object_from_lib(self.templates_library, template_name, stop_import = False)
@@ -467,21 +467,21 @@ class ProxyEngine:
                     algorithms.remove_vertgroups_all(proxy)
                     self.transfer_weights(body, proxy)
 
-            algorithms.set_object_modifiers_visibility(proxy, proxy_modfs_status)
-            algorithms.set_object_modifiers_visibility(body, body_modfs_status)
+            object_ops.set_object_modifiers_visibility(proxy, proxy_modfs_status)
+            object_ops.set_object_modifiers_visibility(body, body_modfs_status)
             self.disable_extra_armature_modfr(proxy)
 
             if not reverse:
                 if smoothing:
                     parameters = {"show_viewport": True}
 
-                    correct_smooth_mod = algorithms.new_modifier(proxy, self.corrective_modifier_name, 'CORRECTIVE_SMOOTH', parameters)
+                    correct_smooth_mod = object_ops.new_modifier(proxy, self.corrective_modifier_name, 'CORRECTIVE_SMOOTH', parameters)
 
                     for i in range(10):
-                        algorithms.move_up_modifier(proxy, correct_smooth_mod)
+                        object_ops.move_up_modifier(proxy, correct_smooth_mod)
 
                 for i in range(10):
-                    algorithms.move_up_modifier(proxy, armature_mod)
+                    object_ops.move_up_modifier(proxy, armature_mod)
 
 
             for obj_name in selected_objs_names:
@@ -574,10 +574,10 @@ class ProxyEngine:
 
         #self.add_mask_modifier(body, mask_name)
         parameters = {"vertex_group": mask_name,"invert_vertex_group": True}
-        algorithms.new_modifier(body, mask_name, 'MASK', parameters)
+        object_ops.new_modifier(body, mask_name, 'MASK', parameters)
 
     def remove_body_mask(self, body, mask_name):
-        algorithms.remove_modifier(body, mask_name)
+        object_ops.remove_modifier(body, mask_name)
         algorithms.remove_vertgroup(body, mask_name)
 
 
