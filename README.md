@@ -16,6 +16,8 @@ MB-Lab is a community developed and supported project based off ManuelBastioniLA
 
 This fork is an attempt to keep this addon going forward as the original author is no longer developing ManuelBastioniLAB
 
+If you're interested in helping this project Financially or to see behind the scenes information of this plugin's Development, Please support our [**Patreon**](https://www.patreon.com/mblab_development).
+
 # MB-Lab 1.7.6
 
 ## Added
