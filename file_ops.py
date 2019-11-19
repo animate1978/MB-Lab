@@ -324,9 +324,3 @@ def new_texture(name, image=None):
         _new_texture.image = image
     return _new_texture
 
-def import_mesh_from_lib(lib_filepath, name):
-    existing_mesh_names = collect_existing_meshes()
-    file_ops.append_mesh_from_library(lib_filepath, [name])
-    new_mesh = get_newest_mesh(existing_mesh_names)
-    return new_mesh
-
