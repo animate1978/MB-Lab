@@ -473,38 +473,38 @@ class Humanoid:
 
     def get_subd_visibility(self):
         obj = self.get_object()
-        modfr = object_ops.get_modifier(obj, self.mat_engine.subdivision_modifier_name)
-        return object_ops.get_modifier_viewport(modfr)
+        modfr = algorithms.get_modifier(obj, self.mat_engine.subdivision_modifier_name)
+        return algorithms.get_modifier_viewport(modfr)
 
 
     def set_subd_visibility(self, value):
         obj = self.get_object()
-        modfr = object_ops.get_modifier(obj, self.mat_engine.subdivision_modifier_name)
-        object_ops.set_modifier_viewport(modfr, value)
+        modfr = algorithms.get_modifier(obj, self.mat_engine.subdivision_modifier_name)
+        algorithms.set_modifier_viewport(modfr, value)
 
 
     def set_smooth_visibility(self, value):
         obj = self.get_object()
-        modfr = object_ops.get_modifier(obj, self.corrective_modifier_name)
-        object_ops.set_modifier_viewport(modfr, value)
+        modfr = algorithms.get_modifier(obj, self.corrective_modifier_name)
+        algorithms.set_modifier_viewport(modfr, value)
 
 
     def get_smooth_visibility(self):
         obj = self.get_object()
-        modfr = object_ops.get_modifier(obj, self.corrective_modifier_name)
-        return object_ops.get_modifier_viewport(modfr)
+        modfr = algorithms.get_modifier(obj, self.corrective_modifier_name)
+        return algorithms.get_modifier_viewport(modfr)
 
     def get_disp_visibility(self):
 
         obj = self.get_object()
-        modfr = object_ops.get_modifier(obj, self.mat_engine.generated_disp_modifier_ID)
-        return object_ops.get_modifier_viewport(modfr)
+        modfr = algorithms.get_modifier(obj, self.mat_engine.generated_disp_modifier_ID)
+        return algorithms.get_modifier_viewport(modfr)
 
 
     def set_disp_visibility(self, value):
         obj = self.get_object()
-        modfr = object_ops.get_modifier(obj, self.mat_engine.generated_disp_modifier_ID)
-        object_ops.set_modifier_viewport(modfr, value)
+        modfr = algorithms.get_modifier(obj, self.mat_engine.generated_disp_modifier_ID)
+        algorithms.set_modifier_viewport(modfr, value)
 
 
     def sync_obj_props_to_character_materials(self):
@@ -1198,4 +1198,4 @@ class Humanoid:
     def add_corrective_smooth_modifier(self):
         obj = self.get_object()
         parameters = {"show_viewport": True, "invert_vertex_group": True, "vertex_group": "head"}
-        object_ops.new_modifier(obj, self.corrective_modifier_name, 'CORRECTIVE_SMOOTH', parameters)
+        algorithms.new_modifier(obj, self.corrective_modifier_name, 'CORRECTIVE_SMOOTH', parameters)
