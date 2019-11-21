@@ -58,6 +58,7 @@ class MaterialEngine:
             "tongue_albedo": character_config["texture_tongue_albedo"],
             "teeth_albedo": character_config["texture_teeth_albedo"],
             "nails_albedo": character_config["texture_nails_albedo"],
+            "eyelash_albedo": character_config["texture_eyelash_albedo"],
             "freckle_mask": character_config["texture_frecklemask"],
             "blush": character_config["texture_blush"],
             "sebum": character_config["texture_sebum"],
@@ -110,6 +111,9 @@ class MaterialEngine:
     @property
     def texture_nails_albedo_exist(self):
         return os.path.isfile(self.image_file_paths["nails_albedo"])
+    @property
+    def texture_eyelash_albedo_exist(self):
+        return os.path.isfile(self.image_file_paths["eyelash_albedo"])
     @property
     def texture_displace_exist(self):
         return os.path.isfile(self.image_file_paths["displ_data"])
@@ -221,7 +225,7 @@ class MaterialEngine:
                     if "_eys_albedo" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["eyes_albedo"])
                     if "_eylsh_albedo" in node.name:
-                        self.assign_image_to_node(material.name, node.name, self.image_file_names["body_derm"])
+                        self.assign_image_to_node(material.name, node.name, self.image_file_names["eyelash_albedo"])
                     if "_tth_albedo" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["teeth_albedo"])
                     if "_nail_albedo" in node.name:

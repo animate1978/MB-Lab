@@ -29,7 +29,9 @@ import logging
 import time
 import json
 import os
-from pathlib import Path
+
+# TODO Use of pathlib in future
+#from pathlib import Path
 
 import bpy
 from bpy.app.handlers import persistent
@@ -2148,8 +2150,8 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                 # box.operator('mbast.load_assets_element')
                 box_asts.label(text="To adapt the asset, use the proxy fitting tool", icon='INFO')
                 # Add Particle Hair
-                box_asts.operator("mbast.particle_hair", icon='USER')
-                box_asts.operator("mbast.manual_hair", icon='USER')
+                box_asts.operator("mbast.particle_hair", icon='MOD_PARTICLES')
+                box_asts.operator("mbast.manual_hair", icon='MOD_PARTICLES')
 
             # Proxy Fitting
 
@@ -2189,13 +2191,13 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                     box_prox.prop(scn, 'mblab_proxy_use_advanced', icon="PLUS")
                     if scn.mblab_proxy_use_advanced:
                         col = box_prox.column()
-                        col.prop(scn, 'mblab_proxy_reverse_fit')
-                        col.prop(scn, 'mblab_proxy_use_all_faces')
-                        col.prop(scn, 'mblab_proxy_no_smoothing')
+                        col.prop(scn, 'mblab_proxy_use_all_faces', icon="FACESEL")
+                        col.prop(scn, 'mblab_proxy_no_smoothing', icon="MOD_SMOOTH")
+                        col.prop(scn, 'mblab_proxy_reverse_fit', icon="COMMUNITY")
                     col = box_prox.column()
                     col.active = not (scn.mblab_proxy_use_advanced and scn.mblab_proxy_reverse_fit)
-                    col.prop(scn, 'mblab_add_mask_group')
-                    col.prop(scn, 'mblab_transfer_proxy_weights')
+                    col.prop(scn, 'mblab_add_mask_group', icon="XRAY")
+                    col.prop(scn, 'mblab_transfer_proxy_weights',icon="UV_SYNC_SELECT")
                     box_prox.operator("mbast.proxy_fit", icon="MOD_CLOTH")
                     box_prox.operator("mbast.proxy_removefit", icon="MOD_CLOTH")
                 if fitting_status == 'WRONG_SELECTION':

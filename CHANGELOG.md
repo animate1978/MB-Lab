@@ -30,7 +30,9 @@ All changes will be documented here
 
 ## Known Issues
 
-- THe Hair Engine does NOT apply a shader at this time
+- The Hair Engine does NOT apply a shader at this time
+- Hair engine does not support shapekeys at this time
+
 
 # MB-Lab 1.7.6
 

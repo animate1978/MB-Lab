@@ -24,7 +24,8 @@
 
 import logging
 import bpy
-from pathlib import Path
+# TODO pathlib might replace the current import os 
+# from pathlib import Path
 
 import os
 import time

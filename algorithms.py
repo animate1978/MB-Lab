@@ -57,10 +57,9 @@ def print_log_report(level, text_to_write):
         print(level + ": " + text_to_write)
 
 
-
-def json_booleans_to_python(value):
-    return value == 0
-
+# ------------------------------------------------------------------------
+#    Algorithms
+# ------------------------------------------------------------------------
 
 def quick_dist(p_1, p_2):
     return ((p_1[0]-p_2[0])**2) + ((p_1[1]-p_2[1])**2) + ((p_1[2]-p_2[2])**2)
@@ -328,6 +327,9 @@ def correct_morph(base_form, current_form, morph_deltas, bboxes):
     logger.info("Morphing corrected in %s secs", time.time()-time1)
     return new_morph_deltas
 
+# ------------------------------------------------------------------------
+#    Functions
+# ------------------------------------------------------------------------
 
 def looking_for_humanoid_obj():
     """
@@ -724,15 +726,6 @@ def generate_items_list(folderpath, file_type="json"):
     return items_list
 
 
-def load_image(filepath):
-    if os.path.isfile(filepath):
-        logger.info("Loading image %s", os.path.basename(filepath))
-        img = bpy.data.images.load(filepath, check_existing=True)
-        img.reload()
-    else:
-        logger.info("Image %s not found", os.path.basename(filepath))
-
-
 def image_to_array(blender_image):
     return array.array('f', blender_image.pixels[:])
 
@@ -741,6 +734,8 @@ def array_to_image(pixel_array, blender_image):
     blender_image.pixels = pixel_array.tolist()
 
 
+def json_booleans_to_python(value):
+    return value == 0
 
 
 def get_edit_bones(armature):
@@ -1147,6 +1142,8 @@ def get_scene_modifiers_status():
         obj_name = obj.name
         scene_viewport_status[obj_name] = get_object_modifiers_visibility(obj)
     return scene_viewport_status
+
+
 def apply_modifier(obj, modifier):
     modifier_name = get_modifier_name(modifier)
     if modifier_name in obj.modifiers:
