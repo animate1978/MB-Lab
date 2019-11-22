@@ -336,20 +336,10 @@ def looking_for_humanoid_obj():
     Looking for a mesh that is OK for the lab
     """
     logger.info("Looking for a humanoid object ...")
-    if bpy.app.version < (2, 80, 74):
-        msg = "Sorry, MB-Lab requires Blender 2.80.74 Minimum"
+    if bpy.app.version < (2, 81, 16):
+        msg = "Sorry, MB-Lab requires Blender 2.81.16 Minimum"
         logger.warning(msg)
         return("ERROR", msg)
-
-#        if bpy.app.version >= (2,80,0):
-#            msg = "Sorry, this version of lab does no work with Blender 2.8"
-#            logger.warning(sg)
-#            return("ERROR",msg)
-
-#       if bpy.app.version > (2,79,0):
-#            msg = "The lab is not designed to work with unstable Blender build {0}".format(str(bpy.app.version))
-#            logger.warning(sg)
-        # return("ERROR",msg)
 
     human_obj = None
     name = ""
