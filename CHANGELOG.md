@@ -13,6 +13,7 @@ All changes will be documented here
 
 ## Changed
 
+- Blender 2.81.16 required for MB-Lab 1.7.7
 - Afro Female now the default character on startup
 - Updated GUI
 - Removed Docs from project directory to it's own repository
@@ -27,6 +28,7 @@ All changes will be documented here
 - Minor GUI edits to fix drawing issues.
 - Fixed Bump and Displacement issues in MBLab_Skin2
 - Fixed IK and IK/Muscle bugs
+- Eye Displacement bug fixed
 
 ## Known Issues
 
