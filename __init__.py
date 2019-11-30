@@ -60,7 +60,7 @@ bl_info = {
     "location": "View3D > Tools > MB-Lab",
     "description": "A complete lab for character creation",
     "warning": "",
-    'wiki_url': "https://github.com/animate1978/MB-Lab/wiki",
+    'wiki_url': "https://mb-lab-docs.readthedocs.io/en/latest/index.html",
     'tracker_url': 'https://github.com/animate1978/MB-Lab/issues',
     "category": "Characters"
 }
@@ -2076,7 +2076,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
         icon_collapse = "DISCLOSURE_TRI_DOWN"
 
         box_info = self.layout.box()
-        box_info.label(text="https://github.com/animate1978/MB-Lab")
+        box_info.label(text="https://www.mblab.dev")
 
         if gui_status == "ERROR_SESSION":
             box_err = self.layout.box()
