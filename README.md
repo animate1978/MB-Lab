@@ -6,7 +6,7 @@ Character creation tool for Blender
 
 MB-Lab has been developed to work with Blender 2.80
 
-## Contributors wanted! Python programmers needed!
+## Contributors wanted!
 
 We are a small bunch of developers and artists but we always need more! MB-Lab's code is quite complex and needs work, to either fix bugs or to add new features, Python programmers are always welcome! Do you have other skills? We need modelers to help with future base models for instance. Are you a specialist in rigging? We could use some help improving the rigs for MB-Lab. There are lots to do in this project, we can only do so much at a time so please feel free to join us, fork the repository and then make something cool.
 
@@ -14,31 +14,37 @@ We are a small bunch of developers and artists but we always need more! MB-Lab's
 
 MB-Lab is a community developed and supported project based off ManuelBastioniLAB.
 
+If you're interested in helping this project Financially or to see behind the scenes information of this plugin's Development, Please support our [**Patreon**](https://www.patreon.com/mblab_development).
+
 This fork is an attempt to keep this addon going forward as the original author is no longer developing ManuelBastioniLAB
 
-# MB-Lab 1.7.6
+# MB-Lab 1.7.7
 
 ## Added
 
-- New Skin Shader, MB-Lab Skin 2 added to the Realistic Humans
-- New Tone maps based on character selection
-- New Latino Model Type added to MB-Lab
-- New South American Phenotype added
-- New texture masks for skin shader
-- New Nails shader added
+- Hair System added
+- Human Rotation Limits added
+- New option to fit in reverse direction to convert a character-specific mesh to a generic proxy.
+- New options to do more precise fitting by turning off some normally useful smoothing passes.
 
 ## Changed
 
-- Material Engine updated for new skin shader
-- Alphabetized the characters list
-- Modified freckle masks
-- Changed structure of humanoid_library.blend
-- Added model license types in character selection menu
+- Afro Female now the default character on startup
+- Updated GUI
+- Removed Docs from project directory to it's own repository
 
 ## Bug Fixes
 
-- Fixed MBLab_fur for EEVEE, renamed to MBLab_eyelash
-- Fixed MBLab_human_eyes SSS rendering artifact in EEVEE
+- Certain bones have to be precisely aligned to the rotation of a specific other bone, which required new code.
+- Stretch to has to be applied to the muscle bones while fitting.
+- B-Bone handles and certain constraints have to be fixed in the library file via a script.
+- Fixed fitting of meshes that are very close to the skin.
+- Replaced obj.hide_select = False with obj.hide_set(False) fixing Age update bug.
+- Minor GUI edits to fix drawing issues.
+- Fixed Bump and Displacement issues in MBLab_Skin2
+- Fixed IK and IK/Muscle bugs
+
+## Known Issues
 
 ## ManuelBastioniLAB 1.6.1a
 

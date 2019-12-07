@@ -1,0 +1,27 @@
+name-template: 'MB-Lab $NEXT_PATCH_VERSION'
+tag-template: 'v$NEXT_PATCH_VERSION'
+categories:
+  - title: 'Added Features 🚀'
+    labels:
+      - 'feature'
+  - title: 'Changed Features 🚀'
+    labels:
+      - 'enhancement'
+  - title: 'Bug Fixes 🐛'
+    labels:
+      - 'fix'
+      - 'bugfix'
+      - 'bug'
+  - title: 'Maintenance 🧰'
+    labels:
+      - 'documentation'
+      - 'chore'
+change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
+exclude-labels:
+  - 'skip-changelog'
+  - 'invalid'
+  - 'wontfix'
+template: |
+  ## Changes
+
+  $CHANGES

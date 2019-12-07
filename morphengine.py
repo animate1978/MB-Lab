@@ -19,6 +19,8 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
+#
+# ManuelbastioniLAB - Copyright (C) 2015-2018 Manuel Bastioni
 
 
 import logging
@@ -27,18 +29,22 @@ import bpy
 
 import mathutils
 
-from . import algorithms, proxyengine
+from . import algorithms, utils, proxyengine, file_ops
 
 import time, json
 import operator
 
 logger = logging.getLogger(__name__)
 
+# ------------------------------------------------------------------------
+#    Morph Engine
+# ------------------------------------------------------------------------
+
 class MorphingEngine:
 
     def __init__(self, obj_name, character_config):
         time1 = time.time()
-        data_path = algorithms.get_data_path()
+        data_path = file_ops.get_data_path()
         self.final_form = []
         self.cache_form = []
         self.obj_name = obj_name
@@ -117,7 +123,7 @@ class MorphingEngine:
         self.proportion_index = None
 
         self.init_final_form()
-        self.base_form = algorithms.load_vertices_database(self.vertices_path)
+        self.base_form = file_ops.load_vertices_database(self.vertices_path)
 
         self.load_morphs_database(self.shared_morph_data_path)
         self.load_morphs_database(self.morph_data_path)
@@ -152,7 +158,7 @@ class MorphingEngine:
         return None
 
     def error_msg(self, path):
-        logger.warning("Database file not found: {0}".format(algorithms.simple_path(path)))
+        logger.warning("Database file not found: {0}".format(file_ops.simple_path(path)))
 
     def reset(self, update=True):
         for i in range(len(self.base_form)):
@@ -163,7 +169,7 @@ class MorphingEngine:
             self.update(update_all_verts=True)
 
     def load_measures_database(self, measures_path):
-        m_database = algorithms.load_json_data(measures_path,"Measures data")
+        m_database = file_ops.load_json_data(measures_path,"Measures data")
         if m_database:
             self.measures_data = m_database["measures"]
             self.measures_relat_data = m_database["relations"]
@@ -171,12 +177,12 @@ class MorphingEngine:
             self.body_height_Z_parts = m_database["body_height_Z_parts"]
 
     def load_bboxes_database(self, bounding_box_path):
-        self.bbox_data = algorithms.load_json_data(bounding_box_path,"Bounding box data")
+        self.bbox_data = file_ops.load_json_data(bounding_box_path,"Bounding box data")
 
 
     def load_morphs_database(self, morph_data_path):
         time1 = time.time()
-        m_data = algorithms.load_json_data(morph_data_path,"Morph data") # calls algorithms.py
+        m_data = file_ops.load_json_data(morph_data_path,"Morph data")
         if m_data:
             for morph_name, deltas in m_data.items():
                 morph_deltas = []
@@ -191,7 +197,7 @@ class MorphingEngine:
                 self.morph_data[morph_name] = morph_deltas
                 self.morph_values[morph_name] = 0.0
                 self.morph_modified_verts[morph_name] = modified_verts
-            logger.info("Morph database {0} loaded in {1} secs".format(algorithms.simple_path(morph_data_path),time.time()-time1))
+            logger.info("Morph database {0} loaded in {1} secs".format(file_ops.simple_path(morph_data_path),time.time()-time1))
             logger.info("Now local morph data contains {0} elements".format(len(self.morph_data)))
 
 
@@ -227,7 +233,7 @@ class MorphingEngine:
 
     def calculate_proportions(self, measures):
 
-        if measures == None:
+        if measures is None:
             measures = self.measures
         if "body_height_Z" in measures:
             if "buttock_girth" in measures:
@@ -247,7 +253,7 @@ class MorphingEngine:
 
 
     def compare_file_proportions(self,filepath):
-        char_data = algorithms.load_json_data(filepath,"Proportions data")
+        char_data = file_ops.load_json_data(filepath,"Proportions data")
         if "proportion_index" in char_data:
             v1 = mathutils.Vector(self.proportion_index)
             v2 = mathutils.Vector(char_data["proportion_index"])
@@ -255,7 +261,7 @@ class MorphingEngine:
 
             return (delta_v.length,filepath)
         else:
-            logger.info("File {0} does not contain proportions".format(algorithms.simple_path(filepath)))
+            logger.info("File {0} does not contain proportions".format(file_ops.simple_path(filepath)))
 
 
     def compare_data_proportions(self):
@@ -349,7 +355,7 @@ class MorphingEngine:
     def update(self, update_all_verts=False):
         obj = self.get_object()
         vertices = obj.data.vertices
-        if update_all_verts == True:
+        if update_all_verts is True:
             for i in range(len(self.final_form)):
                 vertices[i].co = self.final_form[i]
         else:

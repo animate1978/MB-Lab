@@ -28,11 +28,15 @@ import os
 import time
 
 import bpy
-from . import algorithms
+from . import material_ops
+from . import algorithms, utils, file_ops
 
 
 logger = logging.getLogger(__name__)
 
+# ------------------------------------------------------------------------
+#    Material Engine
+# ------------------------------------------------------------------------
 
 class MaterialEngine:
     generated_disp_modifier_ID = "mbastlab_displacement"
@@ -44,7 +48,7 @@ class MaterialEngine:
 
 # Look up characters_config.json for textures
 
-        data_path = algorithms.get_data_path()
+        data_path = file_ops.get_data_path()
         self.obj_name = obj_name
         image_file_names = {
             "displ_data": character_config["texture_displacement"],
@@ -54,6 +58,7 @@ class MaterialEngine:
             "tongue_albedo": character_config["texture_tongue_albedo"],
             "teeth_albedo": character_config["texture_teeth_albedo"],
             "nails_albedo": character_config["texture_nails_albedo"],
+            "eyelash_albedo": character_config["texture_eyelash_albedo"],
             "freckle_mask": character_config["texture_frecklemask"],
             "blush": character_config["texture_blush"],
             "sebum": character_config["texture_sebum"],
@@ -82,10 +87,10 @@ class MaterialEngine:
 
     def load_data_images(self):
         for img_path in self.image_file_paths.values():
-            algorithms.load_image(img_path)
+            file_ops.load_image(img_path)
 
     def load_texture(self, img_path, shader_target):
-        algorithms.load_image(img_path)
+        file_ops.load_image(img_path)
         self.image_file_names[shader_target] = os.path.basename(img_path)
         self.update_shaders()
 
@@ -107,6 +112,9 @@ class MaterialEngine:
     def texture_nails_albedo_exist(self):
         return os.path.isfile(self.image_file_paths["nails_albedo"])
     @property
+    def texture_eyelash_albedo_exist(self):
+        return os.path.isfile(self.image_file_paths["eyelash_albedo"])
+    @property
     def texture_displace_exist(self):
         return os.path.isfile(self.image_file_paths["displ_data"])
     @property
@@ -126,7 +134,7 @@ class MaterialEngine:
         return os.path.isfile(self.image_file_paths["thickness"])
     @property
     def texture_iris_color_exist(self):
-        return os.path.isfile(self.image_file_paths["iris_color"])  
+        return os.path.isfile(self.image_file_paths["iris_color"])
     @property
     def texture_iris_bump(self):
         return os.path.isfile(self.image_file_paths["iris_bump"])
@@ -166,13 +174,15 @@ class MaterialEngine:
             result_img.pixels = np_img1 * np_img2 * blending_factor + (np_img1 * (1.0 - blending_factor))
         logger.info('finish: multiply_images %s', result_name)
 
+# Link Textures to Nodes
+
     @staticmethod
     def assign_image_to_node(material_name, node_name, image_name):
         logger.info("Assigning the image %s to node %s", image_name, node_name)
-        mat_node = algorithms.get_material_node(material_name, node_name)
-        mat_image = algorithms.get_image(image_name)
+        mat_node = material_ops.get_material_node(material_name, node_name)
+        mat_image = file_ops.get_image(image_name)
         if mat_image:
-            algorithms.set_node_image(mat_node, mat_image)
+            material_ops.set_node_image(mat_node, mat_image)
         else:
             logger.warning("Node assignment failed. Image not found: %s", image_name)
 
@@ -181,40 +191,41 @@ class MaterialEngine:
         material_parameters = {}
 
         obj = self.get_object()
-        for material in algorithms.get_object_materials(obj):
+        for material in material_ops.get_object_materials(obj):
             if material.node_tree:
-                for node in algorithms.get_material_nodes(material):
+                for node in material_ops.get_material_nodes(material):
                     is_parameter = False
                     for param_identifier in self.parameter_identifiers:
                         if param_identifier in node.name:
                             is_parameter = True
                             break
                     if is_parameter:
-                        node_output_val = algorithms.get_node_output_value(node, 0)
+                        node_output_val = material_ops.get_node_output_value(node, 0)
                         material_parameters[node.name] = node_output_val
         return material_parameters
 
-# Link textures to nodes - Update Shaders
+
+# Update Shaders
 
     def update_shaders(self, material_parameters=[], update_textures_nodes=True):
 
         obj = self.get_object()
-        for material in algorithms.get_object_materials(obj):
-            nodes = algorithms.get_material_nodes(material)
+        for material in material_ops.get_object_materials(obj):
+            nodes = material_ops.get_material_nodes(material)
             if not nodes:
                 continue
 
             for node in nodes:
                 if node.name in material_parameters:
                     value = material_parameters[node.name]
-                    algorithms.set_node_output_value(node, 0, value)
+                    material_ops.set_node_output_value(node, 0, value)
                 elif update_textures_nodes:
                     if "_skn_albedo" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["body_derm"])
                     if "_eys_albedo" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["eyes_albedo"])
                     if "_eylsh_albedo" in node.name:
-                        self.assign_image_to_node(material.name, node.name, self.image_file_names["body_derm"])
+                        self.assign_image_to_node(material.name, node.name, self.image_file_names["eyelash_albedo"])
                     if "_tth_albedo" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["teeth_albedo"])
                     if "_nail_albedo" in node.name:
@@ -248,21 +259,21 @@ class MaterialEngine:
 
     def rename_skin_shaders(self, prefix):
         obj = self.get_object()
-        for material in algorithms.get_object_materials(obj):
+        for material in material_ops.get_object_materials(obj):
             if prefix != "":
                 material.name = prefix + "_" + material.name
             else:
                 material.name = material.name+str(time.time())
 
     def get_object(self):
-        return algorithms.get_object_by_name(self.obj_name)
+        return file_ops.get_object_by_name(self.obj_name)
 
 # Generate Displacement Data Image
 
     def generate_displacement_image(self):
         disp_data_image_name = self.image_file_names["displ_data"]
         if disp_data_image_name != "":
-            disp_data_image = algorithms.get_image(disp_data_image_name)
+            disp_data_image = file_ops.get_image(disp_data_image_name)
             if disp_data_image:
                 disp_size = disp_data_image.size
                 logger.info(
@@ -272,16 +283,16 @@ class MaterialEngine:
             else:
                 logger.warning(
                     "Cannot create the displacement modifier: data image not found: %s",
-                    algorithms.simple_path(self.image_file_paths["displ_data"]))
+                    file_ops.simple_path(self.image_file_paths["displ_data"]))
 
-# Calculate Displacement based on age, tone, mass 
+# Calculate Displacement based on age, tone, mass
 
     def calculate_displacement_texture(self, age_factor, tone_factor, mass_factor):
         time1 = time.time()
         disp_data_image_name = self.image_file_names["displ_data"]
 
         if disp_data_image_name != "":
-            disp_data_image = algorithms.get_image(disp_data_image_name)
+            disp_data_image = file_ops.get_image(disp_data_image_name)
 
             if disp_data_image:
 
@@ -303,13 +314,13 @@ class MaterialEngine:
                     logger.info("Displacement calculated in %s seconds", time.time()-time1)
             else:
                 logger.error("Displace data image not found: %s",
-                             algorithms.simple_path(self.image_file_paths["displ_data"]))
+                             file_ops.simple_path(self.image_file_paths["displ_data"]))
 
     def save_texture(self, filepath, shader_target):
         img_name = self.image_file_names[shader_target]
-        logger.info("Saving image %s in %s", img_name, algorithms.simple_path(filepath))
-        algorithms.save_image(img_name, filepath)
-        algorithms.load_image(filepath)  # Load the just saved image to replace the current one
+        logger.info("Saving image %s in %s", img_name, file_ops.simple_path(filepath))
+        file_ops.save_image(img_name, filepath)
+        file_ops.load_image(filepath)  # Load the just saved image to replace the current one
         self.image_file_names[shader_target] = os.path.basename(filepath)
         self.update_shaders()
 
