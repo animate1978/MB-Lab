@@ -66,11 +66,19 @@ class MBPreferences(bpy.types.AddonPreferences):
         max=59
     )
 
+    use_censors = bpy.props.BoolProperty(
+        name='censors',
+        description="Use censors to cover genitals and breasts",
+        default=True
+    )
+
     def draw(self, context):
         layout = self.layout
         # col = layout.column() # works best if a column, or even just self.layout
         mainrow = layout.row()
         col = mainrow.column()
+        #add censor preference here
+        col.prop(self, 'use_censors')
 
         # updater draw function
         addon_updater_ops.update_settings_ui(self, context)
