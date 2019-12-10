@@ -1270,7 +1270,7 @@ def register(bl_info):
     #updater.addon = # define at top of module, MUST be done first
 
     # Website for manual addon download, optional but recommended to set
-    updater.website = "https://mb-lab-community.github.io/MB-Lab.github.io/"
+    updater.website = "https://mblab.dev"
 
     # Addon subfolder path
     # "sample/path/to/addon"
