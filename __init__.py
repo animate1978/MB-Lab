@@ -2046,7 +2046,7 @@ class LoadTemplate(bpy.types.Operator):
     def execute(self, context):
         global mblab_humanoid
         scn = bpy.context.scene
-        lib_filepath = algorithms.get_blendlibrary_path()
+        lib_filepath = file_ops.get_blendlibrary_path()
         base_model_name = mblab_humanoid.characters_config[scn.mblab_template_name]["template_model"]
         obj = file_ops.import_object_from_lib(lib_filepath, base_model_name, scn.mblab_template_name)
         if obj:
