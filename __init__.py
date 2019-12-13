@@ -160,6 +160,7 @@ def start_lab_session():
                 mblab_humanoid.update_character(mode="update_all")
 
             algorithms.deselect_all_objects()
+    algorithms.remove_censors()
 
 
 @persistent

@@ -1156,3 +1156,45 @@ def move_down_modifier(obj, modifier):
     set_active_object(obj)
     for n in range(len(obj.modifiers)):
         bpy.ops.object.modifier_move_down(modifier=modifier_name)
+
+def swap_material(old_mat_name, new_mat_name, char_name):
+
+    #Get Object if it doesn't exist return none
+    obj = bpy.data.objects[char_name]
+    if obj == None:
+        return None
+        
+    #Try and get materials if either does not exist return None
+    
+    try:
+
+        mat_old = bpy.data.materials[old_mat_name]
+        mat_new = bpy.data.materials[new_mat_name]
+    
+    except:
+        logger.debug("Material not found")
+        return None
+    
+    
+    #Assign new material to old material slot
+    materialslen = len(obj.data.materials)
+    for i in range(0,materialslen):
+        if obj.data.materials[i] == mat_old:
+            obj.data.materials[i] = mat_new
+
+    return None
+
+def remove_censors():
+
+    my_prefs = bpy.context.preferences.addons.get(__package__, None)
+    if (not my_prefs.preferences.use_censors):
+        is_char = looking_for_humanoid_obj()
+        if is_char[0] == "FOUND":
+            char_name = is_char[1]
+            if char_name in("f_an01","f_an02","m_an01","m_an02"):
+                swap_material("MBlab_generic", "MBLab_anime_skin",char_name)
+            else:
+                swap_material("MBlab_generic", "MBLab_skin2",char_name)
+
+
+    return None
