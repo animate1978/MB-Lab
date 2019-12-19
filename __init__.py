@@ -29,6 +29,8 @@ import logging
 import time
 import json
 import os
+from pathlib import Path
+from math import radians, degrees
 
 # TODO Use of pathlib in future
 #from pathlib import Path
@@ -46,6 +48,8 @@ from . import addon_updater_ops
 from . import humanoid_rotations
 from . import object_ops
 from . import hairengine
+from . import numpy_ops
+from . import node_ops
 from . import utils
 
 logger = logging.getLogger(__name__)
@@ -74,6 +78,10 @@ gui_status = "NEW_SESSION"
 gui_err_msg = ""
 gui_active_panel = None
 gui_active_panel_fin = None
+
+#Delete List
+CY_Hshader_remove = []
+UN_shader_remove = []
 
 # BEGIN
 def start_lab_session():
@@ -505,7 +513,19 @@ def load_proxy_item(self, context):
     scn = bpy.context.scene
     mblab_proxy.load_asset(scn.mblab_assets_models)
 
-
+#Choose Hair Colors
+def hair_style_list(self, context):
+    scn = bpy.context.scene
+    if scn.mblab_use_cycles: #and context.scene.mblab_use_pHair:
+        fileName = hairengine.get_hair_npz('CY_shader_presets.npz')
+        data = node_ops.get_universal_dict(fileName)
+        dat = data['arr_0'].tolist()
+        items = dat
+    else:
+        fileName = hairengine.get_hair_npz('universal_hair_shader.npz')
+        items = node_ops.get_universal_list(fileName)
+    #[(identifier, name, description, icon, number)
+    return [(i, i, i) for i in items]
 
 # MB-Lab Properties
 
@@ -743,6 +763,18 @@ bpy.types.Scene.mblab_random_engine = bpy.props.EnumProperty(
 
 bpy.types.Scene.mblab_facs_rig = bpy.props.BoolProperty(
     name="Import FACS Rig")
+
+#Hair color Drop Down List
+bpy.types.Scene.mblab_hair_color = bpy.props.EnumProperty(
+    items=hair_style_list,
+    name="Color Select",
+    update=hair_style_list)
+
+#Hair new color name
+bpy.types.Scene.mblab_new_hair_color = bpy.props.StringProperty(
+    name="Save Hair Color",
+    default="",
+    description="Enter name for new hair color")
 
 # MB-Lab Operations
 
@@ -1977,6 +2009,7 @@ class OBJECT_OT_particle_hair(bpy.types.Operator):
     def execute(self, context):
         self.hair_Name = "Head_Hair"
         scn = bpy.context.scene
+        style = scn.mblab_hair_color
         character_id = scn.mblab_character_name
         skeleton = object_ops.get_skeleton()
         bpy.ops.object.mode_set(mode='OBJECT')
@@ -1989,14 +2022,19 @@ class OBJECT_OT_particle_hair(bpy.types.Operator):
         hairengine.add_scalp(self.hair_Name)
         hair = bpy.data.objects[self.hair_Name]
         hairengine.hair_armature_mod(skeleton, hair)
-        hairengine.add_hair(hair)
+        if context.scene.mblab_use_cycles:
+            hairengine.add_hair(hair, self.hair_Name, style)
+        else:
+            hairengine.add_pHair(hair)
+            node_ops.universal_shader_nodes(self.hair_Name, node_ops.universal_hair_setup(), (1130, 280))
+            node_ops.set_universal_shader(self.hair_Name, hairengine.get_hair_npz('universal_hair_shader.npz'), style)
         bpy.ops.object.mode_set(mode='OBJECT')
         object_ops.add_parent(skeleton.name, [self.hair_Name])
-        object_ops.active_ob(skeleton.name, None)
-        try:
-            bpy.ops.object.mode_set(mode='POSE')
-        except:
-            pass
+        # object_ops.active_ob(skeleton.name, None)
+        # try:
+        #     bpy.ops.object.mode_set(mode='POSE')
+        # except:
+        #     pass       
         return {'FINISHED'}
 
 class OBJECT_OT_manual_hair(bpy.types.Operator):
@@ -2006,23 +2044,115 @@ class OBJECT_OT_manual_hair(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL', 'UNDO'}
 
     def execute(self, context):
-        self.hair_name = "Hairs"
+        self.hair_Name = "Hairs"
         scn = bpy.context.scene
+        style = scn.mblab_hair_color
         character_id = scn.mblab_character_name
         get_mode = bpy.context.object.mode
         skeleton = object_ops.get_skeleton()
-        hairengine.add_scalp(self.hair_name)
-        hair = bpy.data.objects[self.hair_name]
+        hairengine.add_scalp(self.hair_Name)
+        hair = bpy.data.objects[self.hair_Name]
         hairengine.hair_armature_mod(skeleton, hair)
-        hairengine.add_hair(hair)
+        if scn.mblab_use_cycles:
+            hairengine.add_hair(hair, self.hair_Name, style)
+        else:
+            hairengine.add_pHair(hair)
+            node_ops.universal_shader_nodes(self.hair_Name, node_ops.universal_hair_setup(), (1130, 280))
+            node_ops.set_universal_shader(self.hair_Name, hairengine.get_hair_npz('universal_hair_shader.npz'), style)
         bpy.ops.object.mode_set(mode='EDIT')
         bpy.ops.object.mode_set(mode='OBJECT')
-        object_ops.add_parent(skeleton.name, [self.hair_name])
-        object_ops.active_ob(skeleton.name, None)
-        try:
-            bpy.ops.object.mode_set(mode='POSE')
-        except:
-            pass
+        object_ops.add_parent(skeleton.name, [self.hair_Name])
+        # object_ops.active_ob(skeleton.name, None)
+        # try:
+        #     bpy.ops.object.mode_set(mode='POSE')
+        # except:
+        #     pass       
+        return {'FINISHED'}
+
+class OBJECT_OT_change_hair_color(bpy.types.Operator):
+    """Change Selected Hair Color"""
+    bl_idname = "mbast.change_hair"
+    bl_label = "Change Color"
+    bl_options = {'REGISTER', 'INTERNAL', 'UNDO'}
+
+    def execute(self, context):
+        self.hair_Name = "Hairs"
+        scn = bpy.context.scene
+        style = scn.mblab_hair_color
+        character_id = scn.mblab_character_name
+        get_mode = bpy.context.object.mode
+        skeleton = object_ops.get_skeleton()
+        material = bpy.context.object.active_material
+        nodes = material.node_tree.nodes
+        if scn.mblab_use_cycles:
+            hairengine.change_hair_shader(style)
+        else:
+            node_ops.universal_shader_nodes(material.name, node_ops.universal_hair_setup(), (1130, 280))
+            node_ops.set_universal_shader(bpy.context.object.name, hairengine.get_hair_npz('universal_hair_shader.npz'), style)
+        return {'FINISHED'}
+
+class OBJECT_OT_add_color_preset(bpy.types.Operator):
+    """Add Hair Color to Presets"""
+    bl_idname = "mbast.add_hair_preset"
+    bl_label = "Add Preset"
+    bl_options = {'REGISTER', 'INTERNAL', 'UNDO'}
+
+    def execute(self, context):
+        #self.hair_Name = "Head_Hair"
+        scn = bpy.context.scene
+        #style = scn.mblab_hair_color
+        character_id = scn.mblab_character_name
+        skeleton = object_ops.get_skeleton()
+        newColor = scn.mblab_new_hair_color
+        material = bpy.context.object.active_material
+        nodes = material.node_tree.nodes
+        if scn.mblab_use_cycles:
+            fileName = hairengine.get_hair_npz('CY_shader_presets.npz')
+            hairengine.add_hair_data(context.object, newColor, fileName)
+        else:
+            fileName = hairengine.get_hair_npz('universal_hair_shader.npz')
+            node_ops.save_universal_presets(fileName, newColor, node_ops.get_all_shader_(nodes))
+        return {'FINISHED'}
+
+class OBJECT_OT_remove_color_preset(bpy.types.Operator):
+    """Remove Hair Color from Presets"""
+    bl_idname = "mbast.del_hair_preset"
+    bl_label = "Delete Preset"
+    bl_options = {'REGISTER', 'INTERNAL', 'UNDO'}
+
+    def execute(self, context):
+        scn = bpy.context.scene
+        style = scn.mblab_hair_color
+        newColor = scn.mblab_new_hair_color
+        if scn.mblab_use_cycles:
+            global CY_Hshader_remove
+            fileName = hairengine.get_hair_npz("CY_shader_presets.npz")
+            hairengine.delete_hair_data(style, fileName, CY_Hshader_remove)
+        else:
+            global UN_shader_remove
+            fileName = hairengine.get_hair_npz('universal_hair_shader.npz')
+            node_ops.remove_universal_presets(fileName, style, UN_shader_remove)
+        return {'FINISHED'}
+
+#Undo Delete Preset
+class OBJECT_OT_undo_remove_color(bpy.types.Operator):
+    """Replace Removed Hair Color"""
+    bl_idname = "mbast.rep_hair_preset"
+    bl_label = "Undo Delete Preset"
+    bl_options = {'REGISTER', 'INTERNAL', 'UNDO'}
+
+    def execute(self, context):
+        scn = bpy.context.scene
+        style = scn.mblab_hair_color
+        newColor = scn.mblab_new_hair_color
+        if scn.mblab_use_cycles:
+            global CY_Hshader_remove
+            fileName = hairengine.get_hair_npz("CY_shader_presets.npz")
+            hairengine.replace_hair_data(fileName, CY_Hshader_remove)
+        else:
+            global UN_shader_remove
+            fileName = hairengine.get_hair_npz('universal_hair_shader.npz')
+            node_ops.replace_removed_shader(fileName, UN_shader_remove)
         return {'FINISHED'}
 
 class StartSession(bpy.types.Operator):
@@ -2151,8 +2281,14 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                 # box.operator('mbast.load_assets_element')
                 box_asts.label(text="To adapt the asset, use the proxy fitting tool", icon='INFO')
                 # Add Particle Hair
-                box_asts.operator("mbast.particle_hair", icon='MOD_PARTICLES')
-                box_asts.operator("mbast.manual_hair", icon='MOD_PARTICLES')
+                box_asts.prop(scn, 'mblab_hair_color')
+                box_asts.operator("mbast.particle_hair", icon='USER')
+                box_asts.operator("mbast.manual_hair", icon='USER')
+                box_asts.operator("mbast.change_hair", icon='USER')
+                box_asts.prop(scn, 'mblab_new_hair_color')
+                box_asts.operator("mbast.add_hair_preset", icon='USER')
+                box_asts.operator("mbast.del_hair_preset", icon='USER')
+                box_asts.operator("mbast.rep_hair_preset", icon='USER')
 
             # Proxy Fitting
 
@@ -2575,6 +2711,10 @@ classes = (
     OBJECT_OT_delete_rotations,
     OBJECT_OT_particle_hair,
     OBJECT_OT_manual_hair,
+    OBJECT_OT_change_hair_color,
+    OBJECT_OT_add_color_preset,
+    OBJECT_OT_remove_color_preset,
+    OBJECT_OT_undo_remove_color,
 )
 
 def register():
