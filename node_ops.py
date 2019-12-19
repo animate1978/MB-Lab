@@ -267,14 +267,14 @@ def set_hairP_shader(node_name, parametrization, v0, v1, v2, v3, v4, v5, v6, v7,
     nodes = material.node_tree.nodes
     node = nodes.get(node_name)
     node.parametrization = parametrization #['ABSORPTION', 'COLOR', 'MELANIN']
-    if parametrization is 'COLOR': #Direct Coloring
+    if parametrization == 'COLOR': #Direct Coloring
         node.inputs[0].default_value = v0 #Color
-    if parametrization is 'MELANIN': #Melanin Concetration
+    if parametrization == 'MELANIN': #Melanin Concetration
         node.inputs[1].default_value = v1 #Melanin
         node.inputs[2].default_value = v2 #Melanin Redness
         node.inputs[3].default_value = v3 #Tint
         node.inputs[10].default_value = v10 #Random Color
-    if parametrization is 'ABSORPTION': #    
+    if parametrization == 'ABSORPTION': #
         node.inputs[4].default_value = v4 #Absorbtion Coefficient
     node.inputs[5].default_value = v5 #Roughness
     node.inputs[6].default_value = v6 #Radial Roughness
