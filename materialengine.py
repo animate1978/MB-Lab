@@ -54,6 +54,7 @@ class MaterialEngine:
             "displ_data": character_config["texture_displacement"],
             "body_derm": character_config["texture_albedo"],
             "body_displ": character_config["name"]+"_displ.png",
+            "body_bump": character_config["texture_bump"],
             "eyes_albedo": character_config["texture_eyes"],
             "tongue_albedo": character_config["texture_tongue_albedo"],
             "teeth_albedo": character_config["texture_teeth_albedo"],
@@ -63,7 +64,6 @@ class MaterialEngine:
             "blush": character_config["texture_blush"],
             "sebum": character_config["texture_sebum"],
             "lipmap": character_config["texture_lipmap"],
-            "thickness": character_config["texture_thickness"],
             "iris_color": character_config["texture_iris_color"],
             "iris_bump": character_config["texture_iris_bump"],
             "sclera_color": character_config["texture_sclera_color"],
@@ -118,6 +118,9 @@ class MaterialEngine:
     def texture_displace_exist(self):
         return os.path.isfile(self.image_file_paths["displ_data"])
     @property
+    def texture_bump_exist(self):
+        return os.path.isfile(self.image_file_paths["body_bump"])
+    @property
     def texture_frecklemask_exist(self):
         return os.path.isfile(self.image_file_paths["freckle_mask"])
     @property
@@ -129,9 +132,6 @@ class MaterialEngine:
     @property
     def texture_lipmap_exist(self):
         return os.path.isfile(self.image_file_paths["lipmap"])
-    @property
-    def texture_thickness_exist(self):
-        return os.path.isfile(self.image_file_paths["thickness"])
     @property
     def texture_iris_color_exist(self):
         return os.path.isfile(self.image_file_paths["iris_color"])
@@ -232,6 +232,8 @@ class MaterialEngine:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["nails_albedo"])
                     if "_skn_disp" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["body_displ"])
+                    if "_skn_bump" in node.name:
+                        self.assign_image_to_node(material.name, node.name, self.image_file_names["body_bump"])
                     if "_tongue_albedo" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["tongue_albedo"])
                     if "_skn_frecklemask" in node.name:
@@ -242,8 +244,6 @@ class MaterialEngine:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["sebum"])
                     if "_skn_lipmap" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["lipmap"])
-                    if "_skn_thickness" in node.name:
-                        self.assign_image_to_node(material.name, node.name, self.image_file_names["thickness"])
                     if "_iris_color" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["iris_color"])
                     if "_iris_bump" in node.name:

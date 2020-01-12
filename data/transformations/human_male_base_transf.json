@@ -85,7 +85,7 @@
     ["Nose_TipAngle", 0.08, -0.03],
     ["Nose_SizeY", -0.04, 0.1],
     ["Nose_TipSize", -0.005, 0.19],
-    ["Hands_Lenght", -0.1, 0.045],
+    ["Hands_Length", -0.1, 0.045],
     ["Hands_Mass", 0.02, -0.08],
     ["Hands_Size", 0.06, -0.02],
     ["Hands_Size", 0.06, -0.02]

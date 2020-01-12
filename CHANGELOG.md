@@ -2,6 +2,26 @@
 
 All changes will be documented here
 
+# MB-Lab 1.7.8
+
+## Added
+
+- Hair Engine now adds hair shaders to Cycles and EEVEE
+
+## Changed
+
+- MBLabSkin2 uses Principled BSDF yet again
+- Bump map added, Thickness map removed
+- Modified skin oil maps
+- Slight GUI change to the Asset and Hair box
+- Eyelash shader now has bump and gloss
+
+## Bug Fixes
+
+- Poses don't show when user selects IK model
+- Preserve Phenotype random function code fix
+- Typo: Hands_Lenght, fixed in transformation and measurements JSON
+
 # MB-Lab 1.7.7
 
 ## Added
@@ -10,6 +30,7 @@ All changes will be documented here
 - Human Rotation Limits added
 - New option to fit in reverse direction to convert a character-specific mesh to a generic proxy.
 - New options to do more precise fitting by turning off some normally useful smoothing passes.
+- New option in Preferences to remove censors
 
 ## Changed
 

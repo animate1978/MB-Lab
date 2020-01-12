@@ -32,8 +32,6 @@ import os
 from pathlib import Path
 from math import radians, degrees
 
-# TODO Use of pathlib in future
-#from pathlib import Path
 
 import bpy
 from bpy.app.handlers import persistent
@@ -59,7 +57,7 @@ logger = logging.getLogger(__name__)
 bl_info = {
     "name": "MB-Lab",
     "author": "Manuel Bastioni, MB-Lab Community",
-    "version": (1, 7, 7),
+    "version": (1, 7, 8),
     "blender": (2, 81, 16),
     "location": "View3D > Tools > MB-Lab",
     "description": "A complete lab for character creation",
@@ -2269,18 +2267,23 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                 else:
                     box_exp.enabled = False
                     box_exp.label(text="No express. shapekeys", icon='INFO')
+            
+            # Assets, Fitting and Particle Hair
+
             if gui_active_panel_fin != "assets":
                 box_post_opt.operator('mbast.button_assets_on', icon=icon_expand)
             else:
                 box_post_opt.operator('mbast.button_assets_off', icon=icon_collapse)
                 # assets_status = mblab_proxy.validate_assets_fitting()
                 box_asts = box_post_opt.box()
-
+                box_asts.label(text="Mesh Assets")
                 box_asts.prop(scn, 'mblab_proxy_library')
                 box_asts.prop(scn, 'mblab_assets_models')
                 # box.operator('mbast.load_assets_element')
                 box_asts.label(text="To adapt the asset, use the proxy fitting tool", icon='INFO')
                 # Add Particle Hair
+                box_asts = box_post_opt.box()
+                box_asts.label(text="Hair")
                 box_asts.prop(scn, 'mblab_hair_color')
                 box_asts.operator("mbast.particle_hair", icon='USER')
                 box_asts.operator("mbast.manual_hair", icon='USER')
