@@ -29,26 +29,29 @@ import logging
 import time
 import json
 import os
-from pathlib import Path
+#from pathlib import Path
 from math import radians, degrees
-
 
 import bpy
 from bpy.app.handlers import persistent
 from bpy_extras.io_utils import ExportHelper, ImportHelper
 
-from . import facerig
-from . import humanoid, animationengine, proxyengine
+from . import humanoid
 from . import algorithms
+from . import animationengine
+from . import proxyengine
+from . import expressionengine
 from . import file_ops
-from . import preferences
-from . import addon_updater_ops
-from . import humanoid_rotations
 from . import object_ops
 from . import hairengine
 from . import numpy_ops
 from . import node_ops
 from . import utils
+from . import humanoid_rotations
+from . import preferences
+from . import addon_updater_ops
+from . import facerig
+
 
 logger = logging.getLogger(__name__)
 
@@ -69,7 +72,7 @@ bl_info = {
 
 mblab_humanoid = humanoid.Humanoid(bl_info["version"])
 mblab_retarget = animationengine.RetargetEngine()
-mblab_shapekeys = animationengine.ExpressionEngineShapeK()
+mblab_shapekeys = expressionengine.ExpressionEngineShapeK()
 mblab_proxy = proxyengine.ProxyEngine()
 
 gui_status = "NEW_SESSION"

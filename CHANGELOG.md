@@ -15,6 +15,12 @@ All changes will be documented here
 - Modified skin oil maps
 - Slight GUI change to the Asset and Hair box
 - Eyelash shader now has bump and gloss
+- ExpressionEngine class now in it's own file
+- Blush map converted to grayscale
+- Modified Albedo maps
+- Bump maps now 4k resolution
+- Modified Freckle masks
+- Modified Material Engine
 
 ## Bug Fixes
 
