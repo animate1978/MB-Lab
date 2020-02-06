@@ -271,12 +271,9 @@ def get_newest_object(existing_obj_names):
             return get_object_by_name(name)
     return None
 
-
-
-
-
-def json_booleans_to_python(value):
-    return value == 0
+# This has been commented out, it doesn't seem to be used anywhere
+#def json_booleans_to_python(value):
+#    return value != 0
 
 
 def load_image(filepath):

@@ -725,10 +725,6 @@ def array_to_image(pixel_array, blender_image):
     blender_image.pixels = pixel_array.tolist()
 
 
-def json_booleans_to_python(value):
-    return value == 0
-
-
 def get_edit_bones(armature):
     if bpy.context.mode != 'EDIT_ARMATURE':
         logger.warning("Cannot get the edit bones because the obj is not in edit mode")

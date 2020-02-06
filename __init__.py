@@ -29,6 +29,7 @@ import logging
 import time
 import json
 import os
+import numpy
 #from pathlib import Path
 from math import radians, degrees
 
@@ -51,6 +52,7 @@ from . import humanoid_rotations
 from . import preferences
 from . import addon_updater_ops
 from . import facerig
+from . import morphcreator
 
 
 logger = logging.getLogger(__name__)
@@ -746,6 +748,47 @@ bpy.types.Scene.mblab_body_mass = bpy.props.FloatProperty(
     default=0.5,
     description="Preserve the current character body mass")
 
+bpy.types.Scene.mblab_morphing_spectrum = bpy.props.EnumProperty(
+    items=morphcreator.get_spectrum(),
+    name="Spectrum",
+    default="GE")
+
+bpy.types.Scene.mblab_morph_min_max = bpy.props.EnumProperty(
+    items=morphcreator.get_min_max(),
+    name="min/max",
+    default="MA")
+
+bpy.types.Scene.mblab_morphing_body_type = bpy.props.StringProperty(
+    name="Ethnic group",
+    description="Overide the ethnic group.\n4 letters, without f_ or m_.\nExample : af01\nLet empty to not overide",
+    #default="",
+    maxlen=4,
+    subtype='FILE_NAME')
+
+bpy.types.Scene.mblab_morphing_file_extra_name = bpy.props.StringProperty(
+    name="Extra name",
+    description="Typically it's the name of the author",
+    default="pseudo",
+    maxlen=1024,
+    subtype='FILE_NAME')
+
+bpy.types.Scene.mblab_incremental_saves = bpy.props.BoolProperty(
+    name="Autosaves",
+    description="Does an incremental save each time\n  the final save button is pressed.\nFrom 001 to 999\nCaution : returns to 001 between sessions")
+
+bpy.types.Scene.mblab_morph_name = bpy.props.StringProperty(
+    name="Name",
+    description="ExplicitBodyPartMorphed",
+    default="",
+    maxlen=1024,
+    subtype='FILE_NAME')
+
+bpy.types.Scene.mblab_body_part_name = bpy.props.EnumProperty(
+    items=morphcreator.get_body_parts(),
+    name="Body part",
+    default="BO")
+
+
 bpy.types.Scene.mblab_body_tone = bpy.props.FloatProperty(
     name="Body tone",
     min=0.0,
@@ -912,6 +955,204 @@ class ButtonRandomOn(bpy.types.Operator):
         sync_character_to_props()
         return {'FINISHED'}
 
+class ButtonMorphingOn(bpy.types.Operator):
+    bl_label = 'Morph Creation'
+    bl_idname = 'mbast.button_morphing_on'
+    bl_description = 'Morph creation panel'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel
+        gui_active_panel = 'morphing'
+        return {'FINISHED'}
+
+class ButtonMorphingOff(bpy.types.Operator):
+    bl_label = 'Morph Creation'
+    bl_idname = 'mbast.button_morphing_off'
+    bl_description = 'Close morph creator panel'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel
+        gui_active_panel = None
+        return {'FINISHED'}
+
+class ButtonStoreBaseBodyVertices(bpy.types.Operator):
+    bl_label = 'Store base body vertices'
+    bl_idname = 'mbast.button_store_base_vertices'
+    bl_description = '!WARNING! UNDO UNAVAILABLE!!!'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        mode = bpy.context.active_object.mode
+        vt = bpy.context.object.data.vertices
+        bpy.ops.object.mode_set(mode='OBJECT')
+        #vertices
+        morphcreator.set_vertices_list(0, morphcreator.create_vertices_list(vt))
+        return {'FINISHED'}
+
+    @classmethod
+    def get_stored_base_vertices(self):
+        return morphcreator.set_vertices_list(0)
+
+class ButtonSaveWorkInProgress(bpy.types.Operator):
+    bl_label = 'Quick save wip'
+    bl_idname = 'mbast.button_store_work_in_progress'
+    bl_description = 'Name and location are automatic'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        mode = bpy.context.active_object.mode
+        vt = bpy.context.object.data.vertices
+        bpy.ops.object.mode_set(mode='OBJECT')
+        #vertices
+        morphcreator.set_vertices_list(1, morphcreator.create_vertices_list(vt))
+        return {'FINISHED'}
+
+    @classmethod
+    def get_stored_actual_vertices(self):
+        return morphcreator.set_vertices_list(1)
+
+
+class FinalizeMorph(bpy.types.Operator):
+    """
+        NOW we're talking:
+        - Checking that the base body exists.
+        - Checking that the sculpted body exists.
+        - Doing the substract between the two.
+        - Creating the file name.
+        - Creating the morph name.
+        - Opening or creating the named file.
+        - Adding or replacing the morph.
+        - Close the file.
+        - Profit.
+    """
+    bl_label = 'Finalize the morph'
+    bl_idname = 'mbast.button_save_final_morph'
+    filename_ext = ".json"
+    bl_description = 'Finalize the morph, ask for min and max files, create or open the morphs file, replace or append new morph'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        scn = bpy.context.scene
+        base = []
+        sculpted = []
+
+        if len(scn.mblab_morph_name) < 1:
+            self.ShowMessageBox("Please choose a name for the morph !\nNo file saved", "Warning", 'ERROR')
+            return {'FINISHED'}
+        try:
+            base = morphcreator.get_vertices_list(0)
+        except:
+            self.ShowMessageBox("Base vertices are not stored !", "Warning", 'ERROR')
+            return {'FINISHED'}
+        try:
+            sculpted = morphcreator.get_vertices_list(1)
+        except:
+            self.ShowMessageBox("Changed vertices are not stored !", "Warning", 'ERROR')
+            return {'FINISHED'}
+        indexed_vertices = morphcreator.substract_with_index(base, sculpted)
+        if len(indexed_vertices) < 1:
+            self.ShowMessageBox("Models base / sculpted are equals !\nNo file saved", "Warning", 'INFO')
+            return {'FINISHED'}
+        #-------File name----------
+        file_name = ""
+        if scn.mblab_morphing_spectrum == "GE":
+            #File name for whole gender, like human_female or anime_male.
+            file_name = morphcreator.get_model_and_gender()
+        else:
+            if len(scn.mblab_morphing_body_type) < 1:
+                file_name = morphcreator.get_body_type() + "_morphs"
+            else:
+                file_name = morphcreator.get_body_type()[0:2] + scn.mblab_morphing_body_type + "_morphs"
+            if len(scn.mblab_morphing_file_extra_name) > 0:
+                file_name = file_name + "_" + scn.mblab_morphing_file_extra_name
+        if scn.mblab_incremental_saves:
+            file_name = file_name + "_" + morphcreator.get_next_number()
+        #-------Morph name----------
+        morph_name = morphcreator.get_body_parts(scn.mblab_body_part_name) + "_" + scn.mblab_morph_name + "_" + morphcreator.get_min_max(scn.mblab_morph_min_max)
+        #-------Morphs path----------
+        file_path_name = file_ops.get_data_path() + "\\morphs\\" + file_name + ".json"
+        file = morphcreator.load_morphs_file(file_path_name, "Try to load a morph file")
+        #---Creating new morph-------
+        file[morph_name] = indexed_vertices
+        morphcreator.save_morphs_file(file_path_name, file)
+        #----------------------------
+        return {'FINISHED'}
+
+    def ShowMessageBox(self, message = "", title = "Message Box", icon = 'INFO'):
+
+        def draw(self, context):
+            self.layout.label(text=message)
+        bpy.context.window_manager.popup_menu(draw, title = title, icon = icon)
+
+class SaveBodyAsIs(bpy.types.Operator, ExportHelper):
+    """
+        Save the model shown on screen.
+    """
+    bl_label = 'Save in a file all vertices of the actual model'
+    bl_idname = 'mbast.button_save_body_as_is'
+    filename_ext = ".json"
+    filter_glob: bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
+    bl_description = 'Save all vertices of the actual body shown on screen in a file.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        mode = bpy.context.active_object.mode
+        vt = bpy.context.object.data.vertices
+        bpy.ops.object.mode_set(mode='OBJECT')
+        vertices_to_save = morphcreator.create_vertices_list(vt)
+        vertices_to_save = numpy.around(vertices_to_save, decimals=5).tolist()
+        #--------------------
+        morphcreator.save_morphs_file(self.filepath, vertices_to_save)
+        return {'FINISHED'}
+
+class LoadBaseBody(bpy.types.Operator, ImportHelper):
+    """
+        Load the model as a base model.
+    """
+    bl_label = 'Load all vertices as a base model'
+    bl_idname = 'mbast.button_load_base_body'
+    filename_ext = ".json"
+    filter_glob: bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
+    bl_description = 'Load all vertices as a base body model.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        mode = bpy.context.active_object.mode
+        bpy.ops.object.mode_set(mode='OBJECT')
+        #list =
+        file = morphcreator.load_morphs_file(self.filepath, "Base model vertices")
+        #--------------------
+        morphcreator.set_vertices_list(0, numpy.array(file))
+        return {'FINISHED'}
+
+class LoadSculptedBody(bpy.types.Operator, ImportHelper):
+    """
+        Load the model as a base model.
+    """
+    bl_label = 'Load all vertices as a sculpted model'
+    bl_idname = 'mbast.button_load_sculpted_body'
+    filename_ext = ".json"
+    filter_glob: bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
+    bl_description = 'Load all vertices as a sculpted body model.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        mode = bpy.context.active_object.mode
+        bpy.ops.object.mode_set(mode='OBJECT')
+        file = morphcreator.load_morphs_file(self.filepath, "Sculpted model vertices")
+        #--------------------
+        morphcreator.set_vertices_list(1, numpy.array(file).tolist())
+        return {'FINISHED'}
 
 class ButtonAutomodellingOff(bpy.types.Operator):
     bl_label = 'Automodelling Tools'
@@ -2230,6 +2471,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
             if scn.mblab_use_cycles or scn.mblab_use_eevee:
                 box_new_opt.prop(scn, 'mblab_use_lamps', icon='LIGHT_DATA')
             box_new_opt.operator('mbast.init_character', icon='ARMATURE_DATA')
+            morphcreator.init_morph_names_database()
 
         if gui_status != "ACTIVE_SESSION":
             self.layout.label(text=" ")
@@ -2566,6 +2808,35 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                     for material_data_prop in sorted(mblab_humanoid.character_material_properties.keys()):
                         box_skin.prop(obj, material_data_prop)
 
+                if gui_active_panel != "morphing":
+                    box_act_opt.operator('mbast.button_morphing_on', icon=icon_expand)
+                else:
+                    box_act_opt.operator('mbast.button_morphing_off', icon=icon_collapse)
+                    box_morph = box_act_opt.box()
+                    box_morph.operator('mbast.button_store_base_vertices', icon="SPHERE") #Store all vertices of the actual body.
+                    box_morph.label(text="Morph wording - Body parts", icon='SORT_ASC')
+                    box_morph.prop(scn, "mblab_body_part_name") #first part of the morph's name : jaws, legs, ...
+                    box_morph.prop(scn, 'mblab_morph_name') #name for the morph
+                    box_morph.prop(scn, "mblab_morph_min_max") #The morph is for min proportions or max proportions.
+                    box_morph.label(text="Morph wording - File", icon='SORT_ASC')
+                    box_morph.prop(scn, "mblab_morphing_spectrum") #Ask if the new morph is global or just for a specific body
+                    box_morph.label(text=morphcreator.get_model_and_gender() + "_" + scn.mblab_morphing_file_extra_name, icon='INFO')
+                    tp = morphcreator.get_body_type() + " (overide below)"
+                    if len(scn.mblab_morphing_body_type) > 3:
+                        tp = scn.mblab_morphing_body_type + " (delete below for reset)"
+                    elif len(scn.mblab_morphing_body_type) > 0:
+                        tp = "4 letters please (but that will work)"
+                    box_morph.label(text=tp, icon='INFO')
+                    box_morph.prop(scn, 'mblab_morphing_body_type') #The name of the type (4 letters)
+                    box_morph.prop(scn, 'mblab_morphing_file_extra_name') #The extra name for the file (basically the name of the author)
+                    box_morph.prop(scn, 'mblab_incremental_saves') #If user wants to overide morph in final file or not.
+                    box_morph.operator('mbast.button_store_work_in_progress', icon="MONKEY") #Store all vertices of the modified body in a work-in-progress file.
+                    box_morph.operator('mbast.button_save_final_morph', icon="FREEZE") #Save the final morph.
+                    box_morph.label(text="Tools", icon='SORT_ASC')
+                    box_morph.operator('mbast.button_save_body_as_is', icon='EXPORT')
+                    box_morph.operator('mbast.button_load_base_body', icon='IMPORT')
+                    box_morph.operator('mbast.button_load_sculpted_body', icon='IMPORT')
+
                 if gui_active_panel != "finalize":
                     box_act_opt.operator('mbast.button_finalize_on', icon=icon_expand)
                 else:
@@ -2606,7 +2877,6 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                     box_file.prop(scn, 'mblab_export_materials', icon='MATERIAL')
                     box_file.operator("mbast.export_character", icon='EXPORT')
                     box_file.operator("mbast.import_character", icon='IMPORT')
-
 
                 if gui_active_panel != "display_opt":
                     box_act_opt.operator('mbast.button_display_on', icon=icon_expand)
@@ -2655,6 +2925,14 @@ classes = (
     ButtonRestPoseOff,
     ButtonRestPoseOn,
     ButtonPoseOff,
+    ButtonMorphingOff,
+    ButtonMorphingOn,
+    ButtonStoreBaseBodyVertices,
+    ButtonSaveWorkInProgress,
+    FinalizeMorph,
+    SaveBodyAsIs,
+    LoadBaseBody,
+    LoadSculptedBody,
     ButtonAssetsOn,
     ButtonAssetsOff,
     ButtonPoseOn,
