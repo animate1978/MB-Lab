@@ -81,6 +81,11 @@ gui_status = "NEW_SESSION"
 gui_err_msg = ""
 gui_active_panel = None
 gui_active_panel_fin = None
+#Teto
+gui_active_panel_first = None
+gui_active_panel_second = None
+gui_active_panel_third = None
+#End Teto
 
 #Delete List
 CY_Hshader_remove = []
@@ -955,30 +960,6 @@ class ButtonRandomOn(bpy.types.Operator):
         sync_character_to_props()
         return {'FINISHED'}
 
-class ButtonMorphingOn(bpy.types.Operator):
-    bl_label = 'Morph Creation'
-    bl_idname = 'mbast.button_morphing_on'
-    bl_description = 'Morph creation panel'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel
-        gui_active_panel = 'morphing'
-        return {'FINISHED'}
-
-class ButtonMorphingOff(bpy.types.Operator):
-    bl_label = 'Morph Creation'
-    bl_idname = 'mbast.button_morphing_off'
-    bl_description = 'Close morph creator panel'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel
-        gui_active_panel = None
-        return {'FINISHED'}
-
 class ButtonStoreBaseBodyVertices(bpy.types.Operator):
     bl_label = 'Store base body vertices'
     bl_idname = 'mbast.button_store_base_vertices'
@@ -993,10 +974,11 @@ class ButtonStoreBaseBodyVertices(bpy.types.Operator):
         #vertices
         morphcreator.set_vertices_list(0, morphcreator.create_vertices_list(vt))
         return {'FINISHED'}
-
-    @classmethod
-    def get_stored_base_vertices(self):
-        return morphcreator.set_vertices_list(0)
+    #Teto
+    #@classmethod
+    #def get_stored_base_vertices(self):
+    #    return morphcreator.set_vertices_list(0)
+    #End Teto -> I think that this method is useless, because unused.
 
 class ButtonSaveWorkInProgress(bpy.types.Operator):
     bl_label = 'Quick save wip'
@@ -1013,10 +995,11 @@ class ButtonSaveWorkInProgress(bpy.types.Operator):
         morphcreator.set_vertices_list(1, morphcreator.create_vertices_list(vt))
         return {'FINISHED'}
 
-    @classmethod
-    def get_stored_actual_vertices(self):
-        return morphcreator.set_vertices_list(1)
-
+    #Teto
+    #@classmethod
+    #def get_stored_actual_vertices(self):
+    #    return morphcreator.set_vertices_list(1)
+    #End Teto -> I think that this method is useless, because unused.
 
 class FinalizeMorph(bpy.types.Operator):
     """
@@ -1077,11 +1060,15 @@ class FinalizeMorph(bpy.types.Operator):
         #-------Morph name----------
         morph_name = morphcreator.get_body_parts(scn.mblab_body_part_name) + "_" + scn.mblab_morph_name + "_" + morphcreator.get_min_max(scn.mblab_morph_min_max)
         #-------Morphs path----------
-        file_path_name = file_ops.get_data_path() + "\\morphs\\" + file_name + ".json"
-        file = morphcreator.load_morphs_file(file_path_name, "Try to load a morph file")
+        #Teto
+        file_path_name = os.path.join(file_ops.get_data_path(), "morphs", file_name + ".json")
+        file = file_ops.load_json_data(file_path_name, "Try to load a morph file")
+        if file == None:
+            file = {}
+        #End Teto
         #---Creating new morph-------
         file[morph_name] = indexed_vertices
-        morphcreator.save_morphs_file(file_path_name, file)
+        file_ops.save_json_data(file_path_name, file)
         #----------------------------
         return {'FINISHED'}
 
@@ -1090,7 +1077,7 @@ class FinalizeMorph(bpy.types.Operator):
         def draw(self, context):
             self.layout.label(text=message)
         bpy.context.window_manager.popup_menu(draw, title = title, icon = icon)
-
+#Teto
 class SaveBodyAsIs(bpy.types.Operator, ExportHelper):
     """
         Save the model shown on screen.
@@ -1110,7 +1097,7 @@ class SaveBodyAsIs(bpy.types.Operator, ExportHelper):
         vertices_to_save = morphcreator.create_vertices_list(vt)
         vertices_to_save = numpy.around(vertices_to_save, decimals=5).tolist()
         #--------------------
-        morphcreator.save_morphs_file(self.filepath, vertices_to_save)
+        file_ops.save_json_data(self.filepath, vertices_to_save)
         return {'FINISHED'}
 
 class LoadBaseBody(bpy.types.Operator, ImportHelper):
@@ -1128,15 +1115,14 @@ class LoadBaseBody(bpy.types.Operator, ImportHelper):
     def execute(self, context):
         mode = bpy.context.active_object.mode
         bpy.ops.object.mode_set(mode='OBJECT')
-        #list =
-        file = morphcreator.load_morphs_file(self.filepath, "Base model vertices")
+        file = file_ops.load_json_data(self.filepath, "Base model vertices")
         #--------------------
         morphcreator.set_vertices_list(0, numpy.array(file))
         return {'FINISHED'}
 
 class LoadSculptedBody(bpy.types.Operator, ImportHelper):
     """
-        Load the model as a base model.
+        Load the model as a sculpted model.
     """
     bl_label = 'Load all vertices as a sculpted model'
     bl_idname = 'mbast.button_load_sculpted_body'
@@ -1149,11 +1135,11 @@ class LoadSculptedBody(bpy.types.Operator, ImportHelper):
     def execute(self, context):
         mode = bpy.context.active_object.mode
         bpy.ops.object.mode_set(mode='OBJECT')
-        file = morphcreator.load_morphs_file(self.filepath, "Sculpted model vertices")
+        file = file_ops.load_json_data(self.filepath, "Sculpted model vertices")
         #--------------------
-        morphcreator.set_vertices_list(1, numpy.array(file).tolist())
+        morphcreator.set_vertices_list(1, numpy.array(file))#.tolist())
         return {'FINISHED'}
-
+#End Teto
 class ButtonAutomodellingOff(bpy.types.Operator):
     bl_label = 'Automodelling Tools'
     bl_idname = 'mbast.button_automodelling_off'
@@ -2808,35 +2794,6 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                     for material_data_prop in sorted(mblab_humanoid.character_material_properties.keys()):
                         box_skin.prop(obj, material_data_prop)
 
-                if gui_active_panel != "morphing":
-                    box_act_opt.operator('mbast.button_morphing_on', icon=icon_expand)
-                else:
-                    box_act_opt.operator('mbast.button_morphing_off', icon=icon_collapse)
-                    box_morph = box_act_opt.box()
-                    box_morph.operator('mbast.button_store_base_vertices', icon="SPHERE") #Store all vertices of the actual body.
-                    box_morph.label(text="Morph wording - Body parts", icon='SORT_ASC')
-                    box_morph.prop(scn, "mblab_body_part_name") #first part of the morph's name : jaws, legs, ...
-                    box_morph.prop(scn, 'mblab_morph_name') #name for the morph
-                    box_morph.prop(scn, "mblab_morph_min_max") #The morph is for min proportions or max proportions.
-                    box_morph.label(text="Morph wording - File", icon='SORT_ASC')
-                    box_morph.prop(scn, "mblab_morphing_spectrum") #Ask if the new morph is global or just for a specific body
-                    box_morph.label(text=morphcreator.get_model_and_gender() + "_" + scn.mblab_morphing_file_extra_name, icon='INFO')
-                    tp = morphcreator.get_body_type() + " (overide below)"
-                    if len(scn.mblab_morphing_body_type) > 3:
-                        tp = scn.mblab_morphing_body_type + " (delete below for reset)"
-                    elif len(scn.mblab_morphing_body_type) > 0:
-                        tp = "4 letters please (but that will work)"
-                    box_morph.label(text=tp, icon='INFO')
-                    box_morph.prop(scn, 'mblab_morphing_body_type') #The name of the type (4 letters)
-                    box_morph.prop(scn, 'mblab_morphing_file_extra_name') #The extra name for the file (basically the name of the author)
-                    box_morph.prop(scn, 'mblab_incremental_saves') #If user wants to overide morph in final file or not.
-                    box_morph.operator('mbast.button_store_work_in_progress', icon="MONKEY") #Store all vertices of the modified body in a work-in-progress file.
-                    box_morph.operator('mbast.button_save_final_morph', icon="FREEZE") #Save the final morph.
-                    box_morph.label(text="Tools", icon='SORT_ASC')
-                    box_morph.operator('mbast.button_save_body_as_is', icon='EXPORT')
-                    box_morph.operator('mbast.button_load_base_body', icon='IMPORT')
-                    box_morph.operator('mbast.button_load_sculpted_body', icon='IMPORT')
-
                 if gui_active_panel != "finalize":
                     box_act_opt.operator('mbast.button_finalize_on', icon=icon_expand)
                 else:
@@ -2908,6 +2865,265 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
             else:
                 gui_status = "NEW_SESSION"
 
+#Teto
+
+# MB-Lab Secondary GUI
+
+class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
+    bl_label = "MB-Crea {0}.{1}.{2}".format(bl_info["version"][0], bl_info["version"][1], bl_info["version"][2])
+    bl_idname = "OBJECT_PT_characters02"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_context = 'objectmode'
+    bl_category = "MB-Crea"
+
+    @classmethod
+    def poll(cls, context):
+        return context.mode in {'OBJECT', 'POSE'}
+
+    def draw(self, context):
+        
+        scn = bpy.context.scene
+        icon_expand = "DISCLOSURE_TRI_RIGHT"
+        icon_collapse = "DISCLOSURE_TRI_DOWN"
+        
+        box_general = self.layout.box()
+        box_general.label(text="https://www.mblab.dev")
+        box_general.operator('mbcrea.button_for_tests', icon='BLENDER')
+
+        #Reminder: Morph, config, files management, skin, pose and animation, hair, muscles, rigging
+        #Import tools...
+        box_tools = self.layout.box()
+        box_tools.label(text="Tools categories")
+        if gui_active_panel_first != "adaptation_tools":
+            box_tools.operator('mbcrea.button_adaptation_tools_on', icon=icon_expand)
+        else:
+            box_tools.operator('mbcrea.button_adaptation_tools_off', icon=icon_collapse)
+            box_adaptation_tools = self.layout.box()
+            if gui_active_panel_second != "Rigify":
+                box_adaptation_tools.operator('mbcrea.button_rigify_on', icon=icon_expand)
+            else:
+                box_adaptation_tools.operator('mbcrea.button_rigify_off', icon=icon_collapse)
+                box_rigify = box_adaptation_tools.box()
+                box_rigify.label(text="#TODO Rigify...")
+            if gui_active_panel_second != "Blenrig":
+                box_adaptation_tools.operator('mbcrea.button_blenrig_on', icon=icon_expand)
+            else:
+                box_adaptation_tools.operator('mbcrea.button_blenrig_off', icon=icon_collapse)
+                box_blenrig = box_adaptation_tools.box()
+                box_blenrig.label(text="#TODO Blenrig...")
+            if gui_active_panel_second != "Morphcreator":
+                box_adaptation_tools.operator('mbcrea.button_morphcreator_on', icon=icon_expand)
+            else:
+                box_adaptation_tools.operator('mbcrea.button_morphcreator_off', icon=icon_collapse)
+                box_morphcreator = box_adaptation_tools.box()
+                try:
+                    box_morphcreator.operator('mbast.button_store_base_vertices', icon="SPHERE") #Store all vertices of the actual body.
+                    box_morphcreator.label(text="Morph wording - Body parts", icon='SORT_ASC')
+                    box_morphcreator.prop(scn, "mblab_body_part_name") #first part of the morph's name : jaws, legs, ...
+                    box_morphcreator.prop(scn, 'mblab_morph_name') #name for the morph
+                    box_morphcreator.prop(scn, "mblab_morph_min_max") #The morph is for min proportions or max proportions.
+                    box_morphcreator.label(text="Morph wording - File", icon='SORT_ASC')
+                    box_morphcreator.prop(scn, "mblab_morphing_spectrum") #Ask if the new morph is global or just for a specific body
+                    box_morphcreator.label(text=morphcreator.get_model_and_gender() + "_" + scn.mblab_morphing_file_extra_name, icon='INFO')
+                    tp = morphcreator.get_body_type() + " (overide below)"
+                    if len(scn.mblab_morphing_body_type) > 3:
+                        tp = scn.mblab_morphing_body_type + " (delete below for reset)"
+                    elif len(scn.mblab_morphing_body_type) > 0:
+                        tp = "4 letters please (but that will work)"
+                    box_morphcreator.label(text=tp, icon='INFO')
+                    box_morphcreator.prop(scn, 'mblab_morphing_body_type') #The name of the type (4 letters)
+                    box_morphcreator.prop(scn, 'mblab_morphing_file_extra_name') #The extra name for the file (basically the name of the author)
+                    box_morphcreator.prop(scn, 'mblab_incremental_saves') #If user wants to overide morph in final file or not.
+                    box_morphcreator.operator('mbast.button_store_work_in_progress', icon="MONKEY") #Store all vertices of the modified body in a work-in-progress file.
+                    box_morphcreator.operator('mbast.button_save_final_morph', icon="FREEZE") #Save the final morph.
+                    box_morphcreator.label(text="Tools", icon='SORT_ASC')
+                    box_morphcreator.operator('mbast.button_save_body_as_is', icon='EXPORT')
+                    box_morphcreator.operator('mbast.button_load_base_body', icon='IMPORT')
+                    box_morphcreator.operator('mbast.button_load_sculpted_body', icon='IMPORT')
+                except Exception:
+                    box_morphcreator.label(text="!NO COMPATIBLE MODEL SELECTED!", icon='ERROR')
+                    box_morphcreator.enabled = False
+        
+        #Create/edit tools...
+        
+        if gui_active_panel_first != "compat_tools":
+            box_tools.operator('mbcrea.button_compat_tools_on', icon=icon_expand)
+        else:
+            box_tools.operator('mbcrea.button_compat_tools_off', icon=icon_collapse)
+            box_compat_tools = self.layout.box()
+            box_compat_tools.label(text="#TODO 2...")
+            
+        #
+        
+
+        #
+        
+            
+class ButtonForTest(bpy.types.Operator):
+    #just for quick tests
+    bl_label = 'Button for degug tests'
+    bl_idname = 'mbcrea.button_for_tests'
+    bl_description = 'Test things'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        return {'FINISHED'}
+
+class ButtonAdaptationToolsON(bpy.types.Operator):
+    bl_label = 'Adaptation tools'
+    bl_idname = 'mbcrea.button_adaptation_tools_on'
+    bl_description = 'All tools to change / adapt from an existing model'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_first
+        gui_active_panel_first = "adaptation_tools"
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonAdaptationToolsOFF(bpy.types.Operator):
+    bl_label = 'Adaptation tools'
+    bl_idname = 'mbcrea.button_adaptation_tools_off'
+    bl_description = 'All tools to change / adapt from an existing model'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_first
+        gui_active_panel_first = None
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonCompatToolsON(bpy.types.Operator):
+    bl_label = 'Compatibility tools'
+    bl_idname = 'mbcrea.button_compat_tools_on'
+    bl_description = 'All tools to make a model compatible with MB-Lab'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_first
+        gui_active_panel_first = "compat_tools"
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonCompatToolsOFF(bpy.types.Operator):
+    bl_label = 'Compatibility tools'
+    bl_idname = 'mbcrea.button_compat_tools_off'
+    bl_description = 'All tools to make a model compatible with MB-Lab'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_first
+        gui_active_panel_first = None
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonRigifyON(bpy.types.Operator):
+    bl_label = 'Add Rigify to model'
+    bl_idname = 'mbcrea.button_rigify_on'
+    bl_description = 'All tools to add Rigify to the model'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = "Rigify"
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonRigifyOFF(bpy.types.Operator):
+    bl_label = 'Add Rigify to model'
+    bl_idname = 'mbcrea.button_rigify_off'
+    bl_description = 'All tools to add Rigify to the model'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = None
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonBlenrigON(bpy.types.Operator):
+    bl_label = 'Add Blenrig to model'
+    bl_idname = 'mbcrea.button_blenrig_on'
+    bl_description = 'All tools to add Blenrig to the model'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = "Blenrig"
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonBlenrigOFF(bpy.types.Operator):
+    bl_label = 'Add Blenrig to model'
+    bl_idname = 'mbcrea.button_blenrig_off'
+    bl_description = 'All tools to add Blenrig to the model'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = None
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonMorphingON(bpy.types.Operator):
+    bl_label = 'Morph Creation'
+    bl_idname = 'mbcrea.button_morphcreator_on'
+    bl_description = 'Morph creation panel'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = 'Morphcreator'
+        return {'FINISHED'}
+
+class ButtonMorphingOFF(bpy.types.Operator):
+    bl_label = 'Morph Creation'
+    bl_idname = 'mbcrea.button_morphcreator_off'
+    bl_description = 'Morph creation panel'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = None
+        return {'FINISHED'}
+
+class ButtonOtherToolsON(bpy.types.Operator):
+    bl_label = 'Other tools'
+    bl_idname = 'mbcrea.button_other_tools_on'
+    bl_description = 'All other useful tools that can\'t be in other categories'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_fin
+        gui_active_panel_fin = "other_tools"
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonOtherToolsOFF(bpy.types.Operator):
+    bl_label = 'Other tools'
+    bl_idname = 'mbcrea.button_other_tools_off'
+    bl_description = 'All other useful tools that can\'t be in other categories'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_fin
+        gui_active_panel_fin = None
+        #Other things to do...
+        return {'FINISHED'}
 
 classes = (
     ButtonParametersOff,
@@ -2925,8 +3141,6 @@ classes = (
     ButtonRestPoseOff,
     ButtonRestPoseOn,
     ButtonPoseOff,
-    ButtonMorphingOff,
-    ButtonMorphingOn,
     ButtonStoreBaseBodyVertices,
     ButtonSaveWorkInProgress,
     FinalizeMorph,
@@ -2999,6 +3213,18 @@ classes = (
     OBJECT_OT_add_color_preset,
     OBJECT_OT_remove_color_preset,
     OBJECT_OT_undo_remove_color,
+    ButtonForTest,
+    ButtonAdaptationToolsON,
+    ButtonAdaptationToolsOFF,
+    ButtonCompatToolsON,
+    ButtonCompatToolsOFF,
+    ButtonRigifyON,
+    ButtonRigifyOFF,
+    ButtonBlenrigON,
+    ButtonBlenrigOFF,
+    ButtonMorphingON,
+    ButtonMorphingOFF,
+    VIEW3D_PT_tools_MBCrea,
 )
 
 def register():
