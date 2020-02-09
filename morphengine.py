@@ -28,9 +28,9 @@ import os
 import bpy
 
 import mathutils
-
-from . import algorithms, utils, proxyengine, file_ops
-
+#Teto
+from . import algorithms, utils, proxyengine, file_ops, morphcreator
+#End Teto
 import time, json
 import operator
 
@@ -88,6 +88,11 @@ class MorphingEngine:
             data_path,
             "morphs",
             self.morphs_filename_extra)
+        #Teto
+        self.user_shared_morph_data_path = morphcreator.get_all_morph_files(data_path, "morphs", self.shared_morphs_filename)
+        self.user_morph_data_path = morphcreator.get_all_morph_files(data_path, "morphs", self.morphs_filename)
+        #here they are list[]
+        #End Teto
         self.bounding_box_path = os.path.join(
             data_path,
             "bboxes",
@@ -128,6 +133,12 @@ class MorphingEngine:
         self.load_morphs_database(self.shared_morph_data_path)
         self.load_morphs_database(self.morph_data_path)
         self.load_morphs_database(self.extra_morph_data_path) #Call this after the loading of shared morph is important for overwrite data.
+        #Teto
+        for i in range(len(self.user_morph_data_path)):
+            self.load_morphs_database(self.user_morph_data_path[i])
+        for i in range(len(self.user_shared_morph_data_path)):
+            self.load_morphs_database(self.user_shared_morph_data_path[i])
+        #End Teto
         if self.shared_morph_extra_data_path:
             self.load_morphs_database(self.shared_morph_extra_data_path)
         self.load_morphs_database(self.expressions_path)

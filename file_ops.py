@@ -109,6 +109,19 @@ def exists_database(lib_path):
             logger.warning("data path %s not found", simple_path(lib_path))
     return result
 
+#Teto
+def save_json_data(json_path, char_data):
+    try:
+        with open(json_path, "w") as j_file:
+            json.dump(char_data, j_file)
+        j_file.close()
+    except IOError:
+        if simple_path(json_path) != "":
+            logger.warning("File can not be saved: %s", simple_path(json_path))
+    except Exception:
+        logger.warning("The data are not serializable: %s", simple_path(json_path))
+#End Teto
+
 def load_json_data(json_path, description=None):
     try:
         time1 = time.time()

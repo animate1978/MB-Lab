@@ -123,7 +123,7 @@ def init_morph_names_database():
     morphs_names[0] = ""
     morphs_names[1] = ""
     morphs_names[2] = 0
-
+    
 def get_model_and_gender():
     if len(morphs_names[0]) == 0:
         obj = bpy.context.view_layer.objects.active
@@ -219,51 +219,16 @@ def substract_with_index(list_a, list_b):
             return_list.append(substract)
     return return_list
 
-def get_user_data_path(user_path="user"):
-    addon_directory = os.path.dirname(os.path.realpath(__file__))
-    data_dir = os.path.join(addon_directory, user_path)
-    logger.info("Looking for the retarget data in the folder %s...", simple_path(data_dir))
-
-    if not os.path.isdir(data_dir):
-        logger.critical("Path %s not found. Please check your Blender addons directory.", user_path)
-        return None
-    return data_dir
-
-def save_morphs_file(json_path, char_data):
-    with open(json_path, "w") as j_file:
-        json.dump(char_data, j_file)
-    j_file.close()
-
-def load_morphs_file(json_path, description=None):
-    try:
-        with open(json_path, "r") as j_file:
-            j_database = json.load(j_file)
-            if not description:
-                logger.info("Json database %s loaded", json_path)
-            else:
-                logger.info("%s loaded from %s", description, json_path)
-            j_file.close()
-            return j_database
-    except IOError:
-        if json_path != "":
-            logger.info("File not found. Creating %s", json_path)
-    except json.JSONDecodeError:
-        logger.warning("Errors in json file: %s", json_path)
-    return {}
-
-def get_all_files(data_path, data_type_path, body_type):
+def get_all_morph_files(data_path, data_type_path, body_type):
     #Get all files in morphs directory, without standard ones.
     #Used when the engine loads morphs librairies, here the user ones.
     #Can be used for both types of files : gender and specific type.
-    dir = data_path + "\\" + data_type_path
+    dir = os.path.join(data_path, data_type_path)
     list_dir = os.listdir(dir)
     found_files = []
-    split_one = ""
-    split_two = ""
-    for i in range(len(list_dir)):
-        if list_dir[i] != body_type and list_dir[i].count("extra") < 1:
-            split_one = list_dir[i].split('_')
-            split_two = body_type.split('_')
-            if split_one[0] == split_two[0] and split_one[1] == split_two[1]:
-                found_files += [dir + "\\" + list_dir[i]]
+    body_type_split = body_type.split('_')[:2]
+    for item in os.listdir(dir):
+        if item != body_type and item.count("extra") < 1:
+            if item.split('_')[:2] == body_type_split:
+                found_files += [os.path.join(dir, item)]
     return found_files
