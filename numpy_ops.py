@@ -1,10 +1,12 @@
 import bpy
 import os
 import numpy as np
+import logging
 
 from . import algorithms
 from . import file_ops
 
+logger = logging.getLogger(__name__)
 
 def dict_to_nparray(Dict):
     Keys = np.array([i for i in Dict])
@@ -77,13 +79,83 @@ def dict_to_npz(Dict, fileName):
     data = Keys, Values
     save_to_npz(fileName, *data)
 
+# def load_npz_dict(fileName):
+#     cwd = os.getcwd()
+#     os.chdir(path)
+#     fpath = fileName + '.npz'
+#     with np.load(f'r') as f:
+#         data = {item: list(f[item]) for item in f}
+#     os.chdir(cwd)
+#     return data
 
+#################################################################################################################################
+# New Code #
 
+def new_npz(fileName, data):
+    np.savez_compressed(fileName, **data)
 
+def write_npz_dict(fileName, data):
+    with np.load(fileName, 'rb') as f:
+        np.savez(f, **data)
 
+def load_npz_dict(fileName):
+    with np.load(fileName, 'r', allow_pickle=True) as f:
+        data = {item: f[item].tolist() for item in f}
+    return data
 
-    
+def load_npz_data(fileName, item):
+    with np.load(fileName, 'r', allow_pickle=True) as f:
+        data = f[item].tolist()
+    return data
 
+def load_npz_keys(fileName):
+    with np.load(fileName, 'r', allow_pickle=True) as f:
+        data = [i for i in f]
+    return data
 
+def append_npz_dict(fileName, Name, info):
+    with np.load(fileName, 'r', allow_pickle=True) as f:
+        data = {item: f[item].tolist() for item in f}
+    data.update({Name: info})
+    np.savez(fileName, **data)
+
+def remove_npz_data(fileName, item):
+    with np.load(fileName, 'r', allow_pickle=True) as f:
+        data = {item: f[item].tolist() for item in f}
+    info = data.pop(item)
+    np.savez(fileName, **data)
+    return info
+
+def remove_style(fileName, List, style):
+    with np.load(fileName, 'r+', allow_pickle=True) as f:
+        d = {item: f[item].tolist() for item in f}
+        rs = [style, d[style]]
+        List.append(rs)
+        d.pop(style)
+        np.savez(fileName, **d)
+
+def replace_style(fileName,  List):
+    try:
+        if List == []:
+            pass
+    except:
+        print("List is empty")
+    finally:
+        with np.load(fileName, 'r+', allow_pickle=True) as f:
+            data = {item: f[item].tolist() for item in f}
+            rl = List[-1]
+            List.remove(rl)
+            info = {rl[0]: rl[1]}
+            data.update(**info)
+            np.savez(fileName, **data)
+
+def hair_style_backup(Path, files):
+    for file in files:
+        f = os.path.join(Path, file)
+        fileName = "{}{}".format(f, ".npz")
+        data = load_npz_dict(fileName)
+        desktop = os.path.expanduser("~/Desktop")
+        bu = os.path.join(desktop, file)
+        np.savez_compressed(bu, **data)
 
 

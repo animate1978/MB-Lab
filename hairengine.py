@@ -19,7 +19,8 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
-
+#
+# Written by Noizirom
 
 
 import bpy
@@ -27,14 +28,15 @@ import numpy as np
 import os
 import json as js
 from copy import deepcopy as dc
-from math import radians, degrees
+from mathutils import Matrix, Vector, kdtree
+import logging
 
-from . import algorithms
+from . import file_ops
 from . import object_ops
 from . import node_ops
 from . import numpy_ops
-from . import file_ops
 
+logger = logging.getLogger(__name__)
 
 # ------------------------------------------------------------------------
 #    Functions
@@ -47,7 +49,7 @@ def get_hair_data(fileName):
     fpath = os.path.join(hair_dir, fn)
     with open(fpath, 'r') as f:
         data = js.load(f)
-    return data 
+    return data
 
 def js_face_sel(faces):
     bpy.ops.object.mode_set(mode='EDIT')
@@ -71,7 +73,7 @@ def add_scalp(Name):
     gs = object_ops.get_sel()
     viw = object_ops.vg_idx_dict(gs)
     vid = object_ops.vidx_dict()
-    hairObj = object_ops.obj_new(Name, gs[0], gs[1], "MB_LAB_Character")
+    object_ops.obj_new(Name, gs[0], gs[1], "MB_LAB_Character")
     try:
         object_ops.copy_wt(Name, viw, vid)
     except:
@@ -85,224 +87,214 @@ def hair_armature_mod(skeleton, hair_object):
     a_mod.vertex_group = 'head'
 
 #Add particle hair
-def add_hair(hair_object, mat_name, style):
-    scn = bpy.context.scene
+def add_hair(hair_object):
     p_sys = hair_object.modifiers.new("hair", 'PARTICLE_SYSTEM').particle_system
     p_sys.settings.type = 'HAIR'
+    p_sys.settings.hair_length = 0.1
     p_sys.settings.child_type = 'INTERPOLATED'
-    p_sys.settings.hair_length = 0.2
-    p_sys.settings.root_radius = 0.03
-    p_sys.settings.count = 1000
-    p_sys.settings.hair_step = 5
-    p_sys.settings.child_nbr = 20
-    p_sys.settings.rendered_child_count = 20
-    p_sys.settings.child_length = 0.895
     bpy.context.object.show_instancer_for_viewport = False
-    bpy.context.object.show_instancer_for_render = False
     bpy.ops.particle.connect_hair(all=True)
-    try:
-        material = node_ops.get_material(mat_name)
-        node_ops.clear_material(hair_object)
-        node_ops.clear_node(material)
-        material.use_nodes = True
+
+# ------------------------------------------------------------------------
+#    Hair Engine
+# ------------------------------------------------------------------------
+class HairEngine:
+    '''
+    '''
+    def __init__(self, object):
+        self.object = object
+        self.armature = self.object.parent
+        self.hair = "Hair"
+        self.hair_card = "Hair_Card"
+        self.hair_mesh = "Hair_Object"
+        self.view_hide = self.object.hide_viewport
+        self.render_hide = self.object.hide_render
+        self.material = node_ops.get_material(self.hair)
+        self.hc_mat = node_ops.get_material(self.hair_card)
+        self.def_image = lambda hair_dir: bpy.data.images.load(os.path.join(hair_dir, "Sample_01.png"), check_existing=True)
+        self.def_disp = lambda hair_dir: bpy.data.images.load(os.path.join(hair_dir, "DisplacementMap_01.png"), check_existing=True)
+        self.universal_hair_setup = [['ShaderNodeOutputMaterial', 'Material Output', 'Material Output', 'Material Output', (1150, 250)],
+            ['ShaderNodeMixRGB', 'Mix', 'Gradient_Color', 'Gradient_Color', (-100, 280)], 
+            ['ShaderNodeMixRGB', 'Mix', 'Tip_Color', 'Tip_Color', (150, 280)], 
+            ['ShaderNodeMixRGB', 'Mix', 'Main_Color', 'Main_Color', (-325, 280)], 
+            ['ShaderNodeHairInfo', 'Hair Info', 'Hair Info', 'Hair Info', (-890, 260)], 
+            ['ShaderNodeAddShader', 'Add Shader', 'Highlight_Mix', 'Highlight_Mix', (680, 250)], 
+            ['ShaderNodeBsdfDiffuse', 'Diffuse BSDF', 'Main_Diffuse', 'Main_Diffuse', (390, 240)], 
+            ['ShaderNodeAddShader', 'Add Shader', 'Highlight_Mix_2', 'Highlight_Mix_2', (890, 260)], 
+            ['ShaderNodeValToRGB', 'ColorRamp', 'Gradient_Control', 'Gradient_Control', (-660, 280)], 
+            ['ShaderNodeValToRGB', 'ColorRamp', 'Main_Contrast', 'Main_Contrast', (-660, -5)], 
+            ['ShaderNodeValToRGB', 'ColorRamp', 'Tip_Control', 'Tip_Control', (-660, 555)], 
+            ['ShaderNodeBsdfGlossy', 'Glossy BSDF', 'Main_Highlight', 'Main_Highlight', (440, 80)], 
+            ['ShaderNodeBsdfGlossy', 'Glossy BSDF', 'Secondary_Highlight', 'Secondary_Highlight', (680, 80)]]
+        self.universal_hair_links = [['nodes["Gradient_Color"].outputs[0]', 'nodes["Tip_Color"].inputs[1]'], 
+            ['nodes["Tip_Color"].outputs[0]', 'nodes["Main_Diffuse"].inputs[0]'], 
+            ['nodes["Main_Color"].outputs[0]', 'nodes["Gradient_Color"].inputs[1]'], 
+            ['nodes["Hair Info"].outputs[1]', 'nodes["Gradient_Control"].inputs[0]'], 
+            ['nodes["Hair Info"].outputs[1]', 'nodes["Tip_Control"].inputs[0]'], 
+            ['nodes["Hair Info"].outputs[4]', 'nodes["Main_Contrast"].inputs[0]'], 
+            ['nodes["Highlight_Mix"].outputs[0]', 'nodes["Highlight_Mix_2"].inputs[0]'], 
+            ['nodes["Main_Diffuse"].outputs[0]', 'nodes["Highlight_Mix"].inputs[0]'], 
+            ['nodes["Highlight_Mix_2"].outputs[0]', 'nodes["Material Output"].inputs[0]'], 
+            ['nodes["Gradient_Control"].outputs[0]', 'nodes["Gradient_Color"].inputs[0]'],
+            ['nodes["Main_Contrast"].outputs[0]', 'nodes["Main_Color"].inputs[0]'], 
+            ['nodes["Tip_Control"].outputs[0]', 'nodes["Tip_Color"].inputs[0]'], 
+            ['nodes["Main_Highlight"].outputs[0]', 'nodes["Highlight_Mix"].inputs[1]'], 
+            ['nodes["Secondary_Highlight"].outputs[0]', 'nodes["Highlight_Mix_2"].inputs[1]'],
+            ['nodes["Highlight_Mix_2"].outputs[0]', 'nodes["Material Output"].inputs[0]']]
+        self.universal_hair_default =  [
+            ['Gradient_Color', 'MULTIPLY', True, 0.5, (0.466727614402771, 0.3782432973384857, 0.19663149118423462, 1.0), (0.2325773388147354, 0.15663157403469086, 0.07910887151956558, 1.0)],
+            ['Tip_Color', 'SCREEN', True, 0.5, (0.466727614402771, 0.3782432973384857, 0.19663149118423462, 1.0), (0.38887712359428406, 0.28217148780822754, 0.10125808417797089, 1.0)],
+            ['Main_Color', 'MIX', True, 0.5, (0.466727614402771, 0.3782432973384857, 0.19663149118423462, 1.0), (0.1809358447790146, 0.11345928907394409, 0.04037227854132652, 1.0)],
+            ['Main_Diffuse', (0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0), 0.0, (0.0, 0.0, 0.0)], 
+            ['Gradient_Control', [[0.045454543083906174, (1.0, 1.0, 1.0, 1.0)], [0.8909090161323547, (0.0, 0.0, 0.0, 1.0)]]], 
+            ['Main_Contrast', [[0.08181827515363693, (0.0, 0.0, 0.0, 1.0)], [0.863636314868927, (1.0, 1.0, 1.0, 1.0)]]], 
+            ['Tip_Control', [[0.5045454502105713, (0.0, 0.0, 0.0, 1.0)], [1.0, (1.0, 1.0, 1.0, 1.0)]]], 
+            ['Main_Highlight', 'GGX', (0.08054633438587189, 0.0542692169547081, 0.030534733086824417, 1.0), 0.25, (0.0, 0.0, 0.0)], 
+            ['Secondary_Highlight', 'GGX', (0.023630360141396523, 0.02180372178554535, 0.018096407875418663, 1.0), 0.15000000596046448, (0.0, 0.0, 0.0)]]
+        self.principled_hair_setup = [['ShaderNodeOutputMaterial', 'Material Output', 'Material Output', 'Material Output', (400,100)],
+            ['ShaderNodeBsdfHairPrincipled', 'Principled Hair BSDF', 'Hair_Shader', 'Hair_Shader', (100,100)]]
+        self.principled_hair_links = [['nodes["Hair_Shader"].outputs[0]', 'nodes["Material Output"].inputs[0]']]
+        self.principled_hair_default = [['Hair_Shader', 'MELANIN', None, 0.11400000005960464, 0.3, (1.0, 0.52252197265625, 0.52252197265625, 1.0), None, 0.5, 0.0, 0.0, 1.4500000476837158, 0.03490658476948738, 0.0, 0.0]]
+        self.hair_card_setup = [['ShaderNodeMixRGB', 'Mix', 'Gradient_Color', 'Gradient_Color', (-100.0, 280.0)], 
+            ['ShaderNodeMixRGB', 'Mix', 'Tip_Color', 'Tip_Color', (150.0, 280.0)], 
+            ['ShaderNodeMixRGB', 'Mix', 'Main_Color', 'Main_Color', (-325.0, 280.0)], 
+            ['ShaderNodeHairInfo', 'Hair Info', 'Hair Info', 'Hair Info', (-890.0, 260.0)], 
+            ['ShaderNodeAddShader', 'Add Shader', 'Highlight_Mix', 'Highlight_Mix', (680.0, 250.0)], 
+            ['ShaderNodeBsdfDiffuse', 'Diffuse BSDF', 'Main_Diffuse', 'Main_Diffuse', (390.0, 240.0)], 
+            ['ShaderNodeValToRGB', 'ColorRamp', 'Gradient_Control', 'Gradient_Control', (-660.0, 280.0)], 
+            ['ShaderNodeValToRGB', 'ColorRamp', 'Main_Contrast', 'Main_Contrast', (-660.0, -5.0)], 
+            ['ShaderNodeValToRGB', 'ColorRamp', 'Tip_Control', 'Tip_Control', (-660.0, 555.0)], 
+            ['ShaderNodeBsdfGlossy', 'Glossy BSDF', 'Main_Highlight', 'Main_Highlight', (440.0, 80.0)], 
+            ['ShaderNodeBsdfGlossy', 'Glossy BSDF', 'Secondary_Highlight', 'Secondary_Highlight', (680.0, 80.0)], 
+            ['ShaderNodeAddShader', 'Add Shader', 'Highlight_Mix_2', 'Highlight_Mix_2', (890.0, 260.0)], 
+            ['ShaderNodeTexImage', 'Image Texture', 'Hair_Alpha', 'Hair_Alpha', (165.0, 635.0)], 
+            ['ShaderNodeBsdfDiffuse', 'Diffuse BSDF', 'Hair_Diffuse', 'Hair_Diffuse', (515.0, 400.0)], 
+            ['ShaderNodeBsdfTransparent', 'Transparent BSDF', 'Hair_Transparency', 'Hair_Transparency', (510.0, 500.0338439941406)], 
+            ['ShaderNodeMixShader', 'Mix Shader', 'Diffuse_Mix', 'Diffuse_Mix', (750.0, 550.0)], 
+            ['ShaderNodeMixShader', 'Mix Shader', 'Color_Mix', 'Color_Mix', (1030.0, 615.0)], 
+            ['ShaderNodeOutputMaterial', 'Material Output', 'Material Output', 'Material Output', (1175.0, 280.0)],
+            ['ShaderNodeTexImage', 'Image Texture', 'Hair_Displacement', 'Hair_Displacement', (902.8016967773438, 90.0456771850586)]]
+        self.hair_card_links = [['nodes["Gradient_Color"].outputs[0]', 'nodes["Tip_Color"].inputs[1]'], 
+            ['nodes["Tip_Color"].outputs[0]', 'nodes["Main_Diffuse"].inputs[0]'], 
+            ['nodes["Main_Color"].outputs[0]', 'nodes["Gradient_Color"].inputs[1]'], 
+            ['nodes["Hair Info"].outputs[1]', 'nodes["Gradient_Control"].inputs[0]'], 
+            ['nodes["Hair Info"].outputs[1]', 'nodes["Tip_Control"].inputs[0]'], 
+            ['nodes["Hair Info"].outputs[4]', 'nodes["Main_Contrast"].inputs[0]'], 
+            ['nodes["Highlight_Mix"].outputs[0]', 'nodes["Highlight_Mix_2"].inputs[0]'], 
+            ['nodes["Main_Diffuse"].outputs[0]', 'nodes["Highlight_Mix"].inputs[0]'], 
+            ['nodes["Gradient_Control"].outputs[0]', 'nodes["Gradient_Color"].inputs[0]'], 
+            ['nodes["Main_Contrast"].outputs[0]', 'nodes["Main_Color"].inputs[0]'], 
+            ['nodes["Tip_Control"].outputs[0]', 'nodes["Tip_Color"].inputs[0]'], 
+            ['nodes["Main_Highlight"].outputs[0]', 'nodes["Highlight_Mix"].inputs[1]'], 
+            ['nodes["Secondary_Highlight"].outputs[0]', 'nodes["Highlight_Mix_2"].inputs[1]'], 
+            ['nodes["Highlight_Mix_2"].outputs[0]', 'nodes["Color_Mix"].inputs[2]'], 
+            ['nodes["Hair_Alpha"].outputs[0]', 'nodes["Hair_Diffuse"].inputs[0]'], 
+            ['nodes["Hair_Alpha"].outputs[1]', 'nodes["Diffuse_Mix"].inputs[0]'], 
+            ['nodes["Hair_Alpha"].outputs[1]', 'nodes["Color_Mix"].inputs[0]'], 
+            ['nodes["Hair_Diffuse"].outputs[0]', 'nodes["Diffuse_Mix"].inputs[2]'], 
+            ['nodes["Hair_Transparency"].outputs[0]', 'nodes["Diffuse_Mix"].inputs[1]'], 
+            ['nodes["Diffuse_Mix"].outputs[0]', 'nodes["Color_Mix"].inputs[1]'], 
+            ['nodes["Color_Mix"].outputs[0]', 'nodes["Material Output"].inputs[0]'],
+            ['nodes["Hair_Displacement"].outputs[0]', 'nodes["Material Output"].inputs[2]']]
+        self.options = ['CLIP', 'OPAQUE']
+        self.hair_card_default = lambda hair_dir: [['Hair_Alpha', self.def_image(hair_dir), (0.6079999804496765, 0.6079999804496765, 0.6079999804496765), 'REPEAT', (0.800000011920929, 0.800000011920929, 0.800000011920929), 0.0, 'MIX', 1.0, 1.0, 1.0, False, 'RGB', 1.0, (0.0, 0.0, 0.0, 1.0), 0.0, 'RGB', 1.0, (1.0, 1.0, 1.0, 1.0), 1.0, 'NEAR', 'LINEAR', 1, 1, 1, 0, False, False],
+            ['Hair_Displacement', self.def_disp(hair_dir), (0.6079999804496765, 0.6079999804496765, 0.6079999804496765), 'REPEAT', (0.800000011920929, 0.800000011920929, 0.800000011920929), 0.0, 'MIX', 1.0, 1.0, 1.0, False, 'RGB', 1.0, (0.0, 0.0, 0.0, 1.0), 0.0, 'RGB', 1.0, (1.0, 1.0, 1.0, 1.0), 1.0, 'NEAR', 'LINEAR', 1, 0, 1, -1, False, False]]
+    '''
+    '''
+    def set_universal_nodes(self):
+        node_ops.new_material(self.hair, self.universal_hair_setup, self.universal_hair_links)
+        bpy.context.object.active_material = self.material
+    '''
+    '''
+    def set_principled_nodes(self):
+        node_ops.new_material(self.hair, self.principled_hair_setup, self.principled_hair_links)
+        bpy.context.object.active_material = self.material
+    '''
+    '''
+    def set_hair_card_nodes(self):
+        node_ops.new_material(self.hair_card, self.hair_card_setup, self.hair_card_links)
+        bpy.context.object.active_material = self.hc_mat
+    '''
+    '''
+    def set_material_nodes(self, style):
+        material = self.material
+        bpy.context.object.active_material = material
         nodes = material.node_tree.nodes
-        node_ops.clear_node(material)
-    except:
-        pass
-    if scn.mblab_use_cycles:
-        fileName = get_hair_npz("CY_shader_presets.npz")
-        data = numpy_ops.get_data_value(style, fileName)
-        output = add_HPshader_node(material, 'ShaderNodeOutputMaterial', (400,100))
-        hair = add_HPshader_node(material, 'ShaderNodeBsdfHairPrincipled', (100,100))
-        parametrization = data[0]
-        hair.parametrization = parametrization #parametrization #['ABSORPTION', 'COLOR', 'MELANIN']
-        if parametrization == 'COLOR': #Direct Coloring
-            hair.inputs[0].default_value = data[1] #Color
-        if parametrization == 'MELANIN': #Melanin Concetration
-            hair.inputs[1].default_value = data[2] #Melanin
-            hair.inputs[2].default_value = data[3] #Melanin Redness
-            hair.inputs[3].default_value = data[4] #Tint
-            hair.inputs[10].default_value = data[11] #Random Color
-        if parametrization == 'ABSORPTION': #Absorbtion Coefficient    
-            hair.inputs[4].default_value = data[5] #Absorbtion Coefficient
-        hair.inputs[5].default_value = data[6] #Roughness
-        hair.inputs[6].default_value = data[7] #Radial Roughness
-        hair.inputs[7].default_value = data[8] #Coat
-        hair.inputs[8].default_value = data[9] #IOR
-        hair.inputs[9].default_value = data[10] #offset
-        hair.inputs[11].default_value = data[12] #Random Roughness
-        link = node_ops.add_node_link(material, hair.outputs[0], output.inputs[0])
-        hair_object.active_material = material
-        hair_object.scale = (0.95, 0.95, 0.95)
-
-#Add Melanin Hair Principled Shader #CYCLES
-def add_hairP_shader(mat_name, parametrization, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11):
-    material = node_ops.get_material(mat_name)
-    node_ops.clear_material(bpy.context.object)
-    node_ops.clear_node(material)
-    material.use_nodes = True
-    output = add_HPshader_node(material, 'ShaderNodeOutputMaterial', (400,100))
-    hair = add_HPshader_node(material, 'ShaderNodeBsdfHairPrincipled', (100,100))
-    hair.parametrization = parametrization #['ABSORPTION', 'COLOR', 'MELANIN']
-    if parametrization == 'COLOR': #Direct Coloring
-        hair.inputs[0].default_value = v0 #Color
-    if parametrization == 'MELANIN': #Melanin Concetration
-        hair.inputs[1].default_value = v1 #Melanin
-        hair.inputs[2].default_value = v2 #Melanin Redness
-        hair.inputs[3].default_value = v3 #Tint
-        hair.inputs[10].default_value = v10 #Random Color
-    if parametrization == 'ABSORPTION': #    
-        hair.inputs[4].default_value = v4 #Absorbtion Coefficient
-    hair.inputs[5].default_value = v5 #Roughness
-    hair.inputs[6].default_value = v6 #Radial Roughness
-    hair.inputs[7].default_value = v7 #Coat
-    hair.inputs[8].default_value = v8 #IOR
-    hair.inputs[9].default_value = v9 #offset
-    hair.inputs[11].default_value = v11 #Random Roughness
-    link = node_ops.add_node_link(material, hair.outputs[0], output.inputs[0])
-    bpy.context.object.active_material = material
-
-def change_hair_shader(style):
-    context = bpy.context
-    fileName = get_hair_npz("CY_shader_presets.npz")
-    if context.scene.mblab_use_cycles:
-        mat_name = context.object.name
-        data = numpy_ops.get_data_value(style, fileName)
-        add_hairP_shader(mat_name, data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12])
-    if context.scene.mblab_use_eevee:
-        pass
-
-# Get Principled Hair shader settings
-def get_p_hair_settings(object):
-    material = object.active_material
-    nodes = material.node_tree.nodes
-    hair = nodes.get("Principled Hair BSDF")
-    par = hair.parametrization
-    v6 = hair.inputs[5].default_value
-    v7 = hair.inputs[6].default_value
-    v8 = hair.inputs[7].default_value
-    v9 = hair.inputs[8].default_value
-    v10 = hair.inputs[9].default_value
-    v12 = hair.inputs[11].default_value
-    if par == 'COLOR':
-        v1 = hair.inputs[0].default_value[:]
-        v2 = None
-        v3 = None
-        v4 = None
-        v5 = None
-        v11 = None
-    elif par == 'MELANIN':
-        v1 = None
-        v2 = hair.inputs[1].default_value
-        v3 = hair.inputs[2].default_value
-        v4 = hair.inputs[3].default_value[:]
-        v5 = None
-        v11 = hair.inputs[10].default_value
-    elif par == 'ABSORPTION':
-        v1 = None
-        v2 = None
-        v3 = None
-        v4 = None
-        v5 = hair.inputs[4].default_value
-        v11 = None
-    return[par, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12]
-
-def add_pHair(hair_object):
-    scn = bpy.context.scene
-    p_sys = hair_object.modifiers.new("hair", 'PARTICLE_SYSTEM').particle_system
-    p_sys.settings.type = 'HAIR'
-    p_sys.settings.child_type = 'INTERPOLATED'
-    p_sys.settings.hair_length = 0.2
-    p_sys.settings.root_radius = 0.03
-    p_sys.settings.count = 1000
-    p_sys.settings.hair_step = 5
-    p_sys.settings.child_nbr = 20
-    p_sys.settings.rendered_child_count = 20
-    p_sys.settings.child_length = 0.895
-    bpy.context.scene.render.hair_type = 'STRIP'
-    bpy.context.object.show_instancer_for_viewport = False
-    bpy.context.object.show_instancer_for_render = False
-    bpy.ops.particle.connect_hair(all=True)
-
-# ------------------------------------------------------------------------
-
-def add_HPshader_node(material, node_type, location):
-    nodes = material.node_tree.nodes
-    new_node = nodes.new(type=node_type)
-    new_node.location = location
-    return new_node
-
-# ------------------------------------------------------------------------
-
-#Get Partile Coodinates
-def get_hair_particle(object):
-    # Dependancy Graph
-    dp = bpy.context.evaluated_depsgraph_get()
-    # Particle System
-    ps = object.evaluated_get(dp).particle_systems
-    # Particles
-    p = ps[0].particles
-    # Count
-    count_p = len(p)
-    # Cooordinates
-    p_dict = {}
-    for i, c in [c for c in enumerate(p)]:
-        h_keys = []
-        hk = p[i].hair_keys
-        count_hk = len(hk)
-        for pt in hk:
-            h_keys.append(pt.co)
-        p_dict.update({i: h_keys})
-    return p_dict
-
-# ------------------------------------------------------------------------
-
-def get_hair_dir():
-    data_dir = file_ops.get_data_path()
-    hair_dir = os.path.join(data_dir, "Hair_Data")
-    return hair_dir
-
-def get_hair_npz(fileName):
-    hair_dir = get_hair_dir()
-    return os.path.join(hair_dir, fileName)
-    
-# def get_hair_data(Name):
-#     File = get_hair_npz("scalps.npz")
-#     with np.load(File) as data:
-#         return data[Name].tolist()
-
-# ------------------------------------------------------------------------
-
-def add_hair_data(object, style, fileName):
-    fileName = get_hair_npz("CY_shader_presets.npz")
-    Value = get_p_hair_settings(object)
-    numpy_ops.add_array(style, Value, fileName)
-
-def delete_hair_data(style, fileName, List):
-    fileName = get_hair_npz("CY_shader_presets.npz")
-    numpy_ops.remove_array(style, fileName, List)
-
-def replace_hair_data(fileName, List):
-    fileName = get_hair_npz("CY_shader_presets.npz")
-    rl = List[-1]
-    style, Value = rl
-    List.remove(rl)
-    numpy_ops.add_array(style, Value, fileName)
-
-# def export_hair_data(filePath, style):
-#     File = ext + style + '.npz'
-#     fp = node_ops.get_filename(filePath, File)
-#     fileName = get_hair_npz("CY_shader_presets.npz")
-#     with np.load(fileName) as data:
-#     Value = get_p_hair_settings(bpy.context.object)
-#     data = [style, Value]
-#     np.savez(fp, *data)
-
-# def import_hair_data(mport):
-#     fileName = get_hair_npz("CY_shader_presets.npz")
-#     fp = os.path.split(mport)[1]
-#     if fp.startswith("CY_Hshader_"):
-#         with np.load(mport, 'r+') as imdata:
-#             style, Value = imdata
-#     numpy_ops.add_array(style, Value, fileName)
+        node_ops.set_material(material, style)
+    '''
+    '''
+    #Add particle hair
+    def add_hair(self):
+        p_sys = bpy.context.object.modifiers.new(self.hair, 'PARTICLE_SYSTEM').particle_system
+        p_sys.settings.type = 'HAIR'
+        p_sys.settings.child_type = 'INTERPOLATED'
+        p_sys.settings.hair_length = 0.2
+        p_sys.settings.root_radius = 0.03
+        p_sys.settings.count = 1000
+        p_sys.settings.hair_step = 5
+        p_sys.settings.child_nbr = 20
+        p_sys.settings.rendered_child_count = 20
+        p_sys.settings.child_length = 0.895
+        bpy.context.object.show_instancer_for_viewport = False
+        bpy.context.object.show_instancer_for_render = False
+        bpy.ops.particle.connect_hair(all=True)
+    '''
+    '''
+    def hair_armature_mod(self, hair, vertgroup):
+        new = "ARM_{}".format(hair)
+        a_mod = bpy.context.object.modifiers.new(new, 'ARMATURE')
+        a_mod.object = self.armature
+        a_mod.vertex_group = vertgroup #'head'
+    '''
+    '''
+    def convert_to_curve(self):
+        self.view_hide = False
+        bpy.ops.object.modifier_convert(modifier=self.hair)
+        bpy.ops.object.convert(target='CURVE')
+        bpy.context.object.data.extrude = 0.01
+        bpy.ops.object.editmode_toggle()
+        bpy.ops.curve.select_all(action='SELECT')
+        bpy.ops.transform.tilt(value=-1.5708, mirror=True, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1, use_proportional_connected=False, use_proportional_projected=False)
+        bpy.context.object.data.use_uv_as_generated = True
+        bpy.ops.curve.match_texture_space()
+        bpy.ops.curve.handle_type_set(type='ALIGNED')
+        self.view_hide = True
+        bpy.ops.object.editmode_toggle()
+        bpy.context.object.name = self.hair_card
+        bpy.context.object.data.name = self.hair_card
+        self.set_hair_card_nodes()
+        bpy.context.object.active_material = self.hc_mat
+        bpy.data.objects[self.hair].hide_set(state=True)
+        self.hair_armature_mod(self.hair_card, '')
+    '''
+    '''
+    def convert_to_mesh(self):
+        bpy.ops.object.convert(target='MESH', keep_original=True)
+        bpy.ops.object.editmode_toggle()
+        bpy.ops.mesh.select_all(action='SELECT')
+        bpy.ops.uv.follow_active_quads(mode='LENGTH')
+        bpy.ops.object.editmode_toggle()
+        bpy.context.object.name = self.hair_mesh
+        bpy.context.object.data.name = self.hair_mesh
+        self.hair_armature_mod(self.hair_mesh, '')
+        bpy.data.objects[self.hair_card].hide_set(state=True)
+    '''
+    '''
+    def get_mat_options(self):
+        blend = self.material.blend_method
+        shadow = self.material.shadow_method
+        return [blend, shadow]
+    '''
+    '''
+    def set_mat_options(self, object):
+        object.active_material.blend_method = 'CLIP'
+        object.active_material.shadow_method = 'OPAQUE'
+        object.active_material.cycles.displacement_method = 'BOTH'
+        object.active_material.pass_index = 32
+    '''
+    '''
+    def make_hair(self, target):
+        hair = object_ops.CopyObject(bpy.context.object, self.hair).new_object_full()
+        self.add_hair()
+        self.hair_armature_mod(self.hair, target)
 

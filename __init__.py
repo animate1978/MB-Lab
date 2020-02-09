@@ -29,9 +29,12 @@ import logging
 import time
 import json
 import os
-import numpy
 #from pathlib import Path
 from math import radians, degrees
+import numpy as np
+from mathutils import Matrix, Vector, kdtree
+import json as js
+from copy import deepcopy as dc
 
 import bpy
 from bpy.app.handlers import persistent
@@ -52,7 +55,6 @@ from . import humanoid_rotations
 from . import preferences
 from . import addon_updater_ops
 from . import facerig
-from . import morphcreator
 
 
 logger = logging.getLogger(__name__)
@@ -85,6 +87,7 @@ gui_active_panel_fin = None
 #Delete List
 CY_Hshader_remove = []
 UN_shader_remove = []
+h_e = None
 
 # BEGIN
 def start_lab_session():
@@ -519,14 +522,16 @@ def load_proxy_item(self, context):
 #Choose Hair Colors
 def hair_style_list(self, context):
     scn = bpy.context.scene
-    if scn.mblab_use_cycles: #and context.scene.mblab_use_pHair:
-        fileName = hairengine.get_hair_npz('CY_shader_presets.npz')
-        data = node_ops.get_universal_dict(fileName)
-        dat = data['arr_0'].tolist()
-        items = dat
+    data_dir = file_ops.get_data_path()
+    hair_dir = os.path.join(data_dir, "Hair_Data")
+    filename = lambda f: os.path.join(hair_dir, f)
+    if scn.mblab_use_cycles:
+        #fileName = hairengine.get_hair_npz('CY_shader_presets.npz')
+        #data = node_ops.get_universal_dict(fileName)
+        items = node_ops.get_universal_list(filename('CY_shader_presets.npz'))
     else:
-        fileName = hairengine.get_hair_npz('universal_hair_shader.npz')
-        items = node_ops.get_universal_list(fileName)
+        #fileName = hairengine.get_hair_npz('universal_hair_shader.npz')
+        items = node_ops.get_universal_list(filename('universal_hair_shader.npz'))
     #[(identifier, name, description, icon, number)
     return [(i, i, i) for i in items]
 
@@ -748,47 +753,6 @@ bpy.types.Scene.mblab_body_mass = bpy.props.FloatProperty(
     default=0.5,
     description="Preserve the current character body mass")
 
-bpy.types.Scene.mblab_morphing_spectrum = bpy.props.EnumProperty(
-    items=morphcreator.get_spectrum(),
-    name="Spectrum",
-    default="GE")
-
-bpy.types.Scene.mblab_morph_min_max = bpy.props.EnumProperty(
-    items=morphcreator.get_min_max(),
-    name="min/max",
-    default="MA")
-
-bpy.types.Scene.mblab_morphing_body_type = bpy.props.StringProperty(
-    name="Ethnic group",
-    description="Overide the ethnic group.\n4 letters, without f_ or m_.\nExample : af01\nLet empty to not overide",
-    #default="",
-    maxlen=4,
-    subtype='FILE_NAME')
-
-bpy.types.Scene.mblab_morphing_file_extra_name = bpy.props.StringProperty(
-    name="Extra name",
-    description="Typically it's the name of the author",
-    default="pseudo",
-    maxlen=1024,
-    subtype='FILE_NAME')
-
-bpy.types.Scene.mblab_incremental_saves = bpy.props.BoolProperty(
-    name="Autosaves",
-    description="Does an incremental save each time\n  the final save button is pressed.\nFrom 001 to 999\nCaution : returns to 001 between sessions")
-
-bpy.types.Scene.mblab_morph_name = bpy.props.StringProperty(
-    name="Name",
-    description="ExplicitBodyPartMorphed",
-    default="",
-    maxlen=1024,
-    subtype='FILE_NAME')
-
-bpy.types.Scene.mblab_body_part_name = bpy.props.EnumProperty(
-    items=morphcreator.get_body_parts(),
-    name="Body part",
-    default="BO")
-
-
 bpy.types.Scene.mblab_body_tone = bpy.props.FloatProperty(
     name="Body tone",
     min=0.0,
@@ -955,204 +919,6 @@ class ButtonRandomOn(bpy.types.Operator):
         sync_character_to_props()
         return {'FINISHED'}
 
-class ButtonMorphingOn(bpy.types.Operator):
-    bl_label = 'Morph Creation'
-    bl_idname = 'mbast.button_morphing_on'
-    bl_description = 'Morph creation panel'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel
-        gui_active_panel = 'morphing'
-        return {'FINISHED'}
-
-class ButtonMorphingOff(bpy.types.Operator):
-    bl_label = 'Morph Creation'
-    bl_idname = 'mbast.button_morphing_off'
-    bl_description = 'Close morph creator panel'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel
-        gui_active_panel = None
-        return {'FINISHED'}
-
-class ButtonStoreBaseBodyVertices(bpy.types.Operator):
-    bl_label = 'Store base body vertices'
-    bl_idname = 'mbast.button_store_base_vertices'
-    bl_description = '!WARNING! UNDO UNAVAILABLE!!!'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        mode = bpy.context.active_object.mode
-        vt = bpy.context.object.data.vertices
-        bpy.ops.object.mode_set(mode='OBJECT')
-        #vertices
-        morphcreator.set_vertices_list(0, morphcreator.create_vertices_list(vt))
-        return {'FINISHED'}
-
-    @classmethod
-    def get_stored_base_vertices(self):
-        return morphcreator.set_vertices_list(0)
-
-class ButtonSaveWorkInProgress(bpy.types.Operator):
-    bl_label = 'Quick save wip'
-    bl_idname = 'mbast.button_store_work_in_progress'
-    bl_description = 'Name and location are automatic'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        mode = bpy.context.active_object.mode
-        vt = bpy.context.object.data.vertices
-        bpy.ops.object.mode_set(mode='OBJECT')
-        #vertices
-        morphcreator.set_vertices_list(1, morphcreator.create_vertices_list(vt))
-        return {'FINISHED'}
-
-    @classmethod
-    def get_stored_actual_vertices(self):
-        return morphcreator.set_vertices_list(1)
-
-
-class FinalizeMorph(bpy.types.Operator):
-    """
-        NOW we're talking:
-        - Checking that the base body exists.
-        - Checking that the sculpted body exists.
-        - Doing the substract between the two.
-        - Creating the file name.
-        - Creating the morph name.
-        - Opening or creating the named file.
-        - Adding or replacing the morph.
-        - Close the file.
-        - Profit.
-    """
-    bl_label = 'Finalize the morph'
-    bl_idname = 'mbast.button_save_final_morph'
-    filename_ext = ".json"
-    bl_description = 'Finalize the morph, ask for min and max files, create or open the morphs file, replace or append new morph'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        scn = bpy.context.scene
-        base = []
-        sculpted = []
-
-        if len(scn.mblab_morph_name) < 1:
-            self.ShowMessageBox("Please choose a name for the morph !\nNo file saved", "Warning", 'ERROR')
-            return {'FINISHED'}
-        try:
-            base = morphcreator.get_vertices_list(0)
-        except:
-            self.ShowMessageBox("Base vertices are not stored !", "Warning", 'ERROR')
-            return {'FINISHED'}
-        try:
-            sculpted = morphcreator.get_vertices_list(1)
-        except:
-            self.ShowMessageBox("Changed vertices are not stored !", "Warning", 'ERROR')
-            return {'FINISHED'}
-        indexed_vertices = morphcreator.substract_with_index(base, sculpted)
-        if len(indexed_vertices) < 1:
-            self.ShowMessageBox("Models base / sculpted are equals !\nNo file saved", "Warning", 'INFO')
-            return {'FINISHED'}
-        #-------File name----------
-        file_name = ""
-        if scn.mblab_morphing_spectrum == "GE":
-            #File name for whole gender, like human_female or anime_male.
-            file_name = morphcreator.get_model_and_gender()
-        else:
-            if len(scn.mblab_morphing_body_type) < 1:
-                file_name = morphcreator.get_body_type() + "_morphs"
-            else:
-                file_name = morphcreator.get_body_type()[0:2] + scn.mblab_morphing_body_type + "_morphs"
-            if len(scn.mblab_morphing_file_extra_name) > 0:
-                file_name = file_name + "_" + scn.mblab_morphing_file_extra_name
-        if scn.mblab_incremental_saves:
-            file_name = file_name + "_" + morphcreator.get_next_number()
-        #-------Morph name----------
-        morph_name = morphcreator.get_body_parts(scn.mblab_body_part_name) + "_" + scn.mblab_morph_name + "_" + morphcreator.get_min_max(scn.mblab_morph_min_max)
-        #-------Morphs path----------
-        file_path_name = file_ops.get_data_path() + "\\morphs\\" + file_name + ".json"
-        file = morphcreator.load_morphs_file(file_path_name, "Try to load a morph file")
-        #---Creating new morph-------
-        file[morph_name] = indexed_vertices
-        morphcreator.save_morphs_file(file_path_name, file)
-        #----------------------------
-        return {'FINISHED'}
-
-    def ShowMessageBox(self, message = "", title = "Message Box", icon = 'INFO'):
-
-        def draw(self, context):
-            self.layout.label(text=message)
-        bpy.context.window_manager.popup_menu(draw, title = title, icon = icon)
-
-class SaveBodyAsIs(bpy.types.Operator, ExportHelper):
-    """
-        Save the model shown on screen.
-    """
-    bl_label = 'Save in a file all vertices of the actual model'
-    bl_idname = 'mbast.button_save_body_as_is'
-    filename_ext = ".json"
-    filter_glob: bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
-    bl_description = 'Save all vertices of the actual body shown on screen in a file.'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        mode = bpy.context.active_object.mode
-        vt = bpy.context.object.data.vertices
-        bpy.ops.object.mode_set(mode='OBJECT')
-        vertices_to_save = morphcreator.create_vertices_list(vt)
-        vertices_to_save = numpy.around(vertices_to_save, decimals=5).tolist()
-        #--------------------
-        morphcreator.save_morphs_file(self.filepath, vertices_to_save)
-        return {'FINISHED'}
-
-class LoadBaseBody(bpy.types.Operator, ImportHelper):
-    """
-        Load the model as a base model.
-    """
-    bl_label = 'Load all vertices as a base model'
-    bl_idname = 'mbast.button_load_base_body'
-    filename_ext = ".json"
-    filter_glob: bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
-    bl_description = 'Load all vertices as a base body model.'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        mode = bpy.context.active_object.mode
-        bpy.ops.object.mode_set(mode='OBJECT')
-        #list =
-        file = morphcreator.load_morphs_file(self.filepath, "Base model vertices")
-        #--------------------
-        morphcreator.set_vertices_list(0, numpy.array(file))
-        return {'FINISHED'}
-
-class LoadSculptedBody(bpy.types.Operator, ImportHelper):
-    """
-        Load the model as a base model.
-    """
-    bl_label = 'Load all vertices as a sculpted model'
-    bl_idname = 'mbast.button_load_sculpted_body'
-    filename_ext = ".json"
-    filter_glob: bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
-    bl_description = 'Load all vertices as a sculpted body model.'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        mode = bpy.context.active_object.mode
-        bpy.ops.object.mode_set(mode='OBJECT')
-        file = morphcreator.load_morphs_file(self.filepath, "Sculpted model vertices")
-        #--------------------
-        morphcreator.set_vertices_list(1, numpy.array(file).tolist())
-        return {'FINISHED'}
 
 class ButtonAutomodellingOff(bpy.types.Operator):
     bl_label = 'Automodelling Tools'
@@ -2215,7 +1981,7 @@ class DeleteFaceRig(bpy.types.Operator):
         return {'FINISHED'}
 
 # Add Limit Rotations Constraint
-class OBJECT_OT_humanoid_rot_limits(bpy.types.Operator):
+class HumanoidRotLimits(bpy.types.Operator):
     """Add Humanoid Rotation Limits to Character"""
     bl_idname = "mbast.humanoid_rot_limits"
     bl_label = "Humanoid Rotations"
@@ -2229,7 +1995,7 @@ class OBJECT_OT_humanoid_rot_limits(bpy.types.Operator):
         return {'FINISHED'}
 
 # Delete Limit Rotations Constraint
-class OBJECT_OT_delete_rotations(bpy.types.Operator):
+class DeleteRotations(bpy.types.Operator):
     """Delete Humanoid Rotation Limits for Character"""
     bl_idname = "mbast.delete_rotations"
     bl_label = "Delete Humanoid Rotations"
@@ -2242,160 +2008,250 @@ class OBJECT_OT_delete_rotations(bpy.types.Operator):
         return {'FINISHED'}
 
 #Add Hair Op
-class OBJECT_OT_particle_hair(bpy.types.Operator):
+class ParticleHair(bpy.types.Operator):
     """Add Hair to Character"""
     bl_idname = "mbast.particle_hair"
     bl_label = "Particle Hair"
     bl_options = {'REGISTER', 'INTERNAL', 'UNDO'}
 
     def execute(self, context):
-        self.hair_Name = "Head_Hair"
+        global h_e
         scn = bpy.context.scene
-        style = scn.mblab_hair_color
-        character_id = scn.mblab_character_name
-        skeleton = object_ops.get_skeleton()
-        bpy.ops.object.mode_set(mode='OBJECT')
-        skeleton.select_set(state=False)
-        body = object_ops.get_body_mesh()
-        body.select_set(state=True)
-        bpy.context.view_layer.objects.active = body
-        faces = hairengine.get_hair_data(character_id)
+        faces = hairengine.get_hair_data(bpy.context.scene.mblab_character_name)
         hairengine.sel_faces(faces)
-        hairengine.add_scalp(self.hair_Name)
-        hair = bpy.data.objects[self.hair_Name]
-        hairengine.hair_armature_mod(skeleton, hair)
-        if context.scene.mblab_use_cycles:
-            hairengine.add_hair(hair, self.hair_Name, style)
-        else:
-            hairengine.add_pHair(hair)
-            node_ops.universal_shader_nodes(self.hair_Name, node_ops.universal_hair_setup(), (1130, 280))
-            node_ops.set_universal_shader(self.hair_Name, hairengine.get_hair_npz('universal_hair_shader.npz'), style)
         bpy.ops.object.mode_set(mode='OBJECT')
-        object_ops.add_parent(skeleton.name, [self.hair_Name])
+        h_e = hairengine.HairEngine(bpy.context.object)
+        h_e.make_hair('head')
+        # self.hair_Name = "Head_Hair"
+        # scn = bpy.context.scene
+        # style = scn.mblab_hair_color
+        # character_id = scn.mblab_character_name
+        # skeleton = object_ops.get_skeleton()
+        # bpy.ops.object.mode_set(mode='OBJECT')
+        # skeleton.select_set(state=False)
+        # body = object_ops.get_body_mesh()
+        # body.select_set(state=True)
+        # bpy.context.view_layer.objects.active = body
+        # faces = hairengine.get_hair_data(character_id)
+        # hairengine.sel_faces(faces)
+        # hairengine.add_scalp(self.hair_Name)
+        # hair = bpy.data.objects[self.hair_Name]
+        # hairengine.hair_armature_mod(skeleton, hair)
+        if context.scene.mblab_use_cycles:
+            h_e.set_principled_nodes()
+            node_ops.set_material(h_e.hair, h_e.principled_hair_default)
+            # hairengine.add_hair(hair, self.hair_Name, style)
+        else:
+            h_e.set_universal_nodes()
+            node_ops.set_material(h_e.hair, h_e.universal_hair_default)
+            #bpy.context.scene.render.hair_type = 'STRIP'
+            # hairengine.add_pHair(hair)
+            # node_ops.universal_shader_nodes(self.hair_Name, node_ops.universal_hair_setup(), (1130, 280))
+            # node_ops.set_universal_shader(self.hair_Name, hairengine.get_hair_npz('universal_hair_shader.npz'), style)
+        # bpy.ops.object.mode_set(mode='OBJECT')
+        # object_ops.add_parent(skeleton.name, [self.hair_Name])
         # object_ops.active_ob(skeleton.name, None)
         # try:
         #     bpy.ops.object.mode_set(mode='POSE')
         # except:
-        #     pass       
+        #     pass
+            bpy.context.object.parent = h_e.armature
+            #bpy.context.colection.objects.unlink(bpy.context.object)
         return {'FINISHED'}
 
-class OBJECT_OT_manual_hair(bpy.types.Operator):
+class ManualHair(bpy.types.Operator):
     """Add Hair to Character from Selected Polygons"""
     bl_idname = "mbast.manual_hair"
     bl_label = "Hair from Selected"
     bl_options = {'REGISTER', 'INTERNAL', 'UNDO'}
 
     def execute(self, context):
-        self.hair_Name = "Hairs"
+        global h_e
         scn = bpy.context.scene
-        style = scn.mblab_hair_color
-        character_id = scn.mblab_character_name
-        get_mode = bpy.context.object.mode
-        skeleton = object_ops.get_skeleton()
-        hairengine.add_scalp(self.hair_Name)
-        hair = bpy.data.objects[self.hair_Name]
-        hairengine.hair_armature_mod(skeleton, hair)
-        if scn.mblab_use_cycles:
-            hairengine.add_hair(hair, self.hair_Name, style)
-        else:
-            hairengine.add_pHair(hair)
-            node_ops.universal_shader_nodes(self.hair_Name, node_ops.universal_hair_setup(), (1130, 280))
-            node_ops.set_universal_shader(self.hair_Name, hairengine.get_hair_npz('universal_hair_shader.npz'), style)
-        bpy.ops.object.mode_set(mode='EDIT')
         bpy.ops.object.mode_set(mode='OBJECT')
-        object_ops.add_parent(skeleton.name, [self.hair_Name])
+        h_e = hairengine.HairEngine(bpy.context.object)
+        h_e.make_hair('head')
+        # self.hair_Name = "Hairs"
+        # scn = bpy.context.scene
+        # style = scn.mblab_hair_color
+        # character_id = scn.mblab_character_name
+        # get_mode = bpy.context.object.mode
+        # skeleton = object_ops.get_skeleton()
+        # hairengine.add_scalp(self.hair_Name)
+        # hair = bpy.data.objects[self.hair_Name]
+        # hairengine.hair_armature_mod(skeleton, hair)
+        if scn.mblab_use_cycles:
+            #hairengine.add_hair(hair, self.hair_Name, style)
+            h_e.set_principled_nodes()
+            node_ops.set_material(h_e.hair, h_e.principled_hair_default)
+        else:
+            h_e.set_universal_nodes()
+            node_ops.set_material(h_e.hair, h_e.universal_hair_default)
+            #bpy.context.scene.render.hair_type = 'STRIP'
+        #     hairengine.add_pHair(hair)
+        #     node_ops.universal_shader_nodes(self.hair_Name, node_ops.universal_hair_setup(), (1130, 280))
+        #     node_ops.set_universal_shader(self.hair_Name, hairengine.get_hair_npz('universal_hair_shader.npz'), style)
+        # bpy.ops.object.mode_set(mode='EDIT')
+        # bpy.ops.object.mode_set(mode='OBJECT')
+        # object_ops.add_parent(skeleton.name, [self.hair_Name])
         # object_ops.active_ob(skeleton.name, None)
         # try:
         #     bpy.ops.object.mode_set(mode='POSE')
         # except:
-        #     pass       
+        #     pass
+            bpy.context.object.parent = h_e.armature
+            #bpy.context.colection.objects.unlink(bpy.context.object)
         return {'FINISHED'}
 
-class OBJECT_OT_change_hair_color(bpy.types.Operator):
+class ChangeHairColor(bpy.types.Operator):
     """Change Selected Hair Color"""
     bl_idname = "mbast.change_hair"
     bl_label = "Change Color"
     bl_options = {'REGISTER', 'INTERNAL', 'UNDO'}
 
     def execute(self, context):
-        self.hair_Name = "Hairs"
+        global h_e
         scn = bpy.context.scene
+        #character_id = scn.mblab_character_name
+        #h_e = hairengine.HairEngine(bpy.data.objects[bpy.context.scene.mblab_character_name])
+        # self.hair_Name = "Hairs"
         style = scn.mblab_hair_color
-        character_id = scn.mblab_character_name
-        get_mode = bpy.context.object.mode
-        skeleton = object_ops.get_skeleton()
-        material = bpy.context.object.active_material
-        nodes = material.node_tree.nodes
-        if scn.mblab_use_cycles:
-            hairengine.change_hair_shader(style)
+        # get_mode = bpy.context.object.mode
+        # skeleton = object_ops.get_skeleton()
+        # material = bpy.context.object.active_material
+        # nodes = material.node_tree.nodes
+        data_dir = file_ops.get_data_path()
+        hair_dir = os.path.join(data_dir, "Hair_Data")
+        filename = lambda f: os.path.join(hair_dir, f)
+        if (bpy.context.object.type == 'CURVE') or (h_e.hair_mesh in bpy.context.object.name):
+            node_ops.set_material(h_e.hair_card, numpy_ops.load_npz_data(filename('universal_hair_shader.npz'), style))
+        elif (bpy.context.object.type != 'CURVE' and scn.mblab_use_cycles):
+            #hairengine.change_hair_shader(style)
+            h_e.set_principled_nodes()
+            node_ops.set_material(h_e.hair, numpy_ops.load_npz_data(filename('CY_shader_presets.npz'), style))
         else:
-            node_ops.universal_shader_nodes(material.name, node_ops.universal_hair_setup(), (1130, 280))
-            node_ops.set_universal_shader(bpy.context.object.name, hairengine.get_hair_npz('universal_hair_shader.npz'), style)
+            # node_ops.universal_shader_nodes(material.name, node_ops.universal_hair_setup(), (1130, 280))
+            # node_ops.set_universal_shader(bpy.context.object.name, hairengine.get_hair_npz('universal_hair_shader.npz'), style)
+            h_e.set_universal_nodes()
+            node_ops.set_material(h_e.hair, numpy_ops.load_npz_data(filename('universal_hair_shader.npz'), style))
+            #bpy.context.scene.render.hair_type = 'STRIP'
         return {'FINISHED'}
 
-class OBJECT_OT_add_color_preset(bpy.types.Operator):
+class AddColorPreset(bpy.types.Operator):
     """Add Hair Color to Presets"""
     bl_idname = "mbast.add_hair_preset"
     bl_label = "Add Preset"
     bl_options = {'REGISTER', 'INTERNAL', 'UNDO'}
 
     def execute(self, context):
+        global h_e
         #self.hair_Name = "Head_Hair"
         scn = bpy.context.scene
         #style = scn.mblab_hair_color
-        character_id = scn.mblab_character_name
-        skeleton = object_ops.get_skeleton()
+        #character_id = scn.mblab_character_name
+        #h_e = hairengine.HairEngine(bpy.data.objects[bpy.context.scene.mblab_character_name])
+        # skeleton = object_ops.get_skeleton()
+        data_dir = file_ops.get_data_path()
+        hair_dir = os.path.join(data_dir, "Hair_Data")
+        filename = lambda f: os.path.join(hair_dir, f)
         newColor = scn.mblab_new_hair_color
         material = bpy.context.object.active_material
         nodes = material.node_tree.nodes
+        gn = node_ops.get_all_shader_(nodes)
         if scn.mblab_use_cycles:
-            fileName = hairengine.get_hair_npz('CY_shader_presets.npz')
-            hairengine.add_hair_data(context.object, newColor, fileName)
+            numpy_ops.append_npz_dict(filename('CY_shader_presets.npz'), newColor, [list(i) for i in gn])
+            #fileName = hairengine.get_hair_npz('CY_shader_presets.npz')
+            #hairengine.add_hair_data(context.object, newColor, fileName)
         else:
-            fileName = hairengine.get_hair_npz('universal_hair_shader.npz')
-            node_ops.save_universal_presets(fileName, newColor, node_ops.get_all_shader_(nodes))
+            numpy_ops.append_npz_dict(filename('universal_hair_shader.npz'), newColor, [list(i) for i in gn])
+            #fileName = hairengine.get_hair_npz('universal_hair_shader.npz')
+            #node_ops.save_universal_presets(fileName, newColor, node_ops.get_all_shader_(nodes))
         return {'FINISHED'}
 
-class OBJECT_OT_remove_color_preset(bpy.types.Operator):
+class RemoveColorPreset(bpy.types.Operator):
     """Remove Hair Color from Presets"""
     bl_idname = "mbast.del_hair_preset"
     bl_label = "Delete Preset"
     bl_options = {'REGISTER', 'INTERNAL', 'UNDO'}
 
     def execute(self, context):
+        global h_e
         scn = bpy.context.scene
         style = scn.mblab_hair_color
         newColor = scn.mblab_new_hair_color
+        data_dir = file_ops.get_data_path()
+        hair_dir = os.path.join(data_dir, "Hair_Data")
+        filename = lambda f: os.path.join(hair_dir, f)
+        #h_e = hairengine.HairEngine(bpy.data.objects[bpy.context.scene.mblab_character_name])
         if scn.mblab_use_cycles:
             global CY_Hshader_remove
-            fileName = hairengine.get_hair_npz("CY_shader_presets.npz")
-            hairengine.delete_hair_data(style, fileName, CY_Hshader_remove)
+            numpy_ops.remove_style(filename('CY_shader_presets.npz'), CY_Hshader_remove, style)
+            # fileName = hairengine.get_hair_npz("CY_shader_presets.npz")
+            # hairengine.delete_hair_data(style, fileName, CY_Hshader_remove)
         else:
             global UN_shader_remove
-            fileName = hairengine.get_hair_npz('universal_hair_shader.npz')
-            node_ops.remove_universal_presets(fileName, style, UN_shader_remove)
+            numpy_ops.remove_style(filename('universal_hair_shader.npz'), UN_shader_remove, style)
+            # fileName = hairengine.get_hair_npz('universal_hair_shader.npz')
+            # node_ops.remove_universal_presets(fileName, style, UN_shader_remove)
         return {'FINISHED'}
 
 #Undo Delete Preset
-class OBJECT_OT_undo_remove_color(bpy.types.Operator):
+class UndoRemoveColor(bpy.types.Operator):
     """Replace Removed Hair Color"""
     bl_idname = "mbast.rep_hair_preset"
     bl_label = "Undo Delete Preset"
     bl_options = {'REGISTER', 'INTERNAL', 'UNDO'}
 
     def execute(self, context):
+        global h_e
         scn = bpy.context.scene
         style = scn.mblab_hair_color
         newColor = scn.mblab_new_hair_color
+        data_dir = file_ops.get_data_path()
+        hair_dir = os.path.join(data_dir, "Hair_Data")
+        filename = lambda f: os.path.join(hair_dir, f)
+        #h_e = hairengine.HairEngine(bpy.data.objects[bpy.context.scene.mblab_character_name])
         if scn.mblab_use_cycles:
             global CY_Hshader_remove
-            fileName = hairengine.get_hair_npz("CY_shader_presets.npz")
-            hairengine.replace_hair_data(fileName, CY_Hshader_remove)
+            numpy_ops.replace_style(filename('CY_shader_presets.npz'), CY_Hshader_remove)
+            # fileName = hairengine.get_hair_npz("CY_shader_presets.npz")
+            # hairengine.replace_hair_data(fileName, CY_Hshader_remove)
         else:
             global UN_shader_remove
-            fileName = hairengine.get_hair_npz('universal_hair_shader.npz')
-            node_ops.replace_removed_shader(fileName, UN_shader_remove)
+            numpy_ops.replace_style(filename('universal_hair_shader.npz'), UN_shader_remove)
+            # fileName = hairengine.get_hair_npz('universal_hair_shader.npz')
+            # node_ops.replace_removed_shader(fileName, UN_shader_remove)
         return {'FINISHED'}
+
+#Convert to Hair Cards
+class HairCard(bpy.types.Operator):
+    """Convert Hair to Hair Cards"""
+    bl_idname = "mbast.hair_card"
+    bl_label = "Convert to Hair Cards"
+    bl_options = {'REGISTER', 'INTERNAL', 'UNDO'}
+
+    def execute(self, context):
+        global h_e
+        data_dir = file_ops.get_data_path()
+        hair_dir = os.path.join(data_dir, "Hair_Data")
+        h_e.convert_to_curve()
+        node_ops.set_material(h_e.hair_card, h_e.hair_card_default(hair_dir))
+        node_ops.set_material(h_e.hair_card, h_e.universal_hair_default)
+        bpy.context.object.parent = h_e.armature
+        return {'FINISHED'}
+
+#Convert to Hair Cards
+class HairMesh(bpy.types.Operator):
+	"""Convert Hair Cards to Hair Mesh"""
+	bl_idname = "mbast.hair_mesh"
+	bl_label = "Convert to Hair Mesh"
+	bl_options = {'REGISTER', 'INTERNAL', 'UNDO'}
+
+	def execute(self, context):
+		global h_e
+		h_e.convert_to_mesh()
+		bpy.context.object.parent = h_e.armature
+		return {'FINISHED'}
 
 class StartSession(bpy.types.Operator):
     bl_idname = "mbast.init_character"
@@ -2471,7 +2327,6 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
             if scn.mblab_use_cycles or scn.mblab_use_eevee:
                 box_new_opt.prop(scn, 'mblab_use_lamps', icon='LIGHT_DATA')
             box_new_opt.operator('mbast.init_character', icon='ARMATURE_DATA')
-            morphcreator.init_morph_names_database()
 
         if gui_status != "ACTIVE_SESSION":
             self.layout.label(text=" ")
@@ -2529,14 +2384,21 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                 # Add Particle Hair
                 box_asts = box_post_opt.box()
                 box_asts.label(text="Hair")
-                box_asts.prop(scn, 'mblab_hair_color')
                 box_asts.operator("mbast.particle_hair", icon='USER')
                 box_asts.operator("mbast.manual_hair", icon='USER')
+                box_asts.label(text="Hair Color")
+                box_asts.prop(scn, 'mblab_hair_color')
                 box_asts.operator("mbast.change_hair", icon='USER')
                 box_asts.prop(scn, 'mblab_new_hair_color')
                 box_asts.operator("mbast.add_hair_preset", icon='USER')
                 box_asts.operator("mbast.del_hair_preset", icon='USER')
                 box_asts.operator("mbast.rep_hair_preset", icon='USER')
+                box_asts.label(text="Convert Hair")
+                box_asts.label(text="Warning!!! Experimental", icon='INFO')
+                box_asts.label(text="May cause hours of confusion if not used correctly. Seriously, You may ask yourself out loud, WHYYYY!!!!??? ...ijs. you've been warned.")
+                box_asts.operator("mbast.hair_card", icon='USER')
+                box_asts.operator("mbast.hair_mesh", icon='USER')
+                box_asts.label(text="")
 
             # Proxy Fitting
 
@@ -2808,35 +2670,6 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                     for material_data_prop in sorted(mblab_humanoid.character_material_properties.keys()):
                         box_skin.prop(obj, material_data_prop)
 
-                if gui_active_panel != "morphing":
-                    box_act_opt.operator('mbast.button_morphing_on', icon=icon_expand)
-                else:
-                    box_act_opt.operator('mbast.button_morphing_off', icon=icon_collapse)
-                    box_morph = box_act_opt.box()
-                    box_morph.operator('mbast.button_store_base_vertices', icon="SPHERE") #Store all vertices of the actual body.
-                    box_morph.label(text="Morph wording - Body parts", icon='SORT_ASC')
-                    box_morph.prop(scn, "mblab_body_part_name") #first part of the morph's name : jaws, legs, ...
-                    box_morph.prop(scn, 'mblab_morph_name') #name for the morph
-                    box_morph.prop(scn, "mblab_morph_min_max") #The morph is for min proportions or max proportions.
-                    box_morph.label(text="Morph wording - File", icon='SORT_ASC')
-                    box_morph.prop(scn, "mblab_morphing_spectrum") #Ask if the new morph is global or just for a specific body
-                    box_morph.label(text=morphcreator.get_model_and_gender() + "_" + scn.mblab_morphing_file_extra_name, icon='INFO')
-                    tp = morphcreator.get_body_type() + " (overide below)"
-                    if len(scn.mblab_morphing_body_type) > 3:
-                        tp = scn.mblab_morphing_body_type + " (delete below for reset)"
-                    elif len(scn.mblab_morphing_body_type) > 0:
-                        tp = "4 letters please (but that will work)"
-                    box_morph.label(text=tp, icon='INFO')
-                    box_morph.prop(scn, 'mblab_morphing_body_type') #The name of the type (4 letters)
-                    box_morph.prop(scn, 'mblab_morphing_file_extra_name') #The extra name for the file (basically the name of the author)
-                    box_morph.prop(scn, 'mblab_incremental_saves') #If user wants to overide morph in final file or not.
-                    box_morph.operator('mbast.button_store_work_in_progress', icon="MONKEY") #Store all vertices of the modified body in a work-in-progress file.
-                    box_morph.operator('mbast.button_save_final_morph', icon="FREEZE") #Save the final morph.
-                    box_morph.label(text="Tools", icon='SORT_ASC')
-                    box_morph.operator('mbast.button_save_body_as_is', icon='EXPORT')
-                    box_morph.operator('mbast.button_load_base_body', icon='IMPORT')
-                    box_morph.operator('mbast.button_load_sculpted_body', icon='IMPORT')
-
                 if gui_active_panel != "finalize":
                     box_act_opt.operator('mbast.button_finalize_on', icon=icon_expand)
                 else:
@@ -2877,6 +2710,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                     box_file.prop(scn, 'mblab_export_materials', icon='MATERIAL')
                     box_file.operator("mbast.export_character", icon='EXPORT')
                     box_file.operator("mbast.import_character", icon='IMPORT')
+
 
                 if gui_active_panel != "display_opt":
                     box_act_opt.operator('mbast.button_display_on', icon=icon_expand)
@@ -2925,14 +2759,6 @@ classes = (
     ButtonRestPoseOff,
     ButtonRestPoseOn,
     ButtonPoseOff,
-    ButtonMorphingOff,
-    ButtonMorphingOn,
-    ButtonStoreBaseBodyVertices,
-    ButtonSaveWorkInProgress,
-    FinalizeMorph,
-    SaveBodyAsIs,
-    LoadBaseBody,
-    LoadSculptedBody,
     ButtonAssetsOn,
     ButtonAssetsOff,
     ButtonPoseOn,
@@ -2990,15 +2816,19 @@ classes = (
     DeleteFaceRig,
     LoadTemplate,
     preferences.MBPreferences,
+    HumanoidRotLimits,
+    DeleteRotations,
+    ParticleHair,
+    ManualHair,
+    ChangeHairColor,
+    AddColorPreset,
+    RemoveColorPreset,
+    UndoRemoveColor,
+    HairCard,
+    HairMesh,
     VIEW3D_PT_tools_MBLAB,
-    OBJECT_OT_humanoid_rot_limits,
-    OBJECT_OT_delete_rotations,
-    OBJECT_OT_particle_hair,
-    OBJECT_OT_manual_hair,
-    OBJECT_OT_change_hair_color,
-    OBJECT_OT_add_color_preset,
-    OBJECT_OT_remove_color_preset,
-    OBJECT_OT_undo_remove_color,
+    
+    
 )
 
 def register():
