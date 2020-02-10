@@ -2884,6 +2884,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
     def draw(self, context):
         
         scn = bpy.context.scene
+        is_objet, name = algorithms.looking_for_humanoid_obj()
         icon_expand = "DISCLOSURE_TRI_RIGHT"
         icon_collapse = "DISCLOSURE_TRI_DOWN"
         
@@ -2891,8 +2892,6 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
         box_general.label(text="https://www.mblab.dev")
         box_general.operator('mbcrea.button_for_tests', icon='BLENDER')
 
-        #Reminder: Morph, config, files management, skin, pose and animation, hair, muscles, rigging
-        #Import tools...
         box_tools = self.layout.box()
         box_tools.label(text="Tools categories")
         if gui_active_panel_first != "adaptation_tools":
@@ -2917,7 +2916,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
             else:
                 box_adaptation_tools.operator('mbcrea.button_morphcreator_off', icon=icon_collapse)
                 box_morphcreator = box_adaptation_tools.box()
-                try:
+                if is_objet == "FOUND":
                     box_morphcreator.operator('mbast.button_store_base_vertices', icon="SPHERE") #Store all vertices of the actual body.
                     box_morphcreator.label(text="Morph wording - Body parts", icon='SORT_ASC')
                     box_morphcreator.prop(scn, "mblab_body_part_name") #first part of the morph's name : jaws, legs, ...
@@ -2941,9 +2940,23 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     box_morphcreator.operator('mbast.button_save_body_as_is', icon='EXPORT')
                     box_morphcreator.operator('mbast.button_load_base_body', icon='IMPORT')
                     box_morphcreator.operator('mbast.button_load_sculpted_body', icon='IMPORT')
-                except Exception:
-                    box_morphcreator.label(text="!NO COMPATIBLE MODEL SELECTED!", icon='ERROR')
+                else:
+                    box_morphcreator.label(text="!NO COMPATIBLE MODEL!", icon='ERROR')
                     box_morphcreator.enabled = False
+            if gui_active_panel_second != "morphs_for_expressions":
+                box_adaptation_tools.operator('mbcrea.button_morphexpression_on', icon=icon_expand)
+            else:
+                box_adaptation_tools.operator('mbcrea.button_morphexpression_off', icon=icon_collapse)
+                box_morphexpression = box_adaptation_tools.box()
+                box_morphexpression.label(text="#TODO Morphs for expressions...")
+                box_morphexpression.label(text="but very close to morphs creator.")
+            if gui_active_panel_second != "combine_expressions":
+                box_adaptation_tools.operator('mbcrea.button_combinexpression_on', icon=icon_expand)
+            else:
+                box_adaptation_tools.operator('mbcrea.button_combinexpression_off', icon=icon_collapse)
+                box_combinexpression = box_adaptation_tools.box()
+                box_combinexpression.label(text="#TODO Combine expressions")
+                box_combinexpression.label(text="to have plain expressions...")
         
         #Create/edit tools...
         
@@ -2952,13 +2965,50 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
         else:
             box_tools.operator('mbcrea.button_compat_tools_off', icon=icon_collapse)
             box_compat_tools = self.layout.box()
-            box_compat_tools.label(text="#TODO 2...")
+            #-------------
+            if gui_active_panel_second != "Body_tools":
+                box_compat_tools.operator('mbcrea.button_body_tools_on', icon=icon_expand)
+            else:
+                box_compat_tools.operator('mbcrea.button_body_tools_off', icon=icon_collapse)
+                box_body_tools = box_compat_tools.box()
+                box_body_tools.label(text="#TODO Body tools...")
+            if gui_active_panel_second != "Bboxes_tools":
+                box_compat_tools.operator('mbcrea.button_bboxes_tools_on', icon=icon_expand)
+            else:
+                box_compat_tools.operator('mbcrea.button_bboxes_tools_off', icon=icon_collapse)
+                box_bboxes_tools = box_compat_tools.box()
+                box_bboxes_tools.label(text="#TODO bboxes tools...")
+            if gui_active_panel_second != "Weight_painting":
+                box_compat_tools.operator('mbcrea.button_weight_painting_tools_on', icon=icon_expand)
+            else:
+                box_compat_tools.operator('mbcrea.button_weight_painting_tools_off', icon=icon_collapse)
+                box_weight_painting_tools = box_compat_tools.box()
+                box_weight_painting_tools.label(text="#TODO weight painting tools...")
+            if gui_active_panel_second != "Vertices_groups":
+                box_compat_tools.operator('mbcrea.button_vertices_groups_tools_on', icon=icon_expand)
+            else:
+                box_compat_tools.operator('mbcrea.button_vertices_groups_tools_off', icon=icon_collapse)
+                box_vertices_groups_tools = box_compat_tools.box()
+                box_vertices_groups_tools.label(text="#TODO vertices groups tools...")
+            if gui_active_panel_second != "Muscles":
+                box_compat_tools.operator('mbcrea.button_muscles_tools_on', icon=icon_expand)
+            else:
+                box_compat_tools.operator('mbcrea.button_muscles_tools_off', icon=icon_collapse)
+                box_muscles_tools = box_compat_tools.box()
+                box_muscles_tools.label(text="#TODO muscles tools...")
+            if gui_active_panel_second != "Config":
+                box_compat_tools.operator('mbcrea.button_config_tools_on', icon=icon_expand)
+            else:
+                box_compat_tools.operator('mbcrea.button_config_tools_off', icon=icon_collapse)
+                box_config_tools = box_compat_tools.box()
+                box_config_tools.label(text="#TODO config files tools...")
+            if gui_active_panel_second != "Files_management":
+                box_compat_tools.operator('mbcrea.button_management_tools_on', icon=icon_expand)
+            else:
+                box_compat_tools.operator('mbcrea.button_management_tools_off', icon=icon_collapse)
+                box_management_tools = box_compat_tools.box()
+                box_management_tools.label(text="#TODO files management tools...") 
             
-        #
-        
-
-        #
-        
             
 class ButtonForTest(bpy.types.Operator):
     #just for quick tests
@@ -3099,29 +3149,237 @@ class ButtonMorphingOFF(bpy.types.Operator):
         gui_active_panel_second = None
         return {'FINISHED'}
 
-class ButtonOtherToolsON(bpy.types.Operator):
-    bl_label = 'Other tools'
-    bl_idname = 'mbcrea.button_other_tools_on'
-    bl_description = 'All other useful tools that can\'t be in other categories'
+class ButtonMorphExpressionON(bpy.types.Operator):
+    bl_label = 'Base expressions'
+    bl_idname = 'mbcrea.button_morphexpression_on'
+    bl_description = 'Tool for morphing base expressions'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        global gui_active_panel_fin
-        gui_active_panel_fin = "other_tools"
+        global gui_active_panel_second
+        gui_active_panel_second = "morphs_for_expressions"
         #Other things to do...
         return {'FINISHED'}
 
-class ButtonOtherToolsOFF(bpy.types.Operator):
-    bl_label = 'Other tools'
-    bl_idname = 'mbcrea.button_other_tools_off'
-    bl_description = 'All other useful tools that can\'t be in other categories'
+class ButtonMorphExpressionOFF(bpy.types.Operator):
+    bl_label = 'Base expressions'
+    bl_idname = 'mbcrea.button_morphexpression_off'
+    bl_description = 'Tool for morphing base expressions'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        global gui_active_panel_fin
-        gui_active_panel_fin = None
+        global gui_active_panel_second
+        gui_active_panel_second = None
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonCombineExpressionON(bpy.types.Operator):
+    bl_label = 'Final expressions'
+    bl_idname = 'mbcrea.button_combinexpression_on'
+    bl_description = 'Tool for combining base expressions'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = "combine_expressions"
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonCombineExpressionOFF(bpy.types.Operator):
+    bl_label = 'Final expressions'
+    bl_idname = 'mbcrea.button_combinexpression_off'
+    bl_description = 'Tool for combining base expressions'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = None
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonBodyToolsON(bpy.types.Operator):
+    bl_label = 'Body tools'
+    bl_idname = 'mbcrea.button_body_tools_on'
+    bl_description = 'All tools to create a compatible body'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = "Body_tools"
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonBodyToolsOFF(bpy.types.Operator):
+    bl_label = 'Body tools'
+    bl_idname = 'mbcrea.button_body_tools_off'
+    bl_description = 'All tools to create a compatible body'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = None
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonBboxesToolsON(bpy.types.Operator):
+    bl_label = 'Bboxes tools'
+    bl_idname = 'mbcrea.button_bboxes_tools_on'
+    bl_description = 'All tools to create bboxes for a model'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = "Bboxes_tools"
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonBboxesToolsOFF(bpy.types.Operator):
+    bl_label = 'Bboxes tools'
+    bl_idname = 'mbcrea.button_bboxes_tools_off'
+    bl_description = 'All tools to create bboxes for a model'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = None
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonWeightToolsON(bpy.types.Operator):
+    bl_label = 'Weight painting tools'
+    bl_idname = 'mbcrea.button_weight_painting_tools_on'
+    bl_description = 'All tools related to weight painting'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = "Weight_painting"
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonWeightToolsOFF(bpy.types.Operator):
+    bl_label = 'Weight painting tools'
+    bl_idname = 'mbcrea.button_weight_painting_tools_off'
+    bl_description = 'All tools related to weight painting'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = None
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonVerticesGroupsToolsON(bpy.types.Operator):
+    bl_label = 'Vertices groups tools'
+    bl_idname = 'mbcrea.button_vertices_groups_tools_on'
+    bl_description = 'All tools related to vertices groups'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = "Vertices_groups"
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonVerticesGroupsToolsOFF(bpy.types.Operator):
+    bl_label = 'Vertices groups tools'
+    bl_idname = 'mbcrea.button_vertices_groups_tools_off'
+    bl_description = 'All tools related to vertices groups'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = None
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonMusclesToolsON(bpy.types.Operator):
+    bl_label = 'Muscles tools'
+    bl_idname = 'mbcrea.button_muscles_tools_on'
+    bl_description = 'All tools related to muscles system'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = "Muscles"
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonMusclesToolsOFF(bpy.types.Operator):
+    bl_label = 'Muscles tools'
+    bl_idname = 'mbcrea.button_muscles_tools_off'
+    bl_description = 'All tools related to muscles system'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = None
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonConfigToolsON(bpy.types.Operator):
+    bl_label = 'Configs tools'
+    bl_idname = 'mbcrea.button_config_tools_on'
+    bl_description = 'All tools for managing configuration files'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = "Config"
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonConfigToolsOFF(bpy.types.Operator):
+    bl_label = 'Configs tools'
+    bl_idname = 'mbcrea.button_config_tools_off'
+    bl_description = 'All tools for managing configuration files'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = None
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonFilesManagementON(bpy.types.Operator):
+    bl_label = 'Files management'
+    bl_idname = 'mbcrea.button_management_tools_on'
+    bl_description = 'All tools for addon files management'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = "Files_management"
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonFilesManagementOFF(bpy.types.Operator):
+    bl_label = 'Files management'
+    bl_idname = 'mbcrea.button_management_tools_off'
+    bl_description = 'All tools for addon files management'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = None
         #Other things to do...
         return {'FINISHED'}
 
@@ -3224,6 +3482,24 @@ classes = (
     ButtonBlenrigOFF,
     ButtonMorphingON,
     ButtonMorphingOFF,
+    ButtonMorphExpressionON,
+    ButtonMorphExpressionOFF,
+    ButtonCombineExpressionON,
+    ButtonCombineExpressionOFF,
+    ButtonBodyToolsON,
+    ButtonBodyToolsOFF,
+    ButtonBboxesToolsON,
+    ButtonBboxesToolsOFF,
+    ButtonWeightToolsON,
+    ButtonWeightToolsOFF,
+    ButtonVerticesGroupsToolsON,
+    ButtonVerticesGroupsToolsOFF,
+    ButtonMusclesToolsON,
+    ButtonMusclesToolsOFF,
+    ButtonConfigToolsON,
+    ButtonConfigToolsOFF,
+    ButtonFilesManagementON,
+    ButtonFilesManagementOFF,
     VIEW3D_PT_tools_MBCrea,
 )
 
