@@ -53,6 +53,7 @@ from . import preferences
 from . import addon_updater_ops
 from . import facerig
 from . import morphcreator
+from . import creation_tools_ops
 
 
 logger = logging.getLogger(__name__)
@@ -3007,7 +3008,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
             else:
                 box_compat_tools.operator('mbcrea.button_management_tools_off', icon=icon_collapse)
                 box_management_tools = box_compat_tools.box()
-                box_management_tools.label(text="#TODO files management tools...") 
+                box_management_tools.label(text="#TODO files management tools...")
             
             
 class ButtonForTest(bpy.types.Operator):
@@ -3019,6 +3020,7 @@ class ButtonForTest(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
+        creation_tools_ops.create_necessary_directories("user-try")
         return {'FINISHED'}
 
 class ButtonAdaptationToolsON(bpy.types.Operator):
