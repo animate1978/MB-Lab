@@ -944,36 +944,6 @@ def apply_auto_align_bones(armat):
                 bone.roll = bone_target.roll
 
 
-def link_to_collection(obj):
-    # sanity check
-    if obj.name not in bpy.data.objects:
-        logger.error("Cannot link obj %s because it's not in bpy.data.objects", obj.name)
-        return
-
-    collection_name = 'MB_LAB_Character'
-    c = bpy.data.collections.get(collection_name)
-    scene = bpy.context.scene
-    # collection is already created
-    if c is not None:
-        if obj.name not in c.objects:
-            c.objects.link(obj)
-        else:
-            logger.warning("The object %s is already linked to the scene", obj.name)
-    else:
-        # create the collection, link collection to scene and link obj to collection
-        c = bpy.data.collections.new(collection_name)
-        scene.collection.children.link(c)
-        c.objects.link(obj)
-
-
-def is_armature_linked(obj, armat):
-    if obj.type == 'MESH':
-        for modfr in obj.modifiers:
-            if modfr.type == 'ARMATURE' and modfr.object == armat:
-                return True
-    return False
-
-
 def has_deformation_vgroups(obj, armat):
     if obj.type == 'MESH':
         if armat:
@@ -1102,18 +1072,7 @@ def set_modifier_viewport(modfr, value):
         modfr.show_viewport = value
 
 #
-def new_modifier(obj, name, modifier_type, parameters):
-    if name in obj.modifiers:
-        logger.info("Modifier %s already present in %s", modifier_type, obj.name)
-        return obj.modifiers[name]
-    _new_modifier = obj.modifiers.new(name, modifier_type)
-    for parameter, value in parameters.items():
-        if hasattr(_new_modifier, parameter):
-            try:
-                setattr(_new_modifier, parameter, value)
-            except AttributeError:
-                logger.info("Setattr failed for attribute '%s' of modifier %s", parameter, name)
-    return _new_modifier
+
 
 #
 def set_modifier_parameter(modifier, parameter, value):

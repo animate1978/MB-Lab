@@ -102,7 +102,7 @@ class SkeletonEngine:
             obj = self.get_body()
             armat = self.get_armature()
             parameters = {"object": armat}
-            algorithms.new_modifier(obj, self.armature_modifier_name, 'ARMATURE', parameters)
+            object_ops.new_modifier(obj, self.armature_modifier_name, 'ARMATURE', parameters)
 
     def move_up_armature_modifier(self):
         if self.has_data:

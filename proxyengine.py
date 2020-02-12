@@ -152,7 +152,7 @@ class ProxyEngine:
                     algorithms.remove_modifier(proxy, self.proxy_armature_modifier)
 
         parameters = {"object": armat}
-        armature_modifier = algorithms.new_modifier(proxy, self.proxy_armature_modifier,'ARMATURE', parameters)
+        armature_modifier = object_ops.new_modifier(proxy, self.proxy_armature_modifier,'ARMATURE', parameters)
         return armature_modifier
 
     # def add_mask_modifier(self, body, mask_name):
@@ -475,7 +475,7 @@ class ProxyEngine:
                 if smoothing:
                     parameters = {"show_viewport": True}
 
-                    correct_smooth_mod = algorithms.new_modifier(proxy, self.corrective_modifier_name, 'CORRECTIVE_SMOOTH', parameters)
+                    correct_smooth_mod = object_ops.new_modifier(proxy, self.corrective_modifier_name, 'CORRECTIVE_SMOOTH', parameters)
 
                     for i in range(10):
                         algorithms.move_up_modifier(proxy, correct_smooth_mod)
@@ -574,7 +574,7 @@ class ProxyEngine:
 
         #self.add_mask_modifier(body, mask_name)
         parameters = {"vertex_group": mask_name,"invert_vertex_group": True}
-        algorithms.new_modifier(body, mask_name, 'MASK', parameters)
+        object_ops.new_modifier(body, mask_name, 'MASK', parameters)
 
     def remove_body_mask(self, body, mask_name):
         algorithms.remove_modifier(body, mask_name)

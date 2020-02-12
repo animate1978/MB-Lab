@@ -281,6 +281,19 @@ def apply_mod(Ref):
                 bpy.ops.object.modifier_apply(modifier=m.name)
     bpy.context.view_layer.objects.active = act
 
+# Apply new modifier
+def new_modifier(obj, name, modifier_type, parameters):
+    if name in obj.modifiers:
+        logger.info("Modifier %s already present in %s", modifier_type, obj.name)
+        return obj.modifiers[name]
+    _new_modifier = obj.modifiers.new(name, modifier_type)
+    for parameter, value in parameters.items():
+        if hasattr(_new_modifier, parameter):
+            try:
+                setattr(_new_modifier, parameter, value)
+            except AttributeError:
+                logger.info("Setattr failed for attribute '%s' of modifier %s", parameter, name)
+    return _new_modifier
 
 
 ###############################################################################################################################
@@ -387,3 +400,40 @@ def bvhtree_from_obj_polygons(obj, indices_of_polygons_subset=None):
     vertices = [ vert.co for vert in obj.data.vertices ]
     return mathutils.bvhtree.BVHTree.FromPolygons(vertices, polygons)
 
+###############################################################################################################################
+# LIGHTING_OPS
+
+def add_lighting():
+# create light datablock, set attributes
+    mblight01 = bpy.data.lights.new(name="light_01", type='AREA')
+    mblight02 = bpy.data.lights.new(name="light_02", type='AREA')
+    mblight03 = bpy.data.lights.new(name="light_03", type='AREA')
+
+# create new object with our light datablock
+    light_object01 = bpy.data.objects.new(name="light_key", object_data=mblight01)
+    light_object02 = bpy.data.objects.new(name="light_backlight", object_data=mblight02)
+    light_object03 = bpy.data.objects.new(name="light_fill", object_data=mblight03)
+
+# link light object
+    bpy.context.collection.objects.link(light_object01)
+    bpy.context.collection.objects.link(light_object02)
+    bpy.context.collection.objects.link(light_object03)
+
+# make it active
+    bpy.context.view_layer.objects.active = light_object01
+    bpy.context.view_layer.objects.active = light_object02
+    bpy.context.view_layer.objects.active = light_object03
+
+#change location, rotation and other settings
+    light_object01.location = (1.5, -1.5, 2.5)
+    light_object01.rotation_euler = (radians(0), radians(-70), radians(133))
+    light_object02.location = (-1.5, 1.5, 2.5)
+    light_object02.rotation_euler = (radians(-60), radians(0), radians(40))
+    light_object03.location = (-1.5, -2, 2.5)
+    light_object03.rotation_euler = (radians(0), radians(-70), radians(50))
+    mblight01.energy = 100
+    mblight01.color = (0.688, 0.914, 1)
+    mblight02.energy = 150
+    mblight02.color = (1, 1, 1)
+    mblight03.energy = 100
+    mblight03.color = (0.981, 1, 0.694)

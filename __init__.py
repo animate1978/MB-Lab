@@ -142,9 +142,10 @@ def start_lab_session():
                     scn.render.engine = 'BLENDER_EEVEE'
                 if scn.mblab_use_lamps:
 
-                    file_ops.import_object_from_lib(lib_filepath, "Light_Key")
-                    file_ops.import_object_from_lib(lib_filepath, "Light_Fill")
-                    file_ops.import_object_from_lib(lib_filepath, "Light_Backlight")
+                    #file_ops.import_object_from_lib(lib_filepath, "Light_Key")
+                    #file_ops.import_object_from_lib(lib_filepath, "Light_Fill")
+                    #file_ops.import_object_from_lib(lib_filepath, "Light_Backlight")
+                    object_ops.add_lighting()
 
             else:
                 scn.render.engine = 'BLENDER_WORKBENCH'

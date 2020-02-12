@@ -6,6 +6,7 @@ All changes will be documented here
 
 ## Added
 
+- Morph Engine added
 - Hair Engine now adds hair shaders to Cycles and EEVEE
 
 ## Changed
@@ -21,6 +22,7 @@ All changes will be documented here
 - Bump maps now 4k resolution
 - Modified Freckle masks
 - Modified Material Engine
+- Changed lighting code
 
 ## Bug Fixes
 
