@@ -39,13 +39,38 @@ forbidden_directories = ["__pycache__", "data", "mb-lab_updater", "animations", 
     "hu_m_anthropometry", "anime_expressions", "human_expressions", "female_poses",
     "male_poses", "rest_poses"]
 
-forbiden_names = ["human", "anime", "male", "female"]
+forbiden_names = ["human", "anime", "male", "female", "anthropometry", "bbox", "expressions",
+    "exprs", "morphs", "hair", "joints", "offset", "measures", "extra", "polygs", "ptypes",
+    "poses", "rest", "specialtype", "anyme", "style", "type", "base", "transf", "verts",
+    "vgroups", "muscles"]
 
 needed_directories = ["animations", "anthropometry", "bboxes", "expressions_comb",
     "expressions_morphs", "face_rig", "Hair_Data", "joints", "measures", "morphs",
     "Particle_Hair", "pgroups", "phenotypes", "poses", "presets", "textures", "transformations",
     "vertices", "vgroups"]
 
+created_names = {} #The names created while making a new compatible model.
+"""
+The keys are (values are string):
+body = the name of the body like "human"
+body_short = the short name like "hu"
+gender = the gender like "female"
+gender_short = "f_"
+...
+"""
+
+static_names = {
+    "human": ["human", "hu"],
+    "anime": ["anime", "an"],
+    "male": ["male", "m_"],
+    "female": ["female", "f_"],
+    #"": [],
+    }
+#with complete name, short name.
+
+static_genders = [("MA", "male", "All male characters"),
+   ("FE", "female", "All female characters"),
+   ("UN", "undefined", "CHaracter with no specific gender")]
 #--------------------------------------
 
 def get_forbidden_directories():
@@ -60,6 +85,30 @@ def get_forbidden_names():
 def is_forbidden_name(name):
     return name.lower() in forbiden_names
 
+def get_static_names():
+    return static_names
+
+def get_created_names():
+    return created_names
+
+def get_created_name(key):
+    return created_names.get(key, "")
+
+def set_created_name(key, value):
+    created_names[key] = value
+
+def init_created_names():
+    created_names = {}
+
+def get_static_genders(key=None):
+    if key == None:
+        return static_genders
+    value = None
+    for index in range(len(static_genders)):
+        if key in static_genders[index]:
+            value = static_genders[index]
+            return value[1]
+    return ""
 #--------------------------------------
 
 def create_needed_directories(name=""):

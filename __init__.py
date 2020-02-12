@@ -2967,6 +2967,26 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
             box_tools.operator('mbcrea.button_compat_tools_off', icon=icon_collapse)
             box_compat_tools = self.layout.box()
             #-------------
+            if gui_active_panel_second != "Init_compat":
+                box_compat_tools.operator('mbcrea.button_init_compat_on', icon=icon_expand)
+            else:
+                box_compat_tools.operator('mbcrea.button_init_compat_off', icon=icon_collapse)
+                box_init = box_compat_tools.box()
+                box_init.operator('mbcrea.button_init_compat', icon="ERROR")
+            box_compat_tools.label(text="New model names", icon='INFO')
+            box_compat_tools.prop(scn, 'mbcrea_body_name')
+            box_compat_tools.prop(scn, 'mbcrea_body_gender')
+            if len(scn.mbcrea_body_name) > 0:
+                body_name = str(scn.mbcrea_body_name)
+                creation_tools_ops.set_created_name('Body', body_name)
+                creation_tools_ops.set_created_name('Body_short', body_name[0:2])
+            box_compat_tools.label(text="Body short name : " + creation_tools_ops.get_created_name('Body_short'), icon='INFO')
+            gender_name = creation_tools_ops.get_static_genders(scn.mbcrea_body_gender)
+            creation_tools_ops.set_created_name('Gender', gender_name)
+            creation_tools_ops.set_created_name('Gender_short', gender_name[0:1] + "_")
+            box_compat_tools.label(text="Gender short name : " + creation_tools_ops.get_created_name('Gender_short'), icon='INFO')
+            #
+            #box_compat_tools.prop(scn, 'mbcrea_body_type')
             if gui_active_panel_second != "Body_tools":
                 box_compat_tools.operator('mbcrea.button_body_tools_on', icon=icon_expand)
             else:
@@ -3009,7 +3029,36 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                 box_compat_tools.operator('mbcrea.button_management_tools_off', icon=icon_collapse)
                 box_management_tools = box_compat_tools.box()
                 box_management_tools.label(text="#TODO files management tools...")
-            
+
+"""
+bpy.types.Scene.mblab_incremental_saves = bpy.props.BoolProperty(
+    name="Autosaves",
+    description="Does an incremental save each time\n  the final save button is pressed.\nFrom 001 to 999\nCaution : returns to 001 between sessions")
+
+bpy.types.Scene.mblab_morph_name = bpy.props.StringProperty(
+    name="Name",
+    description="ExplicitBodyPartMorphed",
+    default="",
+    maxlen=1024,
+    subtype='FILE_NAME')
+
+bpy.types.Scene.mblab_body_part_name = bpy.props.EnumProperty(
+    items=morphcreator.get_body_parts(),
+    name="Body part",
+    default="BO")
+"""
+bpy.types.Scene.mbcrea_body_name = bpy.props.StringProperty(
+    name="New body's name",
+    description="Like MyHuman, NewHorse01",
+    default=creation_tools_ops.get_created_name('Body'),
+    maxlen=1024,
+    subtype='FILE_NAME')
+
+bpy.types.Scene.mbcrea_body_gender = bpy.props.EnumProperty(
+    items=creation_tools_ops.get_static_genders(),
+    name="Gender",
+    default="UN")
+
             
 class ButtonForTest(bpy.types.Operator):
     #just for quick tests
@@ -3385,6 +3434,45 @@ class ButtonFilesManagementOFF(bpy.types.Operator):
         #Other things to do...
         return {'FINISHED'}
 
+class ButtonInitCompatON(bpy.types.Operator):
+    bl_label = 'Init all compatibilty tools'
+    bl_idname = 'mbcrea.button_init_compat_on'
+    bl_description = 'Init all names and tools for\ncreating a new compatible model'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = "Init_compat"
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonInitCompatOFF(bpy.types.Operator):
+    bl_label = 'Init all compatibilty tools'
+    bl_idname = 'mbcrea.button_init_compat_off'
+    bl_description = 'Init all names and tools for\ncreating a new compatible model'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = None
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonInitCompat(bpy.types.Operator):
+    bl_label = 'Go'
+    bl_idname = 'mbcrea.button_init_compat'
+    bl_description = 'Are you sure ?\nNo undo possible !'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        #init of all tools. No turning back.
+        creation_tools_ops.init_created_names()
+        return {'FINISHED'}
+
+
 classes = (
     ButtonParametersOff,
     ButtonParametersOn,
@@ -3502,6 +3590,9 @@ classes = (
     ButtonConfigToolsOFF,
     ButtonFilesManagementON,
     ButtonFilesManagementOFF,
+    ButtonInitCompatON,
+    ButtonInitCompatOFF,
+    ButtonInitCompat,
     VIEW3D_PT_tools_MBCrea,
 )
 
