@@ -2973,20 +2973,44 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                 box_compat_tools.operator('mbcrea.button_init_compat_off', icon=icon_collapse)
                 box_init = box_compat_tools.box()
                 box_init.operator('mbcrea.button_init_compat', icon="ERROR")
-            box_compat_tools.label(text="New model names", icon='INFO')
-            box_compat_tools.prop(scn, 'mbcrea_body_name')
-            box_compat_tools.prop(scn, 'mbcrea_body_gender')
-            if len(scn.mbcrea_body_name) > 0:
-                body_name = str(scn.mbcrea_body_name)
-                creation_tools_ops.set_created_name('Body', body_name)
-                creation_tools_ops.set_created_name('Body_short', body_name[0:2])
-            box_compat_tools.label(text="Body short name : " + creation_tools_ops.get_created_name('Body_short'), icon='INFO')
-            gender_name = creation_tools_ops.get_static_genders(scn.mbcrea_body_gender)
-            creation_tools_ops.set_created_name('Gender', gender_name)
-            creation_tools_ops.set_created_name('Gender_short', gender_name[0:1] + "_")
-            box_compat_tools.label(text="Gender short name : " + creation_tools_ops.get_created_name('Gender_short'), icon='INFO')
-            #
-            #box_compat_tools.prop(scn, 'mbcrea_body_type')
+            if not creation_tools_ops.is_project_loaded():
+                box_compat_tools.prop(scn, 'mbcrea_project_name')
+                box_compat_tools.label(text="New model names", icon='QUESTION')
+                box_compat_tools.prop(scn, 'mbcrea_body_name')
+                box_compat_tools.prop(scn, 'mbcrea_body_gender')
+                box_compat_tools.prop(scn, 'mbcrea_body_type')
+                if len(scn.mbcrea_body_name) > 0:
+                    body_name = str(scn.mbcrea_body_name).lower().split("_")[0]
+                    if body_name not in creation_tools_ops.get_forbidden_names():
+                        creation_tools_ops.set_created_name('body', body_name)
+                        creation_tools_ops.set_created_name('body_short', body_name[0:2])
+                        box_compat_tools.label(text="Body full name : " + body_name, icon='INFO')
+                        box_compat_tools.label(text="Body short name : " + creation_tools_ops.get_created_name('body_short'), icon='INFO')
+                    else:
+                        creation_tools_ops.set_created_name('body', "")
+                        creation_tools_ops.set_created_name('body_short', "")
+                        box_compat_tools.label(text="Body name not allowed !", icon='ERROR')
+                gender_name = creation_tools_ops.get_static_genders(scn.mbcrea_body_gender)
+                creation_tools_ops.set_created_name('gender', gender_name)
+                creation_tools_ops.set_created_name('gender_short', gender_name[0:1] + "_")
+                box_compat_tools.label(text="Gender short name : " + creation_tools_ops.get_created_name('gender_short'), icon='INFO')
+                if len(scn.mbcrea_body_type) > 0:
+                    body_type = str(scn.mbcrea_body_type).lower().split("_")[0]
+                    creation_tools_ops.set_created_name('type', body_type)
+                    box_compat_tools.label(text="Body type : " + body_type, icon='INFO')
+                else:
+                    creation_tools_ops.set_created_name('type', '')
+                #-------------
+                project_creation_buttons=box_compat_tools.box()
+                if len(str(scn.mbcrea_project_name)) > 0:
+                    creation_tools_ops.set_created_name("project_name", str(scn.mbcrea_project_name))
+                    project_creation_buttons.operator('mbcrea.button_create_directories', icon='FREEZE')
+                    project_creation_buttons.operator('mbcrea.button_save_compat_project', icon='FREEZE')
+                else:
+                    creation_tools_ops.set_created_name("project_name", "")
+                    project_creation_buttons.label(text="Choose a project name !", icon='ERROR')
+            box_compat_tools.operator('mbcrea.button_load_compat_project', icon='IMPORT')
+            #-------------
             if gui_active_panel_second != "Body_tools":
                 box_compat_tools.operator('mbcrea.button_body_tools_on', icon=icon_expand)
             else:
@@ -3047,10 +3071,17 @@ bpy.types.Scene.mblab_body_part_name = bpy.props.EnumProperty(
     name="Body part",
     default="BO")
 """
+bpy.types.Scene.mbcrea_project_name = bpy.props.StringProperty(
+    name="Project's name",
+    description="Like MyProject.",
+    default=creation_tools_ops.get_created_name('project_name'),
+    maxlen=1024,
+    subtype='FILE_NAME')
+
 bpy.types.Scene.mbcrea_body_name = bpy.props.StringProperty(
     name="New body's name",
     description="Like MyHuman, NewHorse01",
-    default=creation_tools_ops.get_created_name('Body'),
+    default=creation_tools_ops.get_created_name('body'),
     maxlen=1024,
     subtype='FILE_NAME')
 
@@ -3059,7 +3090,55 @@ bpy.types.Scene.mbcrea_body_gender = bpy.props.EnumProperty(
     name="Gender",
     default="UN")
 
-            
+bpy.types.Scene.mbcrea_body_type = bpy.props.StringProperty(
+    name="Body Type",
+    description="in 4 letters, like nm01 (North Martian 01)\nNo gender here",
+    default=creation_tools_ops.get_created_name('type'),
+    maxlen=4,
+    subtype='FILE_NAME')
+
+class ButtonCompatToolsDir(bpy.types.Operator):
+    #just for quick tests
+    bl_label = 'Create project directories'
+    bl_idname = 'mbcrea.button_create_directories'
+    bl_description = 'Button for create all needed\ndirectories for the projet'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        pn = creation_tools_ops.get_created_name("project_name")
+        creation_tools_ops.create_needed_directories(pn)
+        return {'FINISHED'}
+
+class ButtonSaveCompatProject(bpy.types.Operator):
+    #just for quick tests
+    bl_label = 'Save current project'
+    bl_idname = 'mbcrea.button_save_compat_project'
+    bl_description = 'Save current on-going project\nto create a new model.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        creation_tools_ops.save_project()
+        return {'FINISHED'}
+
+class ButtonLoadCompatProject(bpy.types.Operator, ImportHelper):
+    """
+        Load the model as a base model.
+    """
+    bl_label = 'Load project'
+    bl_idname = 'mbcrea.button_load_compat_project'
+    filename_ext = ".json"
+    filter_glob: bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
+    bl_description = 'Load a compatibility project'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        #--------------------
+        creation_tools_ops.load_project(self.filepath)
+        return {'FINISHED'}
+
 class ButtonForTest(bpy.types.Operator):
     #just for quick tests
     bl_label = 'Button for degug tests'
@@ -3469,7 +3548,7 @@ class ButtonInitCompat(bpy.types.Operator):
 
     def execute(self, context):
         #init of all tools. No turning back.
-        creation_tools_ops.init_created_names()
+        creation_tools_ops.init_project()
         return {'FINISHED'}
 
 
@@ -3593,6 +3672,9 @@ classes = (
     ButtonInitCompatON,
     ButtonInitCompatOFF,
     ButtonInitCompat,
+    ButtonCompatToolsDir,
+    ButtonSaveCompatProject,
+    ButtonLoadCompatProject,
     VIEW3D_PT_tools_MBCrea,
 )
 

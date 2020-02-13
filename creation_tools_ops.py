@@ -28,7 +28,9 @@ import os
 import bpy
 import numpy
 #from . import algorithms
-from. import numpy_ops
+from . import numpy_ops
+from . import file_ops
+#from . import 
 
 logger = logging.getLogger(__name__)
 
@@ -56,6 +58,8 @@ body = the name of the body like "human"
 body_short = the short name like "hu"
 gender = the gender like "female"
 gender_short = "f_"
+project_name = the name of the project
+type = The name of the type (2 digits) + a number
 ...
 """
 
@@ -71,6 +75,8 @@ static_names = {
 static_genders = [("MA", "male", "All male characters"),
    ("FE", "female", "All female characters"),
    ("UN", "undefined", "CHaracter with no specific gender")]
+ 
+loaded_project = [False]
 #--------------------------------------
 
 def get_forbidden_directories():
@@ -97,8 +103,9 @@ def get_created_name(key):
 def set_created_name(key, value):
     created_names[key] = value
 
-def init_created_names():
+def init_project():
     created_names = {}
+    loaded_project[0] = False
 
 def get_static_genders(key=None):
     if key == None:
@@ -123,3 +130,20 @@ def create_needed_directories(name=""):
             os.makedirs(os.path.join(path, sub_dir), True)
         except FileExistsError:
             logger.warning("Directory " + sub_dir + " already exists. Skipped.")
+
+def save_project():
+    if len(created_names) < 1:
+        return
+    file_name = created_names.get("project_name", "")
+    addon_directory = os.path.dirname(os.path.realpath(__file__))
+    file_name = os.path.join(addon_directory, file_name, file_name + ".json")
+    file_ops.save_json_data(file_name, created_names)
+
+def load_project(path_name):
+    if len(path_name) < 1:
+        return
+    created_names = file_ops.load_json_data(path_name, "loading compatibility project")
+    loaded_project[0] = True
+
+def is_project_loaded():
+    return loaded_project[0]
