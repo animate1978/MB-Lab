@@ -98,12 +98,13 @@ def get_created_names():
     return created_names
 
 def get_created_name(key):
-    return created_names.get(key, "")
+    return created_names.get(key, '')
 
 def set_created_name(key, value):
     created_names[key] = value
 
 def init_project():
+    global created_names
     created_names = {}
     loaded_project[0] = False
 
@@ -127,7 +128,7 @@ def create_needed_directories(name=""):
         logger.critical("!WARNING! Directory already exists.")
     for sub_dir in needed_directories:
         try:
-            os.makedirs(os.path.join(path, sub_dir), True)
+            os.makedirs(os.path.join(path, sub_dir), mode=0o777)
         except FileExistsError:
             logger.warning("Directory " + sub_dir + " already exists. Skipped.")
 
@@ -142,6 +143,7 @@ def save_project():
 def load_project(path_name):
     if len(path_name) < 1:
         return
+    global created_names
     created_names = file_ops.load_json_data(path_name, "loading compatibility project")
     loaded_project[0] = True
 

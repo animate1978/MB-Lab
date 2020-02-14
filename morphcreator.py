@@ -120,6 +120,7 @@ def get_min_max(key = None):
 # ------------------------------------------------------------------------
 
 def init_morph_names_database():
+    global morphs_names
     morphs_names[0] = ""
     morphs_names[1] = ""
     morphs_names[2] = 0

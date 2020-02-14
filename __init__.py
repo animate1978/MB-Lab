@@ -2883,7 +2883,6 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
         return context.mode in {'OBJECT', 'POSE'}
 
     def draw(self, context):
-        
         scn = bpy.context.scene
         is_objet, name = algorithms.looking_for_humanoid_obj()
         icon_expand = "DISCLOSURE_TRI_RIGHT"
@@ -2967,13 +2966,23 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
             box_tools.operator('mbcrea.button_compat_tools_off', icon=icon_collapse)
             box_compat_tools = self.layout.box()
             #-------------
+            print("3 : ")
+            print(creation_tools_ops.get_created_names())
             if gui_active_panel_second != "Init_compat":
                 box_compat_tools.operator('mbcrea.button_init_compat_on', icon=icon_expand)
             else:
                 box_compat_tools.operator('mbcrea.button_init_compat_off', icon=icon_collapse)
                 box_init = box_compat_tools.box()
                 box_init.operator('mbcrea.button_init_compat', icon="ERROR")
-            if not creation_tools_ops.is_project_loaded():
+            print("4 : ")
+            print(creation_tools_ops.get_created_names())
+            if creation_tools_ops.is_project_loaded():
+                box_compat_tools.label(text="Body full name : " + creation_tools_ops.get_created_name('body'), icon='INFO')
+                box_compat_tools.label(text="Body short name : " + creation_tools_ops.get_created_name('body_short'), icon='INFO')
+                box_compat_tools.label(text="Gender short name : " + creation_tools_ops.get_created_name('gender'), icon='INFO')
+                box_compat_tools.label(text="Gender short name : " + creation_tools_ops.get_created_name('gender_short'), icon='INFO')
+                box_compat_tools.label(text="Body type : " + creation_tools_ops.get_created_name('type'), icon='INFO')
+            else:
                 box_compat_tools.prop(scn, 'mbcrea_project_name')
                 box_compat_tools.label(text="New model names", icon='QUESTION')
                 box_compat_tools.prop(scn, 'mbcrea_body_name')
@@ -3009,6 +3018,8 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                 else:
                     creation_tools_ops.set_created_name("project_name", "")
                     project_creation_buttons.label(text="Choose a project name !", icon='ERROR')
+            print("5 : ")
+            print(creation_tools_ops.get_created_names())
             box_compat_tools.operator('mbcrea.button_load_compat_project', icon='IMPORT')
             #-------------
             if gui_active_panel_second != "Body_tools":
@@ -3073,7 +3084,7 @@ bpy.types.Scene.mblab_body_part_name = bpy.props.EnumProperty(
 """
 bpy.types.Scene.mbcrea_project_name = bpy.props.StringProperty(
     name="Project's name",
-    description="Like MyProject.",
+    description="Like MyProject",
     default=creation_tools_ops.get_created_name('project_name'),
     maxlen=1024,
     subtype='FILE_NAME')
@@ -3136,7 +3147,11 @@ class ButtonLoadCompatProject(bpy.types.Operator, ImportHelper):
 
     def execute(self, context):
         #--------------------
+        print("1 : ")
+        print(creation_tools_ops.created_names)
         creation_tools_ops.load_project(self.filepath)
+        print("2 : ")
+        print(creation_tools_ops.created_names)
         return {'FINISHED'}
 
 class ButtonForTest(bpy.types.Operator):
