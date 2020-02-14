@@ -2966,16 +2966,12 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
             box_tools.operator('mbcrea.button_compat_tools_off', icon=icon_collapse)
             box_compat_tools = self.layout.box()
             #-------------
-            print("3 : ")
-            print(creation_tools_ops.get_created_names())
             if gui_active_panel_second != "Init_compat":
                 box_compat_tools.operator('mbcrea.button_init_compat_on', icon=icon_expand)
             else:
                 box_compat_tools.operator('mbcrea.button_init_compat_off', icon=icon_collapse)
                 box_init = box_compat_tools.box()
                 box_init.operator('mbcrea.button_init_compat', icon="ERROR")
-            print("4 : ")
-            print(creation_tools_ops.get_created_names())
             if creation_tools_ops.is_project_loaded():
                 box_compat_tools.label(text="Body full name : " + creation_tools_ops.get_created_name('body'), icon='INFO')
                 box_compat_tools.label(text="Body short name : " + creation_tools_ops.get_created_name('body_short'), icon='INFO')
@@ -3018,8 +3014,6 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                 else:
                     creation_tools_ops.set_created_name("project_name", "")
                     project_creation_buttons.label(text="Choose a project name !", icon='ERROR')
-            print("5 : ")
-            print(creation_tools_ops.get_created_names())
             box_compat_tools.operator('mbcrea.button_load_compat_project', icon='IMPORT')
             #-------------
             if gui_active_panel_second != "Body_tools":
