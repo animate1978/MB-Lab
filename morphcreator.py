@@ -21,6 +21,7 @@
 # ##### END GPL LICENSE BLOCK #####
 #
 # ManuelbastioniLAB - Copyright (C) 2015-2018 Manuel Bastioni
+# Teto for this part.
 
 import logging
 import json
@@ -225,7 +226,6 @@ def get_all_morph_files(data_path, data_type_path, body_type):
     #Used when the engine loads morphs librairies, here the user ones.
     #Can be used for both types of files : gender and specific type.
     dir = os.path.join(data_path, data_type_path)
-    list_dir = os.listdir(dir)
     found_files = []
     body_type_split = body_type.split('_')[:2]
     for item in os.listdir(dir):

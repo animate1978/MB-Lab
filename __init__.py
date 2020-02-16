@@ -2899,18 +2899,21 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
         else:
             box_tools.operator('mbcrea.button_adaptation_tools_off', icon=icon_collapse)
             box_adaptation_tools = self.layout.box()
+            #------------Rigify------------
             if gui_active_panel_second != "Rigify":
                 box_adaptation_tools.operator('mbcrea.button_rigify_on', icon=icon_expand)
             else:
                 box_adaptation_tools.operator('mbcrea.button_rigify_off', icon=icon_collapse)
                 box_rigify = box_adaptation_tools.box()
                 box_rigify.label(text="#TODO Rigify...")
+            #------------Blenrig------------
             if gui_active_panel_second != "Blenrig":
                 box_adaptation_tools.operator('mbcrea.button_blenrig_on', icon=icon_expand)
             else:
                 box_adaptation_tools.operator('mbcrea.button_blenrig_off', icon=icon_collapse)
                 box_blenrig = box_adaptation_tools.box()
                 box_blenrig.label(text="#TODO Blenrig...")
+            #------------Morph creator------------
             if gui_active_panel_second != "Morphcreator":
                 box_adaptation_tools.operator('mbcrea.button_morphcreator_on', icon=icon_expand)
             else:
@@ -2943,13 +2946,54 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                 else:
                     box_morphcreator.label(text="!NO COMPATIBLE MODEL!", icon='ERROR')
                     box_morphcreator.enabled = False
+            #------------Expressions creator------------
             if gui_active_panel_second != "morphs_for_expressions":
                 box_adaptation_tools.operator('mbcrea.button_morphexpression_on', icon=icon_expand)
             else:
                 box_adaptation_tools.operator('mbcrea.button_morphexpression_off', icon=icon_collapse)
                 box_morphexpression = box_adaptation_tools.box()
-                box_morphexpression.label(text="#TODO Morphs for expressions...")
-                box_morphexpression.label(text="but very close to morphs creator.")
+                if is_objet == "FOUND":
+                    box_morphexpression.operator('mbast.button_store_base_vertices', icon="SPHERE") #Store all vertices of the actual body.
+                    box_morphexpression.label(text="Body base expression", icon='SORT_ASC')
+                    box_morphexpression.prop(scn, "mbcrea_standard_base_expr")
+                    final_name = "Expressions_" + expressionscreator.get_standard_base_expr(scn.mbcrea_standard_base_expr)
+                    if scn.mbcrea_standard_base_expr == 'NE':
+                        box_morphexpression.prop(scn, "mbcrea_body_part_expr")
+                        final_name = "Expressions_" + expressionscreator.get_body_parts_expr(scn.mbcrea_body_part_expr)
+                        if scn.mbcrea_body_part_expr == 'NE':
+                            box_morphexpression.prop(scn, "mbcrea_new_base_expr_name")
+                            final_name = "Expressions_" + scn.mbcrea_new_base_expr_name.lower()
+                        box_morphexpression.prop(scn, "mbcrea_expr_name")
+                        final_name += scn.mbcrea_expr_name.capitalize()
+                        box_morphexpression.prop(scn, "mbcrea_min_max_expr")
+                        if scn.mbcrea_min_max_expr == 'MI':
+                            box_morphexpression.label(text="Reminder, min only not allowed.", icon='INFO')
+                        final_name += "_" + expressionscreator.get_min_max_expr(scn.mbcrea_min_max_expr)
+                    if final_name in expressionscreator.get_standard_expressions_list():
+                        box_morphexpression.label(text="!WARNING! may overwrite standard expression!", icon='ERROR')
+                    expressionscreator.set_expression_name(final_name)
+                    box_morphexpression.label(text="Complete name : " + final_name, icon='INFO')
+                    #------------------------------
+                    box_morphexpression.label(text="Expression wording - File", icon='SORT_ASC')
+                    box_morphexpression.prop(scn, "mbcrea_expr_pseudo")
+                    box_morphexpression.prop(scn, 'mbcrea_incremental_saves_expr')
+                    box_morphexpression.prop(scn, 'mbcrea_standard_ID_expr')
+                    expressionscreator.set_expression_ID(scn.mbcrea_standard_ID_expr)
+                    if scn.mbcrea_standard_ID_expr == 'OT':
+                        box_morphexpression.prop(scn, "mbcrea_other_ID_expr")
+                        expressionscreator.set_expression_ID(scn.mbcrea_other_ID_expr)
+                    else:
+                        expressionscreator.set_expression_ID(str(scn.mbcrea_standard_ID_expr).capitalize())
+                    box_morphexpression.operator('mbast.button_store_work_in_progress', icon="MONKEY") #Store all vertices of the modified expression in a wip.
+                    box_morphexpression.operator('mbcrea.button_save_final_base_expression', icon="FREEZE") #Save the final expression.
+                    box_morphexpression.label(text="Tools", icon='SORT_ASC')
+                    box_morphexpression.operator('mbast.button_save_body_as_is', icon='EXPORT')
+                    box_morphexpression.operator('mbast.button_load_base_body', icon='IMPORT')
+                    box_morphexpression.operator('mbast.button_load_sculpted_body', icon='IMPORT')
+                else:
+                    box_morphexpression.label(text="!NO COMPATIBLE MODEL!", icon='ERROR')
+                    box_morphexpression.enabled = False
+            #------------Combine expressions creator------------
             if gui_active_panel_second != "combine_expressions":
                 box_adaptation_tools.operator('mbcrea.button_combinexpression_on', icon=icon_expand)
             else:
@@ -3102,6 +3146,114 @@ bpy.types.Scene.mbcrea_body_type = bpy.props.StringProperty(
     maxlen=4,
     subtype='FILE_NAME')
 
+bpy.types.Scene.mbcrea_standard_base_expr = bpy.props.EnumProperty(
+    items=expressionscreator.get_standard_base_expr(),
+    name="",
+    default="CK")
+
+bpy.types.Scene.mbcrea_body_part_expr = bpy.props.EnumProperty(
+    items=expressionscreator.get_body_parts_expr(),
+    name="Body part",
+    default="MO")
+
+bpy.types.Scene.mbcrea_new_base_expr_name = bpy.props.StringProperty(
+    name="Part name",
+    description="New body part for expression,\nlike ears",
+    default="",
+    maxlen=1024,
+    subtype='FILE_NAME')
+
+bpy.types.Scene.mbcrea_expr_name = bpy.props.StringProperty(
+    name="Expression name",
+    description="New name for the expression,\nlike Downward",
+    default="",
+    maxlen=1024,
+    subtype='FILE_NAME')
+
+bpy.types.Scene.mbcrea_min_max_expr = bpy.props.EnumProperty(
+    items=expressionscreator.get_min_max_expr(),
+    name="min/max:",
+    default="MA")
+
+bpy.types.Scene.mbcrea_expr_pseudo = bpy.props.StringProperty(
+    name="Extra name",
+    description="To avoid overwriting existing files\nBasically it's the name of the author",
+    default="",
+    maxlen=1024,
+    subtype='FILE_NAME')
+
+bpy.types.Scene.mbcrea_incremental_saves_expr = bpy.props.BoolProperty(
+    name="Autosaves",
+    description="Does an incremental save each time\n  the final save button is pressed.\nFrom 001 to 999\nCaution : returns to 001 between sessions")
+
+bpy.types.Scene.mbcrea_standard_ID_expr = bpy.props.EnumProperty(
+    items=expressionscreator.get_expression_ID_list(),
+    name="Model ID",
+    default="HU")
+
+bpy.types.Scene.mbcrea_other_ID_expr = bpy.props.StringProperty(
+    name="Other ID",
+    description="Another model for the base expression",
+    default="CantBeEmpty",
+    maxlen=1024,
+    subtype='FILE_NAME')
+
+class FinalizeExpression(bpy.types.Operator):
+    """
+        Working like FinalizeMorph
+    """
+    bl_label = 'Finalize the base expression'
+    bl_idname = 'mbcrea.button_save_final_base_expression'
+    filename_ext = ".json"
+    bl_description = 'Finalize the expression, ask for min and max files, create or open the expression file, replace or append new expression'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        scn = bpy.context.scene
+        base = []
+        sculpted = []
+
+        try:
+            base = morphcreator.get_vertices_list(0)
+        except:
+            self.ShowMessageBox("Base vertices are not stored !", "Warning", 'ERROR')
+            return {'FINISHED'}
+        try:
+            sculpted = morphcreator.get_vertices_list(1)
+        except:
+            self.ShowMessageBox("Changed vertices are not stored !", "Warning", 'ERROR')
+            return {'FINISHED'}
+        indexed_vertices = morphcreator.substract_with_index(base, sculpted)
+        if len(indexed_vertices) < 1:
+            self.ShowMessageBox("Models base / sculpted are equals !\nNo file saved", "Warning", 'INFO')
+            return {'FINISHED'}
+        #-------File name----------
+        file_name = morphcreator.get_body_type() + "_exprs"
+        if len(scn.mbcrea_expr_pseudo) > 0:
+            file_name += "_" + scn.mbcrea_expr_pseudo
+        if scn.mbcrea_incremental_saves_expr:
+            file_name += "_" + expressionscreator.get_next_number()
+        #-------Expression name----------
+        expression_name = expressionscreator.get_expression_name()
+        #-------Expression path----------
+        file_path_name = os.path.join(file_ops.get_data_path(), "expressions_morphs", file_name + ".json")
+        file = file_ops.load_json_data(file_path_name, "Try to load an expression file")
+        if file == None:
+            file = {}
+        #---Creating new expression-------
+        file[expressionscreator.get_expression_name()] = indexed_vertices
+        file[expressionscreator.get_expression_ID()] = []
+        file_ops.save_json_data(file_path_name, file)
+        #----------------------------
+        return {'FINISHED'}
+
+    def ShowMessageBox(self, message = "", title = "Message Box", icon = 'INFO'):
+
+        def draw(self, context):
+            self.layout.label(text=message)
+        bpy.context.window_manager.popup_menu(draw, title = title, icon = icon)
+
 class ButtonCompatToolsDir(bpy.types.Operator):
     #just for quick tests
     bl_label = 'Create project directories'
@@ -3141,11 +3293,7 @@ class ButtonLoadCompatProject(bpy.types.Operator, ImportHelper):
 
     def execute(self, context):
         #--------------------
-        print("1 : ")
-        print(creation_tools_ops.created_names)
         creation_tools_ops.load_project(self.filepath)
-        print("2 : ")
-        print(creation_tools_ops.created_names)
         return {'FINISHED'}
 
 class ButtonForTest(bpy.types.Operator):
@@ -3157,7 +3305,6 @@ class ButtonForTest(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        creation_tools_ops.create_necessary_directories("user-try")
         return {'FINISHED'}
 
 class ButtonAdaptationToolsON(bpy.types.Operator):
@@ -3684,6 +3831,7 @@ classes = (
     ButtonCompatToolsDir,
     ButtonSaveCompatProject,
     ButtonLoadCompatProject,
+    FinalizeExpression,
     VIEW3D_PT_tools_MBCrea,
 )
 
