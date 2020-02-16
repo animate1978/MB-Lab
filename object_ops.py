@@ -400,14 +400,15 @@ def bvhtree_from_obj_polygons(obj, indices_of_polygons_subset=None):
     vertices = [ vert.co for vert in obj.data.vertices ]
     return mathutils.bvhtree.BVHTree.FromPolygons(vertices, polygons)
 
+
 ###############################################################################################################################
 # LIGHTING_OPS
 
 def add_lighting():
 # create light datablock, set attributes
-    mblight01 = bpy.data.lights.new(name="light_01", type='AREA')
-    mblight02 = bpy.data.lights.new(name="light_02", type='AREA')
-    mblight03 = bpy.data.lights.new(name="light_03", type='AREA')
+    mblight01 = bpy.data.lights.new(name="light_key", type='AREA')
+    mblight02 = bpy.data.lights.new(name="light_backlight", type='AREA')
+    mblight03 = bpy.data.lights.new(name="light_fill", type='AREA')
 
 # create new object with our light datablock
     light_object01 = bpy.data.objects.new(name="light_key", object_data=mblight01)
@@ -433,7 +434,10 @@ def add_lighting():
     light_object03.rotation_euler = (radians(0), radians(-70), radians(50))
     mblight01.energy = 100
     mblight01.color = (0.688, 0.914, 1)
+    mblight01.use_contact_shadow = True
     mblight02.energy = 150
     mblight02.color = (1, 1, 1)
+    mblight02.use_contact_shadow = True
     mblight03.energy = 100
     mblight03.color = (0.981, 1, 0.694)
+    mblight03.use_contact_shadow = True

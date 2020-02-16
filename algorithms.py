@@ -470,7 +470,6 @@ def apply_object_transformation(obj):
             set_active_object(active_obj)
             bpy.ops.object.mode_set(mode=active_mode)
 
-#
 def collect_existing_objects():
     existing_obj_names = []
     for obj in bpy.data.objects:
@@ -685,36 +684,6 @@ def set_object_visible(obj):
         # bpy.context.scene.layers = obj.layers in some cases this return DAG zero error (with old depsgraph)!
         #n = bpy.context.scene.active_layer
         # set_object_layer(obj,n) #TODO not perfect because it changes the layer
-
-
-def load_vertices_database(vertices_path):
-    vertices = []
-    verts = file_ops.load_json_data(vertices_path, "Vertices data")
-    if verts:
-        for vert_co in verts:
-            vertices.append(mathutils.Vector(vert_co))
-    return vertices
-
-
-def set_verts_coords_from_file(obj, vertices_path):
-    new_vertices = load_vertices_database(vertices_path)
-    if obj:
-        if len(new_vertices) == len(obj.data.vertices):
-            for i, vert in enumerate(obj.data.vertices):
-                vert.co = new_vertices[i]
-
-
-def generate_items_list(folderpath, file_type="json"):
-    items_list = []
-    if os.path.isdir(folderpath):
-        for database_file in os.listdir(folderpath):
-            the_item, extension = os.path.splitext(database_file)
-            if file_type in extension:
-                if the_item not in items_list:
-                    the_descr = "Load and apply {0} from lab library".format(the_item)
-                    items_list.append((the_item, the_item, the_descr))
-        items_list.sort()
-    return items_list
 
 
 def image_to_array(blender_image):
