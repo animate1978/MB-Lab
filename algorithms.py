@@ -795,15 +795,6 @@ def new_vertgroup(obj, group_name):
     return obj.vertex_groups.new(name=group_name)
 
 
-def play_animation():
-    if not bpy.context.screen.is_animation_playing:
-        bpy.ops.screen.animation_play()
-
-
-def stop_animation():
-    if bpy.context.screen.is_animation_playing:
-        bpy.ops.screen.animation_play()
-
 
 def get_shapekey_reference(obj):
     if has_shapekeys(obj):
