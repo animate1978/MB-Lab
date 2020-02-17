@@ -147,10 +147,12 @@ standard_expressions = [("AA", "abdomExpansion_min", "abdomen"),
 body_parts_expr = [
     ("AB", "abdom", ""),
     ("BR", "brow", ""),
+    ("BS", "brows", ""),
     ("CH", "cheek", ""),
     ("CE", "chest", ""),
     ("DE", "deglutition", ""),
     ("EY", "eye", ""),
+    ("ES", "eyes", ""),
     ("JA", "jaw", ""),
     ("MO", "mouth", ""),
     ("NO", "nostrils", ""),
@@ -163,8 +165,7 @@ min_max_expr = [("MI", "min", "min = 0"),
 
 expression_ID_list = [("HU", "Humans", "Standard in MB-Lab"),
    ("AN", "Anime", "Standard in MB-Lab"),
-   ("OT", "OTHER", "For another model")
-   ]
+   ("OT", "OTHER", "For another model")]
 
 expression_name = ["", "", 0]
 #the number is for autosaves.

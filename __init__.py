@@ -2954,7 +2954,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                 box_morphexpression = box_adaptation_tools.box()
                 if is_objet == "FOUND":
                     box_morphexpression.operator('mbast.button_store_base_vertices', icon="SPHERE") #Store all vertices of the actual body.
-                    box_morphexpression.label(text="Body base expression", icon='SORT_ASC')
+                    box_morphexpression.label(text="Expression wording - Name", icon='SORT_ASC')
                     box_morphexpression.prop(scn, "mbcrea_standard_base_expr")
                     final_name = "Expressions_" + expressionscreator.get_standard_base_expr(scn.mbcrea_standard_base_expr)
                     if scn.mbcrea_standard_base_expr == 'NE':
@@ -3462,7 +3462,7 @@ class ButtonMorphExpressionOFF(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonCombineExpressionON(bpy.types.Operator):
-    bl_label = 'Final expressions'
+    bl_label = 'Facial expressions'
     bl_idname = 'mbcrea.button_combinexpression_on'
     bl_description = 'Tool for combining base expressions'
     bl_context = 'objectmode'
@@ -3475,7 +3475,7 @@ class ButtonCombineExpressionON(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonCombineExpressionOFF(bpy.types.Operator):
-    bl_label = 'Final expressions'
+    bl_label = 'Facial expressions'
     bl_idname = 'mbcrea.button_combinexpression_off'
     bl_description = 'Tool for combining base expressions'
     bl_context = 'objectmode'
