@@ -122,7 +122,7 @@ class ExpressionEngineShapeK:
     
     def get_loaded_expression_database(self, name):
         if name in self.model_expressions_data:
-            return self.model_expressions_data
+            return self.model_expressions_data[name]
         return {}
         
     #End Teto
