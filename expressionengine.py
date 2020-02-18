@@ -46,25 +46,38 @@ class ExpressionEngineShapeK:
             "anime_expressions")
 
         self.expressions_labels = set()
-        self.human_expressions_data = self.load_expression_database(self.human_expression_path)
-        self.anime_expressions_data = self.load_expression_database(self.anime_expression_path)
+        #Teto
+        #self.human_expressions_data = self.load_expression_database(self.human_expression_path)
+        #self.anime_expressions_data = self.load_expression_database(self.anime_expression_path)
+        self.model_expressions_data = {}
+        self.model_expressions_data['HUMANS'] = self.load_expression_database(self.human_expression_path)
+        self.model_expressions_data['ANIME'] = self.load_expression_database(self.anime_expression_path)
+        self.model_expressions_data['NONE'] = {}
+        #End Teto
         self.expressions_data = {}
         self.model_type = "NONE"
         self.has_data = True
 
     def identify_model_type(self):
-        self.model_type = "NONE"
-
+        #self.model_type = "NONE"
         obj = algorithms.get_active_body()
         if obj:
             current_shapekes_names = algorithms.get_shapekeys_names(obj)
             if current_shapekes_names:
-                if "Expressions_IDHumans_max" in current_shapekes_names:
+                #Teto
+                """if "Expressions_IDHumans_max" in current_shapekes_names:
                     self.model_type = "HUMAN"
                     return
                 if "Expressions_IDAnime_max" in current_shapekes_names:
                     self.model_type = "ANIME"
-                    return
+                    return"""
+                for id in current_shapekes_names:
+                    if id.startswith('Expressions_ID') and id.endswith('_max'):
+                        length = len(id)-4
+                        self.model_type = id[14:length].upper()
+                        return
+        self.model_type = "NONE"
+        #End Teto
 
     @staticmethod
     def load_expression(filepath):
@@ -96,6 +109,23 @@ class ExpressionEngineShapeK:
                     self.expressions_labels.add(e_item)
                     expressions_data[e_item] = self.load_expression(expression_filepath)
         return expressions_data
+    
+    #Teto
+    
+    #Will be useful with new models.
+    def add_expression_model_type(self, name="", dirpath=""):
+        ed = load_expression_database(self, dirpath)
+        if len(ed) < 1 or len(name) < 1:
+            return
+        self.model_expressions_data[name] = ed
+        self.model_type = name #Useless ?
+    
+    def get_loaded_expression_database(self, name):
+        if name in self.model_expressions_data:
+            return self.model_expressions_data
+        return {}
+        
+    #End Teto
 
     def sync_expression_to_gui(self):
         # Process all expressions: reset all them and then update all them.
@@ -126,12 +156,15 @@ class ExpressionEngineShapeK:
 
     def update_expressions_data(self):
         self.identify_model_type()
-        if self.model_type == "ANIME":
+        #Teto
+        """if self.model_type == "ANIME":
             self.expressions_data = self.anime_expressions_data
         if self.model_type == "HUMAN":
             self.expressions_data = self.human_expressions_data
         if self.model_type == "NONE":
-            self.expressions_data = {}
+            self.expressions_data = {}"""
+        self.expressions_data = self.model_expressions_data[self.model_type]
+        #End Teto
 
     def update_expression(self, expression_name, express_val):
 

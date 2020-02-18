@@ -41,10 +41,10 @@ forbidden_directories = ["__pycache__", "data", "mb-lab_updater", "animations", 
     "hu_m_anthropometry", "anime_expressions", "human_expressions", "female_poses",
     "male_poses", "rest_poses"]
 
-forbiden_names = ["human", "anime", "male", "female", "anthropometry", "bbox", "expressions",
+forbiden_names = ["human", "humans", "anime", "male", "female", "anthropometry", "bbox", "expressions",
     "exprs", "morphs", "hair", "joints", "offset", "measures", "extra", "polygs", "ptypes",
     "poses", "rest", "specialtype", "anyme", "style", "type", "base", "transf", "verts",
-    "vgroups", "muscles"]
+    "vgroups", "muscles", "none"]
 
 needed_directories = ["animations", "anthropometry", "bboxes", "expressions_comb",
     "expressions_morphs", "face_rig", "Hair_Data", "joints", "measures", "morphs",

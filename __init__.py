@@ -3305,6 +3305,13 @@ class ButtonForTest(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
+        global mblab_shapekeys
+        test = mblab_shapekeys.get_loaded_expression_database()
+        print(test[0])
+        print(test[1])
+        print(test[2])
+        print(test[3])
+        print("------------------------------")
         return {'FINISHED'}
 
 class ButtonAdaptationToolsON(bpy.types.Operator):

@@ -140,13 +140,9 @@ def get_body_type():
 
 def get_next_number():
     morphs_names[2] += 1
-    if morphs_names[2] < 10:
-        return "00" + str(morphs_names[2])
-    elif morphs_names[2] < 100:
-        return "0" + str(morphs_names[2])
-    elif morphs_names[2] > 999:
+    if morphs_names[2] > 999:
         return "999"
-    return str(morphs_names[2])
+    return str(morphs_names[2]).zfill(3)
 # ------------------------------------------------------------------------
 #    All methods/classes to help creating morphs
 # ------------------------------------------------------------------------
