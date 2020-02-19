@@ -224,26 +224,27 @@ def is_excluded(property_name, excluded_properties):
             return True
     return False
 
-
+# Improved random fix
 def generate_parameter(val, random_value, preserve_phenotype=False):
 
-    if preserve_phenotype:
-        if val > 0.5:
-            if val > 0.8:
-                new_value = 0.8 + 0.2*random.random()
-            else:
-                new_value = 0.5+random.random()*random_value
-        else:
-            if val < 0.2:
-                new_value = 0.2*random.random()
-            else:
-                new_value = 0.5-random.random()*random_value
-    else:
-        if random.random() > 0.5:
-            new_value = min(1.0, 0.5+random.random()*random_value)
-        else:
-            new_value = max(0.0, 0.5-random.random()*random_value)
-    return new_value
+   if preserve_phenotype:
+       if val > 0.5:
+           if val > 0.8:
+               new_value = 0.8 + 0.2*random.random()
+           else:
+               new_value = 0.5+random.random()*random_value
+       else:
+           if val < 0.2:
+               new_value = 0.2*random.random()
+           else:
+               new_value = 0.5-random.random()*random_value
+   else:
+       r = random.random()
+       if r > 0.5:
+           new_value = min(1.0, 0.5+r*random_value)
+       else:
+           new_value = max(0.0, 0.5-r*random_value)
+   return new_value
 
 
 def polygon_forma(list_of_verts):
@@ -469,7 +470,6 @@ def apply_object_transformation(obj):
             set_active_object(active_obj)
             bpy.ops.object.mode_set(mode=active_mode)
 
-#
 def collect_existing_objects():
     existing_obj_names = []
     for obj in bpy.data.objects:
@@ -686,46 +686,12 @@ def set_object_visible(obj):
         # set_object_layer(obj,n) #TODO not perfect because it changes the layer
 
 
-def load_vertices_database(vertices_path):
-    vertices = []
-    verts = file_ops.load_json_data(vertices_path, "Vertices data")
-    if verts:
-        for vert_co in verts:
-            vertices.append(mathutils.Vector(vert_co))
-    return vertices
-
-
-def set_verts_coords_from_file(obj, vertices_path):
-    new_vertices = load_vertices_database(vertices_path)
-    if obj:
-        if len(new_vertices) == len(obj.data.vertices):
-            for i, vert in enumerate(obj.data.vertices):
-                vert.co = new_vertices[i]
-
-
-def generate_items_list(folderpath, file_type="json"):
-    items_list = []
-    if os.path.isdir(folderpath):
-        for database_file in os.listdir(folderpath):
-            the_item, extension = os.path.splitext(database_file)
-            if file_type in extension:
-                if the_item not in items_list:
-                    the_descr = "Load and apply {0} from lab library".format(the_item)
-                    items_list.append((the_item, the_item, the_descr))
-        items_list.sort()
-    return items_list
-
-
 def image_to_array(blender_image):
     return array.array('f', blender_image.pixels[:])
 
 
 def array_to_image(pixel_array, blender_image):
     blender_image.pixels = pixel_array.tolist()
-
-
-def json_booleans_to_python(value):
-    return value == 0
 
 
 def get_edit_bones(armature):
@@ -828,15 +794,6 @@ def remove_vertgroup(obj, group_name):
 def new_vertgroup(obj, group_name):
     return obj.vertex_groups.new(name=group_name)
 
-
-def play_animation():
-    if not bpy.context.screen.is_animation_playing:
-        bpy.ops.screen.animation_play()
-
-
-def stop_animation():
-    if bpy.context.screen.is_animation_playing:
-        bpy.ops.screen.animation_play()
 
 
 def get_shapekey_reference(obj):
@@ -945,36 +902,6 @@ def apply_auto_align_bones(armat):
                 bone_target = edit_bones[target_name]
                 bone.tail = bone.head + bone_target.vector.normalized() * bone.length
                 bone.roll = bone_target.roll
-
-
-def link_to_collection(obj):
-    # sanity check
-    if obj.name not in bpy.data.objects:
-        logger.error("Cannot link obj %s because it's not in bpy.data.objects", obj.name)
-        return
-
-    collection_name = 'MB_LAB_Character'
-    c = bpy.data.collections.get(collection_name)
-    scene = bpy.context.scene
-    # collection is already created
-    if c is not None:
-        if obj.name not in c.objects:
-            c.objects.link(obj)
-        else:
-            logger.warning("The object %s is already linked to the scene", obj.name)
-    else:
-        # create the collection, link collection to scene and link obj to collection
-        c = bpy.data.collections.new(collection_name)
-        scene.collection.children.link(c)
-        c.objects.link(obj)
-
-
-def is_armature_linked(obj, armat):
-    if obj.type == 'MESH':
-        for modfr in obj.modifiers:
-            if modfr.type == 'ARMATURE' and modfr.object == armat:
-                return True
-    return False
 
 
 def has_deformation_vgroups(obj, armat):
@@ -1105,18 +1032,7 @@ def set_modifier_viewport(modfr, value):
         modfr.show_viewport = value
 
 #
-def new_modifier(obj, name, modifier_type, parameters):
-    if name in obj.modifiers:
-        logger.info("Modifier %s already present in %s", modifier_type, obj.name)
-        return obj.modifiers[name]
-    _new_modifier = obj.modifiers.new(name, modifier_type)
-    for parameter, value in parameters.items():
-        if hasattr(_new_modifier, parameter):
-            try:
-                setattr(_new_modifier, parameter, value)
-            except AttributeError:
-                logger.info("Setattr failed for attribute '%s' of modifier %s", parameter, name)
-    return _new_modifier
+
 
 #
 def set_modifier_parameter(modifier, parameter, value):

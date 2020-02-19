@@ -62,13 +62,13 @@ def get_active_armature():
 def is_ik_armature(armature=None):
     if not armature:
         armature = get_active_armature()
-        if armature and armature.type == 'ARMATURE':
-            for b in armature.data.bones:
-                if 'IK' in b.name:
-                    return True
-        elif armature and armature.type != 'ARMATURE':
-            logger.warning("Cannot get the bones because the obj is not an armature")
-            return False
+    if armature and armature.type == 'ARMATURE':
+        for b in armature.data.bones:
+            if 'IK' in b.name:
+                return True
+    elif armature and armature.type != 'ARMATURE':
+        logger.warning("Cannot get the bones because the obj is not an armature")
+        return False
     return False
 
 # MB-Lab version check

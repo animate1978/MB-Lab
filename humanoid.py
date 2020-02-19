@@ -32,7 +32,6 @@ import time
 import json
 import operator
 
-
 from . import morphengine, skeletonengine, algorithms, proxyengine, materialengine, utils, file_ops, object_ops
 
 logger = logging.getLogger(__name__)
@@ -261,7 +260,7 @@ class Humanoid:
     def add_subdivision_modifier(self):
         obj = self.get_object()
         parameters = {"levels": 1, "render_levels": 2, "show_viewport": True, "show_in_editmode": False}
-        algorithms.new_modifier(obj, self.mat_engine.subdivision_modifier_name, 'SUBSURF', parameters)
+        object_ops.new_modifier(obj, self.mat_engine.subdivision_modifier_name, 'SUBSURF', parameters)
 
     def add_displacement_modifier(self):
         obj = self.get_object()
@@ -269,7 +268,7 @@ class Humanoid:
         if disp_img:
             disp_tex = file_ops.new_texture(self.mat_engine.generated_disp_modifier_ID, disp_img)
             parameters = {"texture_coords":'UV', "strength": 0.01, "show_viewport": False, "texture": disp_tex}
-            displacement_modifier = algorithms.new_modifier(obj, self.mat_engine.generated_disp_modifier_ID, 'DISPLACE', parameters)
+            displacement_modifier = object_ops.new_modifier(obj, self.mat_engine.generated_disp_modifier_ID, 'DISPLACE', parameters)
 
     def rename_obj(self, prefix):
         obj = self.get_object()
@@ -451,7 +450,7 @@ class Humanoid:
         self.mat_engine.save_texture(filepath, "body_derm")
 
     def save_all_textures(self, filepath):
-        targets = ["body_derm", "body_displ", "teeth_albedo", "eyes_albedo", "tongue_albedo", "freckle_mask", "blush", "sebum", "lipmap", "thickness", "iris_color", "iris_bump", "sclera_color", "translucent_mask", "sclera_mask"]
+        targets = ["body_derm", "body_displ", "teeth_albedo", "eyes_albedo", "tongue_albedo", "freckle_mask", "blush", "sebum", "lipmap", "iris_color", "iris_bump", "sclera_color", "translucent_mask", "sclera_mask", "body_bump"]
         for target in targets:
             dir_path = os.path.dirname(filepath)
             filename = os.path.basename(filepath)
@@ -1199,4 +1198,4 @@ class Humanoid:
     def add_corrective_smooth_modifier(self):
         obj = self.get_object()
         parameters = {"show_viewport": True, "invert_vertex_group": True, "vertex_group": "head"}
-        algorithms.new_modifier(obj, self.corrective_modifier_name, 'CORRECTIVE_SMOOTH', parameters)
+        object_ops.new_modifier(obj, self.corrective_modifier_name, 'CORRECTIVE_SMOOTH', parameters)
