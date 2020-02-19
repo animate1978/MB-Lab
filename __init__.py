@@ -54,6 +54,7 @@ from . import addon_updater_ops
 from . import facerig
 from . import morphcreator
 from . import creation_tools_ops
+from . import expressionscreator
 
 
 logger = logging.getLogger(__name__)
