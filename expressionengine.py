@@ -114,7 +114,7 @@ class ExpressionEngineShapeK:
     
     #Will be useful with new models.
     def add_expression_model_type(self, name="", dirpath=""):
-        ed = load_expression_database(self, dirpath)
+        ed = self.load_expression_database(self, dirpath)
         if len(ed) < 1 or len(name) < 1:
             return
         self.model_expressions_data[name] = ed
