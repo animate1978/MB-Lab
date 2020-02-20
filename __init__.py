@@ -663,6 +663,19 @@ bpy.types.Scene.mblab_expression_filter = bpy.props.StringProperty(
     default="",
     description="Filter the expressions to show")
 
+#Teto
+def mbcrea_enum_expressions_items_update(self, context):
+    return expressionscreator.get_expressions_items()
+   
+
+bpy.types.Scene.mbcrea_enum_expressions_items = bpy.props.EnumProperty(
+    items=mbcrea_enum_expressions_items_update,
+    name="",
+    default=None,
+    options={'ANIMATABLE'},
+    )
+#End Teto
+
 bpy.types.Scene.mblab_mix_characters = bpy.props.BoolProperty(
     name="Mix with current",
     description="Mix templates")
@@ -2489,12 +2502,20 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                     box_exp.enabled = True
                     box_exp.prop(scn, 'mblab_expression_filter')
                     box_exp.operator("mbast.keyframe_expression", icon="ACTION")
+                    #Teto
                     if mblab_shapekeys.expressions_data:
+                        sorted_expressions = sorted(mblab_shapekeys.expressions_data.keys())
                         obj = algorithms.get_active_body()
-                        for expr_name in sorted(mblab_shapekeys.expressions_data.keys()):
-                            if hasattr(obj, expr_name):
-                                if scn.mblab_expression_filter in expr_name:
+                        if len(str(scn.mblab_expression_filter)) > 0:
+                            for expr_name in sorted_expressions:
+                                if hasattr(obj, expr_name) and scn.mblab_expression_filter in expr_name:
                                     box_exp.prop(obj, expr_name)
+                        else:
+                            expressionscreator.set_expressions_items(sorted_expressions)
+                            box_exp.prop(scn, 'mbcrea_enum_expressions_items')
+                            result = expressionscreator.get_expressions_item(scn.mbcrea_enum_expressions_items)
+                            box_exp.prop(obj, result)
+                    #End Teto
                     box_exp.operator("mbast.reset_expression", icon="RECOVER_LAST")
                 else:
                     box_exp.enabled = False
