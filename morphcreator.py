@@ -89,32 +89,17 @@ logger = logging.getLogger(__name__)
 def get_body_parts(key = None):
     if key == None:
         return body_parts
-    value = None
-    for index in range(len(body_parts)):
-        if key in body_parts[index]:
-            value = body_parts[index]
-            return value[1]
-    return ""
+    return algorithms.get_enum_property_item(key, body_parts)
 
 def get_spectrum(key = None):
     if key == None:
         return spectrum
-    value = None
-    for index in range(len(spectrum)):
-        if key in spectrum[index]:
-            value = spectrum[index]
-            return value[1]
-    return ""
+    return algorithms.get_enum_property_item(key, spectrum)
 
 def get_min_max(key = None):
     if key == None:
         return min_max
-    value = None
-    for index in range(len(min_max)):
-        if key in min_max[index]:
-            value = min_max[index]
-            return value[1]
-    return ""
+    return algorithms.get_enum_property_item(key, min_max)
 
 # ------------------------------------------------------------------------
 #    All methods to help creating file names
@@ -140,8 +125,6 @@ def get_body_type():
 
 def get_next_number():
     morphs_names[2] += 1
-    if morphs_names[2] > 999:
-        return "999"
     return str(morphs_names[2]).zfill(3)
 # ------------------------------------------------------------------------
 #    All methods/classes to help creating morphs

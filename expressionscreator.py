@@ -170,10 +170,15 @@ expression_ID_list = [("HU", "Humans", "Standard in MB-Lab"),
 expression_name = ["", "", 0]
 #the number is for autosaves.
 
+editor_expressions_items = []
+# To have quickly items for enum_property,
+# and create them only when model is changed.
+
 #operator_for_base_expr = {}
 
 logger = logging.getLogger(__name__)
 
+#--------------Play with variables
 def get_standard_expressions_list():
     return standard_expressions_list
 
@@ -226,14 +231,29 @@ def get_expression_ID_list():
     
 def get_next_number():
     expression_name[2] += 1
-    if expression_name[2] < 10:
-        return "00" + str(expression_name[2])
-    elif expression_name[2] < 100:
-        return "0" + str(expression_name[2])
-    elif expression_name[2] > 999:
-        return "999"
-    return str(expression_name[2])
+    return str(expression_name[2]).zfill(3)
 
+#--------------EnumProperty for exepressions in UI
+
+def reset_expressions_items():
+    global editor_expressions_items
+    editor_expressions_items = []
+
+def set_expressions_items(sorted_names):
+    if len(editor_expressions_items) > 0:
+        return
+    key = 0
+    for s_n in sorted_names:
+        editor_expressions_items.append((str(key).zfill(3), s_n, "" ))
+        key += 1
+
+def get_expressions_items():
+    return editor_expressions_items
+
+def get_expressions_item(key):
+    return algorithms.get_enum_property_item(key, editor_expressions_items)
+    
+#--------------Loading data
 def get_all_expression_files(data_path, data_type_path, body_type):
     #Get all files in morphs directory, with standard ones.
     #Used when the engine loads expressions librairies.

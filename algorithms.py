@@ -1114,3 +1114,21 @@ def remove_censors():
 
 
     return None
+
+# ------------------------------------------------------------------------
+#    UI and UI init Functions
+# ------------------------------------------------------------------------
+
+# Recover from an enumProperty, the value returned by the component,
+# that is only the key, the real value.
+# In real life, it's really cumbersome to get this value if
+# we use things like bpy.types.scene.whatever.
+# Here, the trick is to keep the list of tuples used to
+# create the component somewhere, and check in it.
+def get_enum_property_item(key, enum_property):
+    value = None
+    for index in range(len(enum_property)):
+        if key in enum_property[index]:
+            value = enum_property[index]
+            return value[1]
+    return ""

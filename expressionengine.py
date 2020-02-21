@@ -27,6 +27,9 @@ import os
 import bpy
 
 from . import algorithms, utils, file_ops
+#Teto
+from . import expressionscreator
+#End Teto
 
 logger = logging.getLogger(__name__)
 
@@ -59,12 +62,12 @@ class ExpressionEngineShapeK:
         self.has_data = True
 
     def identify_model_type(self):
+        #Teto
         #self.model_type = "NONE"
         obj = algorithms.get_active_body()
         if obj:
             current_shapekes_names = algorithms.get_shapekeys_names(obj)
             if current_shapekes_names:
-                #Teto
                 """if "Expressions_IDHumans_max" in current_shapekes_names:
                     self.model_type = "HUMAN"
                     return
@@ -74,7 +77,10 @@ class ExpressionEngineShapeK:
                 for id in current_shapekes_names:
                     if id.startswith('Expressions_ID') and id.endswith('_max'):
                         length = len(id)-4
-                        self.model_type = id[14:length].upper()
+                        tp_name = id[14:length].upper()
+                        if tp_name != self.model_type:
+                            expressionscreator.reset_expressions_items()
+                        self.model_type = tp_name
                         return
         self.model_type = "NONE"
         #End Teto
@@ -124,7 +130,6 @@ class ExpressionEngineShapeK:
         if name in self.model_expressions_data:
             return self.model_expressions_data[name]
         return {}
-        
     #End Teto
 
     def sync_expression_to_gui(self):
