@@ -42,7 +42,7 @@ forbidden_directories = ["__pycache__", "data", "mb-lab_updater", "animations", 
     "male_poses", "rest_poses"]
 
 forbiden_names = ["human", "humans", "anime", "male", "female", "anthropometry", "bbox", "expressions",
-    "exprs", "morphs", "hair", "joints", "offset", "measures", "extra", "polygs", "ptypes",
+    "exprs", "Expression", "morphs", "hair", "joints", "offset", "measures", "extra", "polygs", "ptypes",
     "poses", "rest", "specialtype", "anyme", "style", "type", "base", "transf", "verts",
     "vgroups", "muscles", "none"]
 

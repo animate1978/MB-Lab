@@ -65,12 +65,7 @@ body_parts = [("AB", "Abdomen", ""),
 spectrum = [("GE", "Gender", "For all males / females"),
    ("ET", "Ethnic group", "For a specific ethnic group")]
 
-min_max = [("MI", "min", "min = 0"),
-   ("MA", "max", "max = 1"),
-   ("II", "min-min", "seen in f_an03\nbut what is this ?"),
-   ("IA", "min-max", "seen in f_an03\nbut what is this ?"),
-   ("AI", "max-min", "seen in f_an03\nbut what is this ?"),
-   ("AA", "max-max", "seen in f_an03\nbut what is this ?")]
+min_max = [("MI", "min", "min = 0"), ("MA", "max", "max = 1")]
 
 morphs_names = ["", "", 0]
 #0 = get_model_and_gender()

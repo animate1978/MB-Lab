@@ -1206,10 +1206,23 @@ def remove_censors():
 # we use things like bpy.types.scene.whatever.
 # Here, the trick is to keep the list of tuples used to
 # create the component somewhere, and check in it.
-def get_enum_property_item(key, enum_property):
+def get_enum_property_item(key, enum_property, index=1):
     value = None
-    for index in range(len(enum_property)):
-        if key in enum_property[index]:
-            value = enum_property[index]
-            return value[1]
+    for ind in range(len(enum_property)):
+        if key in enum_property[ind]:
+            value = enum_property[ind]
+            return value[index]
     return ""
+
+#create an enumProperty list of tuples, from a list.
+def create_enum_property_items(values=[], key_length=3, tip_length=4):
+    if values == None or len(values) < 1:
+        return [("0", "NONE", "")]
+    return_list = []
+    for i in range(len(values)):
+        return_list.append(
+            (str(i).zfill(key_length),
+            values[i],
+            str(values[i])[0:tip_length]))
+    return return_list
+        
