@@ -29,12 +29,14 @@ import os
 import bpy
 import numpy
 from . import algorithms
+from . import file_ops
 
 logger = logging.getLogger(__name__)
 
 class ExpressionsCreator():
     
     def __init__(self):
+        
         self.standard_expressions_list = ["abdomExpansion_min", "abdomExpansion_max",
             "browOutVertL_min", "browOutVertL_max", "browOutVertR_min",
             "browOutVertR_max", "browsMidVert_min", "browsMidVert_max",
@@ -200,6 +202,9 @@ class ExpressionsCreator():
         # Instance of class Humanoid
         
     #--------------Play with variables
+    def set_lab_version(self, lab_version):
+        self.lab_vers = list(lab_version)
+        
     def get_standard_expressions_list(self):
         return self.standard_expressions_list
 
@@ -278,7 +283,7 @@ class ExpressionsCreator():
     def get_items_in_sub(self, key):
         sub = algorithms.get_enum_property_item(key, self.get_expressions_sub_categories())
         cat = self.humanoid.get_category("Expressions")
-        tiny = cat.get_modifier_tiny_name([sub])
+        tiny = cat.get_modifier_tiny_name(sub_categories=[sub], exclude_in_others=self.body_parts_expr_list)
         items = tiny[sub]
         return_items = []
         for item in items:
@@ -328,5 +333,18 @@ class ExpressionsCreator():
                 found_files += [os.path.join(dir, item)]
         return found_files
 
-    #--------------Tools to collect data
-
+    #--------------Saving all changed base expression in a filedef 
+    def save_face_expression(self, filepath, humanoid):
+        # Save all expression morphs as a new face expression
+        # in its dedicated file.
+        # If file already exists, it's replaced.
+        logger.info("Exporting face expression to {0}".format(file_ops.simple_path(filepath)))
+        char_data = {"manuellab_vers": self.lab_vers, "structural": dict(), "metaproperties": dict(), "materialproperties": dict()}
+        obj = humanoid.get_object()
+        
+        if obj:
+            for prop in humanoid.character_data.keys():
+                if humanoid.character_data[prop] != 0.5 and prop.startswith("Expressions_"):
+                    char_data["structural"][prop] = round(humanoid.character_data[prop], 4)
+                    # continue here...
+        

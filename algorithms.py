@@ -1196,6 +1196,7 @@ def remove_censors():
 
     return None
 
+#Teto
 # ------------------------------------------------------------------------
 #    UI and UI init Functions
 # ------------------------------------------------------------------------
@@ -1225,4 +1226,4 @@ def create_enum_property_items(values=[], key_length=3, tip_length=4):
             values[i],
             str(values[i])[0:tip_length]))
     return return_list
-        
+#End Teto

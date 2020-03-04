@@ -2763,8 +2763,10 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                     col.prop(scn, "morphingCategory")
 
                     for prop in mblab_humanoid.get_properties_in_category(scn.morphingCategory):
-                        if hasattr(obj, prop):
+                        #Teto
+                        if hasattr(obj, prop) and not prop.startswith("Expressions_ID"):
                             col.prop(obj, prop)
+                        #End Teto
 
                     if mblab_humanoid.exists_measure_database() and scn.mblab_show_measures:
                         col = split.column()
@@ -3057,7 +3059,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     sorted_expressions = sorted(mblab_humanoid.get_properties_in_category("Expressions"))
                     if len(str(scn.mbcrea_base_expression_filter)) > 0:
                         for expr_name in sorted_expressions:
-                            if hasattr(obj, expr_name) and scn.mbcrea_base_expression_filter in expr_name:
+                            if hasattr(obj, expr_name) and scn.mbcrea_base_expression_filter in expr_name and not expr_name.startswith("Expressions_ID"):
                                     box_combinexpression.prop(obj, expr_name)
                     #-------- Expression enumProp --------
                     else:
@@ -3077,7 +3079,9 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     box_combinexpression.label(text="Expr. wording - File", icon='SORT_ASC')
                     if len(comb_name) < 1:
                         box_combinexpression.label(text="Choose a name !", icon='ERROR')
-                    
+                    else:
+                        box_combinexpression.label(text="Save in : ", icon='INFO')
+                        box_combinexpression.operator('mbcrea.button_save_final_comb_expression', icon="FREEZE") #Save the final expression.
                 else:
                     box_combinexpression.label(text="!NO COMPATIBLE MODEL!", icon='ERROR')
                     box_combinexpression.enabled = False
@@ -3280,7 +3284,7 @@ bpy.types.Scene.mbcrea_other_ID_expr = bpy.props.StringProperty(
 
 bpy.types.Scene.mbcrea_base_expression_filter = bpy.props.StringProperty(
     name="Filter",
-    description="Filter the base expressions available",
+    description="Filter the base expressions available.\nCase sensitive !",
     default="",
     maxlen=1024,
     subtype='FILE_NAME')
@@ -3300,7 +3304,7 @@ class FinalizeExpression(bpy.types.Operator):
     bl_label = 'Finalize the base expression'
     bl_idname = 'mbcrea.button_save_final_base_expression'
     filename_ext = ".json"
-    bl_description = 'Finalize the expression, ask for min and max files, create or open the expression file, replace or append new expression'
+    bl_description = 'Finalize the expression,\nask for min and max files,\ncreate or open the expression file,\nreplace or append new expression'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -3341,6 +3345,29 @@ class FinalizeExpression(bpy.types.Operator):
         file[mbcrea_expressionscreator.get_expression_ID()] = []
         file_ops.save_json_data(file_path_name, file)
         #----------------------------
+        return {'FINISHED'}
+
+    def ShowMessageBox(self, message = "", title = "Message Box", icon = 'INFO'):
+
+        def draw(self, context):
+            self.layout.label(text=message)
+        bpy.context.window_manager.popup_menu(draw, title = title, icon = icon)
+
+class FinalizeCombExpression(bpy.types.Operator):
+    """
+        Working like Save character
+    """
+    bl_label = 'Finalize the face expression'
+    bl_idname = 'mbcrea.button_save_final_comb_expression'
+    filename_ext = ".json"
+    bl_description = 'Finalize the face expression,\ncreate or open the face expression file,\nreplace or create new face expression'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        scn = bpy.context.scene
+        mbcrea_expressionscreator.set_lab_version(bl_info["version"])
+        mbcrea_expressionscreator.save_face_expression("path", mblab_humanoid)
         return {'FINISHED'}
 
     def ShowMessageBox(self, message = "", title = "Message Box", icon = 'INFO'):
@@ -3942,6 +3969,7 @@ classes = (
     ButtonSaveCompatProject,
     ButtonLoadCompatProject,
     FinalizeExpression,
+    FinalizeCombExpression,
     Reset_expression_category,
     VIEW3D_PT_tools_MBCrea,
 )

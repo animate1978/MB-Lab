@@ -141,16 +141,19 @@ class HumanCategory:
             return ""
         return modif.short_name
     
-    def get_modifier_tiny_name(self, sub_categories=[]):
+    def get_modifier_tiny_name(self, sub_categories=[], exclude_in_others=[]):
         # Return the short name minus the beginning
         # of its name corresponding to sub_category
         # The key is subcategory name.
         # The value is [tiny, short, full]
         # Method used only for expressions editor for now
+        # exclude_in_others means that the modifiers' name that are in this
+        # list can't be put in "other" category
         if len(sub_categories) > 0:
             tiny = {'other': []}
             triple = []
             done = False
+            false_others = False
             sub_categories = sorted(sub_categories, reverse = True)
             for modif in self.modifiers:
                 for sub in sub_categories:
@@ -164,7 +167,13 @@ class HumanCategory:
                 if done:
                     done = False
                 else:
-                    tiny['other'].append([modif.short_name, modif.short_name, modif.name])
+                    for fo in exclude_in_others:
+                        if modif.short_name.startswith(fo) or modif.short_name.startswith("ID"):
+                            false_others = True
+                    if false_others:
+                        false_others = False
+                    else:
+                        tiny['other'].append([modif.short_name, modif.short_name, modif.name])
             return tiny
         return {}
     #End Teto
