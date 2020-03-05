@@ -3072,15 +3072,17 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     box_combinexpression.label(text="Expr. wording - Name", icon='SORT_ASC')
                     box_combinexpression.prop(scn, 'mbcrea_comb_expression_filter')
                     comb_name = str(scn.mbcrea_comb_expression_filter).lower()
-                    comb_name = comb_name.split('_')[0]
-                    comb_name = comb_name.split('-')[0] # Why split("-_") doesn't work ?
+                    comb_name = algorithms.split_name(comb_name, splitting_char=mbcrea_expressionscreator.forbidden_char_list)
                     box_combinexpression.label(text="File name : " + comb_name, icon='INFO')
+                    check_root = mblab_humanoid.get_root_model_name()
+                    if mbcrea_expressionscreator.is_comb_expression_exists(check_root, comb_name):
+                        box_combinexpression.label(text="File already exists !", icon='ERROR')
                     #-------- New expression file --------
                     box_combinexpression.label(text="Expr. wording - File", icon='SORT_ASC')
                     if len(comb_name) < 1:
                         box_combinexpression.label(text="Choose a name !", icon='ERROR')
                     else:
-                        box_combinexpression.label(text="Save in : ", icon='INFO')
+                        box_combinexpression.label(text="Save in : " + mblab_humanoid.get_root_model_name(), icon='INFO')
                         box_combinexpression.operator('mbcrea.button_save_final_comb_expression', icon="FREEZE") #Save the final expression.
                 else:
                     box_combinexpression.label(text="!NO COMPATIBLE MODEL!", icon='ERROR')
@@ -3367,7 +3369,13 @@ class FinalizeCombExpression(bpy.types.Operator):
     def execute(self, context):
         scn = bpy.context.scene
         mbcrea_expressionscreator.set_lab_version(bl_info["version"])
-        mbcrea_expressionscreator.save_face_expression("path", mblab_humanoid)
+        #-------File name----------
+        comb_name = str(scn.mbcrea_comb_expression_filter).lower()
+        comb_name = algorithms.split_name(comb_name, splitting_char=mbcrea_expressionscreator.forbidden_char_list)
+        #--expression path + name--
+        path = os.path.join(file_ops.get_data_path(), "expressions_comb", mblab_humanoid.get_root_model_name() + "_expressions", comb_name+".json")
+        #--------Saving file-------
+        mbcrea_expressionscreator.save_face_expression(path)
         return {'FINISHED'}
 
     def ShowMessageBox(self, message = "", title = "Message Box", icon = 'INFO'):

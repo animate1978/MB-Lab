@@ -60,9 +60,10 @@ class ExpressionEngineShapeK:
         self.expressions_data = {}
         self.model_type = "NONE"
         self.has_data = True
+        #Teto
+        self.expression_creator = expressionscreator.ExpressionsCreator()
 
     def identify_model_type(self):
-        #Teto
         #self.model_type = "NONE"
         obj = algorithms.get_active_body()
         if obj:
@@ -79,7 +80,7 @@ class ExpressionEngineShapeK:
                         length = len(id)-4
                         tp_name = id[14:length].upper()
                         if tp_name != self.model_type:
-                            expressionscreator.reset_expressions_items()
+                            self.expression_creator.reset_expressions_items()
                         self.model_type = tp_name
                         return
         self.model_type = "NONE"

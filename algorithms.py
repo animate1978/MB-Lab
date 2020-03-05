@@ -1226,4 +1226,14 @@ def create_enum_property_items(values=[], key_length=3, tip_length=4):
             values[i],
             str(values[i])[0:tip_length]))
     return return_list
+    
+def split_name(name, splitting_char=[], indexes=[]):
+    if len(splitting_char) < 1:
+        return name
+    if len(indexes) < 1:
+        indexes = [0]*len(splitting_char)
+    result = name
+    for i in range(len(splitting_char)):
+        result = result.split(splitting_char[i])[indexes[i]]
+    return result
 #End Teto

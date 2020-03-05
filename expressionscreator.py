@@ -180,6 +180,9 @@ class ExpressionsCreator():
         self.expression_ID_list = [("HU", "Humans", "Standard in MB-Lab"),
            ("AN", "Anime", "Standard in MB-Lab"),
            ("OT", "OTHER", "For another model")]
+        
+        self.forbidden_char_list = ['-', '_', '²', '&', '=', '¨', '^', '$',
+            '£', '%', 'µ', ',', '?', ';', '!', '§', '+', '*', '/']
 
         self.expression_name = ["", "", 0]
         #the number is for autosaves.
@@ -290,7 +293,7 @@ class ExpressionsCreator():
             return_items.append(item[2])
         return return_items
 
-# Return an enumProperty with all sub-categories.
+    # Return an enumProperty with all sub-categories.
     def get_expressions_sub_categories(self):
         if len(self.expressions_sub_categories) > 0:
             return self.expressions_sub_categories
@@ -299,6 +302,19 @@ class ExpressionsCreator():
         sorted_list = sorted(list(self.expressions_modifiers.keys()))
         self.expressions_sub_categories = algorithms.create_enum_property_items(sorted_list, tip_length=100)
         return self.expressions_sub_categories
+    
+    def is_comb_expression_exists(self, root_model, name):
+        if len(root_model) < 1 or len(name) < 1:
+            return False
+        try:
+            path = os.path.join(file_ops.get_data_path(), "expressions_comb", root_model+"_expressions")
+            for database_file in os.listdir(path):
+                the_item, extension = os.path.splitext(database_file)
+                if the_item == name:
+                    return True
+        except:
+            return False
+        return False
 
     #--------------EnumProperty for expressions in UI
     #--------------AFTER finalization of the character
@@ -334,17 +350,20 @@ class ExpressionsCreator():
         return found_files
 
     #--------------Saving all changed base expression in a filedef 
-    def save_face_expression(self, filepath, humanoid):
+    def save_face_expression(self, filepath):
         # Save all expression morphs as a new face expression
         # in its dedicated file.
         # If file already exists, it's replaced.
-        logger.info("Exporting face expression to {0}".format(file_ops.simple_path(filepath)))
+        logger.info("Exporting character to {0}".format(file_ops.simple_path(filepath)))
+        obj = self.humanoid.get_object()
         char_data = {"manuellab_vers": self.lab_vers, "structural": dict(), "metaproperties": dict(), "materialproperties": dict()}
-        obj = humanoid.get_object()
-        
+
         if obj:
-            for prop in humanoid.character_data.keys():
-                if humanoid.character_data[prop] != 0.5 and prop.startswith("Expressions_"):
-                    char_data["structural"][prop] = round(humanoid.character_data[prop], 4)
-                    # continue here...
-        
+            for prop in self.humanoid.character_data.keys():
+                if self.humanoid.character_data[prop] != 0.5 and prop.startswith("Expressions_"):
+                    char_data["structural"][prop] = round(self.humanoid.character_data[prop], 4)
+
+            output_file = open(filepath, 'w')
+            json.dump(char_data, output_file)
+            output_file.close()
+

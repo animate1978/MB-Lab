@@ -216,6 +216,9 @@ class Humanoid:
         self.lab_vers = list(lab_version)
         self.has_data = False
         self.obj_name = ""
+        #Teto
+        self.root_model_name = ""
+        #End Teto
         self.data_path = file_ops.get_data_path()
         self.characters_config = file_ops.get_configuration()
         self.lib_filepath = file_ops.get_blendlibrary_path()
@@ -252,7 +255,10 @@ class Humanoid:
         logger.info("Found the humanoid: {0}".format(character_identifier))
 
         logger.info("Init the database...")
-
+        
+        #Teto
+        self.root_model_name = ""
+        #End Teto
         self.no_categories = "BasisAsymTest"
         self.categories = {}
         self.bodydata_realtime_activated = True
@@ -358,6 +364,20 @@ class Humanoid:
                 categories.append(value)
         return sorted(categories)
     
+    def get_root_model_name(self):
+        if len(self.root_model_name) > 0:
+            return self.root_model_name
+        if len(self.obj_name) < 1:
+            return ""
+        for name in self.get_category("Expressions").get_all_properties():
+            if name.startswith("Expressions_"):
+                rmn = name.split("_")[1]
+                rmn = rmn[2:]
+                self.root_model_name = rmn.lower()
+                if self.root_model_name == "humans": # Dirty trick...
+                    self.root_model_name = "human"
+                return self.root_model_name
+        
     #End Teto
 
     def get_category(self, name):
