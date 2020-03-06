@@ -37,24 +37,24 @@ import bpy
 from bpy.app.handlers import persistent
 from bpy_extras.io_utils import ExportHelper, ImportHelper
 
-from . import humanoid
+from . import addon_updater_ops
 from . import algorithms
 from . import animationengine
-from . import proxyengine
-from . import expressionengine
-from . import file_ops
-from . import object_ops
-from . import hairengine
-from . import numpy_ops
-from . import node_ops
-from . import utils
-from . import humanoid_rotations
-from . import preferences
-from . import addon_updater_ops
-from . import facerig
-from . import morphcreator
 from . import creation_tools_ops
+from . import expressionengine
 from . import expressionscreator
+from . import facerig
+from . import file_ops
+from . import hairengine
+from . import humanoid
+from . import humanoid_rotations
+from . import morphcreator
+from . import node_ops
+from . import numpy_ops
+from . import object_ops
+from . import proxyengine
+from . import utils
+from . import preferences
 
 
 logger = logging.getLogger(__name__)
@@ -78,6 +78,7 @@ mblab_humanoid = humanoid.Humanoid(bl_info["version"])
 mblab_retarget = animationengine.RetargetEngine()
 mblab_shapekeys = expressionengine.ExpressionEngineShapeK()
 mblab_proxy = proxyengine.ProxyEngine()
+mbcrea_expressionscreator = expressionscreator.ExpressionsCreator()
 
 gui_status = "NEW_SESSION"
 gui_err_msg = ""
@@ -221,6 +222,16 @@ def realtime_update(self, context):
         # time1 = time.time()
         scn = bpy.context.scene
         mblab_humanoid.update_character(category_name=scn.morphingCategory, mode="update_realtime")
+        #Teto
+        # Dirty, but I didn't want to touch the code too much.
+        # I tried things, but I am pretty sure that they would
+        # bring inconsistencies when changing model without
+        # quitting Blender.
+        # So we always update expressions category, because same
+        # prop are used in "facial expression creator".
+        if scn.morphingCategory != "Expressions":
+            mblab_humanoid.update_character(category_name="Expressions", mode="update_realtime")
+        #End Teto
         mblab_humanoid.sync_gui_according_measures()
         # print("realtime_update: {0}".format(time.time()-time1))
 
@@ -332,7 +343,9 @@ def init_morphing_props(humanoid_instance):
             bpy.types.Object,
             prop,
             bpy.props.FloatProperty(
-                name=prop,
+                #Teto
+                name=prop.split("_")[1],
+                #End Teto
                 min=-5.0,
                 max=5.0,
                 soft_min=0.0,
@@ -340,7 +353,6 @@ def init_morphing_props(humanoid_instance):
                 precision=3,
                 default=0.5,
                 update=realtime_update))
-
 
 def init_measures_props(humanoid_instance):
     for measure_name, measure_val in humanoid_instance.morph_engine.measures.items():
@@ -352,9 +364,10 @@ def init_measures_props(humanoid_instance):
                 default=measure_val))
     humanoid_instance.sync_gui_according_measures()
 
-
+#Teto
 def init_categories_props(humanoid_instance):
     categories_enum = []
+    # All categories for "Body Measures"
     for category in mblab_humanoid.get_categories():
         categories_enum.append(
             (category.name, category.name, category.name))
@@ -363,7 +376,16 @@ def init_categories_props(humanoid_instance):
         items=categories_enum,
         update=modifiers_update,
         name="Morphing categories")
-
+    
+    # Sub-categories for "Facial expressions"
+    mbcrea_expressionscreator.set_expressions_modifiers(mblab_humanoid)
+    sub_categories_enum = mbcrea_expressionscreator.get_expressions_sub_categories()
+    
+    bpy.types.Scene.expressionsSubCategory = bpy.props.EnumProperty(
+        items=sub_categories_enum,
+        update=modifiers_update,
+        name="Expressions sub-categories")
+#End Teto
 
 def init_restposes_props(humanoid_instance):
     if humanoid_instance.exists_rest_poses_database():
@@ -667,7 +689,7 @@ bpy.types.Scene.mblab_expression_filter = bpy.props.StringProperty(
 
 #Teto
 def mbcrea_enum_expressions_items_update(self, context):
-    return expressionscreator.get_expressions_items()
+    return mbcrea_expressionscreator.get_expressions_items()
    
 
 bpy.types.Scene.mbcrea_enum_expressions_items = bpy.props.EnumProperty(
@@ -2408,6 +2430,10 @@ class StartSession(bpy.types.Operator):
 
     def execute(self, context):
         start_lab_session()
+        #Teto
+        morphcreator.init_morph_names_database()
+        mbcrea_expressionscreator.reset_expressions_items()
+        #End Teto
         return {'FINISHED'}
 
 
@@ -2473,7 +2499,6 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
             if scn.mblab_use_cycles or scn.mblab_use_eevee:
                 box_new_opt.prop(scn, 'mblab_use_lamps', icon='LIGHT_DATA')
             box_new_opt.operator('mbast.init_character', icon='ARMATURE_DATA')
-            morphcreator.init_morph_names_database()
 
         if gui_status != "ACTIVE_SESSION":
             self.layout.label(text=" ")
@@ -2513,9 +2538,9 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                                 if hasattr(obj, expr_name) and scn.mblab_expression_filter in expr_name:
                                     box_exp.prop(obj, expr_name)
                         else:
-                            expressionscreator.set_expressions_items(sorted_expressions)
+                            mbcrea_expressionscreator.set_expressions_items(sorted_expressions)
                             box_exp.prop(scn, 'mbcrea_enum_expressions_items')
-                            result = expressionscreator.get_expressions_item(scn.mbcrea_enum_expressions_items)
+                            result = mbcrea_expressionscreator.get_expressions_item(scn.mbcrea_enum_expressions_items)
                             box_exp.prop(obj, result)
                     #End Teto
                     box_exp.operator("mbast.reset_expression", icon="RECOVER_LAST")
@@ -2739,8 +2764,10 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                     col.prop(scn, "morphingCategory")
 
                     for prop in mblab_humanoid.get_properties_in_category(scn.morphingCategory):
-                        if hasattr(obj, prop):
+                        #Teto
+                        if hasattr(obj, prop) and not prop.startswith("Expressions_ID"):
                             col.prop(obj, prop)
+                        #End Teto
 
                     if mblab_humanoid.exists_measure_database() and scn.mblab_show_measures:
                         col = split.column()
@@ -2977,13 +3004,13 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                 box_morphexpression = box_adaptation_tools.box()
                 if is_objet == "FOUND":
                     box_morphexpression.operator('mbast.button_store_base_vertices', icon="SPHERE") #Store all vertices of the actual body.
-                    box_morphexpression.label(text="Expression wording - Name", icon='SORT_ASC')
+                    box_morphexpression.label(text="Expr. wording - Name", icon='SORT_ASC')
                     box_morphexpression.prop(scn, "mbcrea_standard_base_expr")
-                    final_name = "Expressions_" + expressionscreator.get_standard_base_expr(scn.mbcrea_standard_base_expr)
-                    if scn.mbcrea_standard_base_expr == 'NE':
+                    final_name = "Expressions_" + mbcrea_expressionscreator.get_standard_base_expr(scn.mbcrea_standard_base_expr)
+                    if scn.mbcrea_standard_base_expr == 'OT':
                         box_morphexpression.prop(scn, "mbcrea_body_part_expr")
-                        final_name = "Expressions_" + expressionscreator.get_body_parts_expr(scn.mbcrea_body_part_expr)
-                        if scn.mbcrea_body_part_expr == 'NE':
+                        final_name = "Expressions_" + mbcrea_expressionscreator.get_body_parts_expr(scn.mbcrea_body_part_expr)
+                        if scn.mbcrea_body_part_expr == 'OT':
                             box_morphexpression.prop(scn, "mbcrea_new_base_expr_name")
                             final_name = "Expressions_" + scn.mbcrea_new_base_expr_name.lower()
                         box_morphexpression.prop(scn, "mbcrea_expr_name")
@@ -2991,22 +3018,22 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                         box_morphexpression.prop(scn, "mbcrea_min_max_expr")
                         if scn.mbcrea_min_max_expr == 'MI':
                             box_morphexpression.label(text="Reminder, min only not allowed.", icon='INFO')
-                        final_name += "_" + expressionscreator.get_min_max_expr(scn.mbcrea_min_max_expr)
-                    if final_name in expressionscreator.get_standard_expressions_list():
+                        final_name += "_" + mbcrea_expressionscreator.get_min_max_expr(scn.mbcrea_min_max_expr)
+                    if final_name in mbcrea_expressionscreator.get_standard_expressions_list():
                         box_morphexpression.label(text="!WARNING! may overwrite standard expression!", icon='ERROR')
-                    expressionscreator.set_expression_name(final_name)
+                    mbcrea_expressionscreator.set_expression_name(final_name)
                     box_morphexpression.label(text="Complete name : " + final_name, icon='INFO')
                     #------------------------------
-                    box_morphexpression.label(text="Expression wording - File", icon='SORT_ASC')
+                    box_morphexpression.label(text="Expr. wording - File", icon='SORT_ASC')
                     box_morphexpression.prop(scn, "mbcrea_expr_pseudo")
                     box_morphexpression.prop(scn, 'mbcrea_incremental_saves_expr')
                     box_morphexpression.prop(scn, 'mbcrea_standard_ID_expr')
-                    expressionscreator.set_expression_ID(scn.mbcrea_standard_ID_expr)
+                    mbcrea_expressionscreator.set_expression_ID(scn.mbcrea_standard_ID_expr)
                     if scn.mbcrea_standard_ID_expr == 'OT':
                         box_morphexpression.prop(scn, "mbcrea_other_ID_expr")
-                        expressionscreator.set_expression_ID(scn.mbcrea_other_ID_expr)
+                        mbcrea_expressionscreator.set_expression_ID(scn.mbcrea_other_ID_expr)
                     else:
-                        expressionscreator.set_expression_ID(str(scn.mbcrea_standard_ID_expr).capitalize())
+                        mbcrea_expressionscreator.set_expression_ID(str(scn.mbcrea_standard_ID_expr).capitalize())
                     box_morphexpression.operator('mbast.button_store_work_in_progress', icon="MONKEY") #Store all vertices of the modified expression in a wip.
                     box_morphexpression.operator('mbcrea.button_save_final_base_expression', icon="FREEZE") #Save the final expression.
                     box_morphexpression.label(text="Tools", icon='SORT_ASC')
@@ -3022,11 +3049,47 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
             else:
                 box_adaptation_tools.operator('mbcrea.button_combinexpression_off', icon=icon_collapse)
                 box_combinexpression = box_adaptation_tools.box()
-                box_combinexpression.label(text="#TODO Combine expressions")
-                box_combinexpression.label(text="to have plain expressions...")
-        
+                if is_objet == "FOUND":
+                    obj = algorithms.get_active_body() #to be sure...
+                    mblab_humanoid.bodydata_realtime_activated = True
+                    #-------------------------
+                    box_combinexpression.operator("mbcrea.reset_expressionscategory", icon="RECOVER_LAST")
+                    box_combinexpression.label(text="Base expressions", icon='SORT_ASC')
+                    #--------- Expression filter ---------
+                    box_combinexpression.prop(scn, 'mbcrea_base_expression_filter')
+                    sorted_expressions = sorted(mblab_humanoid.get_properties_in_category("Expressions"))
+                    if len(str(scn.mbcrea_base_expression_filter)) > 0:
+                        for expr_name in sorted_expressions:
+                            if hasattr(obj, expr_name) and scn.mbcrea_base_expression_filter in expr_name and not expr_name.startswith("Expressions_ID"):
+                                    box_combinexpression.prop(obj, expr_name)
+                    #-------- Expression enumProp --------
+                    else:
+                        box_combinexpression.prop(scn, 'expressionsSubCategory')
+                        props = sorted(mbcrea_expressionscreator.get_items_in_sub(scn.expressionsSubCategory), reverse = True)
+                        for prop in props:
+                            if hasattr(obj, prop):
+                                box_combinexpression.prop(obj, prop)
+                    #-------- New expression name --------
+                    box_combinexpression.label(text="Expr. wording - Name", icon='SORT_ASC')
+                    box_combinexpression.prop(scn, 'mbcrea_comb_expression_filter')
+                    comb_name = str(scn.mbcrea_comb_expression_filter).lower()
+                    comb_name = algorithms.split_name(comb_name, splitting_char=mbcrea_expressionscreator.forbidden_char_list)
+                    box_combinexpression.label(text="File name : " + comb_name, icon='INFO')
+                    check_root = mblab_humanoid.get_root_model_name()
+                    if mbcrea_expressionscreator.is_comb_expression_exists(check_root, comb_name):
+                        box_combinexpression.label(text="File already exists !", icon='ERROR')
+                    #-------- New expression file --------
+                    box_combinexpression.label(text="Expr. wording - File", icon='SORT_ASC')
+                    if len(comb_name) < 1:
+                        box_combinexpression.label(text="Choose a name !", icon='ERROR')
+                    else:
+                        box_combinexpression.label(text="Save in : " + mblab_humanoid.get_root_model_name(), icon='INFO')
+                        box_combinexpression.operator('mbcrea.button_save_final_comb_expression', icon="FREEZE") #Save the final expression.
+                else:
+                    box_combinexpression.label(text="!NO COMPATIBLE MODEL!", icon='ERROR')
+                    box_combinexpression.enabled = False
+                    
         #Create/edit tools...
-        
         if gui_active_panel_first != "compat_tools":
             box_tools.operator('mbcrea.button_compat_tools_on', icon=icon_expand)
         else:
@@ -3125,6 +3188,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                 box_compat_tools.operator('mbcrea.button_management_tools_off', icon=icon_collapse)
                 box_management_tools = box_compat_tools.box()
                 box_management_tools.label(text="#TODO files management tools...")
+        box_tools.separator(factor=0.5)
 
 """
 bpy.types.Scene.mblab_incremental_saves = bpy.props.BoolProperty(
@@ -3170,12 +3234,12 @@ bpy.types.Scene.mbcrea_body_type = bpy.props.StringProperty(
     subtype='FILE_NAME')
 
 bpy.types.Scene.mbcrea_standard_base_expr = bpy.props.EnumProperty(
-    items=expressionscreator.get_standard_base_expr(),
+    items=mbcrea_expressionscreator.get_standard_base_expr(),
     name="",
     default="CK")
 
 bpy.types.Scene.mbcrea_body_part_expr = bpy.props.EnumProperty(
-    items=expressionscreator.get_body_parts_expr(),
+    items=mbcrea_expressionscreator.get_body_parts_expr(),
     name="Body part",
     default="MO")
 
@@ -3194,7 +3258,7 @@ bpy.types.Scene.mbcrea_expr_name = bpy.props.StringProperty(
     subtype='FILE_NAME')
 
 bpy.types.Scene.mbcrea_min_max_expr = bpy.props.EnumProperty(
-    items=expressionscreator.get_min_max_expr(),
+    items=mbcrea_expressionscreator.get_min_max_expr(),
     name="min/max:",
     default="MA")
 
@@ -3210,7 +3274,7 @@ bpy.types.Scene.mbcrea_incremental_saves_expr = bpy.props.BoolProperty(
     description="Does an incremental save each time\n  the final save button is pressed.\nFrom 001 to 999\nCaution : returns to 001 between sessions")
 
 bpy.types.Scene.mbcrea_standard_ID_expr = bpy.props.EnumProperty(
-    items=expressionscreator.get_expression_ID_list(),
+    items=mbcrea_expressionscreator.get_expression_ID_list(),
     name="Model ID",
     default="HU")
 
@@ -3221,6 +3285,21 @@ bpy.types.Scene.mbcrea_other_ID_expr = bpy.props.StringProperty(
     maxlen=1024,
     subtype='FILE_NAME')
 
+bpy.types.Scene.mbcrea_base_expression_filter = bpy.props.StringProperty(
+    name="Filter",
+    description="Filter the base expressions available.\nCase sensitive !",
+    default="",
+    maxlen=1024,
+    subtype='FILE_NAME')
+
+bpy.types.Scene.mbcrea_comb_expression_filter = bpy.props.StringProperty(
+    name="Name",
+    description="Name the new face expression",
+    default="",
+    maxlen=1024,
+    subtype='FILE_NAME')
+
+
 class FinalizeExpression(bpy.types.Operator):
     """
         Working like FinalizeMorph
@@ -3228,7 +3307,7 @@ class FinalizeExpression(bpy.types.Operator):
     bl_label = 'Finalize the base expression'
     bl_idname = 'mbcrea.button_save_final_base_expression'
     filename_ext = ".json"
-    bl_description = 'Finalize the expression, ask for min and max files, create or open the expression file, replace or append new expression'
+    bl_description = 'Finalize the expression,\nask for min and max files,\ncreate or open the expression file,\nreplace or append new expression'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -3256,19 +3335,48 @@ class FinalizeExpression(bpy.types.Operator):
         if len(scn.mbcrea_expr_pseudo) > 0:
             file_name += "_" + scn.mbcrea_expr_pseudo
         if scn.mbcrea_incremental_saves_expr:
-            file_name += "_" + expressionscreator.get_next_number()
+            file_name += "_" + mbcrea_expressionscreator.get_next_number()
         #-------Expression name----------
-        expression_name = expressionscreator.get_expression_name()
+        expression_name = mbcrea_expressionscreator.get_expression_name()
         #-------Expression path----------
         file_path_name = os.path.join(file_ops.get_data_path(), "expressions_morphs", file_name + ".json")
         file = file_ops.load_json_data(file_path_name, "Try to load an expression file")
         if file == None:
             file = {}
         #---Creating new expression-------
-        file[expressionscreator.get_expression_name()] = indexed_vertices
-        file[expressionscreator.get_expression_ID()] = []
+        file[mbcrea_expressionscreator.get_expression_name()] = indexed_vertices
+        file[mbcrea_expressionscreator.get_expression_ID()] = []
         file_ops.save_json_data(file_path_name, file)
         #----------------------------
+        return {'FINISHED'}
+
+    def ShowMessageBox(self, message = "", title = "Message Box", icon = 'INFO'):
+
+        def draw(self, context):
+            self.layout.label(text=message)
+        bpy.context.window_manager.popup_menu(draw, title = title, icon = icon)
+
+class FinalizeCombExpression(bpy.types.Operator):
+    """
+        Working like Save character
+    """
+    bl_label = 'Finalize the face expression'
+    bl_idname = 'mbcrea.button_save_final_comb_expression'
+    filename_ext = ".json"
+    bl_description = 'Finalize the face expression,\ncreate or open the face expression file,\nreplace or create new face expression'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        scn = bpy.context.scene
+        mbcrea_expressionscreator.set_lab_version(bl_info["version"])
+        #-------File name----------
+        comb_name = str(scn.mbcrea_comb_expression_filter).lower()
+        comb_name = algorithms.split_name(comb_name, splitting_char=mbcrea_expressionscreator.forbidden_char_list)
+        #--expression path + name--
+        path = os.path.join(file_ops.get_data_path(), "expressions_comb", mblab_humanoid.get_root_model_name() + "_expressions", comb_name+".json")
+        #--------Saving file-------
+        mbcrea_expressionscreator.save_face_expression(path)
         return {'FINISHED'}
 
     def ShowMessageBox(self, message = "", title = "Message Box", icon = 'INFO'):
@@ -3328,17 +3436,11 @@ class ButtonForTest(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        global mblab_shapekeys
-        test = mblab_shapekeys.get_loaded_expression_database()
-        print(test[0])
-        print(test[1])
-        print(test[2])
-        print(test[3])
-        print("------------------------------")
+        global mblab_humanoid
         return {'FINISHED'}
 
 class ButtonAdaptationToolsON(bpy.types.Operator):
-    bl_label = 'Adaptation tools'
+    bl_label = 'Model edition'
     bl_idname = 'mbcrea.button_adaptation_tools_on'
     bl_description = 'All tools to change / adapt from an existing model'
     bl_context = 'objectmode'
@@ -3351,7 +3453,7 @@ class ButtonAdaptationToolsON(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonAdaptationToolsOFF(bpy.types.Operator):
-    bl_label = 'Adaptation tools'
+    bl_label = 'Model edition'
     bl_idname = 'mbcrea.button_adaptation_tools_off'
     bl_description = 'All tools to change / adapt from an existing model'
     bl_context = 'objectmode'
@@ -3364,7 +3466,7 @@ class ButtonAdaptationToolsOFF(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonCompatToolsON(bpy.types.Operator):
-    bl_label = 'Compatibility tools'
+    bl_label = 'Model creation'
     bl_idname = 'mbcrea.button_compat_tools_on'
     bl_description = 'All tools to make a model compatible with MB-Lab'
     bl_context = 'objectmode'
@@ -3377,7 +3479,7 @@ class ButtonCompatToolsON(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonCompatToolsOFF(bpy.types.Operator):
-    bl_label = 'Compatibility tools'
+    bl_label = 'Model creation'
     bl_idname = 'mbcrea.button_compat_tools_off'
     bl_description = 'All tools to make a model compatible with MB-Lab'
     bl_context = 'objectmode'
@@ -3442,9 +3544,9 @@ class ButtonBlenrigOFF(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonMorphingON(bpy.types.Operator):
-    bl_label = 'Morph Creation'
+    bl_label = 'Simple Morph Creation'
     bl_idname = 'mbcrea.button_morphcreator_on'
-    bl_description = 'Morph creation panel'
+    bl_description = 'Simple morph creation panel'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -3454,9 +3556,9 @@ class ButtonMorphingON(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonMorphingOFF(bpy.types.Operator):
-    bl_label = 'Morph Creation'
+    bl_label = 'Simple Morph Creation'
     bl_idname = 'mbcrea.button_morphcreator_off'
-    bl_description = 'Morph creation panel'
+    bl_description = 'Simple morph creation panel'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -3466,7 +3568,7 @@ class ButtonMorphingOFF(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonMorphExpressionON(bpy.types.Operator):
-    bl_label = 'Base expressions'
+    bl_label = 'Base Expressions Creation'
     bl_idname = 'mbcrea.button_morphexpression_on'
     bl_description = 'Tool for morphing base expressions'
     bl_context = 'objectmode'
@@ -3479,7 +3581,7 @@ class ButtonMorphExpressionON(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonMorphExpressionOFF(bpy.types.Operator):
-    bl_label = 'Base expressions'
+    bl_label = 'Base Expressions Creation'
     bl_idname = 'mbcrea.button_morphexpression_off'
     bl_description = 'Tool for morphing base expressions'
     bl_context = 'objectmode'
@@ -3492,7 +3594,7 @@ class ButtonMorphExpressionOFF(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonCombineExpressionON(bpy.types.Operator):
-    bl_label = 'Facial expressions'
+    bl_label = 'Facial Expressions Creation'
     bl_idname = 'mbcrea.button_combinexpression_on'
     bl_description = 'Tool for combining base expressions'
     bl_context = 'objectmode'
@@ -3505,7 +3607,7 @@ class ButtonCombineExpressionON(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonCombineExpressionOFF(bpy.types.Operator):
-    bl_label = 'Facial expressions'
+    bl_label = 'Facial Expressions Creation'
     bl_idname = 'mbcrea.button_combinexpression_off'
     bl_description = 'Tool for combining base expressions'
     bl_context = 'objectmode'
@@ -3737,6 +3839,20 @@ class ButtonInitCompat(bpy.types.Operator):
         creation_tools_ops.init_project()
         return {'FINISHED'}
 
+class Reset_expression_category(bpy.types.Operator):
+    """Reset the parameters for the currently selected category"""
+    bl_label = 'Reset expressions'
+    bl_idname = 'mbcrea.reset_expressionscategory'
+    bl_description = 'Reset the parameters for expressions'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL', 'UNDO'}
+
+    def execute(self, context):
+        global mblab_humanoid
+        scn = bpy.context.scene
+        mblab_humanoid.reset_category("Expressions")
+        return {'FINISHED'}
+
 
 classes = (
     ButtonParametersOff,
@@ -3862,6 +3978,8 @@ classes = (
     ButtonSaveCompatProject,
     ButtonLoadCompatProject,
     FinalizeExpression,
+    FinalizeCombExpression,
+    Reset_expression_category,
     VIEW3D_PT_tools_MBCrea,
 )
 

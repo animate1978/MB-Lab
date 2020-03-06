@@ -29,7 +29,12 @@ import bpy
 
 import mathutils
 #Teto
-from . import algorithms, utils, proxyengine, file_ops, morphcreator, expressionscreator
+from . import algorithms
+from . import expressionscreator
+from . import file_ops
+from . import morphcreator
+from . import proxyengine
+from . import utils
 #End Teto
 import time, json
 import operator
@@ -91,14 +96,15 @@ class MorphingEngine:
         #Teto
         self.user_shared_morph_data_path = morphcreator.get_all_morph_files(data_path, "morphs", self.shared_morphs_filename)
         self.user_morph_data_path = morphcreator.get_all_morph_files(data_path, "morphs", self.morphs_filename)
-        #here they are list[]
+        #here, they are list[]
         #End Teto
         self.bounding_box_path = os.path.join(
             data_path,
             "bboxes",
             self.shared_bbox_filename)
         #Teto
-        self.expressions_path = expressionscreator.get_all_expression_files(data_path, "expressions_morphs", self.expressions_filename)
+        self.expressionscreator = expressionscreator.ExpressionsCreator()
+        self.expressions_path = self.expressionscreator.get_all_expression_files(data_path, "expressions_morphs", self.expressions_filename)
         #here it's a list[]
         #End Teto
         self.vertices_path = os.path.join(
@@ -411,3 +417,4 @@ class MorphingEngine:
                 self.morph_values[morph_name] = val
         else:
             logger.debug("Morph data {0} not found".format(morph_name))
+            
