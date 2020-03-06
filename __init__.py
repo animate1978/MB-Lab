@@ -3053,6 +3053,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     mblab_humanoid.bodydata_realtime_activated = True
                     #-------------------------
                     box_combinexpression.operator("mbcrea.reset_expressionscategory", icon="RECOVER_LAST")
+                    box_combinexpression.operator("mbcrea.import_expression", icon='IMPORT')
                     box_combinexpression.label(text="Base expressions", icon='SORT_ASC')
                     #--------- Expression filter ---------
                     box_combinexpression.prop(scn, 'mbcrea_base_expression_filter')
@@ -3852,6 +3853,23 @@ class Reset_expression_category(bpy.types.Operator):
         mblab_humanoid.reset_category("Expressions")
         return {'FINISHED'}
 
+class ImpExpression(bpy.types.Operator, ImportHelper):
+    """Import parameters for the character"""
+    bl_idname = "mbcrea.import_expression"
+    bl_label = "Import facial expression"
+    filename_ext = ".json"
+    filter_glob: bpy.props.StringProperty(
+        default="*.json",
+        options={'HIDDEN'},
+    )
+    bl_context = 'objectmode'
+
+    def execute(self, context):
+        global mbcrea_expressionscreator
+
+        char_data = mbcrea_expressionscreator.load_face_expression(self.filepath)
+        return {'FINISHED'}
+
 
 classes = (
     ButtonParametersOff,
@@ -3979,6 +3997,7 @@ classes = (
     FinalizeExpression,
     FinalizeCombExpression,
     Reset_expression_category,
+    ImpExpression,
     VIEW3D_PT_tools_MBCrea,
 )
 
