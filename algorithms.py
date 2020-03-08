@@ -1201,18 +1201,20 @@ def remove_censors():
 #    UI and UI init Functions
 # ------------------------------------------------------------------------
 
-# Recover from an enumProperty, the value returned by the component,
-# that is only the key, the real value.
+# Recover from an enumProperty.
+# The component returns the key. So the function seeks the key
+# in tuples used in it, and extract the real value, or the 3rd if needed.
 # In real life, it's really cumbersome to get this value if
 # we use things like bpy.types.scene.whatever.
-# Here, the trick is to keep the list of tuples used to
-# create the component somewhere, and check in it.
-def get_enum_property_item(key, enum_property, index=1):
+def get_enum_property_item(key, enum_property, index=1, split_first_part = False):
     value = None
     for ind in range(len(enum_property)):
         if key in enum_property[ind]:
             value = enum_property[ind]
-            return value[index]
+            return_value = value[index]
+            if split_first_part:
+                return_value = return_value.split("_")[1]
+            return return_value
     return ""
 
 #create an enumProperty list of tuples, from a list.
@@ -1227,13 +1229,14 @@ def create_enum_property_items(values=[], key_length=3, tip_length=4):
             str(values[i])[0:tip_length]))
     return return_list
     
-def split_name(name, splitting_char=[], indexes=[]):
+def split_name(name, splitting_char="", indexes=[]):
     if len(splitting_char) < 1:
         return name
     if len(indexes) < 1:
         indexes = [0]*len(splitting_char)
+    chars = list(splitting_char)
     result = name
-    for i in range(len(splitting_char)):
-        result = result.split(splitting_char[i])[indexes[i]]
+    for i in range(len(chars)):
+        result = result.split(chars[i])[indexes[i]]
     return result
 #End Teto

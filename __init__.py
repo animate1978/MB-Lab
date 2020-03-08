@@ -364,15 +364,17 @@ def init_measures_props(humanoid_instance):
     humanoid_instance.sync_gui_according_measures()
 
 #Teto
-def init_categories_props(humanoid_instance):
+def get_categories_enum():
     categories_enum = []
     # All categories for "Body Measures"
     for category in mblab_humanoid.get_categories():
         categories_enum.append(
             (category.name, category.name, category.name))
+    return categories_enum
 
+def init_categories_props(humanoid_instance):
     bpy.types.Scene.morphingCategory = bpy.props.EnumProperty(
-        items=categories_enum,
+        items=get_categories_enum(),
         update=modifiers_update,
         name="Morphing categories")
     
@@ -1054,7 +1056,7 @@ class FinalizeMorph(bpy.types.Operator):
     bl_label = 'Finalize the morph'
     bl_idname = 'mbast.button_save_final_morph'
     filename_ext = ".json"
-    bl_description = 'Finalize the morph, ask for min and max files, create or open the morphs file, replace or append new morph'
+    bl_description = 'Finalize the morph, create or open the morphs file, replace or append new morph'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -2953,21 +2955,21 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                 box_adaptation_tools.operator('mbcrea.button_rigify_on', icon=icon_expand)
             else:
                 box_adaptation_tools.operator('mbcrea.button_rigify_off', icon=icon_collapse)
-                box_rigify = box_adaptation_tools.box()
+                box_rigify = self.layout.box()
                 box_rigify.label(text="#TODO Rigify...")
             #------------Blenrig------------
             if gui_active_panel_second != "Blenrig":
                 box_adaptation_tools.operator('mbcrea.button_blenrig_on', icon=icon_expand)
             else:
                 box_adaptation_tools.operator('mbcrea.button_blenrig_off', icon=icon_collapse)
-                box_blenrig = box_adaptation_tools.box()
+                box_blenrig = self.layout.box()
                 box_blenrig.label(text="#TODO Blenrig...")
             #------------Morph creator------------
             if gui_active_panel_second != "Morphcreator":
                 box_adaptation_tools.operator('mbcrea.button_morphcreator_on', icon=icon_expand)
             else:
                 box_adaptation_tools.operator('mbcrea.button_morphcreator_off', icon=icon_collapse)
-                box_morphcreator = box_adaptation_tools.box()
+                box_morphcreator = self.layout.box()
                 if is_objet == "FOUND":
                     box_morphcreator.operator('mbast.button_store_base_vertices', icon="SPHERE") #Store all vertices of the actual body.
                     box_morphcreator.label(text="Morph wording - Body parts", icon='SORT_ASC')
@@ -2976,13 +2978,21 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     box_morphcreator.prop(scn, "mblab_morph_min_max") #The morph is for min proportions or max proportions.
                     box_morphcreator.label(text="Morph wording - File", icon='SORT_ASC')
                     box_morphcreator.prop(scn, "mblab_morphing_spectrum") #Ask if the new morph is global or just for a specific body
-                    box_morphcreator.label(text=morphcreator.get_model_and_gender() + "_" + scn.mblab_morphing_file_extra_name, icon='INFO')
-                    tp = morphcreator.get_body_type() + " (overide below)"
+                    txt = "If gender : " + morphcreator.get_model_and_gender()
+                    if len(scn.mblab_morphing_file_extra_name) > 0:
+                        txt += "_" + scn.mblab_morphing_file_extra_name
+                    box_morphcreator.label(text=txt, icon='INFO')
+                    if len(scn.mblab_morphing_body_type) > 0:
+                        txt = "If ethnic : " +  morphcreator.get_body_type().split('_')[0] + "_" + scn.mblab_morphing_body_type + "_morphs"
+                    else:
+                        txt = "If ethnic : " + morphcreator.get_body_type() + "_morphs"
+                    if len(scn.mblab_morphing_file_extra_name) > 0:
+                        txt += "_" + scn.mblab_morphing_file_extra_name
+                    box_morphcreator.label(text=txt, icon='INFO')
                     if len(scn.mblab_morphing_body_type) > 3:
-                        tp = scn.mblab_morphing_body_type + " (delete below for reset)"
+                        box_morphcreator.label(text=" (delete below to reset)", icon='BLANK1')
                     elif len(scn.mblab_morphing_body_type) > 0:
-                        tp = "4 letters please (but that will work)"
-                    box_morphcreator.label(text=tp, icon='INFO')
+                        box_morphcreator.label(text="4 letters please (but that will work)", icon='BLANK1')
                     box_morphcreator.prop(scn, 'mblab_morphing_body_type') #The name of the type (4 letters)
                     box_morphcreator.prop(scn, 'mblab_morphing_file_extra_name') #The extra name for the file (basically the name of the author)
                     box_morphcreator.prop(scn, 'mblab_incremental_saves') #If user wants to overide morph in final file or not.
@@ -2995,12 +3005,106 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                 else:
                     box_morphcreator.label(text="!NO COMPATIBLE MODEL!", icon='ERROR')
                     box_morphcreator.enabled = False
+            #----------Combined Morph creator-----------
+            if gui_active_panel_second != "Comb_morphcreator":
+                box_adaptation_tools.operator('mbcrea.button_combined_morphcreator_on', icon=icon_expand)
+            else:
+                box_adaptation_tools.operator('mbcrea.button_combined_morphcreator_off', icon=icon_collapse)
+                box_comb_morphcreator = self.layout.box()
+                if is_objet == "FOUND":
+                    box_comb_morphcreator.operator("mbast.reset_allproperties", icon="RECOVER_LAST")
+                    box_comb_morphcreator.label(text="Morph wording - Mix bases", icon='SORT_ASC')
+                    box_comb_morphcreator.prop(scn, "mbcrea_mixing_morphs_number")
+                    nb = int(scn.mbcrea_mixing_morphs_number)
+                    # If 2 combined morphs or more
+                    box_comb_morphcreator.prop(scn, "morphingCategory")
+                    cat = algorithms.get_enum_property_item(scn.morphingCategory, get_categories_enum())
+                    items_1, minmax_1 = morphs_items_minmax(box_comb_morphcreator, "mbcrea_morphs_items_1", "mbcrea_morphs_minmax_1")
+                    check_name_1 = algorithms.get_enum_property_item(scn.mbcrea_morphs_items_1, items_1)
+                    combined_name = check_name_1
+                    combined_minmax = algorithms.get_enum_property_item(scn.mbcrea_morphs_minmax_1, minmax_1)
+                    check_fail_1, check_modif_1 = mbcrea_expressionscreator.is_modifier_combined_morph(combined_name, cat)
+                    #
+                    items_2, minmax_2 = morphs_items_minmax(box_comb_morphcreator, "mbcrea_morphs_items_2", "mbcrea_morphs_minmax_2")
+                    check_name_2 = algorithms.get_enum_property_item(scn.mbcrea_morphs_items_2, items_2)
+                    combined_name += "-" + check_name_2.split("_")[1]
+                    combined_minmax += "-" + algorithms.get_enum_property_item(scn.mbcrea_morphs_minmax_2, minmax_2)
+                    check_fail_2, check_modif_2 = mbcrea_expressionscreator.is_modifier_combined_morph(check_name_2, cat)
+                    # If 3 combined morphs or more
+                    check_fail_3 = False
+                    check_modif_3 = None
+                    if nb > 2:
+                        items_3, minmax_3 = morphs_items_minmax(box_comb_morphcreator, "mbcrea_morphs_items_3", "mbcrea_morphs_minmax_3")
+                        check_name_3 = algorithms.get_enum_property_item(scn.mbcrea_morphs_items_3, items_3)
+                        combined_name += "-" + check_name_3.split("_")[1]
+                        combined_minmax += "-" + algorithms.get_enum_property_item(scn.mbcrea_morphs_minmax_3, minmax_3)
+                        check_fail_3, check_modif_3 = mbcrea_expressionscreator.is_modifier_combined_morph(check_name_3, cat)
+                    # If 4 combined morphs
+                    check_fail_4 = False
+                    check_modif_4 = None
+                    if nb > 3:
+                        items_4, minmax_4 = morphs_items_minmax(box_comb_morphcreator, "mbcrea_morphs_items_4", "mbcrea_morphs_minmax_4")
+                        check_name_4 = algorithms.get_enum_property_item(scn.mbcrea_morphs_items_4, items_4)
+                        combined_name += "-" + check_name_4.split("_")[1]
+                        combined_minmax += "-" + algorithms.get_enum_property_item(scn.mbcrea_morphs_minmax_4, minmax_4)
+                        check_fail_4, check_modif_4 = mbcrea_expressionscreator.is_modifier_combined_morph(check_name_4, cat)
+                    # Checks validity and prepare save file.
+                    fail = False # If user chooses a morph that is already in combined morph.
+                    if check_fail_1:
+                        fail = True
+                        box_comb_morphcreator.label(text="1st used in a combined morph ! ", icon='ERROR')
+                    if check_fail_2:
+                        fail = True
+                        box_comb_morphcreator.label(text="2nd used in a combined morph ! ", icon='ERROR')
+                    if check_fail_3 and nb > 2:
+                        fail = True
+                        box_comb_morphcreator.label(text="3rd used in a combined morph ! ", icon='ERROR')
+                    if check_fail_4 and nb > 3:
+                        fail = True
+                        box_comb_morphcreator.label(text="4th used in a combined morph ! ", icon='ERROR')
+                    final_morph_name = combined_name + "_" + combined_minmax
+                    box_comb_morphcreator.label(text="Combined name : " + final_morph_name, icon='INFO')
+                    #
+                    if not fail:
+                        # Now we update the model + new button for that.
+                        #print(check_name_1)
+                        #print(check_modif_1.get_property(check_name_1))
+                        # Check is_changed in Modifier to know how to do.
+                        # Same elements that come from regular morphs
+                        box_comb_morphcreator.label(text="Morph wording - File", icon='SORT_ASC')
+                        box_comb_morphcreator.prop(scn, "mblab_morphing_spectrum") #Ask if the new morph is global or just for a specific body
+                        txt = "If gender : " + morphcreator.get_model_and_gender()
+                        if len(scn.mblab_morphing_file_extra_name) > 0:
+                            txt += "_" + scn.mblab_morphing_file_extra_name
+                        box_comb_morphcreator.label(text=txt, icon='INFO')
+                        if len(scn.mblab_morphing_body_type) > 0:
+                            txt = "If ethnic : " +  morphcreator.get_body_type().split('_')[0] + "_" + scn.mblab_morphing_body_type + "_morphs"
+                        else:
+                            txt = "If ethnic : " + morphcreator.get_body_type() + "_morphs"
+                        if len(scn.mblab_morphing_file_extra_name) > 0:
+                            txt += "_" + scn.mblab_morphing_file_extra_name
+                        box_comb_morphcreator.label(text=txt, icon='INFO')
+                        if len(scn.mblab_morphing_body_type) > 3:
+                            box_comb_morphcreator.label(text=" (delete below to reset)", icon='BLANK1')
+                        elif len(scn.mblab_morphing_body_type) > 0:
+                            box_comb_morphcreator.label(text="4 letters please (but that will work)", icon='BLANK1')
+                        box_comb_morphcreator.prop(scn, 'mblab_morphing_body_type') #The name of the type (4 letters)
+                        box_comb_morphcreator.prop(scn, 'mblab_morphing_file_extra_name') #The extra name for the file (basically the name of the author)
+                        box_comb_morphcreator.prop(scn, 'mblab_incremental_saves') #If user wants to overide morph in final file or not.
+                        #box_comb_morphcreator.operator('mbast.button_store_work_in_progress', icon="MONKEY") #Store all vertices of the modified body in a work-in-progress file.
+                        #box_comb_morphcreator.operator('mbast.button_save_final_morph', icon="FREEZE") #Save the final morph.
+                    else:
+                        box_comb_morphcreator.label(text="You cannot save while there are warnings ! ", icon='ERROR')
+                
+                else:
+                    box_comb_morphcreator.label(text="!NO COMPATIBLE MODEL!", icon='ERROR')
+                    box_comb_morphcreator.enabled = False
             #------------Expressions creator------------
             if gui_active_panel_second != "morphs_for_expressions":
                 box_adaptation_tools.operator('mbcrea.button_morphexpression_on', icon=icon_expand)
             else:
                 box_adaptation_tools.operator('mbcrea.button_morphexpression_off', icon=icon_collapse)
-                box_morphexpression = box_adaptation_tools.box()
+                box_morphexpression = self.layout.box()
                 if is_objet == "FOUND":
                     box_morphexpression.operator('mbast.button_store_base_vertices', icon="SPHERE") #Store all vertices of the actual body.
                     box_morphexpression.label(text="Expr. wording - Name", icon='SORT_ASC')
@@ -3047,11 +3151,11 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                 box_adaptation_tools.operator('mbcrea.button_combinexpression_on', icon=icon_expand)
             else:
                 box_adaptation_tools.operator('mbcrea.button_combinexpression_off', icon=icon_collapse)
-                box_combinexpression = box_adaptation_tools.box()
+                box_combinexpression = self.layout.box()
                 if is_objet == "FOUND":
                     obj = algorithms.get_active_body() #to be sure...
                     mblab_humanoid.bodydata_realtime_activated = True
-                    #-------------------------
+                    #-------------------------------------
                     box_combinexpression.operator("mbcrea.reset_expressionscategory", icon="RECOVER_LAST")
                     box_combinexpression.operator("mbcrea.import_expression", icon='IMPORT')
                     box_combinexpression.label(text="Base expressions", icon='SORT_ASC')
@@ -3088,6 +3192,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                 else:
                     box_combinexpression.label(text="!NO COMPATIBLE MODEL!", icon='ERROR')
                     box_combinexpression.enabled = False
+            box_adaptation_tools.separator(factor=0.5)
                     
         #Create/edit tools...
         if gui_active_panel_first != "compat_tools":
@@ -3299,6 +3404,84 @@ bpy.types.Scene.mbcrea_comb_expression_filter = bpy.props.StringProperty(
     maxlen=1024,
     subtype='FILE_NAME')
 
+bpy.types.Scene.mbcrea_mixing_morphs_number = bpy.props.EnumProperty(
+    items=[("2", "2", "Means 4 combined to create"),
+        ("3", "3", "Means 8 combined to create"),
+        ("4", "4", "Means 16 combined to create")],
+    name="Base morphs number",
+    default="2")
+
+def mbcrea_enum_morph_items_update(self, context):
+    obj = mblab_humanoid.get_object()
+    props = []
+    for prop in mblab_humanoid.get_properties_in_category(bpy.context.scene.morphingCategory):
+        if hasattr(obj, prop) and not prop.startswith("Expressions_ID"):
+            props.append(prop)
+    global mbcrea_combined_morph_list
+    mbcrea_combined_morph_list = algorithms.create_enum_property_items(props)
+    return mbcrea_combined_morph_list
+   
+
+bpy.types.Scene.mbcrea_morphs_items_1 = bpy.props.EnumProperty(
+    items=mbcrea_enum_morph_items_update,
+    name="",
+    default=None,
+    options={'ANIMATABLE'},
+    )
+
+bpy.types.Scene.mbcrea_morphs_items_2 = bpy.props.EnumProperty(
+    items=mbcrea_enum_morph_items_update,
+    name="",
+    default=None,
+    options={'ANIMATABLE'},
+    )
+
+bpy.types.Scene.mbcrea_morphs_items_3 = bpy.props.EnumProperty(
+    items=mbcrea_enum_morph_items_update,
+    name="",
+    default=None,
+    options={'ANIMATABLE'},
+    )
+
+bpy.types.Scene.mbcrea_morphs_items_4 = bpy.props.EnumProperty(
+    items=mbcrea_enum_morph_items_update,
+    name="",
+    default=None,
+    options={'ANIMATABLE'},
+    )
+
+bpy.types.Scene.mbcrea_morphs_minmax_1 = bpy.props.EnumProperty(
+    items=morphcreator.get_min_max(),
+    name="",
+    default=None,
+    )
+
+bpy.types.Scene.mbcrea_morphs_minmax_2 = bpy.props.EnumProperty(
+    items=morphcreator.get_min_max(),
+    name="",
+    default=None,
+    )
+
+bpy.types.Scene.mbcrea_morphs_minmax_3 = bpy.props.EnumProperty(
+    items=morphcreator.get_min_max(),
+    name="",
+    default=None,
+    )
+
+bpy.types.Scene.mbcrea_morphs_minmax_4 = bpy.props.EnumProperty(
+    items=morphcreator.get_min_max(),
+    name="",
+    default=None,
+    )
+
+def morphs_items_minmax(box, items_str, minmax_str):
+    sub = box.box()
+    split = sub.split()
+    col = split.column()
+    col.prop(bpy.context.scene, items_str)
+    col = split.column()
+    col.prop(bpy.context.scene, minmax_str)
+    return mbcrea_enum_morph_items_update(bpy.context.scene, None), morphcreator.get_min_max()
 
 class FinalizeExpression(bpy.types.Operator):
     """
@@ -3437,6 +3620,7 @@ class ButtonForTest(bpy.types.Operator):
 
     def execute(self, context):
         global mblab_humanoid
+        print(copie)
         return {'FINISHED'}
 
 class ButtonAdaptationToolsON(bpy.types.Operator):
@@ -3559,6 +3743,30 @@ class ButtonMorphingOFF(bpy.types.Operator):
     bl_label = 'Simple Morph Creation'
     bl_idname = 'mbcrea.button_morphcreator_off'
     bl_description = 'Simple morph creation panel'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = None
+        return {'FINISHED'}
+
+class ButtonCombMorphingON(bpy.types.Operator):
+    bl_label = 'Combined Morph Creation'
+    bl_idname = 'mbcrea.button_combined_morphcreator_on'
+    bl_description = 'Combined morph creation panel'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = 'Comb_morphcreator'
+        return {'FINISHED'}
+
+class ButtonCombMorphingOFF(bpy.types.Operator):
+    bl_label = 'Combined Morph Creation'
+    bl_idname = 'mbcrea.button_combined_morphcreator_off'
+    bl_description = 'Combined morph creation panel'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -3970,6 +4178,8 @@ classes = (
     ButtonBlenrigOFF,
     ButtonMorphingON,
     ButtonMorphingOFF,
+    ButtonCombMorphingON,
+    ButtonCombMorphingOFF,
     ButtonMorphExpressionON,
     ButtonMorphExpressionOFF,
     ButtonCombineExpressionON,

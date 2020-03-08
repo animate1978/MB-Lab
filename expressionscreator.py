@@ -182,8 +182,7 @@ class ExpressionsCreator():
            ("AN", "Anime", "Standard in MB-Lab"),
            ("OT", "OTHER", "For another model")]
         
-        self.forbidden_char_list = ['-', '_', '²', '&', '=', '¨', '^', '$',
-            '£', '%', 'µ', ',', '?', ';', '!', '§', '+', '*', '/']
+        self.forbidden_char_list = '-_²&=¨^$£%µ,?;!§+*/'
 
         self.expression_name = ["", "", 0]
         #the number is for autosaves.
@@ -201,6 +200,10 @@ class ExpressionsCreator():
         # and create them only when model is changed.
         # Used only BEFORE finalization of the model,
         # in the Combined Expression Editor.
+        
+        # variable for creating combined morphs
+        # 1st value is the name, the other the modifier
+        self.modifiers_for_combined = []
         
         self.humanoid = None
         # Instance of class Humanoid
@@ -316,7 +319,22 @@ class ExpressionsCreator():
         except:
             return False
         return False
-
+    
+    # Special method, that answer the question AND return modifier if False
+    def is_modifier_combined_morph(self, name="", category=""):
+        if name == "" or category == "":
+            return True, None # Just in case...
+        cat = self.humanoid.get_category(category)
+        modif = cat.get_modifier(name)
+        if modif == None:
+            return True, None
+        return False, modif
+    
+    # Store the combined morph elements for
+    # updating the model and save the morph
+    def set_modifiers_for_combined_morphs(self, name="", modifiers=[], minmax=[]):
+        self.modifiers_for_combined = [name, modifiers, minmax]
+    
     #--------------EnumProperty for expressions in UI
     #--------------AFTER finalization of the character
 
