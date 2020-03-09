@@ -65,7 +65,7 @@ body_parts = [("AB", "Abdomen", ""),
 spectrum = [("GE", "Gender", "For all males / females"),
    ("ET", "Ethnic group", "For a specific ethnic group")]
 
-min_max = [("MI", "min", "min = 0"), ("MA", "max", "max = 1")]
+min_max = [("MI", "min", "0"), ("MA", "max", "1")]
 
 morphs_names = ["", "", 0]
 #0 = get_model_and_gender()
@@ -75,6 +75,10 @@ morphs_names = ["", "", 0]
 vertices_lists = [[], []]
 #0 base vertices.
 #1 Sculpted vertices.
+
+modifiers_for_combined = ["", [], []]
+# variable for creating combined morphs
+# 1st value is the name, the other the modifier
 
 logger = logging.getLogger(__name__)
 
@@ -102,9 +106,13 @@ def get_min_max(key = None):
 
 def init_morph_names_database():
     global morphs_names
+    global modifiers_for_combined
     morphs_names[0] = ""
     morphs_names[1] = ""
     morphs_names[2] = 0
+    modifiers_for_combined[0] = ""
+    modifiers_for_combined[1] = []
+    modifiers_for_combined[2] = []
     
 def get_model_and_gender():
     if len(morphs_names[0]) == 0:
@@ -207,3 +215,57 @@ def get_all_morph_files(data_path, data_type_path, body_type):
             if item.split('_')[:2] == body_type_split:
                 found_files += [os.path.join(dir, item)]
     return found_files
+
+# ------------------------------------------------------------------------
+#    All methods/classes to help creating combined morphs
+# ------------------------------------------------------------------------
+
+# Answer if the morph "name" is already part of a combined morph or not.
+def is_modifier_combined_morph(humanoid, name="", category=""):
+    if name == "" or category == "":
+        return True # Just in case...
+    cat = humanoid.get_category(category)
+    modif = cat.get_modifier(name)
+    if modif == None:
+        return True
+    return False
+
+# A special and dirty function to help and simplify __init__
+def secure_modifier_name(enum_items, items):
+    check_name = algorithms.get_enum_property_item(enum_items, items)
+    try:
+        temp = check_name.split("_")[1]
+    except:
+        return "###_###"
+    return check_name
+
+# Store the combined morph elements for
+# updating the model and save the morph
+def set_modifiers_for_combined_morphs(final_name="", morphs_name=[], minmax=[]):
+    global modifiers_for_combined
+    modifiers_for_combined[0] = final_name
+    modifiers_for_combined[1] = morphs_name
+    for i in range(len(minmax)):
+        if len(minmax[i]) > 0:
+            if minmax[i] == "min":
+                minmax[i] = 0
+            else:
+                minmax[i] = 1
+        else:
+            minmax[i] = 0.5
+    modifiers_for_combined[2] = minmax
+
+def update_for_combined_morphs(humanoid):
+    global modifiers_for_combined
+    if len(modifiers_for_combined[0]) < 1 or humanoid == None:
+        return
+    obj = humanoid.get_object()
+    names = modifiers_for_combined[1]
+    minmax = modifiers_for_combined[2]
+    for i in range(len(names)):
+        for prop in humanoid.character_data:
+            if str(prop) == names[i]:
+                setattr(obj, prop, minmax[i])
+    humanoid.sync_character_data_to_obj_props()
+    humanoid.update_character()
+    

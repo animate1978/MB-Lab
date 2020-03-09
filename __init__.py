@@ -1713,22 +1713,6 @@ class ResetExpressions(bpy.types.Operator):
         return {'FINISHED'}
 
 
-# class LoadAssets(bpy.types.Operator):
-# """
-# Load assets from library
-# """
-# bl_label = 'Load model from assets library'
-# bl_idname = 'mbast.load_assets_element'
-# bl_description = 'Load the element selected from the assets library'
-# bl_context = 'objectmode'
-# bl_options = {'REGISTER', 'INTERNAL','UNDO'}
-
-# def execute(self, context):
-# scn = bpy.context.scene
-# mblab_proxy.load_asset(scn.mblab_assets_models)
-# return {'FINISHED'}
-
-
 class InsertExpressionKeyframe(bpy.types.Operator):
     """Reset all morphings."""
     bl_label = 'Insert Keyframe'
@@ -3021,55 +3005,60 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     cat = algorithms.get_enum_property_item(scn.morphingCategory, get_categories_enum())
                     items_1, minmax_1 = morphs_items_minmax(box_comb_morphcreator, "mbcrea_morphs_items_1", "mbcrea_morphs_minmax_1")
                     check_name_1 = algorithms.get_enum_property_item(scn.mbcrea_morphs_items_1, items_1)
+                    check_minmax_1 = algorithms.get_enum_property_item(scn.mbcrea_morphs_minmax_1, minmax_1)
                     combined_name = check_name_1
-                    combined_minmax = algorithms.get_enum_property_item(scn.mbcrea_morphs_minmax_1, minmax_1)
-                    check_fail_1, check_modif_1 = mbcrea_expressionscreator.is_modifier_combined_morph(combined_name, cat)
+                    combined_minmax = check_minmax_1
+                    check_fail_1 = morphcreator.is_modifier_combined_morph(mblab_humanoid, combined_name, cat)
                     #
                     items_2, minmax_2 = morphs_items_minmax(box_comb_morphcreator, "mbcrea_morphs_items_2", "mbcrea_morphs_minmax_2")
-                    check_name_2 = algorithms.get_enum_property_item(scn.mbcrea_morphs_items_2, items_2)
+                    check_name_2 = morphcreator.secure_modifier_name(scn.mbcrea_morphs_items_2, items_2)
+                    check_minmax_2 = algorithms.get_enum_property_item(scn.mbcrea_morphs_minmax_2, minmax_2)
                     combined_name += "-" + check_name_2.split("_")[1]
-                    combined_minmax += "-" + algorithms.get_enum_property_item(scn.mbcrea_morphs_minmax_2, minmax_2)
-                    check_fail_2, check_modif_2 = mbcrea_expressionscreator.is_modifier_combined_morph(check_name_2, cat)
+                    combined_minmax += "-" + check_minmax_2
+                    check_fail_2 = morphcreator.is_modifier_combined_morph(mblab_humanoid, check_name_2, cat)
                     # If 3 combined morphs or more
+                    check_name_3 = ""
+                    check_minmax_3 = ""
                     check_fail_3 = False
-                    check_modif_3 = None
                     if nb > 2:
                         items_3, minmax_3 = morphs_items_minmax(box_comb_morphcreator, "mbcrea_morphs_items_3", "mbcrea_morphs_minmax_3")
-                        check_name_3 = algorithms.get_enum_property_item(scn.mbcrea_morphs_items_3, items_3)
+                        check_name_3 = morphcreator.secure_modifier_name(scn.mbcrea_morphs_items_3, items_3)
+                        check_minmax_3 = algorithms.get_enum_property_item(scn.mbcrea_morphs_minmax_3, minmax_3)
                         combined_name += "-" + check_name_3.split("_")[1]
-                        combined_minmax += "-" + algorithms.get_enum_property_item(scn.mbcrea_morphs_minmax_3, minmax_3)
-                        check_fail_3, check_modif_3 = mbcrea_expressionscreator.is_modifier_combined_morph(check_name_3, cat)
+                        combined_minmax += "-" + check_minmax_3
+                        check_fail_3 = morphcreator.is_modifier_combined_morph(mblab_humanoid, check_name_3, cat)
                     # If 4 combined morphs
+                    check_name_4 = ""
+                    check_minmax_4 = ""
                     check_fail_4 = False
-                    check_modif_4 = None
                     if nb > 3:
                         items_4, minmax_4 = morphs_items_minmax(box_comb_morphcreator, "mbcrea_morphs_items_4", "mbcrea_morphs_minmax_4")
-                        check_name_4 = algorithms.get_enum_property_item(scn.mbcrea_morphs_items_4, items_4)
+                        check_name_4 = morphcreator.secure_modifier_name(scn.mbcrea_morphs_items_4, items_4)
+                        check_minmax_4 = algorithms.get_enum_property_item(scn.mbcrea_morphs_minmax_4, minmax_4)
                         combined_name += "-" + check_name_4.split("_")[1]
-                        combined_minmax += "-" + algorithms.get_enum_property_item(scn.mbcrea_morphs_minmax_4, minmax_4)
-                        check_fail_4, check_modif_4 = mbcrea_expressionscreator.is_modifier_combined_morph(check_name_4, cat)
+                        combined_minmax += "-" + check_minmax_4
+                        check_fail_4 = morphcreator.is_modifier_combined_morph(mblab_humanoid, check_name_4, cat)
                     # Checks validity and prepare save file.
                     fail = False # If user chooses a morph that is already in combined morph.
                     if check_fail_1:
                         fail = True
-                        box_comb_morphcreator.label(text="1st used in a combined morph ! ", icon='ERROR')
+                        box_comb_morphcreator.label(text="1st invalid ! ", icon='ERROR')
                     if check_fail_2:
                         fail = True
-                        box_comb_morphcreator.label(text="2nd used in a combined morph ! ", icon='ERROR')
-                    if check_fail_3 and nb > 2:
+                        box_comb_morphcreator.label(text="2nd invalid ! ", icon='ERROR')
+                    if check_fail_3:
                         fail = True
-                        box_comb_morphcreator.label(text="3rd used in a combined morph ! ", icon='ERROR')
-                    if check_fail_4 and nb > 3:
+                        box_comb_morphcreator.label(text="3rd invalid ! ", icon='ERROR')
+                    if check_fail_4:
                         fail = True
-                        box_comb_morphcreator.label(text="4th used in a combined morph ! ", icon='ERROR')
+                        box_comb_morphcreator.label(text="4th invalid ! ", icon='ERROR')
                     final_morph_name = combined_name + "_" + combined_minmax
-                    box_comb_morphcreator.label(text="Combined name : " + final_morph_name, icon='INFO')
                     #
                     if not fail:
+                        box_comb_morphcreator.label(text="Combined name : " + final_morph_name, icon='INFO')
                         # Now we update the model + new button for that.
-                        #print(check_name_1)
-                        #print(check_modif_1.get_property(check_name_1))
-                        # Check is_changed in Modifier to know how to do.
+                        morphcreator.set_modifiers_for_combined_morphs(final_morph_name, [check_name_1, check_name_2, check_name_3, check_name_4], [check_minmax_1, check_minmax_2, check_minmax_3, check_minmax_4])
+                        box_comb_morphcreator.operator("mbcrea.update_comb_morphs", icon="MONKEY")
                         # Same elements that come from regular morphs
                         box_comb_morphcreator.label(text="Morph wording - File", icon='SORT_ASC')
                         box_comb_morphcreator.prop(scn, "mblab_morphing_spectrum") #Ask if the new morph is global or just for a specific body
@@ -3775,6 +3764,19 @@ class ButtonCombMorphingOFF(bpy.types.Operator):
         gui_active_panel_second = None
         return {'FINISHED'}
 
+class ButtonUpdateCombMorphs(bpy.types.Operator):
+    """Reset all morphings."""
+    bl_label = 'Update character'
+    bl_idname = 'mbcrea.update_comb_morphs'
+    bl_description = 'Update character with actual parameters'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL', 'UNDO'}
+
+    def execute(self, context):
+        global mblab_humanoid
+        morphcreator.update_for_combined_morphs(mblab_humanoid)
+        return {'FINISHED'}
+
 class ButtonMorphExpressionON(bpy.types.Operator):
     bl_label = 'Base Expressions Creation'
     bl_idname = 'mbcrea.button_morphexpression_on'
@@ -4206,6 +4208,7 @@ classes = (
     ButtonLoadCompatProject,
     FinalizeExpression,
     FinalizeCombExpression,
+    ButtonUpdateCombMorphs,
     Reset_expression_category,
     ImpExpression,
     VIEW3D_PT_tools_MBCrea,

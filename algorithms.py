@@ -1206,8 +1206,10 @@ def remove_censors():
 # in tuples used in it, and extract the real value, or the 3rd if needed.
 # In real life, it's really cumbersome to get this value if
 # we use things like bpy.types.scene.whatever.
-def get_enum_property_item(key, enum_property, index=1, split_first_part = False):
+def get_enum_property_item(key, enum_property, index=1, split_first_part=False):
     value = None
+    if enum_property == None or len(enum_property) < 1:
+        enum_property = ('NONE', 'CHOOSE', 'Choose one')
     for ind in range(len(enum_property)):
         if key in enum_property[ind]:
             value = enum_property[ind]
