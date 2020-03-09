@@ -30,6 +30,7 @@ import bpy
 import numpy
 from . import algorithms
 from . import file_ops
+from . import utils
 
 logger = logging.getLogger(__name__)
 
@@ -181,8 +182,7 @@ class ExpressionsCreator():
            ("AN", "Anime", "Standard in MB-Lab"),
            ("OT", "OTHER", "For another model")]
         
-        self.forbidden_char_list = ['-', '_', '²', '&', '=', '¨', '^', '$',
-            '£', '%', 'µ', ',', '?', ';', '!', '§', '+', '*', '/']
+        self.forbidden_char_list = '-_²&=¨^$£%µ,?;!§+*/'
 
         self.expression_name = ["", "", 0]
         #the number is for autosaves.
@@ -200,6 +200,10 @@ class ExpressionsCreator():
         # and create them only when model is changed.
         # Used only BEFORE finalization of the model,
         # in the Combined Expression Editor.
+        
+        # variable for creating combined morphs
+        # 1st value is the name, the other the modifier
+        self.modifiers_for_combined = []
         
         self.humanoid = None
         # Instance of class Humanoid
@@ -315,7 +319,22 @@ class ExpressionsCreator():
         except:
             return False
         return False
-
+    
+    # Special method, that answer the question AND return modifier if False
+    def is_modifier_combined_morph(self, name="", category=""):
+        if name == "" or category == "":
+            return True, None # Just in case...
+        cat = self.humanoid.get_category(category)
+        modif = cat.get_modifier(name)
+        if modif == None:
+            return True, None
+        return False, modif
+    
+    # Store the combined morph elements for
+    # updating the model and save the morph
+    def set_modifiers_for_combined_morphs(self, name="", modifiers=[], minmax=[]):
+        self.modifiers_for_combined = [name, modifiers, minmax]
+    
     #--------------EnumProperty for expressions in UI
     #--------------AFTER finalization of the character
 
@@ -366,4 +385,43 @@ class ExpressionsCreator():
             output_file = open(filepath, 'w')
             json.dump(char_data, output_file)
             output_file.close()
-
+    
+    # data_source can be a filepath but also the data themselves.
+    def load_face_expression(self, data_source, reset_unassigned=True):
+        
+        if self.humanoid == None:
+            return
+        
+        obj = self.humanoid.get_object()
+        log_msg_type = "Expression data"
+        
+        if isinstance(data_source, str):
+            log_msg_type = file_ops.simple_path(data_source)
+            charac_data = file_ops.load_json_data(data_source, "Expression data")
+        else:
+            charac_data = data_source
+        
+        logger.info("Loading expression from {0}".format(log_msg_type))
+        
+        if "manuellab_vers" in charac_data:
+            if not utils.check_version(charac_data["manuellab_vers"]):
+                logger.warning("{0} created with vers. {1}. Current vers is {2}".format(log_msg_type, charac_data["manuellab_vers"], self.lab_vers))
+        else:
+            logger.info("No lab version specified in {0}".format(log_msg_type))
+        
+        if "structural" in charac_data:
+            char_data = charac_data["structural"]
+        else:
+            logger.warning("No structural data in  {0}".format(log_msg_type))
+            char_data = {}
+        
+        # data are loaded, now update the character.
+        if char_data is not None:
+            for name in self.humanoid.character_data.keys():
+                if name in char_data:
+                    self.humanoid.character_data[name] = char_data[name]
+                else:
+                    if reset_unassigned and name.startswith("Expressions_"):
+                        self.humanoid.character_data[name] = 0.5
+            # Now updating.
+            self.humanoid.update_character(mode="update_all")
