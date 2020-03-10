@@ -78,7 +78,9 @@ vertices_lists = [[], []]
 
 modifiers_for_combined = ["", [], []]
 # variable for creating combined morphs
-# 1st value is the name, the other the modifier
+# 1st value is the name
+# 2nd list of body parts
+# 3rd list of corresponding min/max
 
 logger = logging.getLogger(__name__)
 
@@ -219,6 +221,9 @@ def get_all_morph_files(data_path, data_type_path, body_type):
 # ------------------------------------------------------------------------
 #    All methods/classes to help creating combined morphs
 # ------------------------------------------------------------------------
+
+def get_combined_morph_name():
+    return modifiers_for_combined[0]
 
 # Answer if the morph "name" is already part of a combined morph or not.
 def is_modifier_combined_morph(humanoid, name="", category=""):

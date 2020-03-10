@@ -822,7 +822,7 @@ bpy.types.Scene.mblab_incremental_saves = bpy.props.BoolProperty(
 
 bpy.types.Scene.mblab_morph_name = bpy.props.StringProperty(
     name="Name",
-    description="ExplicitBodyPartMorphed",
+    description="Format : ExplicitPartMorphed\n(Without body part category)",
     default="",
     maxlen=1024,
     subtype='FILE_NAME')
@@ -1099,12 +1099,10 @@ class FinalizeMorph(bpy.types.Operator):
         #-------Morph name----------
         morph_name = morphcreator.get_body_parts(scn.mblab_body_part_name) + "_" + scn.mblab_morph_name + "_" + morphcreator.get_min_max(scn.mblab_morph_min_max)
         #-------Morphs path----------
-        #Teto
         file_path_name = os.path.join(file_ops.get_data_path(), "morphs", file_name + ".json")
         file = file_ops.load_json_data(file_path_name, "Try to load a morph file")
         if file == None:
             file = {}
-        #End Teto
         #---Creating new morph-------
         file[morph_name] = indexed_vertices
         file_ops.save_json_data(file_path_name, file)
@@ -1116,7 +1114,7 @@ class FinalizeMorph(bpy.types.Operator):
         def draw(self, context):
             self.layout.label(text=message)
         bpy.context.window_manager.popup_menu(draw, title = title, icon = icon)
-#Teto
+
 class SaveBodyAsIs(bpy.types.Operator, ExportHelper):
     """
         Save the model shown on screen.
@@ -2960,25 +2958,36 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     box_morphcreator.prop(scn, "mblab_body_part_name") #first part of the morph's name : jaws, legs, ...
                     box_morphcreator.prop(scn, 'mblab_morph_name') #name for the morph
                     box_morphcreator.prop(scn, "mblab_morph_min_max") #The morph is for min proportions or max proportions.
+                    if len(scn.mblab_morph_name) > 0:
+                        morph_label = "Morph name : " + morphcreator.get_body_parts(scn.mblab_body_part_name)
+                        morph_label += "_" + scn.mblab_morph_name
+                        morph_label += "_" + morphcreator.get_min_max(scn.mblab_morph_min_max)                    
+                        box_morphcreator.label(text=morph_label, icon='INFO')
+                    else:
+                        box_morphcreator.label(text="Name needed !", icon='ERROR')
                     box_morphcreator.label(text="Morph wording - File", icon='SORT_ASC')
                     box_morphcreator.prop(scn, "mblab_morphing_spectrum") #Ask if the new morph is global or just for a specific body
-                    txt = "If gender : " + morphcreator.get_model_and_gender()
-                    if len(scn.mblab_morphing_file_extra_name) > 0:
-                        txt += "_" + scn.mblab_morphing_file_extra_name
-                    box_morphcreator.label(text=txt, icon='INFO')
-                    if len(scn.mblab_morphing_body_type) > 0:
-                        txt = "If ethnic : " +  morphcreator.get_body_type().split('_')[0] + "_" + scn.mblab_morphing_body_type + "_morphs"
-                    else:
-                        txt = "If ethnic : " + morphcreator.get_body_type() + "_morphs"
-                    if len(scn.mblab_morphing_file_extra_name) > 0:
-                        txt += "_" + scn.mblab_morphing_file_extra_name
-                    box_morphcreator.label(text=txt, icon='INFO')
+                    spectrum = morphcreator.get_spectrum(scn.mblab_morphing_spectrum)
+                    box_morphcreator.prop(scn, 'mblab_morphing_body_type') #The name of the type (4 letters)
                     if len(scn.mblab_morphing_body_type) > 3:
-                        box_morphcreator.label(text=" (delete below to reset)", icon='BLANK1')
+                        box_morphcreator.label(text="(Delete to reset the name)", icon='BLANK1')
                     elif len(scn.mblab_morphing_body_type) > 0:
                         box_morphcreator.label(text="4 letters please (but that will work)", icon='BLANK1')
-                    box_morphcreator.prop(scn, 'mblab_morphing_body_type') #The name of the type (4 letters)
                     box_morphcreator.prop(scn, 'mblab_morphing_file_extra_name') #The extra name for the file (basically the name of the author)
+                    txt = "File name : "
+                    if spectrum == "Gender":
+                        txt += morphcreator.get_model_and_gender()
+                        if len(scn.mblab_morphing_file_extra_name) > 0:
+                            txt += "_" + scn.mblab_morphing_file_extra_name
+                        box_morphcreator.label(text=txt, icon='INFO')
+                    else:
+                        if len(scn.mblab_morphing_body_type) > 0:
+                            txt +=  morphcreator.get_body_type().split('_')[0] + "_" + scn.mblab_morphing_body_type + "_morphs"
+                        else:
+                            txt += morphcreator.get_body_type() + "_morphs"
+                        if len(scn.mblab_morphing_file_extra_name) > 0:
+                            txt += "_" + scn.mblab_morphing_file_extra_name
+                        box_morphcreator.label(text=txt, icon='INFO')
                     box_morphcreator.prop(scn, 'mblab_incremental_saves') #If user wants to overide morph in final file or not.
                     box_morphcreator.operator('mbast.button_store_work_in_progress', icon="MONKEY") #Store all vertices of the modified body in a work-in-progress file.
                     box_morphcreator.operator('mbast.button_save_final_morph', icon="FREEZE") #Save the final morph.
@@ -2997,6 +3006,8 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                 box_comb_morphcreator = self.layout.box()
                 if is_objet == "FOUND":
                     box_comb_morphcreator.operator("mbast.reset_allproperties", icon="RECOVER_LAST")
+                    box_comb_morphcreator.operator('mbast.button_store_base_vertices', icon="SPHERE")
+                    #box_comb_morphcreator.separator(factor=0.5)
                     box_comb_morphcreator.label(text="Morph wording - Mix bases", icon='SORT_ASC')
                     box_comb_morphcreator.prop(scn, "mbcrea_mixing_morphs_number")
                     nb = int(scn.mbcrea_mixing_morphs_number)
@@ -3056,35 +3067,43 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     #
                     if not fail:
                         box_comb_morphcreator.label(text="Combined name : " + final_morph_name, icon='INFO')
+                        box_comb_morphcreator.label(text="(Reminder : Keep alphabetical order)", icon='FORWARD')
                         # Now we update the model + new button for that.
                         morphcreator.set_modifiers_for_combined_morphs(final_morph_name, [check_name_1, check_name_2, check_name_3, check_name_4], [check_minmax_1, check_minmax_2, check_minmax_3, check_minmax_4])
                         box_comb_morphcreator.operator("mbcrea.update_comb_morphs", icon="MONKEY")
                         # Same elements that come from regular morphs
                         box_comb_morphcreator.label(text="Morph wording - File", icon='SORT_ASC')
                         box_comb_morphcreator.prop(scn, "mblab_morphing_spectrum") #Ask if the new morph is global or just for a specific body
-                        txt = "If gender : " + morphcreator.get_model_and_gender()
-                        if len(scn.mblab_morphing_file_extra_name) > 0:
-                            txt += "_" + scn.mblab_morphing_file_extra_name
-                        box_comb_morphcreator.label(text=txt, icon='INFO')
-                        if len(scn.mblab_morphing_body_type) > 0:
-                            txt = "If ethnic : " +  morphcreator.get_body_type().split('_')[0] + "_" + scn.mblab_morphing_body_type + "_morphs"
-                        else:
-                            txt = "If ethnic : " + morphcreator.get_body_type() + "_morphs"
-                        if len(scn.mblab_morphing_file_extra_name) > 0:
-                            txt += "_" + scn.mblab_morphing_file_extra_name
-                        box_comb_morphcreator.label(text=txt, icon='INFO')
+                        spectrum = morphcreator.get_spectrum(scn.mblab_morphing_spectrum)
+                        box_comb_morphcreator.prop(scn, 'mblab_morphing_body_type') #The name of the type (4 letters)
                         if len(scn.mblab_morphing_body_type) > 3:
-                            box_comb_morphcreator.label(text=" (delete below to reset)", icon='BLANK1')
+                            box_comb_morphcreator.label(text="(delete to reset the name)", icon='BLANK1')
                         elif len(scn.mblab_morphing_body_type) > 0:
                             box_comb_morphcreator.label(text="4 letters please (but that will work)", icon='BLANK1')
-                        box_comb_morphcreator.prop(scn, 'mblab_morphing_body_type') #The name of the type (4 letters)
                         box_comb_morphcreator.prop(scn, 'mblab_morphing_file_extra_name') #The extra name for the file (basically the name of the author)
+                        txt = "File name : "
+                        if spectrum == "Gender":
+                            txt += morphcreator.get_model_and_gender()
+                            if len(scn.mblab_morphing_file_extra_name) > 0:
+                                txt += "_" + scn.mblab_morphing_file_extra_name
+                            box_comb_morphcreator.label(text=txt, icon='INFO')
+                        else:
+                            if len(scn.mblab_morphing_body_type) > 0:
+                                txt +=  morphcreator.get_body_type().split('_')[0] + "_" + scn.mblab_morphing_body_type + "_morphs"
+                            else:
+                                txt += morphcreator.get_body_type() + "_morphs"
+                            if len(scn.mblab_morphing_file_extra_name) > 0:
+                                txt += "_" + scn.mblab_morphing_file_extra_name
+                            box_comb_morphcreator.label(text=txt, icon='INFO')
                         box_comb_morphcreator.prop(scn, 'mblab_incremental_saves') #If user wants to overide morph in final file or not.
-                        #box_comb_morphcreator.operator('mbast.button_store_work_in_progress', icon="MONKEY") #Store all vertices of the modified body in a work-in-progress file.
-                        #box_comb_morphcreator.operator('mbast.button_save_final_morph', icon="FREEZE") #Save the final morph.
+                        box_comb_morphcreator.operator('mbast.button_store_work_in_progress', icon="MONKEY") #Store all vertices of the modified body in a work-in-progress file.
+                        box_comb_morphcreator.operator('mbcrea.button_save_final_comb_morph', icon="FREEZE") #Save the final morph.
                     else:
                         box_comb_morphcreator.label(text="You cannot save while there are warnings ! ", icon='ERROR')
-                
+                    box_comb_morphcreator.label(text="Tools", icon='SORT_ASC')
+                    box_comb_morphcreator.operator('mbast.button_save_body_as_is', icon='EXPORT')
+                    box_comb_morphcreator.operator('mbast.button_load_base_body', icon='IMPORT')
+                    box_comb_morphcreator.operator('mbast.button_load_sculpted_body', icon='IMPORT')
                 else:
                     box_comb_morphcreator.label(text="!NO COMPATIBLE MODEL!", icon='ERROR')
                     box_comb_morphcreator.enabled = False
@@ -3777,6 +3796,74 @@ class ButtonUpdateCombMorphs(bpy.types.Operator):
         morphcreator.update_for_combined_morphs(mblab_humanoid)
         return {'FINISHED'}
 
+class FinalizeCombMorph(bpy.types.Operator):
+    """
+        Works like FinalizeMorph
+    """
+    bl_label = 'Finalize the combined morph'
+    bl_idname = 'mbcrea.button_save_final_comb_morph'
+    filename_ext = ".json"
+    bl_description = 'Finalize the combined morph,\ncreate or open the morphs file,\nreplace or append new morph'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        scn = bpy.context.scene
+        base = []
+        sculpted = []
+
+        if len(scn.mblab_morph_name) < 1:
+            self.ShowMessageBox("Please choose a name for the morph !\nNo file saved", "Warning", 'ERROR')
+            return {'FINISHED'}
+        try:
+            base = morphcreator.get_vertices_list(0)
+        except:
+            self.ShowMessageBox("Base vertices are not stored !", "Warning", 'ERROR')
+            return {'FINISHED'}
+        try:
+            sculpted = morphcreator.get_vertices_list(1)
+        except:
+            self.ShowMessageBox("Changed vertices are not stored !", "Warning", 'ERROR')
+            return {'FINISHED'}
+        indexed_vertices = morphcreator.substract_with_index(base, sculpted)
+        if len(indexed_vertices) < 1:
+            self.ShowMessageBox("Models base / sculpted are equals !\nNo file saved", "Warning", 'INFO')
+            return {'FINISHED'}
+        #-------File name----------
+        file_name = ""
+        if scn.mblab_morphing_spectrum == "GE":
+            #File name for whole gender, like human_female or anime_male.
+            file_name = morphcreator.get_model_and_gender()
+        else:
+            if len(scn.mblab_morphing_body_type) < 1:
+                file_name = morphcreator.get_body_type() + "_morphs"
+            else:
+                file_name = morphcreator.get_body_type()[0:2] + scn.mblab_morphing_body_type + "_morphs"
+            if len(scn.mblab_morphing_file_extra_name) > 0:
+                file_name = file_name + "_" + scn.mblab_morphing_file_extra_name
+        if scn.mblab_incremental_saves:
+            file_name = file_name + "_" + morphcreator.get_next_number()
+        #-------Morph name-----------
+        morph_name = morphcreator.get_combined_morph_name()
+        #-------Morphs path----------
+        #Teto
+        file_path_name = os.path.join(file_ops.get_data_path(), "morphs", file_name + ".json")
+        file = file_ops.load_json_data(file_path_name, "Try to load a morph file")
+        if file == None:
+            file = {}
+        #End Teto
+        #---Creating new morph-------
+        file[morph_name] = indexed_vertices
+        file_ops.save_json_data(file_path_name, file)
+        #----------------------------
+        return {'FINISHED'}
+
+    def ShowMessageBox(self, message = "", title = "Message Box", icon = 'INFO'):
+
+        def draw(self, context):
+            self.layout.label(text=message)
+        bpy.context.window_manager.popup_menu(draw, title = title, icon = icon)
+
 class ButtonMorphExpressionON(bpy.types.Operator):
     bl_label = 'Base Expressions Creation'
     bl_idname = 'mbcrea.button_morphexpression_on'
@@ -4209,6 +4296,7 @@ classes = (
     FinalizeExpression,
     FinalizeCombExpression,
     ButtonUpdateCombMorphs,
+    FinalizeCombMorph,
     Reset_expression_category,
     ImpExpression,
     VIEW3D_PT_tools_MBCrea,
