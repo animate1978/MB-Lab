@@ -274,3 +274,22 @@ def update_for_combined_morphs(humanoid):
     humanoid.sync_character_data_to_obj_props()
     humanoid.update_character()
     
+# ------------------------------------------------------------------------
+#    All methods/classes to help creating phenotypes
+# ------------------------------------------------------------------------
+
+def is_phenotype_exists(body_type, name):
+    if len(body_type) < 1 or len(name) < 1:
+        return False
+    try:
+        path = os.path.join(file_ops.get_data_path(), "phenotypes", body_type+"_ptypes")
+        for database_file in os.listdir(path):
+            the_item, extension = os.path.splitext(database_file)
+            if the_item == name:
+                return True
+    except:
+        return False
+    return False
+
+def save_phenotype(path, humanoid):
+    return None

@@ -314,8 +314,8 @@ class ExpressionsCreator():
                     return True
         except:
             return False
-        return False  
-   
+        return False
+        
     #--------------EnumProperty for expressions in UI
     #--------------AFTER finalization of the character
 

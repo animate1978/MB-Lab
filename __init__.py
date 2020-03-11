@@ -3200,6 +3200,56 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                 else:
                     box_combinexpression.label(text="!NO COMPATIBLE MODEL!", icon='ERROR')
                     box_combinexpression.enabled = False
+            #----------Fast creators-----------
+            if gui_active_panel_second != "fast_creators":
+                box_adaptation_tools.operator('mbcrea.button_fastcreators_on', icon=icon_expand)
+            else:
+                box_adaptation_tools.operator('mbcrea.button_fastcreators_off', icon=icon_collapse)
+                box_fast_creators = self.layout.box()
+                if is_objet == "FOUND":
+                    mblab_humanoid.bodydata_realtime_activated = True
+                    obj = mblab_humanoid.get_object()
+                    box_fast_creators.operator("mbast.reset_allproperties", icon="RECOVER_LAST")
+                    #----------
+                    if mblab_humanoid.exists_transform_database():
+                        x_age = getattr(obj, 'character_age', 0)
+                        x_mass = getattr(obj, 'character_mass', 0)
+                        x_tone = getattr(obj, 'character_tone', 0)
+                        age_lbl = round((15.5 * x_age ** 2) + 31 * x_age + 33)
+                        mass_lbl = round(50 * (x_mass + 1))
+                        tone_lbl = round(50 * (x_tone + 1))
+                        lbl_text = "Age : {0} yr.  Mass : {1}%  Tone : {2}% ".format(age_lbl, mass_lbl, tone_lbl)
+                        box_fast_creators.label(text=lbl_text)
+
+                        for meta_data_prop in sorted(mblab_humanoid.character_metaproperties.keys()):
+                            if "last" not in meta_data_prop:
+                                box_fast_creators.prop(obj, meta_data_prop)
+                    else:
+                        box_fast_creators.label(text="No transform database !", icon="ERROR")
+                    #----------
+                    box_fast_creators.prop(scn, "morphingCategory")
+                    for prop in mblab_humanoid.get_properties_in_category(scn.morphingCategory):
+                        if hasattr(obj, prop) and not prop.startswith("Expressions_"):
+                            box_fast_creators.prop(obj, prop)
+                    box_fast_creators.operator("mbast.reset_categoryonly", icon="RECOVER_LAST")
+                    box_fast_creators.separator(factor=0.5)
+                    box_fast_creators.label(text="Phenotype Creator", icon='SORT_ASC')
+                    body_type = morphcreator.get_body_type()
+                    path = os.path.join("data", "phenotypes", body_type + "_ptypes")
+                    box_fast_creators.label(text="File saved under " + path, icon='INFO')
+                    box_fast_creators.label(text="(age, mass & tone useless here)", icon='FORWARD')
+                    box_fast_creators.prop(scn, 'mbcrea_phenotype_name_filter')
+                    if len(scn.mbcrea_phenotype_name_filter) > 0:
+                        pheno_name = algorithms.split_name(scn.mbcrea_phenotype_name_filter, '-²&=¨^$£%µ,?;!§+*/').lower()
+                        box_fast_creators.label(text="Name : " + pheno_name, icon='INFO')
+                        if morphcreator.is_phenotype_exists(body_type, pheno_name):
+                            box_fast_creators.label(text="File already exists !", icon='ERROR')
+                        else :
+                            box_fast_creators.operator('mbcrea.button_save_phenotype', icon="FREEZE")
+                else:
+                    box_combinexpression.label(text="! NO COMPATIBLE MODEL !", icon='ERROR')
+                    box_combinexpression.enabled = False
+            #----------------------------------
             box_adaptation_tools.separator(factor=0.5)
                     
         #Create/edit tools...
@@ -3491,6 +3541,14 @@ def morphs_items_minmax(box, items_str, minmax_str):
     col.prop(bpy.context.scene, minmax_str)
     return mbcrea_enum_morph_items_update(bpy.context.scene, None), morphcreator.get_min_max()
 
+bpy.types.Scene.mbcrea_phenotype_name_filter = bpy.props.StringProperty(
+    name="Name",
+    description="The name for the file.",
+    default="",
+    maxlen=1024,
+    subtype='FILE_NAME')
+
+
 class FinalizeExpression(bpy.types.Operator):
     """
         Working like FinalizeMorph
@@ -3568,6 +3626,33 @@ class FinalizeCombExpression(bpy.types.Operator):
         path = os.path.join(file_ops.get_data_path(), "expressions_comb", mblab_humanoid.get_root_model_name() + "_expressions", comb_name+".json")
         #--------Saving file-------
         mbcrea_expressionscreator.save_face_expression(path)
+        return {'FINISHED'}
+
+    def ShowMessageBox(self, message = "", title = "Message Box", icon = 'INFO'):
+
+        def draw(self, context):
+            self.layout.label(text=message)
+        bpy.context.window_manager.popup_menu(draw, title = title, icon = icon)
+
+class FinalizePhenotype(bpy.types.Operator):
+    """
+        Working like Save character
+    """
+    bl_label = 'Finalize the phenotype'
+    bl_idname = 'mbcrea.button_save_phenotype'
+    filename_ext = ".json"
+    bl_description = 'Finalize the phenotype'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        scn = bpy.context.scene
+        #-------File name----------
+        pheno_name = algorithms.split_name(scn.mbcrea_phenotype_name_filter, '-²&=¨^$£%µ,?;!§+*/').lower()
+        #--expression path + name--
+        path = os.path.join(file_ops.get_data_path(), "phenotypes", morphcreator.get_body_type() + "_ptypes", pheno_name+".json")
+        #--------Saving file-------
+        morphcreator.save_phenotype(path, mblab_humanoid)
         return {'FINISHED'}
 
     def ShowMessageBox(self, message = "", title = "Message Box", icon = 'INFO'):
@@ -3907,6 +3992,32 @@ class ButtonCombineExpressionOFF(bpy.types.Operator):
     bl_label = 'Facial Expressions Creation'
     bl_idname = 'mbcrea.button_combinexpression_off'
     bl_description = 'Tool for combining base expressions'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = None
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonFastCreationsON(bpy.types.Operator):
+    bl_label = 'Fast Creation Tools'
+    bl_idname = 'mbcrea.button_fastcreators_on'
+    bl_description = 'Quick tools to create :\n- Phenotypes\n- Presets'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = "fast_creators"
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonFastCreationsOFF(bpy.types.Operator):
+    bl_label = 'Fast Creation Tools'
+    bl_idname = 'mbcrea.button_fastcreators_off'
+    bl_description = 'Quick tools to create :\n- Phenotypes\n- Presets'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -4273,6 +4384,8 @@ classes = (
     ButtonMorphExpressionOFF,
     ButtonCombineExpressionON,
     ButtonCombineExpressionOFF,
+    ButtonFastCreationsON,
+    ButtonFastCreationsOFF,
     ButtonBodyToolsON,
     ButtonBodyToolsOFF,
     ButtonBboxesToolsON,
@@ -4295,6 +4408,7 @@ classes = (
     ButtonLoadCompatProject,
     FinalizeExpression,
     FinalizeCombExpression,
+    FinalizePhenotype,
     ButtonUpdateCombMorphs,
     FinalizeCombMorph,
     Reset_expression_category,
