@@ -362,10 +362,9 @@ class ExpressionsCreator():
             for prop in self.humanoid.character_data.keys():
                 if self.humanoid.character_data[prop] != 0.5 and prop.startswith("Expressions_"):
                     char_data["structural"][prop] = round(self.humanoid.character_data[prop], 4)
-
-            output_file = open(filepath, 'w')
-            json.dump(char_data, output_file)
-            output_file.close()
+            with open(filepath, "w") as j_file:
+                json.dump(char_data, j_file, indent=2)
+            j_file.close()
     
     # data_source can be a filepath but also the data themselves.
     def load_face_expression(self, data_source, reset_unassigned=True):
