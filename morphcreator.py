@@ -29,6 +29,7 @@ import os
 import bpy
 import numpy
 from . import algorithms
+from . import file_ops
 
 
 body_parts = [("AB", "Abdomen", ""),
@@ -283,6 +284,40 @@ def is_phenotype_exists(body_type, name):
         return False
     try:
         path = os.path.join(file_ops.get_data_path(), "phenotypes", body_type+"_ptypes")
+        for database_file in os.listdir(path):
+            the_item, extension = os.path.splitext(database_file)
+            if the_item == name:
+                return True
+    except:
+        return False
+    return False
+
+def save_phenotype(path, humanoid):
+    # Save all expression morphs as a new face expression
+    # in its dedicated file.
+    # If file already exists, it's replaced.
+    logger.info("Exporting character to {0}".format(file_ops.simple_path(path)))
+    obj = humanoid.get_object()
+    char_data = {"structural": dict()}
+
+    if obj:
+        for prop in humanoid.character_data.keys():
+            if humanoid.character_data[prop] != 0.5 and not prop.startswith("Expressions_"):
+                char_data["structural"][prop] = round(humanoid.character_data[prop], 2)
+        
+        with open(path, "w") as j_file:
+            json.dump(char_data, j_file, indent=2)
+        j_file.close()
+
+# ------------------------------------------------------------------------
+#    All methods/classes to help creating presets
+# ------------------------------------------------------------------------
+
+def is_preset_exists(preset_folder, name):
+    if len(preset_folder) < 1 or len(name) < 1:
+        return False
+    try:
+        path = os.path.join(file_ops.get_data_path(), "presets", preset_folder)
         for database_file in os.listdir(path):
             the_item, extension = os.path.splitext(database_file)
             if the_item == name:

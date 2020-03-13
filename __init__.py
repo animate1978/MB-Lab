@@ -3233,6 +3233,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                         if hasattr(obj, prop) and not prop.startswith("Expressions_"):
                             box_fast_creators.prop(obj, prop)
                     box_fast_creators.operator("mbast.reset_categoryonly", icon="RECOVER_LAST")
+                    #----------
                     box_fast_creators.separator(factor=0.5)
                     box_fast_creators.label(text="Phenotype Creator", icon='SORT_ASC')
                     body_type = morphcreator.get_body_type()
@@ -3245,11 +3246,31 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                         box_fast_creators.label(text="Name : " + pheno_name, icon='INFO')
                         if morphcreator.is_phenotype_exists(body_type, pheno_name):
                             box_fast_creators.label(text="File already exists !", icon='ERROR')
-                        else :
-                            box_fast_creators.operator('mbcrea.button_save_phenotype', icon="FREEZE")
+                        box_fast_creators.operator('mbcrea.button_save_phenotype', icon="FREEZE")
+                    #----------
+                    box_fast_creators.separator(factor=0.5)
+                    box_fast_creators.label(text="Preset Creator", icon='SORT_ASC')
+                    preset_folder = mblab_humanoid.presets_data_folder
+                    path = os.path.join("data", "presets", preset_folder)
+                    box_fast_creators.label(text="File saved under " + path, icon='INFO')
+                    box_fast_creators.label(text="(age, mass & tone are used here)", icon='FORWARD')
+                    box_fast_creators.prop(scn, 'mbcrea_preset_name_filter')
+                    if len(scn.mbcrea_preset_name_filter) > 0:
+                        box_fast_creators.prop(scn, 'mbcrea_special_preset') # Common or Special ?
+                        preset_name = ""
+                        if scn.mbcrea_special_preset:
+                            preset_name = "special"
+                        tmp = algorithms.split_name(scn.mbcrea_preset_name_filter, '-²&=¨^$£%µ,?;!§+*/').lower()
+                        if not tmp.startswith("type_"):
+                            preset_name += "type_"
+                        preset_name += tmp
+                        box_fast_creators.label(text="Name : " + preset_name, icon='INFO')
+                        if morphcreator.is_preset_exists(preset_folder, preset_name):
+                            box_fast_creators.label(text="File already exists !", icon='ERROR')
+                        box_fast_creators.operator('mbcrea.button_save_preset', icon="FREEZE")
                 else:
-                    box_combinexpression.label(text="! NO COMPATIBLE MODEL !", icon='ERROR')
-                    box_combinexpression.enabled = False
+                    box_fast_creators.label(text="! NO COMPATIBLE MODEL !", icon='ERROR')
+                    box_fast_creators.enabled = False
             #----------------------------------
             box_adaptation_tools.separator(factor=0.5)
                     
@@ -3549,7 +3570,17 @@ bpy.types.Scene.mbcrea_phenotype_name_filter = bpy.props.StringProperty(
     maxlen=1024,
     subtype='FILE_NAME')
 
+bpy.types.Scene.mbcrea_preset_name_filter = bpy.props.StringProperty(
+    name="Name",
+    description="The name for the file.\nStarting with type_ is automatic",
+    default="",
+    maxlen=1024,
+    subtype='FILE_NAME')
 
+bpy.types.Scene.mbcrea_special_preset = bpy.props.BoolProperty(
+    name="Special",
+    description="If the preset is special or common")
+    
 class FinalizeExpression(bpy.types.Operator):
     """
         Working like FinalizeMorph
@@ -3650,17 +3681,35 @@ class FinalizePhenotype(bpy.types.Operator):
         scn = bpy.context.scene
         #-------File name----------
         pheno_name = algorithms.split_name(scn.mbcrea_phenotype_name_filter, '-²&=¨^$£%µ,?;!§+*/').lower()
-        #--expression path + name--
+        #---phenotype path + name--
         path = os.path.join(file_ops.get_data_path(), "phenotypes", morphcreator.get_body_type() + "_ptypes", pheno_name+".json")
         #--------Saving file-------
         morphcreator.save_phenotype(path, mblab_humanoid)
         return {'FINISHED'}
 
-    def ShowMessageBox(self, message = "", title = "Message Box", icon = 'INFO'):
+class FinalizePreset(bpy.types.Operator):
+    """
+        Working like Save character
+    """
+    bl_label = 'Finalize the preset'
+    bl_idname = 'mbcrea.button_save_preset'
+    filename_ext = ".json"
+    bl_description = 'Finalize the preset'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
 
-        def draw(self, context):
-            self.layout.label(text=message)
-        bpy.context.window_manager.popup_menu(draw, title = title, icon = icon)
+    def execute(self, context):
+        scn = bpy.context.scene
+        #-------File name----------
+        preset_name = algorithms.split_name(scn.mbcrea_preset_name_filter, '-²&=¨^$£%µ,?;!§+*/').lower()
+        if not preset_name.startswith("type_"):
+            preset_name = "type_" + preset_name
+        #----preset path + name----
+        path = os.path.join(file_ops.get_data_path(), "presets", mblab_humanoid.presets_data_folder, preset_name+".json")
+        #--------Saving file-------
+        morphcreator.save_preset(path, mblab_humanoid)
+        return {'FINISHED'}
+
 
 class ButtonCompatToolsDir(bpy.types.Operator):
     #just for quick tests
@@ -4003,9 +4052,9 @@ class ButtonCombineExpressionOFF(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonFastCreationsON(bpy.types.Operator):
-    bl_label = 'Fast Creation Tools'
+    bl_label = 'Character Library Creation'
     bl_idname = 'mbcrea.button_fastcreators_on'
-    bl_description = 'Quick tools to create :\n- Phenotypes\n- Presets'
+    bl_description = 'Quick tools to create :\n- Phenotypes\n- Presets\nfor Character Library'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -4016,9 +4065,9 @@ class ButtonFastCreationsON(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonFastCreationsOFF(bpy.types.Operator):
-    bl_label = 'Fast Creation Tools'
+    bl_label = 'Character Library Creation'
     bl_idname = 'mbcrea.button_fastcreators_off'
-    bl_description = 'Quick tools to create :\n- Phenotypes\n- Presets'
+    bl_description = 'Quick tools to create :\n- Phenotypes\n- Presets\nfor Character Library'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -4410,6 +4459,7 @@ classes = (
     FinalizeExpression,
     FinalizeCombExpression,
     FinalizePhenotype,
+    FinalizePreset,
     ButtonUpdateCombMorphs,
     FinalizeCombMorph,
     Reset_expression_category,
