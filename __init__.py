@@ -3255,6 +3255,18 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     box_fast_creators.label(text="(age, mass & tone are used here)", icon='FORWARD')
                     box_fast_creators.prop(scn, 'mbcrea_preset_name_filter')
                     if len(scn.mbcrea_preset_name_filter) > 0:
+                        box_fast_creators.prop(scn, 'mbcrea_integrate_material')
+                        if scn.mbcrea_integrate_material:
+                            box_skin = box_fast_creators.box()
+                            box_skin.enabled = True
+                            if scn.render.engine != 'CYCLES' and scn.render.engine != 'BLENDER_EEVEE':
+                                box_skin.enabled = False
+                                box_skin.label(text="Skin editor requires Cycles or EEVEE", icon='INFO')
+                            if mblab_humanoid.exists_displace_texture():
+                                box_skin.operator("mbast.skindisplace_calculate", icon='MOD_DISPLACE')
+                                box_skin.label(text="Enable Displacement Preview to view updates", icon='INFO')
+                            for material_data_prop in sorted(mblab_humanoid.character_material_properties.keys()):
+                                box_skin.prop(obj, material_data_prop)
                         box_fast_creators.prop(scn, 'mbcrea_special_preset') # Common or Special ?
                         preset_name = ""
                         if scn.mbcrea_special_preset:
@@ -3576,6 +3588,10 @@ bpy.types.Scene.mbcrea_preset_name_filter = bpy.props.StringProperty(
     maxlen=1024,
     subtype='FILE_NAME')
 
+bpy.types.Scene.mbcrea_integrate_material = bpy.props.BoolProperty(
+    name="Integrate material",
+    description="You can integrate the material or not.")
+    
 bpy.types.Scene.mbcrea_special_preset = bpy.props.BoolProperty(
     name="Special",
     description="If the preset is special or common")
@@ -3706,7 +3722,7 @@ class FinalizePreset(bpy.types.Operator):
         #----preset path + name----
         path = os.path.join(file_ops.get_data_path(), "presets", mblab_humanoid.presets_data_folder, preset_name+".json")
         #--------Saving file-------
-        morphcreator.save_preset(path, mblab_humanoid)
+        morphcreator.save_preset(path, mblab_humanoid, scn.mbcrea_integrate_material)
         return {'FINISHED'}
 
 
