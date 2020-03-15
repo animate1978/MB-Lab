@@ -53,6 +53,7 @@ from . import node_ops
 from . import numpy_ops
 from . import object_ops
 from . import proxyengine
+from . import transfor
 from . import utils
 from . import preferences
 
@@ -79,6 +80,7 @@ mblab_retarget = animationengine.RetargetEngine()
 mblab_shapekeys = expressionengine.ExpressionEngineShapeK()
 mblab_proxy = proxyengine.ProxyEngine()
 mbcrea_expressionscreator = expressionscreator.ExpressionsCreator()
+mbcrea_transfor = transfor.Transfor(mblab_humanoid)
 
 gui_status = "NEW_SESSION"
 gui_err_msg = ""
@@ -2416,6 +2418,7 @@ class StartSession(bpy.types.Operator):
         #Teto
         morphcreator.init_morph_names_database()
         mbcrea_expressionscreator.reset_expressions_items()
+        mbcrea_transfor.reset_properties()
         #End Teto
         return {'FINISHED'}
 
@@ -3282,6 +3285,54 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                 else:
                     box_fast_creators.label(text="! NO COMPATIBLE MODEL !", icon='ERROR')
                     box_fast_creators.enabled = False
+            #------Age/Fat/Muscle Creator------
+            if gui_active_panel_second != "agemasstone_creator":
+                box_adaptation_tools.operator('mbcrea.button_agemasstonecreator_on', icon=icon_expand)
+            else:
+                box_adaptation_tools.operator('mbcrea.button_agemasstonecreator_off', icon=icon_collapse)
+                box_agemasstone = self.layout.box()
+                if is_objet == "FOUND":
+                    mblab_humanoid.bodydata_realtime_activated = True
+                    obj = mblab_humanoid.get_object()
+                    box_agemasstone.operator("mbast.reset_allproperties", icon="RECOVER_LAST")
+                    #----------
+                    if mblab_humanoid.exists_transform_database():
+                        box_agemasstone.label(text="Preselection", icon='SORT_ASC')
+                        x_age = getattr(obj, 'character_age', 0)
+                        x_mass = getattr(obj, 'character_mass', 0)
+                        x_tone = getattr(obj, 'character_tone', 0)
+                        age_lbl = round((15.5 * x_age ** 2) + 31 * x_age + 33)
+                        mass_lbl = round(50 * (x_mass + 1))
+                        tone_lbl = round(50 * (x_tone + 1))
+                        lbl_text = "Age : {0} yr.  Mass : {1}%  Tone : {2}% ".format(age_lbl, mass_lbl, tone_lbl)
+                        box_agemasstone.label(text=lbl_text)
+
+                        for meta_data_prop in sorted(mblab_humanoid.character_metaproperties.keys()):
+                            if "last" not in meta_data_prop:
+                                box_agemasstone.prop(obj, meta_data_prop)
+                    else:
+                        box_agemasstone.label(text="No transform database !", icon="ERROR")
+                    #---------- Now the tool itself
+                    box_agemasstone.label(text="Selection", icon='SORT_ASC')
+                    mbcrea_transfor.get_box(box_agemasstone)
+                    #---------- The name and save
+                    box_agemasstone.label(text="Tool wording - File", icon='SORT_ASC')
+                    box_agemasstone.label(text="File saved under " + os.path.join("data", "transformations"), icon='INFO')
+                    box_agemasstone.prop(scn, 'mbcrea_agemasstone_name')
+                    box_agemasstone.prop(scn, 'mblab_incremental_saves')
+                    if len(scn.mbcrea_agemasstone_name) > 0:
+                        tmp = morphcreator.get_model_and_gender().split("_")
+                        agemasstone_name = tmp[0] + "_" + tmp[1] + "_" + algorithms.split_name(scn.mbcrea_agemasstone_name.lower())
+                        if scn.mblab_incremental_saves:
+                            agemasstone_name += "_123"
+                        agemasstone_name += "_transf"
+                        box_agemasstone.label(text="File name : " + agemasstone_name, icon="INFO")
+                    else:
+                        box_agemasstone.label(text="Name needed ! ", icon="ERROR")
+                    #---------- Tools
+                    box_agemasstone.label(text="Tools", icon='SORT_ASC')
+                    box_agemasstone.operator('mbcrea.button_load_transf', icon='IMPORT')
+                    
             #----------------------------------
             box_adaptation_tools.separator(factor=0.5)
                     
@@ -3595,7 +3646,14 @@ bpy.types.Scene.mbcrea_integrate_material = bpy.props.BoolProperty(
 bpy.types.Scene.mbcrea_special_preset = bpy.props.BoolProperty(
     name="Special",
     description="If the preset is special or common")
-    
+
+bpy.types.Scene.mbcrea_agemasstone_name = bpy.props.StringProperty(
+    name="Name",
+    description="The name for the file.\nBeginning and ending are automatic",
+    default="",
+    maxlen=1024,
+    subtype='FILE_NAME')
+
 class FinalizeExpression(bpy.types.Operator):
     """
         Working like FinalizeMorph
@@ -3725,6 +3783,36 @@ class FinalizePreset(bpy.types.Operator):
         morphcreator.save_preset(path, mblab_humanoid, scn.mbcrea_integrate_material)
         return {'FINISHED'}
 
+class LoadTransformationFile(bpy.types.Operator, ImportHelper):
+    """
+        Load the file as a transformation.
+    """
+    bl_label = 'Load file as a model'
+    bl_idname = 'mbcrea.button_load_transf'
+    filename_ext = ".json"
+    filter_glob: bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
+    bl_description = 'Load a transformation file as a base model.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        mode = bpy.context.active_object.mode
+        bpy.ops.object.mode_set(mode='OBJECT')
+        file = file_ops.load_json_data(self.filepath, "Base model vertices")
+        if not self.filepath.endswith("_transf.json"):
+            self.ShowMessageBox(message = "It's not a valid file !")
+            return {'FINISHED'}
+        #--------------------
+        mbcrea_transfor.load_transformation(file)
+        return {'FINISHED'}
+    
+    def ShowMessageBox(self, message = "", title = "Error !", icon = 'ERROR'):
+
+        def draw(self, context):
+            self.layout.label(text=message)
+        bpy.context.window_manager.popup_menu(draw, title = title, icon = icon)
+    
+    
 
 class ButtonCompatToolsDir(bpy.types.Operator):
     #just for quick tests
@@ -4083,6 +4171,32 @@ class ButtonFastCreationsOFF(bpy.types.Operator):
     bl_label = 'Character Library Creation'
     bl_idname = 'mbcrea.button_fastcreators_off'
     bl_description = 'Quick tools to create :\n- Phenotypes\n- Presets\nfor Character Library'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = None
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonAgeMassToneON(bpy.types.Operator):
+    bl_label = 'Age/Mass/Tone Creation'
+    bl_idname = 'mbcrea.button_agemasstonecreator_on'
+    bl_description = 'Quick tool to create interpolation between\nage, mass (or fat), tone (or muscle)\nand the character.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = "agemasstone_creator"
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonAgeMassToneOFF(bpy.types.Operator):
+    bl_label = 'Age/Mass/Tone Creation'
+    bl_idname = 'mbcrea.button_agemasstonecreator_off'
+    bl_description = 'Quick tool to create interpolation between\nage, mass (or fat), tone (or muscle)\nand the character.'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -4451,6 +4565,8 @@ classes = (
     ButtonCombineExpressionOFF,
     ButtonFastCreationsON,
     ButtonFastCreationsOFF,
+    ButtonAgeMassToneON,
+    ButtonAgeMassToneOFF,
     ButtonBodyToolsON,
     ButtonBodyToolsOFF,
     ButtonBboxesToolsON,
@@ -4477,6 +4593,7 @@ classes = (
     FinalizePreset,
     ButtonUpdateCombMorphs,
     FinalizeCombMorph,
+    LoadTransformationFile,
     Reset_expression_category,
     ImpExpression,
     VIEW3D_PT_tools_MBCrea,
