@@ -1126,7 +1126,7 @@ class Humanoid:
                 char_data["proportion_index"] = self.morph_engine.proportion_index
 
             output_file = open(filepath, 'w')
-            json.dump(char_data, output_file)
+            json.dump(char_data, output_file, indent=2)
             output_file.close()
 
     def export_measures(self, filepath):
