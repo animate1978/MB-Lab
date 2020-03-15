@@ -1287,7 +1287,7 @@ class RetargetEngine:
             armat = get_active_armature()
         if armat:
             self.clear_animation(armat)
-            self.stop_animation()
+            algorithms.stop_animation()
             for p_bone in armat.pose.bones:
                 algorithms.reset_bone_rot(p_bone)
                 if reset_location:
@@ -1343,7 +1343,7 @@ class RetargetEngine:
                 self.load_bones_quaternions(source_armature, filepath)
                 self.retarget(target_armature, source_armature, bake_animation=True)
                 object_ops.remove_object(source_armature)
-                self.stop_animation
+                algorithms.stop_animation()
         else:
             self.load_bones_quaternions(target_armature, filepath)
         self.clear_animation(target_armature)
@@ -1365,7 +1365,7 @@ class RetargetEngine:
                     object_ops.remove_object(source_armature)
                 else:
                     self.retarget(target_armature, source_armature, False)
-                self.play_animation
+                algorithms.play_animation()
         logger.info("Animation loaded in %s sec.", time.time()-time1)
 
     @staticmethod
@@ -1400,16 +1400,4 @@ class RetargetEngine:
                 algorithms.set_scene_modifiers_status_by_type('ARMATURE', True)
                 self.bake_animation(target_armature, source_armature)
                 algorithms.set_scene_modifiers_status(False, scene_modifiers_status)
-
-# - Play and Stop Animation
-# - Moved from algorithms.py
-
-    def play_animation():
-        if not bpy.context.screen.is_animation_playing:
-            bpy.ops.screen.animation_play()
-
-
-    def stop_animation():
-        if bpy.context.screen.is_animation_playing:
-            bpy.ops.screen.animation_play()
 

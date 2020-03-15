@@ -1032,6 +1032,18 @@ def set_modifier_viewport(modfr, value):
         modfr.show_viewport = value
 
 #
+# - Play and Stop Animation
+
+
+def play_animation():
+    if not bpy.context.screen.is_animation_playing:
+        bpy.ops.screen.animation_play()
+
+
+def stop_animation():
+    if bpy.context.screen.is_animation_playing:
+        bpy.ops.screen.animation_play()
+
 
 
 #
