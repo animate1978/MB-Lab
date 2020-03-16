@@ -343,8 +343,9 @@ def save_preset(filepath, humanoid, integrate_material=False):
         if integrate_material:
             mat_param = humanoid.mat_engine.get_material_parameters()
             for mat_prop in mat_param.keys():
-                char_data["materialproperties"][mat_prop] = round(mat_param[mat_prop], 2)
+                char_data["materialproperties"][mat_prop] = round(mat_param[mat_prop], 4)
         # File
         with open(filepath, "w") as j_file:
             json.dump(char_data, j_file, indent=2)
         j_file.close()
+        
