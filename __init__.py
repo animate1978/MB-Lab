@@ -2908,12 +2908,13 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
 # MB-Lab Secondary GUI
 
 class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
-    bl_label = "MB-Crea {0}.{1}.{2}".format(bl_info["version"][0], bl_info["version"][1], bl_info["version"][2])
+    bl_label = "MB-Dev {0}.{1}.{2}".format(bl_info["version"][0], bl_info["version"][1], bl_info["version"][2])
     bl_idname = "OBJECT_PT_characters02"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_context = 'objectmode'
-    bl_category = "MB-Crea"
+    bl_category = "MB-Lab"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
