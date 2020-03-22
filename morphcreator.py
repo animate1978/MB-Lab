@@ -120,7 +120,13 @@ def init_morph_names_database():
 def get_model_and_gender():
     if len(morphs_names[0]) == 0:
         obj = bpy.context.view_layer.objects.active
-        temp = algorithms.get_template_model(obj).split("_")
+        # Dirty, but SOMETIMES for an unknown reason,
+        # algorithms.get_template_model(obj) returns None.
+        # Tried to reproduce the bug, without success.
+        try:
+            temp = algorithms.get_template_model(obj).split("_")
+        except:
+            return "Bug"
         morphs_names[0] = temp[1] + "_" + temp[2] + "_morphs"
     return morphs_names[0]
 
