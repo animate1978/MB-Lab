@@ -61,11 +61,12 @@ from . import preferences
 logger = logging.getLogger(__name__)
 
 # MB-Lab Blender Info
+# 3/22 added new version number to MB-Lab, internal dev purposes
 
 bl_info = {
     "name": "MB-Lab",
     "author": "Manuel Bastioni, MB-Lab Community",
-    "version": (1, 7, 8),
+    "version": (1, 7, 8, 42),
     "blender": (2, 81, 16),
     "location": "View3D > Tools > MB-Lab",
     "description": "A complete lab for character creation",
@@ -85,6 +86,10 @@ mbcrea_transfor = transfor.Transfor(mblab_humanoid)
 gui_status = "NEW_SESSION"
 gui_err_msg = ""
 gui_active_panel = None
+# added for future dev once it's done
+gui_active_panel_middle = None
+gui_active_panel_display = None
+
 gui_active_panel_fin = None
 #Teto
 gui_active_panel_first = None
@@ -152,9 +157,6 @@ def start_lab_session():
                     scn.render.engine = 'BLENDER_EEVEE'
                 if scn.mblab_use_lamps:
 
-                    #file_ops.import_object_from_lib(lib_filepath, "Light_Key")
-                    #file_ops.import_object_from_lib(lib_filepath, "Light_Fill")
-                    #file_ops.import_object_from_lib(lib_filepath, "Light_Backlight")
                     object_ops.add_lighting()
 
             else:
@@ -354,6 +356,7 @@ def init_morphing_props(humanoid_instance):
                 soft_max=1.0,
                 precision=3,
                 default=0.5,
+                subtype='FACTOR',
                 update=realtime_update))
 
 def init_measures_props(humanoid_instance):
@@ -437,6 +440,7 @@ def init_expression_props():
                     max=1.0,
                     precision=3,
                     default=0.0,
+                    subtype='FACTOR',
                     update=human_expression_update))
 
 
@@ -479,6 +483,7 @@ def init_metaparameters_props(humanoid_instance):
                     name=meta_data_prop, min=-1.0, max=1.0,
                     precision=3,
                     default=0.0,
+                    subtype='FACTOR',
                     update=upd_function))
 
 
@@ -492,6 +497,7 @@ def init_material_parameters_props(humanoid_instance):
                 min=0.0,
                 max=1.0,
                 precision=2,
+                subtype='FACTOR',
                 update=material_update,
                 default=value))
 
@@ -2445,7 +2451,7 @@ class LoadTemplate(bpy.types.Operator):
 # MB-Lab Main GUI
 
 class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
-    bl_label = "MB-Lab {0}.{1}.{2}".format(bl_info["version"][0], bl_info["version"][1], bl_info["version"][2])
+    bl_label = "MB-Lab {0}.{1}.{2}".format(bl_info["version"][0], bl_info["version"][1], bl_info["version"][2], bl_info["version"][3])
     bl_idname = "OBJECT_PT_characters01"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -2908,7 +2914,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
 # MB-Lab Secondary GUI
 
 class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
-    bl_label = "MB-Dev {0}.{1}.{2}".format(bl_info["version"][0], bl_info["version"][1], bl_info["version"][2])
+    bl_label = "MB-Dev {0}.{1}.{2}".format(bl_info["version"][0], bl_info["version"][1], bl_info["version"][2], bl_info["version"][3])
     bl_idname = "OBJECT_PT_characters02"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
