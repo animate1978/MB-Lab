@@ -366,6 +366,7 @@ def init_measures_props(humanoid_instance):
             measure_name,
             bpy.props.FloatProperty(
                 name=measure_name, min=0.0, max=500.0,
+                subtype='FACTOR',
                 default=measure_val))
     humanoid_instance.sync_gui_according_measures()
 
@@ -599,6 +600,7 @@ bpy.types.Scene.mblab_rot_offset_0 = bpy.props.FloatProperty(
     max=1,
     precision=2,
     update=angle_update_0,
+    subtype='FACTOR',
     default=0.0)
 
 bpy.types.Scene.mblab_rot_offset_1 = bpy.props.FloatProperty(
@@ -607,6 +609,7 @@ bpy.types.Scene.mblab_rot_offset_1 = bpy.props.FloatProperty(
     max=1,
     precision=2,
     update=angle_update_1,
+    subtype='FACTOR',
     default=0.0)
 
 bpy.types.Scene.mblab_rot_offset_2 = bpy.props.FloatProperty(
@@ -615,12 +618,14 @@ bpy.types.Scene.mblab_rot_offset_2 = bpy.props.FloatProperty(
     max=1,
     precision=2,
     update=angle_update_2,
+    subtype='FACTOR',
     default=0.0)
 
 bpy.types.Scene.mblab_proxy_offset = bpy.props.FloatProperty(
     name="Offset",
     min=0,
     max=100,
+    subtype='FACTOR',
     default=0)
 
 bpy.types.Scene.mblab_proxy_threshold = bpy.props.FloatProperty(
@@ -628,6 +633,7 @@ bpy.types.Scene.mblab_proxy_threshold = bpy.props.FloatProperty(
     min=0,
     max=1000,
     default=20,
+    subtype='FACTOR',
     description="Maximum distance threshold for proxy vertices to closely follow the body surface")
 
 bpy.types.Scene.mblab_proxy_use_advanced = bpy.props.BoolProperty(
@@ -799,7 +805,16 @@ bpy.types.Scene.mblab_body_mass = bpy.props.FloatProperty(
     min=0.0,
     max=1.0,
     default=0.5,
+    subtype='FACTOR',
     description="Preserve the current character body mass")
+
+bpy.types.Scene.mblab_body_tone = bpy.props.FloatProperty(
+    name="Body tone",
+    min=0.0,
+    max=1.0,
+    default=0.5,
+    subtype='FACTOR',
+    description="Preserve the current character body tone")
 
 bpy.types.Scene.mblab_morphing_spectrum = bpy.props.EnumProperty(
     items=morphcreator.get_spectrum(),
@@ -840,14 +855,6 @@ bpy.types.Scene.mblab_body_part_name = bpy.props.EnumProperty(
     items=morphcreator.get_body_parts(),
     name="Body part",
     default="BO")
-
-
-bpy.types.Scene.mblab_body_tone = bpy.props.FloatProperty(
-    name="Body tone",
-    min=0.0,
-    max=1.0,
-    default=0.5,
-    description="Preserve the current character body mass")
 
 bpy.types.Scene.mblab_random_engine = bpy.props.EnumProperty(
     items=[("LI", "Light", "Little variations from the standard"),
@@ -2464,7 +2471,8 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
 
     def draw(self, context):
 
-        global mblab_humanoid, gui_status, gui_err_msg, gui_active_panel
+        global mblab_humanoid, gui_status, gui_err_msg #gui_active_panel
+        global gui_active_panel, gui_active_panel_middle, gui_active_panel_display
         scn = bpy.context.scene
         icon_expand = "DISCLOSURE_TRI_RIGHT"
         icon_collapse = "DISCLOSURE_TRI_DOWN"
