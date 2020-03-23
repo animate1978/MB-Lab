@@ -34,12 +34,18 @@ import json
 import operator
 
 from . import algorithms
+from . import file_ops
 
 logger = logging.getLogger(__name__)
 
 transfor_categories = {}
 
+inhibition = False
+
 def realtime_transfor_update(self, context):
+    # Useful during initialization.
+    if inhibition:
+        return
     # Check all changed values.
     global transfor_categories
     changed_values = None
@@ -133,7 +139,7 @@ class TransforMorph():
         return False
         
     def __eq__(self, other):
-        return other.category == self.category and other.morph_name in self.morph_name
+        return other.morph_name in self.morph_name or self.morph_name in other.morph_name
 
     def __repr__(self):
         return "Transfor item \"{0}\" (full name : {1})".format(
@@ -173,13 +179,10 @@ class TransforCategory:
     
     def get_changed_values(self):
         changed_values = []
-        for ldb in self.local_data_base.values():
-            if ldb[0].is_changed() or ldb[1].is_changed():
-                print(ldb[0])
-                #changed_values.append
-                # To do here : What values we put in changed_values
-                # in order to do the changes in the character quickly ?
-        return []
+        for ldb_name, ldb_value in self.local_data_base.items():
+            if ldb_value[0].is_changed() or ldb_value[1].is_changed():
+                changed_values.append([ldb_name, ldb_value[0], ldb_value[1]])
+        return changed_values
      
     def validate_changed_values(self):
         for ldb in self.local_data_base.values():
@@ -206,9 +209,9 @@ class Transfor:
         self.panel_initialized = False
         self.scn = None
         self.data_base = []
-        transfor_categories["Age"] = TransforCategory("Age", self.humanoid)
-        transfor_categories["Mass"] = TransforCategory("Mass", self.humanoid)
-        transfor_categories["Tone"] = TransforCategory("Tone", self.humanoid)
+        transfor_categories["age"] = TransforCategory("age", self.humanoid)
+        transfor_categories["mass"] = TransforCategory("mass", self.humanoid)
+        transfor_categories["tone"] = TransforCategory("tone", self.humanoid)
         
     def init_transfor_props(self):
         global transfor_categories
@@ -221,6 +224,7 @@ class Transfor:
         for cat in transfor_categories.values():
             cat.set_local_data_base(self.data_base)
         print("... Done.")
+        self.load_transformation_from_model()
         self.panel_initialized = True
     
     def is_initialized(self):
@@ -246,9 +250,6 @@ class Transfor:
             adb.append(self.get_data_base(cat))
         return adb
         
-    def load_transformation(self, filepath):
-        return None
-    
     def set_scene(self, scene):
         self.scn = scene
     
@@ -265,7 +266,7 @@ class Transfor:
     
     def create_agemasstone_box(self, parent_box, title):
         parent_box.label(text=title, icon='SORT_ASC')
-        txt = "transfor_" + title.lower()
+        txt = "transfor_" + title
         parent_box.prop(self.scn, txt)
         t_cat = getattr(self.scn, txt)
         t_morphs = self.get_data_base(title)
@@ -275,7 +276,45 @@ class Transfor:
                 r.label(text=t_morph[1].morph_name)
                 r.prop(self.scn, t_morph[1].full_name)
                 r.prop(self.scn, t_morph[2].full_name)
-
+    
+    def load_transformation_from_model(self):
+        global inhibition
+        inhibition = True
+        # tricks... if new categories are added for a reason,
+        # they will have keep the same name (aka "name_data") to avoid this...
+        keys_before = self.humanoid.transformations_data.keys()
+        keys_after = []
+        for i in keys_before:
+            if i == "fat_data":
+                keys_after.append("mass")
+            elif i == "muscle_data":
+                keys_after.append("tone")
+            else:
+                keys_after.append(i.split("_")[0])
+        # comeback to normal.
+        index = 0
+        debug = 0
+        local_db = None
+        for key in keys_before:
+            for item in self.humanoid.transformations_data[key]:
+                local_db = self.get_data_base(keys_after[index])
+                for i in local_db:
+                    if item[0] in i[0]:
+                        setattr(bpy.context.scene, i[0]+"_min", item[1])
+                        setattr(bpy.context.scene, i[0]+"_max", item[2])
+                        debug += 1
+            print("Debug : for " + keys_after[index] + ", " + str(debug) + " properties were found.")
+            print("   Please check the file. It must have the same number of lines")
+            index += 1
+            debug = 0
+        inhibition = False
+    
+    def load_transformation_from_file(self, filepath):
+        self.humanoid.reset_character()
+        self.humanoid.transformations_data = file_ops.load_json_data(filepath, "Transformation file")
+        self.load_transformation_from_model()
+        return
+        
     def save_transformation(self, filepath):
         # transf_data = humanoid.transformations_data.keys()
         # dict_keys(['age_data', 'fat_data', 'muscle_data'])

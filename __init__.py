@@ -3828,12 +3828,11 @@ class LoadTransformationFile(bpy.types.Operator, ImportHelper):
     def execute(self, context):
         mode = bpy.context.active_object.mode
         bpy.ops.object.mode_set(mode='OBJECT')
-        file = file_ops.load_json_data(self.filepath, "Base model vertices")
         if not self.filepath.endswith("_transf.json"):
             self.ShowMessageBox(message = "It's not a valid file !")
             return {'FINISHED'}
         #--------------------
-        mbcrea_transfor.load_transformation(file)
+        mbcrea_transfor.load_transformation_from_file(self.filepath)
         return {'FINISHED'}
     
     def ShowMessageBox(self, message = "", title = "Error !", icon = 'ERROR'):
