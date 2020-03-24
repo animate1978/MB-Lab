@@ -48,29 +48,20 @@ def realtime_transfor_update(self, context):
         return
     # Check all changed values.
     global transfor_categories
-    changed_values = None
     for tc in transfor_categories.values():
-        changed_values = tc.get_changed_values()
-        for changed_value in changed_values:
-            whatever = None
-        # Reinit for the next change
-        tc.validate_changed_values()
-    
-    
+        tc.check_changed_values()
 
 class TransforMorph():
     
-    def transfor_realtime_update(self, context):
-        print(self.full_name)
-    
     def __init__(self, cat, name, minmax = "min"):
-        self.category = cat
+        self.category = cat # Means age, mass, tone
         self.morph_name = name
         self.min_max = minmax
         self.full_name = cat + "_" + name + "_" + minmax
-        self.properties = []
-        self.float_prop = None
-        self.actual_value = 0
+        self.properties = [] # Useless, maybe
+        self.float_prop = None # The cursor on GUI
+        self.current_value = 0 # The actual value shown in the cursor
+        self.saved_value = 0 # A state where the user can recover.
         
     def add(self, prop):
         self.properties.append(prop)
@@ -100,8 +91,8 @@ class TransforMorph():
             return bpy.data.objects[self.full_name]
         return None
     
-    def set_value(self, value):
-        setattr(bpy.context.scene, self.full_name, value)
+    """def set_value(self, value):
+        setattr(bpy.context.scene, self.full_name, value)"""
     
     def create_transfor_prop(self):
         self.float_prop = bpy.props.FloatProperty(
@@ -121,16 +112,17 @@ class TransforMorph():
             )
             
     def is_changed(self):
-        if getattr(bpy.context.scene, self.full_name) != self.actual_value:
-            print(getattr(bpy.context.scene, self.full_name))
+        if getattr(bpy.context.scene, self.full_name) != self.current_value:
             return True
         return False
     
-    def get_value(self):
-        return getattr(bpy.context.scene, self.full_name)
-        
-    def validate_change(self):
-        self.actual_value = getattr(bpy.context.scene, self.full_name)
+    def validate_recover_value(self):
+        self.saved_value = self.current_value
+    
+    def recover_value(self):
+        self.current_value = self.saved_value
+        setattr(bpy.context.scene, self.full_name, self.saved_value)
+        # Careful : think to put the value in humanoid data base !
         
     def __contains__(self, prop):
         for propx in self.properties:
@@ -139,7 +131,10 @@ class TransforMorph():
         return False
         
     def __eq__(self, other):
-        return other.morph_name in self.morph_name or self.morph_name in other.morph_name
+        try:
+            return self.current_value == other.current_value
+        except:
+            return self.current_value == other
 
     def __repr__(self):
         return "Transfor item \"{0}\" (full name : {1})".format(
@@ -177,26 +172,62 @@ class TransforCategory:
     def get_local_data_base(self):
         return self.local_data_base
     
-    def get_changed_values(self):
+    # check all objects in the category and if there's a difference
+    # between the dedicated property and the value in the object,
+    # the new value is saved.
+    def check_changed_values(self):
+        for ldb_value in self.local_data_base.values():
+            val_min = getattr(bpy.context.scene, ldb_value[0].full_name)
+            val_max = getattr(bpy.context.scene, ldb_value[1].full_name)
+            if ldb_value[0].current_value != val_min or ldb_value[1].current_value != val_max:
+                ldb_value[0].current_value = val_min
+                ldb_value[1].current_value = val_max
+                self.seek_and_change_humanoid_value(ldb_value[0], ldb_value[1])
+    
+    def seek_and_change_humanoid_value(self, transfor_min, transfor_max):
+        # tricks... btw, if new categories are added for a reason,
+        # they will have to keep the same name (aka "name_data")
+        # to avoid this...
+        key_after = ""
+        if self.transfor_category == "mass":
+            key_after = "fat_data"
+        elif self.transfor_category == "tone":
+            key_after = "muscle_data"
+        else:
+            key_after = self.transfor_category + "_data"
+        # comeback to normal.
+        h_database = self.humanoid.transformations_data[key_after]
+        ok = False
+        for h_data in h_database:
+            if h_data[0] in transfor_min.morph_name:
+                #print("Existing : " + h_data[0])
+                h_data[1] = transfor_min.current_value
+                h_data[2] = transfor_max.current_value
+                ok = True
+        if not ok:
+            #print("Creating : " + h_data[0])
+            self.humanoid.transformations_data[key_after].append([transfor_min.morph_name, transfor_min.current_value, transfor_max.current_value])
+        
+    def validate_recover_values(self):
+        for ldb_value in self.local_data_base.values():
+            ldb_value[0].validate_recover_value()
+            ldb_value[1].validate_recover_value()
+    
+    def recover_values(self):
+        global inhibition
+        inhibition = True
+        for ldb_value in self.local_data_base.values():
+            ldb[0].recover_value()
+            ldb[1].recover_value()
+        inhibition = False
+    
+    def get_changed_transformorph(self):
         changed_values = []
         for ldb_name, ldb_value in self.local_data_base.items():
             if ldb_value[0].is_changed() or ldb_value[1].is_changed():
                 changed_values.append([ldb_name, ldb_value[0], ldb_value[1]])
         return changed_values
      
-    def validate_changed_values(self):
-        for ldb in self.local_data_base.values():
-            ldb[0].validate_change()
-            ldb[1].validate_change()
-    
-    # Update transformation values in humanoid.
-    def update(self, cat):
-        list = []
-        transformation_list = self.humanoid.transformations_data[self.transfor_category]
-        for h_prop in transformation_list:
-            for t_prop in self.transformorphs_in_morph_category:
-                print("Todo")
-    
     def __repr__(self):
         return "Nb of transfor_morphs = {0}\"".format(len(self.local_data_base.keys()))
 
@@ -280,8 +311,9 @@ class Transfor:
     def load_transformation_from_model(self):
         global inhibition
         inhibition = True
-        # tricks... if new categories are added for a reason,
-        # they will have keep the same name (aka "name_data") to avoid this...
+        # tricks... btw if new categories are added for a reason,
+        # they will have to keep the same name (aka "name_data")
+        # to avoid this...
         keys_before = self.humanoid.transformations_data.keys()
         keys_after = []
         for i in keys_before:
@@ -294,19 +326,25 @@ class Transfor:
         # comeback to normal.
         index = 0
         debug = 0
-        local_db = None
         for key in keys_before:
-            for item in self.humanoid.transformations_data[key]:
-                local_db = self.get_data_base(keys_after[index])
-                for i in local_db:
-                    if item[0] in i[0]:
-                        setattr(bpy.context.scene, i[0]+"_min", item[1])
-                        setattr(bpy.context.scene, i[0]+"_max", item[2])
+            local_db = self.get_data_base(keys_after[index])
+            for h_transfor in self.humanoid.transformations_data[key]:
+                for l_transfor in local_db:
+                    if h_transfor[0] in l_transfor[0]:
+                        setattr(bpy.context.scene, l_transfor[1].full_name, h_transfor[1])
+                        setattr(bpy.context.scene, l_transfor[2].full_name, h_transfor[2])
+                        l_transfor[1].current_value = h_transfor[1]
+                        l_transfor[2].current_value = h_transfor[2]
                         debug += 1
             print("Debug : for " + keys_after[index] + ", " + str(debug) + " properties were found.")
-            print("   Please check the file. It must have the same number of lines")
             index += 1
             debug = 0
+        # The step below is necessary, because values created by setattr are not rounded everytime
+        # For example 0.45 can be initialized at 0.4999999999912358
+        # So the step below fixes that.
+        global transfor_categories
+        for cat in transfor_categories.values():
+            cat.check_changed_values()
         inhibition = False
     
     def load_transformation_from_file(self, filepath):
@@ -326,3 +364,12 @@ class Transfor:
     def reset_properties(self):
         # All elements are recreated from humanoid object.
         self.panel_initialized = False
+    
+    def reset_values(self):
+        adb = get_all_data_bases()
+        for property in adb:
+            print("reset")
+
+    def validate_values(self):
+        print("validate_values")
+        

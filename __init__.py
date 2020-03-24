@@ -3345,6 +3345,8 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                         mbcrea_transfor.init_transfor_props()
                     # All UI stuff is done below (in a dedicated class)
                     mbcrea_transfor.create_box(box_agemasstone)
+                    box_agemasstone.operator("mbcrea.reset_transfor_values", icon="RECOVER_LAST")
+                    box_agemasstone.operator("mbcrea.validate_transfor_values", icon="FREEZE")
                     #---------- The name and save
                     box_agemasstone.label(text="Tool wording - File", icon='SORT_ASC')
                     box_agemasstone.label(text="File saved under " + os.path.join("data", "transformations"), icon='INFO')
@@ -3811,6 +3813,32 @@ class FinalizePreset(bpy.types.Operator):
         path = os.path.join(file_ops.get_data_path(), "presets", mblab_humanoid.presets_data_folder, preset_name+".json")
         #--------Saving file-------
         morphcreator.save_preset(path, mblab_humanoid, scn.mbcrea_integrate_material)
+        return {'FINISHED'}
+
+class ResetTransforValues(bpy.types.Operator):
+    # Reset all cursors to their previous saved state
+    bl_label = 'Reset properties'
+    bl_idname = 'mbcrea.reset_transfor_values'
+    bl_description = 'Reset all properties in their previous saved state.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global mbcrea_transfor
+        mbcrea_transfor.reset_values()
+        return {'FINISHED'}
+
+class ValidateTransforValues(bpy.types.Operator):
+    # Reset all cursors to their previous saved state
+    bl_label = 'Validate properties'
+    bl_idname = 'mbcrea.validate_transfor_values'
+    bl_description = 'Validate all properties in this state.\nRecover these values after a reset.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global mbcrea_transfor
+        mbcrea_transfor.validate_properties()
         return {'FINISHED'}
 
 class LoadTransformationFile(bpy.types.Operator, ImportHelper):
@@ -4622,6 +4650,8 @@ classes = (
     FinalizePreset,
     ButtonUpdateCombMorphs,
     FinalizeCombMorph,
+    ResetTransforValues,
+    ValidateTransforValues,
     LoadTransformationFile,
     Reset_expression_category,
     ImpExpression,
