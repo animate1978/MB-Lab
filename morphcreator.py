@@ -29,6 +29,7 @@ import os
 import bpy
 import numpy
 from . import algorithms
+from . import file_ops
 
 
 body_parts = [("AB", "Abdomen", ""),
@@ -65,7 +66,7 @@ body_parts = [("AB", "Abdomen", ""),
 spectrum = [("GE", "Gender", "For all males / females"),
    ("ET", "Ethnic group", "For a specific ethnic group")]
 
-min_max = [("MI", "min", "min = 0"), ("MA", "max", "max = 1")]
+min_max = [("MI", "min", "0"), ("MA", "max", "1")]
 
 morphs_names = ["", "", 0]
 #0 = get_model_and_gender()
@@ -75,6 +76,12 @@ morphs_names = ["", "", 0]
 vertices_lists = [[], []]
 #0 base vertices.
 #1 Sculpted vertices.
+
+modifiers_for_combined = ["", [], []]
+# variable for creating combined morphs
+# 1st value is the name
+# 2nd list of body parts
+# 3rd list of corresponding min/max
 
 logger = logging.getLogger(__name__)
 
@@ -102,14 +109,24 @@ def get_min_max(key = None):
 
 def init_morph_names_database():
     global morphs_names
+    global modifiers_for_combined
     morphs_names[0] = ""
     morphs_names[1] = ""
     morphs_names[2] = 0
+    modifiers_for_combined[0] = ""
+    modifiers_for_combined[1] = []
+    modifiers_for_combined[2] = []
     
 def get_model_and_gender():
     if len(morphs_names[0]) == 0:
         obj = bpy.context.view_layer.objects.active
-        temp = algorithms.get_template_model(obj).split("_")
+        # Dirty, but SOMETIMES for an unknown reason,
+        # algorithms.get_template_model(obj) returns None.
+        # Tried to reproduce the bug, without success.
+        try:
+            temp = algorithms.get_template_model(obj).split("_")
+        except:
+            return "Bug"
         morphs_names[0] = temp[1] + "_" + temp[2] + "_morphs"
     return morphs_names[0]
 
@@ -207,3 +224,134 @@ def get_all_morph_files(data_path, data_type_path, body_type):
             if item.split('_')[:2] == body_type_split:
                 found_files += [os.path.join(dir, item)]
     return found_files
+
+# ------------------------------------------------------------------------
+#    All methods/classes to help creating combined morphs
+# ------------------------------------------------------------------------
+
+def get_combined_morph_name():
+    return modifiers_for_combined[0]
+
+# Answer if the morph "name" is already part of a combined morph or not.
+def is_modifier_combined_morph(humanoid, name="", category=""):
+    if name == "" or category == "":
+        return True # Just in case...
+    cat = humanoid.get_category(category)
+    modif = cat.get_modifier(name)
+    if modif == None:
+        return True
+    return False
+
+# A special and dirty function to help and simplify __init__
+def secure_modifier_name(enum_items, items):
+    check_name = algorithms.get_enum_property_item(enum_items, items)
+    try:
+        temp = check_name.split("_")[1]
+    except:
+        return "###_###"
+    return check_name
+
+# Store the combined morph elements for
+# updating the model and save the morph
+def set_modifiers_for_combined_morphs(final_name="", morphs_name=[], minmax=[]):
+    global modifiers_for_combined
+    modifiers_for_combined[0] = final_name
+    modifiers_for_combined[1] = morphs_name
+    for i in range(len(minmax)):
+        if len(minmax[i]) > 0:
+            if minmax[i] == "min":
+                minmax[i] = 0
+            else:
+                minmax[i] = 1
+        else:
+            minmax[i] = 0.5
+    modifiers_for_combined[2] = minmax
+
+def update_for_combined_morphs(humanoid):
+    global modifiers_for_combined
+    if len(modifiers_for_combined[0]) < 1 or humanoid == None:
+        return
+    obj = humanoid.get_object()
+    names = modifiers_for_combined[1]
+    minmax = modifiers_for_combined[2]
+    for i in range(len(names)):
+        for prop in humanoid.character_data:
+            if str(prop) == names[i]:
+                setattr(obj, prop, minmax[i])
+    humanoid.sync_character_data_to_obj_props()
+    humanoid.update_character()
+    
+# ------------------------------------------------------------------------
+#    All methods/classes to help creating phenotypes
+# ------------------------------------------------------------------------
+
+def is_phenotype_exists(body_type, name):
+    if len(body_type) < 1 or len(name) < 1:
+        return False
+    try:
+        path = os.path.join(file_ops.get_data_path(), "phenotypes", body_type+"_ptypes")
+        for database_file in os.listdir(path):
+            the_item, extension = os.path.splitext(database_file)
+            if the_item == name:
+                return True
+    except:
+        return False
+    return False
+
+def save_phenotype(path, humanoid):
+    # Save all expression morphs as a new face expression
+    # in its dedicated file.
+    # If file already exists, it's replaced.
+    logger.info("Exporting character to {0}".format(file_ops.simple_path(path)))
+    obj = humanoid.get_object()
+    char_data = {"structural": dict()}
+
+    if obj:
+        for prop in humanoid.character_data.keys():
+            if humanoid.character_data[prop] != 0.5 and not prop.startswith("Expressions_"):
+                char_data["structural"][prop] = round(humanoid.character_data[prop], 2)
+        
+        with open(path, "w") as j_file:
+            json.dump(char_data, j_file, indent=2)
+        j_file.close()
+
+# ------------------------------------------------------------------------
+#    All methods/classes to help creating presets
+# ------------------------------------------------------------------------
+
+def is_preset_exists(preset_folder, name):
+    if len(preset_folder) < 1 or len(name) < 1:
+        return False
+    try:
+        path = os.path.join(file_ops.get_data_path(), "presets", preset_folder)
+        for database_file in os.listdir(path):
+            the_item, extension = os.path.splitext(database_file)
+            if the_item == name:
+                return True
+    except:
+        return False
+    return False
+
+def save_preset(filepath, humanoid, integrate_material=False):
+    logger.info("Exporting character to {0}".format(file_ops.simple_path(filepath)))
+    obj = humanoid.get_object()
+    char_data = {"manuellab_vers": humanoid.lab_vers, "structural": dict(), "metaproperties": dict(), "materialproperties": dict(), "materialproperties": dict()}
+
+    if obj:
+        # Structural
+        for prop in humanoid.character_data.keys():
+            if humanoid.character_data[prop] != 0.5 and not prop.startswith("Expressions_"):
+                char_data["structural"][prop] = round(humanoid.character_data[prop], 4)
+        # metaproperties
+        for meta_data_prop in humanoid.character_metaproperties.keys():
+            char_data["metaproperties"][meta_data_prop] = round(humanoid.character_metaproperties[meta_data_prop], 2)
+        # materiel properties
+        if integrate_material:
+            mat_param = humanoid.mat_engine.get_material_parameters()
+            for mat_prop in mat_param.keys():
+                char_data["materialproperties"][mat_prop] = round(mat_param[mat_prop], 4)
+        # File
+        with open(filepath, "w") as j_file:
+            json.dump(char_data, j_file, indent=2)
+        j_file.close()
+        

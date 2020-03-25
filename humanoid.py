@@ -368,8 +368,10 @@ class Humanoid:
             return self.root_model_name
         if len(self.obj_name) < 1:
             return ""
+        # This method below must change when the root model name
+        # will be available directly in the config file.
         for name in self.get_category("Expressions").get_all_properties():
-            if name.startswith("Expressions_"):
+            if name.startswith("Expressions_ID"):
                 rmn = name.split("_")[1]
                 rmn = rmn[2:]
                 self.root_model_name = rmn.lower()
@@ -1126,7 +1128,7 @@ class Humanoid:
                 char_data["proportion_index"] = self.morph_engine.proportion_index
 
             output_file = open(filepath, 'w')
-            json.dump(char_data, output_file)
+            json.dump(char_data, output_file, indent=2)
             output_file.close()
 
     def export_measures(self, filepath):
