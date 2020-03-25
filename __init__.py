@@ -623,7 +623,6 @@ bpy.types.Scene.mblab_rot_offset_0 = bpy.props.FloatProperty(
     precision=2,
     subtype='FACTOR',
     update=angle_update_0,
-    subtype='FACTOR',
     default=0.0)
 
 bpy.types.Scene.mblab_rot_offset_1 = bpy.props.FloatProperty(
@@ -633,7 +632,6 @@ bpy.types.Scene.mblab_rot_offset_1 = bpy.props.FloatProperty(
     precision=2,
     subtype='FACTOR',
     update=angle_update_1,
-    subtype='FACTOR',
     default=0.0)
 
 bpy.types.Scene.mblab_rot_offset_2 = bpy.props.FloatProperty(
@@ -643,7 +641,6 @@ bpy.types.Scene.mblab_rot_offset_2 = bpy.props.FloatProperty(
     precision=2,
     subtype='FACTOR',
     update=angle_update_2,
-    subtype='FACTOR',
     default=0.0)
 
 bpy.types.Scene.mblab_proxy_offset = bpy.props.FloatProperty(
