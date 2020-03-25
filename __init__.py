@@ -182,7 +182,13 @@ def start_lab_session():
             else:
                 mblab_humanoid.reset_mesh()
                 mblab_humanoid.update_character(mode="update_all")
-
+            
+            # All inits for creation tools.
+            morphcreator.init_morph_names_database()
+            mbcrea_expressionscreator.reset_expressions_items()
+            mbcrea_transfor.reset_properties()
+            mbcrea_transfor.init_transfor_props()
+            # End for that.
             algorithms.deselect_all_objects()
     algorithms.remove_censors()
 
@@ -238,7 +244,6 @@ def realtime_update(self, context):
         #End Teto
         mblab_humanoid.sync_gui_according_measures()
         # print("realtime_update: {0}".format(time.time()-time1))
-
 
 def age_update(self, context):
     global mblab_humanoid
@@ -359,6 +364,7 @@ def init_morphing_props(humanoid_instance):
                 subtype='FACTOR',
                 update=realtime_update))
 
+
 def init_measures_props(humanoid_instance):
     for measure_name, measure_val in humanoid_instance.morph_engine.measures.items():
         setattr(
@@ -371,10 +377,10 @@ def init_measures_props(humanoid_instance):
     humanoid_instance.sync_gui_according_measures()
 
 #Teto
-def get_categories_enum():
+def get_categories_enum(exclude=[]):
     categories_enum = []
     # All categories for "Body Measures"
-    for category in mblab_humanoid.get_categories():
+    for category in mblab_humanoid.get_categories(exclude):
         categories_enum.append(
             (category.name, category.name, category.name))
     return categories_enum
@@ -393,6 +399,22 @@ def init_categories_props(humanoid_instance):
         items=sub_categories_enum,
         update=modifiers_update,
         name="Expressions sub-categories")
+
+    # Special properties used by transfor.Transfor
+    bpy.types.Scene.transfor_age = bpy.props.EnumProperty(
+            items=get_categories_enum(["Expressions"]),
+            update=modifiers_update,
+            name="Age")
+
+    bpy.types.Scene.transfor_mass = bpy.props.EnumProperty(
+            items=get_categories_enum(["Expressions"]),
+            update=modifiers_update,
+            name="Mass")
+
+    bpy.types.Scene.transfor_tone = bpy.props.EnumProperty(
+            items=get_categories_enum(["Expressions"]),
+            update=modifiers_update,
+            name="Tone")
 #End Teto
 
 def init_restposes_props(humanoid_instance):
@@ -599,6 +621,7 @@ bpy.types.Scene.mblab_rot_offset_0 = bpy.props.FloatProperty(
     min=-1,
     max=1,
     precision=2,
+    subtype='FACTOR',
     update=angle_update_0,
     subtype='FACTOR',
     default=0.0)
@@ -608,6 +631,7 @@ bpy.types.Scene.mblab_rot_offset_1 = bpy.props.FloatProperty(
     min=-1,
     max=1,
     precision=2,
+    subtype='FACTOR',
     update=angle_update_1,
     subtype='FACTOR',
     default=0.0)
@@ -617,6 +641,7 @@ bpy.types.Scene.mblab_rot_offset_2 = bpy.props.FloatProperty(
     min=-1,
     max=1,
     precision=2,
+    subtype='FACTOR',
     update=angle_update_2,
     subtype='FACTOR',
     default=0.0)
@@ -855,6 +880,15 @@ bpy.types.Scene.mblab_body_part_name = bpy.props.EnumProperty(
     items=morphcreator.get_body_parts(),
     name="Body part",
     default="BO")
+
+
+bpy.types.Scene.mblab_body_tone = bpy.props.FloatProperty(
+    name="Body tone",
+    min=0.0,
+    max=1.0,
+    default=0.5,
+    subtype='FACTOR',
+    description="Preserve the current character body mass")
 
 bpy.types.Scene.mblab_random_engine = bpy.props.EnumProperty(
     items=[("LI", "Light", "Little variations from the standard"),
@@ -2429,11 +2463,6 @@ class StartSession(bpy.types.Operator):
 
     def execute(self, context):
         start_lab_session()
-        #Teto
-        morphcreator.init_morph_names_database()
-        mbcrea_expressionscreator.reset_expressions_items()
-        mbcrea_transfor.reset_properties()
-        #End Teto
         return {'FINISHED'}
 
 
@@ -2917,12 +2946,9 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
             else:
                 gui_status = "NEW_SESSION"
 
-#Teto
-
 # MB-Lab Secondary GUI
-
 class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
-    bl_label = "MB-Dev {0}.{1}.{2}".format(bl_info["version"][0], bl_info["version"][1], bl_info["version"][2], bl_info["version"][3])
+    bl_label = "MB-Dev {0}.{1}.{2}".format(bl_info["version"][0], bl_info["version"][1], bl_info["version"][2])
     bl_idname = "OBJECT_PT_characters02"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -3330,7 +3356,13 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                         box_agemasstone.label(text="No transform database !", icon="ERROR")
                     #---------- Now the tool itself
                     box_agemasstone.label(text="Selection", icon='SORT_ASC')
-                    mbcrea_transfor.get_box(box_agemasstone)
+                    mbcrea_transfor.set_scene(scn)
+                    if not mbcrea_transfor.is_initialized():
+                        mbcrea_transfor.init_transfor_props()
+                    # All UI stuff is done below (in a dedicated class)
+                    mbcrea_transfor.create_box(box_agemasstone)
+                    box_agemasstone.operator("mbcrea.reset_transfor_values", icon="RECOVER_LAST")
+                    box_agemasstone.operator("mbcrea.validate_transfor_values", icon="FREEZE")
                     #---------- The name and save
                     box_agemasstone.label(text="Tool wording - File", icon='SORT_ASC')
                     box_agemasstone.label(text="File saved under " + os.path.join("data", "transformations"), icon='INFO')
@@ -3348,6 +3380,9 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     #---------- Tools
                     box_agemasstone.label(text="Tools", icon='SORT_ASC')
                     box_agemasstone.operator('mbcrea.button_load_transf', icon='IMPORT')
+                else:
+                    box_agemasstone.label(text="! NO COMPATIBLE MODEL !", icon='ERROR')
+                    box_agemasstone.enabled = False
                     
             #----------------------------------
             box_adaptation_tools.separator(factor=0.5)
@@ -3633,12 +3668,9 @@ bpy.types.Scene.mbcrea_morphs_minmax_4 = bpy.props.EnumProperty(
     )
 
 def morphs_items_minmax(box, items_str, minmax_str):
-    sub = box.box()
-    split = sub.split()
-    col = split.column()
-    col.prop(bpy.context.scene, items_str)
-    col = split.column()
-    col.prop(bpy.context.scene, minmax_str)
+    sub = box.row(align=True)
+    sub.prop(bpy.context.scene, items_str)
+    sub.prop(bpy.context.scene, minmax_str)
     return mbcrea_enum_morph_items_update(bpy.context.scene, None), morphcreator.get_min_max()
 
 bpy.types.Scene.mbcrea_phenotype_name_filter = bpy.props.StringProperty(
@@ -3799,6 +3831,32 @@ class FinalizePreset(bpy.types.Operator):
         morphcreator.save_preset(path, mblab_humanoid, scn.mbcrea_integrate_material)
         return {'FINISHED'}
 
+class ResetTransforValues(bpy.types.Operator):
+    # Reset all cursors to their previous saved state
+    bl_label = 'Reset properties'
+    bl_idname = 'mbcrea.reset_transfor_values'
+    bl_description = 'Reset all properties in their previous saved state.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global mbcrea_transfor
+        mbcrea_transfor.reset_values()
+        return {'FINISHED'}
+
+class ValidateTransforValues(bpy.types.Operator):
+    # Reset all cursors to their previous saved state
+    bl_label = 'Validate properties'
+    bl_idname = 'mbcrea.validate_transfor_values'
+    bl_description = 'Validate all properties in this state.\nRecover these values after a reset.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global mbcrea_transfor
+        mbcrea_transfor.validate_properties()
+        return {'FINISHED'}
+
 class LoadTransformationFile(bpy.types.Operator, ImportHelper):
     """
         Load the file as a transformation.
@@ -3814,12 +3872,11 @@ class LoadTransformationFile(bpy.types.Operator, ImportHelper):
     def execute(self, context):
         mode = bpy.context.active_object.mode
         bpy.ops.object.mode_set(mode='OBJECT')
-        file = file_ops.load_json_data(self.filepath, "Base model vertices")
         if not self.filepath.endswith("_transf.json"):
             self.ShowMessageBox(message = "It's not a valid file !")
             return {'FINISHED'}
         #--------------------
-        mbcrea_transfor.load_transformation(file)
+        mbcrea_transfor.load_transformation_from_file(self.filepath)
         return {'FINISHED'}
     
     def ShowMessageBox(self, message = "", title = "Error !", icon = 'ERROR'):
@@ -4464,7 +4521,7 @@ class ImpExpression(bpy.types.Operator, ImportHelper):
     filter_glob: bpy.props.StringProperty(
         default="*.json",
         options={'HIDDEN'},
-    )
+        )
     bl_context = 'objectmode'
 
     def execute(self, context):
@@ -4609,6 +4666,8 @@ classes = (
     FinalizePreset,
     ButtonUpdateCombMorphs,
     FinalizeCombMorph,
+    ResetTransforValues,
+    ValidateTransforValues,
     LoadTransformationFile,
     Reset_expression_category,
     ImpExpression,
