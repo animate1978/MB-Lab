@@ -333,4 +333,3 @@ def new_texture(name, image=None):
     if image:
         _new_texture.image = image
     return _new_texture
-

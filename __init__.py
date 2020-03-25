@@ -186,8 +186,6 @@ def start_lab_session():
             # All inits for creation tools.
             morphcreator.init_morph_names_database()
             mbcrea_expressionscreator.reset_expressions_items()
-            mbcrea_transfor.reset_properties()
-            mbcrea_transfor.init_transfor_props()
             # End for that.
             algorithms.deselect_all_objects()
     algorithms.remove_censors()
@@ -401,20 +399,11 @@ def init_categories_props(humanoid_instance):
         name="Expressions sub-categories")
 
     # Special properties used by transfor.Transfor
-    bpy.types.Scene.transfor_age = bpy.props.EnumProperty(
+    bpy.types.Scene.transfor_morphingCategory = bpy.props.EnumProperty(
             items=get_categories_enum(["Expressions"]),
             update=modifiers_update,
-            name="Age")
+            name="Morphing categories")
 
-    bpy.types.Scene.transfor_mass = bpy.props.EnumProperty(
-            items=get_categories_enum(["Expressions"]),
-            update=modifiers_update,
-            name="Mass")
-
-    bpy.types.Scene.transfor_tone = bpy.props.EnumProperty(
-            items=get_categories_enum(["Expressions"]),
-            update=modifiers_update,
-            name="Tone")
 #End Teto
 
 def init_restposes_props(humanoid_instance):
@@ -2791,10 +2780,8 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                     col.prop(scn, "morphingCategory")
 
                     for prop in mblab_humanoid.get_properties_in_category(scn.morphingCategory):
-                        #Teto
                         if hasattr(obj, prop) and not prop.startswith("Expressions_ID"):
                             col.prop(obj, prop)
-                        #End Teto
 
                     if mblab_humanoid.exists_measure_database() and scn.mblab_show_measures:
                         col = split.column()
@@ -3334,48 +3321,35 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     mblab_humanoid.bodydata_realtime_activated = True
                     obj = mblab_humanoid.get_object()
                     box_agemasstone.operator("mbast.reset_allproperties", icon="RECOVER_LAST")
-                    #----------
-                    if mblab_humanoid.exists_transform_database():
-                        box_agemasstone.label(text="Preselection", icon='SORT_ASC')
-                        x_age = getattr(obj, 'character_age', 0)
-                        x_mass = getattr(obj, 'character_mass', 0)
-                        x_tone = getattr(obj, 'character_tone', 0)
-                        age_lbl = round((15.5 * x_age ** 2) + 31 * x_age + 33)
-                        mass_lbl = round(50 * (x_mass + 1))
-                        tone_lbl = round(50 * (x_tone + 1))
-                        lbl_text = "Age : {0} yr.  Mass : {1}%  Tone : {2}% ".format(age_lbl, mass_lbl, tone_lbl)
-                        box_agemasstone.label(text=lbl_text)
-
-                        for meta_data_prop in sorted(mblab_humanoid.character_metaproperties.keys()):
-                            if "last" not in meta_data_prop:
-                                box_agemasstone.prop(obj, meta_data_prop)
-                    else:
-                        box_agemasstone.label(text="No transform database !", icon="ERROR")
                     #---------- Now the tool itself
                     box_agemasstone.label(text="Selection", icon='SORT_ASC')
-                    mbcrea_transfor.set_scene(scn)
-                    if not mbcrea_transfor.is_initialized():
-                        mbcrea_transfor.init_transfor_props()
-                    # All UI stuff is done below (in a dedicated class)
-                    mbcrea_transfor.create_box(box_agemasstone)
-                    box_agemasstone.operator("mbcrea.reset_transfor_values", icon="RECOVER_LAST")
-                    box_agemasstone.operator("mbcrea.validate_transfor_values", icon="FREEZE")
-                    #---------- The name and save
+                    box_agemasstone.prop(scn, "transfor_morphingCategory")
+                    for prop in mblab_humanoid.get_properties_in_category(scn.morphingCategory):
+                        if hasattr(obj, prop):
+                            box_agemasstone.prop(obj, prop)
+                    #---------- The name
+                    box_agemasstone.label(text="Tool wording - Content", icon='SORT_ASC')
+                    box_agemasstone.prop(scn, "mbcrea_transfor_category")
+                    box_agemasstone.prop(scn, "mbcrea_transfor_minmax")
+                    #---------- The name and file
                     box_agemasstone.label(text="Tool wording - File", icon='SORT_ASC')
-                    box_agemasstone.label(text="File saved under " + os.path.join("data", "transformations"), icon='INFO')
                     box_agemasstone.prop(scn, 'mbcrea_agemasstone_name')
-                    box_agemasstone.prop(scn, 'mblab_incremental_saves')
+                    box_agemasstone.label(text="File saved under " + os.path.join("data", "transformations"), icon='INFO')
                     if len(scn.mbcrea_agemasstone_name) > 0:
                         tmp = morphcreator.get_model_and_gender().split("_")
-                        agemasstone_name = tmp[0] + "_" + tmp[1] + "_" + algorithms.split_name(scn.mbcrea_agemasstone_name.lower())
-                        if scn.mblab_incremental_saves:
-                            agemasstone_name += "_123"
-                        agemasstone_name += "_transf"
+                        agemasstone_name = tmp[0] + "_" + tmp[1] + "_" + algorithms.split_name(scn.mbcrea_agemasstone_name.lower()) + "_transf"
                         box_agemasstone.label(text="File name : " + agemasstone_name, icon="INFO")
+                        #---------- Saving file
+                        box_agemasstone.label(text="Saves", icon='SORT_ASC')
+                        box_agemasstone.operator('mbcrea.button_transfor_save', icon='FREEZE')
+                        box_agemasstone.operator('mbcrea.button_clean_transfor_save', icon='FREEZE')
                     else:
                         box_agemasstone.label(text="Name needed ! ", icon="ERROR")
                     #---------- Tools
                     box_agemasstone.label(text="Tools", icon='SORT_ASC')
+                    box_agemasstone.operator('mbcrea.button_check_transf', icon='IMPORT')
+                    if len(scn.mbcrea_agemasstone_name) > 0:
+                        box_agemasstone.operator('mbcrea.button_transfor_save_current', icon='FREEZE')
                     box_agemasstone.operator('mbcrea.button_load_transf', icon='IMPORT')
                 else:
                     box_agemasstone.label(text="! NO COMPATIBLE MODEL !", icon='ERROR')
@@ -3699,6 +3673,33 @@ bpy.types.Scene.mbcrea_agemasstone_name = bpy.props.StringProperty(
     maxlen=1024,
     subtype='FILE_NAME')
 
+def mbcrea_enum_transfor_category(self, context):
+    cat = mblab_humanoid.transformations_data.keys()
+    mbcrea_transfor_category_list = []
+    for key in cat:
+        name = key.split("_")[0]
+        if name == "fat":
+            name = "Mass"
+        elif name == "muscle":
+            name = "Tone"
+        mbcrea_transfor_category_list.append((name, name, name))
+    return mbcrea_transfor_category_list
+   
+
+bpy.types.Scene.mbcrea_transfor_category = bpy.props.EnumProperty(
+    items=mbcrea_enum_transfor_category,
+    name="Save for",
+    default=None,
+    options={'ANIMATABLE'},
+    )
+
+bpy.types.Scene.mbcrea_transfor_minmax = bpy.props.EnumProperty(
+    items=morphcreator.min_max,
+    name="-1 to +1",
+    default=None,
+    )
+
+
 class FinalizeExpression(bpy.types.Operator):
     """
         Working like FinalizeMorph
@@ -3828,41 +3829,80 @@ class FinalizePreset(bpy.types.Operator):
         morphcreator.save_preset(path, mblab_humanoid, scn.mbcrea_integrate_material)
         return {'FINISHED'}
 
-class ResetTransforValues(bpy.types.Operator):
-    # Reset all cursors to their previous saved state
-    bl_label = 'Reset properties'
-    bl_idname = 'mbcrea.reset_transfor_values'
-    bl_description = 'Reset all properties in their previous saved state.'
+def get_transfor_filepath():
+    scn = bpy.context.scene
+    if len(scn.mbcrea_agemasstone_name) < 1:
+        return None
+    tmp = morphcreator.get_model_and_gender().split("_")
+    name = tmp[0] + "_" + tmp[1] + "_" + algorithms.split_name(scn.mbcrea_agemasstone_name.lower()) + "_transf.json"
+    filepath = os.path.join(file_ops.get_data_path(), "transformations", name)
+    return filepath
+    
+class ButtonTransforSave(bpy.types.Operator):
+    bl_label = 'Save in file'
+    bl_idname = 'mbcrea.button_transfor_save'
+    bl_description = 'Button for saving content in selected category and morph'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        global mbcrea_transfor
-        mbcrea_transfor.reset_values()
+        mode = bpy.context.active_object.mode
+        bpy.ops.object.mode_set(mode='OBJECT')
+        #--------------------
+        filepath = get_transfor_filepath()
+        if filepath == None:
+            return {'FINISHED'}
+        mbcrea_transfor.save_transformations(filepath)
         return {'FINISHED'}
 
-class ValidateTransforValues(bpy.types.Operator):
-    # Reset all cursors to their previous saved state
-    bl_label = 'Validate properties'
-    bl_idname = 'mbcrea.validate_transfor_values'
-    bl_description = 'Validate all properties in this state.\nRecover these values after a reset.'
+class ButtonCleanTransforFile(bpy.types.Operator):
+    bl_label = 'Clean save file'
+    bl_idname = 'mbcrea.button_clean_transfor_save'
+    bl_description = 'Button for cleaning unecessary content in the file.\nTo do when the content is complete.'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        global mbcrea_transfor
-        mbcrea_transfor.validate_properties()
+        mode = bpy.context.active_object.mode
+        bpy.ops.object.mode_set(mode='OBJECT')
+        #--------------------
+        filepath = get_transfor_filepath()
+        if filepath == None:
+            return {'FINISHED'}
+        mbcrea_transfor.save_transformations(filepath)
         return {'FINISHED'}
 
-class LoadTransformationFile(bpy.types.Operator, ImportHelper):
+class ButtonCurrentModelTransforSave(bpy.types.Operator):
     """
         Load the file as a transformation.
     """
-    bl_label = 'Load file as a model'
-    bl_idname = 'mbcrea.button_load_transf'
+    bl_label = 'Export current model'
+    bl_idname = 'mbcrea.button_transfor_save_current'
     filename_ext = ".json"
     filter_glob: bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
-    bl_description = 'Load a transformation file as a base model.'
+    bl_description = 'Export the data base of the current model.\ni.e its data base, not the changes from user.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        mode = bpy.context.active_object.mode
+        bpy.ops.object.mode_set(mode='OBJECT')
+        #--------------------
+        filepath = get_transfor_filepath()
+        if filepath == None:
+            return {'FINISHED'}
+        mbcrea_transfor.save_current_model(filepath)
+        return {'FINISHED'}
+
+class CheckTransformationFile(bpy.types.Operator, ImportHelper):
+    """
+        Load the file as a transformation.
+    """
+    bl_label = 'Check compatibility'
+    bl_idname = 'mbcrea.button_check_transf'
+    filename_ext = ".json"
+    filter_glob: bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
+    bl_description = 'Check the compatibility of a file to current model.\nThe result is stored in check.txt under the same directory.'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -3870,7 +3910,37 @@ class LoadTransformationFile(bpy.types.Operator, ImportHelper):
         mode = bpy.context.active_object.mode
         bpy.ops.object.mode_set(mode='OBJECT')
         if not self.filepath.endswith("_transf.json"):
-            self.ShowMessageBox(message = "It's not a valid file !")
+            self.ShowMessageBox(message = "May not a valid file !")
+            return {'FINISHED'}
+        #--------------------
+        mbcrea_transfor.check_compatibility_with_current_model(self.filepath)
+        return {'FINISHED'}
+    
+    def ShowMessageBox(self, message = "", title = "Error !", icon = 'ERROR'):
+
+        def draw(self, context):
+            self.layout.label(text=message)
+        bpy.context.window_manager.popup_menu(draw, title = title, icon = icon)
+    
+
+
+class LoadTransformationFile(bpy.types.Operator, ImportHelper):
+    """
+        Load the file as a transformation.
+    """
+    bl_label = 'Import for current model'
+    bl_idname = 'mbcrea.button_load_transf'
+    filename_ext = ".json"
+    filter_glob: bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
+    bl_description = 'Load a transformation file for the current model.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        mode = bpy.context.active_object.mode
+        bpy.ops.object.mode_set(mode='OBJECT')
+        if not self.filepath.endswith("_transf.json"):
+            self.ShowMessageBox(message = "May not a valid file !")
             return {'FINISHED'}
         #--------------------
         mbcrea_transfor.load_transformation_from_file(self.filepath)
@@ -3881,8 +3951,7 @@ class LoadTransformationFile(bpy.types.Operator, ImportHelper):
         def draw(self, context):
             self.layout.label(text=message)
         bpy.context.window_manager.popup_menu(draw, title = title, icon = icon)
-    
-    
+
 
 class ButtonCompatToolsDir(bpy.types.Operator):
     #just for quick tests
@@ -4663,8 +4732,10 @@ classes = (
     FinalizePreset,
     ButtonUpdateCombMorphs,
     FinalizeCombMorph,
-    ResetTransforValues,
-    ValidateTransforValues,
+    ButtonTransforSave,
+    ButtonCleanTransforFile,
+    ButtonCurrentModelTransforSave,
+    CheckTransformationFile,
     LoadTransformationFile,
     Reset_expression_category,
     ImpExpression,
