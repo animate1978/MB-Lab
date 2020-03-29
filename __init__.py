@@ -186,8 +186,7 @@ def start_lab_session():
             # All inits for creation tools.
             morphcreator.init_morph_names_database()
             mbcrea_expressionscreator.reset_expressions_items()
-            mbcrea_transfor.reset_properties()
-            mbcrea_transfor.init_transfor_props()
+            mbcrea_transfor.set_scene(scn)
             # End for that.
             algorithms.deselect_all_objects()
     algorithms.remove_censors()
@@ -401,20 +400,11 @@ def init_categories_props(humanoid_instance):
         name="Expressions sub-categories")
 
     # Special properties used by transfor.Transfor
-    bpy.types.Scene.transfor_age = bpy.props.EnumProperty(
-            items=get_categories_enum(["Expressions"]),
-            update=modifiers_update,
-            name="Age")
+    bpy.types.Scene.transforMorphingCategory = bpy.props.EnumProperty(
+        items=get_categories_enum(["Expressions"]),
+        update=modifiers_update,
+        name="Morphing categories")
 
-    bpy.types.Scene.transfor_mass = bpy.props.EnumProperty(
-            items=get_categories_enum(["Expressions"]),
-            update=modifiers_update,
-            name="Mass")
-
-    bpy.types.Scene.transfor_tone = bpy.props.EnumProperty(
-            items=get_categories_enum(["Expressions"]),
-            update=modifiers_update,
-            name="Tone")
 #End Teto
 
 def init_restposes_props(humanoid_instance):
@@ -2528,7 +2518,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
             box_new_opt.operator('mbast.init_character', icon='ARMATURE_DATA')
 
         if gui_status != "ACTIVE_SESSION":
-            self.layout.label(text=" ")
+            self.layout.separator(factor=0.5)
             self.layout.label(text="AFTER-CREATION TOOLS", icon='MODIFIER_ON')
 
             box_post_opt = self.layout.box()
@@ -2720,6 +2710,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
             if obj and armature:
                 self.layout.label(text="CREATION TOOLS", icon="RNA")
                 box_act_opt = self.layout.box()
+                box_act_opt_sub = box_act_opt.box()
 
                 if mblab_humanoid.exists_transform_database():
                     x_age = getattr(obj, 'character_age', 0)
@@ -2729,13 +2720,13 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                     mass_lbl = round(50 * (x_mass + 1))
                     tone_lbl = round(50 * (x_tone + 1))
                     lbl_text = "Age : {0} yr.  Mass : {1}%  Tone : {2}% ".format(age_lbl, mass_lbl, tone_lbl)
-                    box_act_opt.label(text=lbl_text)
+                    box_act_opt_sub.label(text=lbl_text)
 
                     for meta_data_prop in sorted(mblab_humanoid.character_metaproperties.keys()):
                         if "last" not in meta_data_prop:
-                            box_act_opt.prop(obj, meta_data_prop)
-                    box_act_opt.operator("mbast.reset_allproperties", icon="RECOVER_LAST")
-
+                            box_act_opt_sub.prop(obj, meta_data_prop)
+                    box_act_opt_sub.operator("mbast.reset_allproperties", icon="RECOVER_LAST")
+                    box_act_opt_sub.separator(factor=0.2)
                     #if mblab_humanoid.get_subd_visibility() is True:
                         #self.layout.label(text="Tip: for slow PC, disable the subdivision in Display Options below", icon='INFO')
 
@@ -2791,10 +2782,8 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                     col.prop(scn, "morphingCategory")
 
                     for prop in mblab_humanoid.get_properties_in_category(scn.morphingCategory):
-                        #Teto
                         if hasattr(obj, prop) and not prop.startswith("Expressions_ID"):
                             col.prop(obj, prop)
-                        #End Teto
 
                     if mblab_humanoid.exists_measure_database() and scn.mblab_show_measures:
                         col = split.column()
@@ -2935,10 +2924,10 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                     else:
                         box_disp.operator("mbast.corrective_disable", icon='X')
 
-                self.layout.label(text=" ")
+                self.layout.separator(factor=0.5)
                 self.layout.label(text="AFTER-CREATION TOOLS", icon="MODIFIER_ON")
-                self.layout.label(
-                    text="FINALIZED characters ONLY", icon="INFO")
+                layout_sub=self.layout.box()
+                layout_sub.label(text="FINALIZED characters ONLY", icon="INFO")
 
             else:
                 gui_status = "NEW_SESSION"
@@ -2965,29 +2954,16 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
         
         box_general = self.layout.box()
         box_general.label(text="https://www.mblab.dev")
-        box_general.operator('mbcrea.button_for_tests', icon='BLENDER')
+        #box_general.operator('mbcrea.button_for_tests', icon='BLENDER')
 
         box_tools = self.layout.box()
-        box_tools.label(text="Tools categories")
+        box_tools.label(text="TOOLS CATEGORIES", icon="RNA")
         if gui_active_panel_first != "adaptation_tools":
             box_tools.operator('mbcrea.button_adaptation_tools_on', icon=icon_expand)
         else:
             box_tools.operator('mbcrea.button_adaptation_tools_off', icon=icon_collapse)
             box_adaptation_tools = self.layout.box()
-            #------------Rigify------------
-            if gui_active_panel_second != "Rigify":
-                box_adaptation_tools.operator('mbcrea.button_rigify_on', icon=icon_expand)
-            else:
-                box_adaptation_tools.operator('mbcrea.button_rigify_off', icon=icon_collapse)
-                box_rigify = self.layout.box()
-                box_rigify.label(text="#TODO Rigify...")
-            #------------Blenrig------------
-            if gui_active_panel_second != "Blenrig":
-                box_adaptation_tools.operator('mbcrea.button_blenrig_on', icon=icon_expand)
-            else:
-                box_adaptation_tools.operator('mbcrea.button_blenrig_off', icon=icon_collapse)
-                box_blenrig = self.layout.box()
-                box_blenrig.label(text="#TODO Blenrig...")
+            box_adaptation_tools.label(text="Before finalization", icon='MODIFIER_ON')
             #------------Morph creator------------
             if gui_active_panel_second != "Morphcreator":
                 box_adaptation_tools.operator('mbcrea.button_morphcreator_on', icon=icon_expand)
@@ -3149,6 +3125,133 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                 else:
                     box_comb_morphcreator.label(text="!NO COMPATIBLE MODEL!", icon='ERROR')
                     box_comb_morphcreator.enabled = False
+            #------Age/Fat/Muscle Creator------
+            if gui_active_panel_second != "agemasstone_creator":
+                box_adaptation_tools.operator('mbcrea.button_agemasstonecreator_on', icon=icon_expand)
+            else:
+                box_adaptation_tools.operator('mbcrea.button_agemasstonecreator_off', icon=icon_collapse)
+                box_agemasstone = self.layout.box()
+                if is_objet == "FOUND":
+                    mblab_humanoid.bodydata_realtime_activated = True
+                    obj = mblab_humanoid.get_object()
+                    box_agemasstone.operator("mbast.reset_allproperties", icon="RECOVER_LAST")
+                    #---------- Now the tool itself
+                    box_agemasstone.label(text="Selection", icon='SORT_ASC')
+                    box_agemasstone_sub = box_agemasstone.box()
+                    box_agemasstone_sub.prop(scn, "transforMorphingCategory")
+                    for prop in mblab_humanoid.get_properties_in_category(scn.transforMorphingCategory):
+                        if hasattr(obj, prop):
+                            box_agemasstone_sub.prop(obj, prop)
+                    #---------- The name
+                    box_agemasstone.label(text="Tool wording - Content", icon='SORT_ASC')
+                    box_agemasstone.prop(scn, "mbcrea_transfor_category")
+                    box_agemasstone.prop(scn, "mbcrea_transfor_minmax")
+                    #---------- The name and file
+                    box_agemasstone.label(text="Tool wording - File", icon='SORT_ASC')
+                    box_agemasstone.prop(scn, 'mbcrea_agemasstone_name')
+                    box_agemasstone.label(text="File saved under " + os.path.join("data", "transformations"), icon='INFO')
+                    if len(scn.mbcrea_agemasstone_name) > 0:
+                        tmp = morphcreator.get_model_and_gender().split("_")
+                        agemasstone_name = tmp[0] + "_" + tmp[1] + "_" + algorithms.split_name(scn.mbcrea_agemasstone_name.lower()) + "_transf"
+                        box_agemasstone.label(text="File name : " + agemasstone_name, icon="INFO")
+                        #---------- Saving file
+                        box_agemasstone.label(text="Load / Save", icon='SORT_ASC')
+                        box_agemasstone.operator('mbcrea.button_transfor_load', icon='MONKEY')
+                        box_agemasstone.operator('mbcrea.button_transfor_save', icon='FREEZE')
+                    else:
+                        box_agemasstone.label(text="Name needed ! ", icon="ERROR")
+                    #---------- Tools
+                    box_agemasstone.label(text="Tools", icon='SORT_ASC')
+                    box_agemasstone.operator('mbcrea.button_check_transf', icon='IMPORT')
+                    if len(scn.mbcrea_agemasstone_name) > 0:
+                        box_agemasstone.operator('mbcrea.button_transfor_save_current', icon='FREEZE')
+                    box_agemasstone.operator('mbcrea.button_load_transf', icon='IMPORT')
+                else:
+                    box_agemasstone.label(text="! NO COMPATIBLE MODEL !", icon='ERROR')
+                    box_agemasstone.enabled = False
+            #----------Fast creators-----------
+            if gui_active_panel_second != "fast_creators":
+                box_adaptation_tools.operator('mbcrea.button_fastcreators_on', icon=icon_expand)
+            else:
+                box_adaptation_tools.operator('mbcrea.button_fastcreators_off', icon=icon_collapse)
+                box_fast_creators = self.layout.box()
+                if is_objet == "FOUND":
+                    mblab_humanoid.bodydata_realtime_activated = True
+                    obj = mblab_humanoid.get_object()
+                    box_fast_creators.operator("mbast.reset_allproperties", icon="RECOVER_LAST")
+                    #----------
+                    box_fast_creators_sub = box_fast_creators.box()
+                    if mblab_humanoid.exists_transform_database():
+                        x_age = getattr(obj, 'character_age', 0)
+                        x_mass = getattr(obj, 'character_mass', 0)
+                        x_tone = getattr(obj, 'character_tone', 0)
+                        age_lbl = round((15.5 * x_age ** 2) + 31 * x_age + 33)
+                        mass_lbl = round(50 * (x_mass + 1))
+                        tone_lbl = round(50 * (x_tone + 1))
+                        lbl_text = "Age : {0} yr.  Mass : {1}%  Tone : {2}% ".format(age_lbl, mass_lbl, tone_lbl)
+                        box_fast_creators_sub.label(text=lbl_text)
+
+                        for meta_data_prop in sorted(mblab_humanoid.character_metaproperties.keys()):
+                            if "last" not in meta_data_prop:
+                                box_fast_creators_sub.prop(obj, meta_data_prop)
+                    else:
+                        box_fast_creators_sub.label(text="No transform database !", icon="ERROR")
+                    #----------
+                    box_fast_creators_sub.prop(scn, "morphingCategory")
+                    for prop in mblab_humanoid.get_properties_in_category(scn.morphingCategory):
+                        if hasattr(obj, prop) and not prop.startswith("Expressions_"):
+                            box_fast_creators_sub.prop(obj, prop)
+                    box_fast_creators_sub.operator("mbast.reset_categoryonly", icon="RECOVER_LAST")
+                    #----------
+                    box_fast_creators.separator(factor=0.2)
+                    box_fast_creators.label(text="Phenotype Creator", icon='SORT_ASC')
+                    body_type = morphcreator.get_body_type()
+                    path = os.path.join("data", "phenotypes", body_type + "_ptypes")
+                    box_fast_creators.label(text="File saved under " + path, icon='INFO')
+                    box_fast_creators.label(text="(age, mass & tone useless here)", icon='FORWARD')
+                    box_fast_creators.prop(scn, 'mbcrea_phenotype_name_filter')
+                    if len(scn.mbcrea_phenotype_name_filter) > 0:
+                        pheno_name = algorithms.split_name(scn.mbcrea_phenotype_name_filter, '-²&=¨^$£%µ,?;!§+*/').lower()
+                        box_fast_creators.label(text="Name : " + pheno_name, icon='INFO')
+                        if morphcreator.is_phenotype_exists(body_type, pheno_name):
+                            box_fast_creators.label(text="File already exists !", icon='ERROR')
+                        box_fast_creators.operator('mbcrea.button_save_phenotype', icon="FREEZE")
+                    #----------
+                    box_fast_creators.separator(factor=0.5)
+                    box_fast_creators.label(text="Preset Creator", icon='SORT_ASC')
+                    preset_folder = mblab_humanoid.presets_data_folder
+                    path = os.path.join("data", "presets", preset_folder)
+                    box_fast_creators.label(text="File saved under " + path, icon='INFO')
+                    box_fast_creators.label(text="(age, mass & tone are used here)", icon='FORWARD')
+                    box_fast_creators.prop(scn, 'mbcrea_preset_name_filter')
+                    if len(scn.mbcrea_preset_name_filter) > 0:
+                        box_fast_creators.prop(scn, 'mbcrea_integrate_material')
+                        if scn.mbcrea_integrate_material:
+                            box_skin = box_fast_creators.box()
+                            box_skin.enabled = True
+                            if scn.render.engine != 'CYCLES' and scn.render.engine != 'BLENDER_EEVEE':
+                                box_skin.enabled = False
+                                box_skin.label(text="Skin editor requires Cycles or EEVEE", icon='INFO')
+                            if mblab_humanoid.exists_displace_texture():
+                                box_skin.operator("mbast.skindisplace_calculate", icon='MOD_DISPLACE')
+                                box_skin.label(text="Enable Displacement Preview to view updates", icon='INFO')
+                            for material_data_prop in sorted(mblab_humanoid.character_material_properties.keys()):
+                                box_skin.prop(obj, material_data_prop)
+                        box_fast_creators.prop(scn, 'mbcrea_special_preset') # Common or Special ?
+                        preset_name = ""
+                        if scn.mbcrea_special_preset:
+                            preset_name = "special"
+                        tmp = algorithms.split_name(scn.mbcrea_preset_name_filter, '-²&=¨^$£%µ,?;!§+*/').lower()
+                        if not tmp.startswith("type_"):
+                            preset_name += "type_"
+                        preset_name += tmp
+                        box_fast_creators.label(text="Name : " + preset_name, icon='INFO')
+                        if morphcreator.is_preset_exists(preset_folder, preset_name):
+                            box_fast_creators.label(text="File already exists !", icon='ERROR')
+                        box_fast_creators.operator('mbcrea.button_save_preset', icon="FREEZE")
+                else:
+                    box_fast_creators.label(text="! NO COMPATIBLE MODEL !", icon='ERROR')
+                    box_fast_creators.enabled = False
             #------------Expressions creator------------
             if gui_active_panel_second != "morphs_for_expressions":
                 box_adaptation_tools.operator('mbcrea.button_morphexpression_on', icon=icon_expand)
@@ -3242,146 +3345,21 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                 else:
                     box_combinexpression.label(text="!NO COMPATIBLE MODEL!", icon='ERROR')
                     box_combinexpression.enabled = False
-            #----------Fast creators-----------
-            if gui_active_panel_second != "fast_creators":
-                box_adaptation_tools.operator('mbcrea.button_fastcreators_on', icon=icon_expand)
+            #------------Rigify------------
+            box_adaptation_tools.label(text="After finalization", icon='MODIFIER_ON')
+            if gui_active_panel_second != "Rigify":
+                box_adaptation_tools.operator('mbcrea.button_rigify_on', icon=icon_expand)
             else:
-                box_adaptation_tools.operator('mbcrea.button_fastcreators_off', icon=icon_collapse)
-                box_fast_creators = self.layout.box()
-                if is_objet == "FOUND":
-                    mblab_humanoid.bodydata_realtime_activated = True
-                    obj = mblab_humanoid.get_object()
-                    box_fast_creators.operator("mbast.reset_allproperties", icon="RECOVER_LAST")
-                    #----------
-                    if mblab_humanoid.exists_transform_database():
-                        x_age = getattr(obj, 'character_age', 0)
-                        x_mass = getattr(obj, 'character_mass', 0)
-                        x_tone = getattr(obj, 'character_tone', 0)
-                        age_lbl = round((15.5 * x_age ** 2) + 31 * x_age + 33)
-                        mass_lbl = round(50 * (x_mass + 1))
-                        tone_lbl = round(50 * (x_tone + 1))
-                        lbl_text = "Age : {0} yr.  Mass : {1}%  Tone : {2}% ".format(age_lbl, mass_lbl, tone_lbl)
-                        box_fast_creators.label(text=lbl_text)
-
-                        for meta_data_prop in sorted(mblab_humanoid.character_metaproperties.keys()):
-                            if "last" not in meta_data_prop:
-                                box_fast_creators.prop(obj, meta_data_prop)
-                    else:
-                        box_fast_creators.label(text="No transform database !", icon="ERROR")
-                    #----------
-                    box_fast_creators.prop(scn, "morphingCategory")
-                    for prop in mblab_humanoid.get_properties_in_category(scn.morphingCategory):
-                        if hasattr(obj, prop) and not prop.startswith("Expressions_"):
-                            box_fast_creators.prop(obj, prop)
-                    box_fast_creators.operator("mbast.reset_categoryonly", icon="RECOVER_LAST")
-                    #----------
-                    box_fast_creators.separator(factor=0.5)
-                    box_fast_creators.label(text="Phenotype Creator", icon='SORT_ASC')
-                    body_type = morphcreator.get_body_type()
-                    path = os.path.join("data", "phenotypes", body_type + "_ptypes")
-                    box_fast_creators.label(text="File saved under " + path, icon='INFO')
-                    box_fast_creators.label(text="(age, mass & tone useless here)", icon='FORWARD')
-                    box_fast_creators.prop(scn, 'mbcrea_phenotype_name_filter')
-                    if len(scn.mbcrea_phenotype_name_filter) > 0:
-                        pheno_name = algorithms.split_name(scn.mbcrea_phenotype_name_filter, '-²&=¨^$£%µ,?;!§+*/').lower()
-                        box_fast_creators.label(text="Name : " + pheno_name, icon='INFO')
-                        if morphcreator.is_phenotype_exists(body_type, pheno_name):
-                            box_fast_creators.label(text="File already exists !", icon='ERROR')
-                        box_fast_creators.operator('mbcrea.button_save_phenotype', icon="FREEZE")
-                    #----------
-                    box_fast_creators.separator(factor=0.5)
-                    box_fast_creators.label(text="Preset Creator", icon='SORT_ASC')
-                    preset_folder = mblab_humanoid.presets_data_folder
-                    path = os.path.join("data", "presets", preset_folder)
-                    box_fast_creators.label(text="File saved under " + path, icon='INFO')
-                    box_fast_creators.label(text="(age, mass & tone are used here)", icon='FORWARD')
-                    box_fast_creators.prop(scn, 'mbcrea_preset_name_filter')
-                    if len(scn.mbcrea_preset_name_filter) > 0:
-                        box_fast_creators.prop(scn, 'mbcrea_integrate_material')
-                        if scn.mbcrea_integrate_material:
-                            box_skin = box_fast_creators.box()
-                            box_skin.enabled = True
-                            if scn.render.engine != 'CYCLES' and scn.render.engine != 'BLENDER_EEVEE':
-                                box_skin.enabled = False
-                                box_skin.label(text="Skin editor requires Cycles or EEVEE", icon='INFO')
-                            if mblab_humanoid.exists_displace_texture():
-                                box_skin.operator("mbast.skindisplace_calculate", icon='MOD_DISPLACE')
-                                box_skin.label(text="Enable Displacement Preview to view updates", icon='INFO')
-                            for material_data_prop in sorted(mblab_humanoid.character_material_properties.keys()):
-                                box_skin.prop(obj, material_data_prop)
-                        box_fast_creators.prop(scn, 'mbcrea_special_preset') # Common or Special ?
-                        preset_name = ""
-                        if scn.mbcrea_special_preset:
-                            preset_name = "special"
-                        tmp = algorithms.split_name(scn.mbcrea_preset_name_filter, '-²&=¨^$£%µ,?;!§+*/').lower()
-                        if not tmp.startswith("type_"):
-                            preset_name += "type_"
-                        preset_name += tmp
-                        box_fast_creators.label(text="Name : " + preset_name, icon='INFO')
-                        if morphcreator.is_preset_exists(preset_folder, preset_name):
-                            box_fast_creators.label(text="File already exists !", icon='ERROR')
-                        box_fast_creators.operator('mbcrea.button_save_preset', icon="FREEZE")
-                else:
-                    box_fast_creators.label(text="! NO COMPATIBLE MODEL !", icon='ERROR')
-                    box_fast_creators.enabled = False
-            #------Age/Fat/Muscle Creator------
-            if gui_active_panel_second != "agemasstone_creator":
-                box_adaptation_tools.operator('mbcrea.button_agemasstonecreator_on', icon=icon_expand)
+                box_adaptation_tools.operator('mbcrea.button_rigify_off', icon=icon_collapse)
+                box_rigify = self.layout.box()
+                box_rigify.label(text="#TODO Rigify...")
+            #------------Blenrig------------
+            if gui_active_panel_second != "Blenrig":
+                box_adaptation_tools.operator('mbcrea.button_blenrig_on', icon=icon_expand)
             else:
-                box_adaptation_tools.operator('mbcrea.button_agemasstonecreator_off', icon=icon_collapse)
-                box_agemasstone = self.layout.box()
-                if is_objet == "FOUND":
-                    mblab_humanoid.bodydata_realtime_activated = True
-                    obj = mblab_humanoid.get_object()
-                    box_agemasstone.operator("mbast.reset_allproperties", icon="RECOVER_LAST")
-                    #----------
-                    if mblab_humanoid.exists_transform_database():
-                        box_agemasstone.label(text="Preselection", icon='SORT_ASC')
-                        x_age = getattr(obj, 'character_age', 0)
-                        x_mass = getattr(obj, 'character_mass', 0)
-                        x_tone = getattr(obj, 'character_tone', 0)
-                        age_lbl = round((15.5 * x_age ** 2) + 31 * x_age + 33)
-                        mass_lbl = round(50 * (x_mass + 1))
-                        tone_lbl = round(50 * (x_tone + 1))
-                        lbl_text = "Age : {0} yr.  Mass : {1}%  Tone : {2}% ".format(age_lbl, mass_lbl, tone_lbl)
-                        box_agemasstone.label(text=lbl_text)
-
-                        for meta_data_prop in sorted(mblab_humanoid.character_metaproperties.keys()):
-                            if "last" not in meta_data_prop:
-                                box_agemasstone.prop(obj, meta_data_prop)
-                    else:
-                        box_agemasstone.label(text="No transform database !", icon="ERROR")
-                    #---------- Now the tool itself
-                    box_agemasstone.label(text="Selection", icon='SORT_ASC')
-                    mbcrea_transfor.set_scene(scn)
-                    if not mbcrea_transfor.is_initialized():
-                        mbcrea_transfor.init_transfor_props()
-                    # All UI stuff is done below (in a dedicated class)
-                    mbcrea_transfor.create_box(box_agemasstone)
-                    box_agemasstone.operator("mbcrea.reset_transfor_values", icon="RECOVER_LAST")
-                    box_agemasstone.operator("mbcrea.validate_transfor_values", icon="FREEZE")
-                    #---------- The name and save
-                    box_agemasstone.label(text="Tool wording - File", icon='SORT_ASC')
-                    box_agemasstone.label(text="File saved under " + os.path.join("data", "transformations"), icon='INFO')
-                    box_agemasstone.prop(scn, 'mbcrea_agemasstone_name')
-                    box_agemasstone.prop(scn, 'mblab_incremental_saves')
-                    if len(scn.mbcrea_agemasstone_name) > 0:
-                        tmp = morphcreator.get_model_and_gender().split("_")
-                        agemasstone_name = tmp[0] + "_" + tmp[1] + "_" + algorithms.split_name(scn.mbcrea_agemasstone_name.lower())
-                        if scn.mblab_incremental_saves:
-                            agemasstone_name += "_123"
-                        agemasstone_name += "_transf"
-                        box_agemasstone.label(text="File name : " + agemasstone_name, icon="INFO")
-                    else:
-                        box_agemasstone.label(text="Name needed ! ", icon="ERROR")
-                    #---------- Tools
-                    box_agemasstone.label(text="Tools", icon='SORT_ASC')
-                    box_agemasstone.operator('mbcrea.button_load_transf', icon='IMPORT')
-                else:
-                    box_agemasstone.label(text="! NO COMPATIBLE MODEL !", icon='ERROR')
-                    box_agemasstone.enabled = False
-                    
-            #----------------------------------
+                box_adaptation_tools.operator('mbcrea.button_blenrig_off', icon=icon_collapse)
+                box_blenrig = self.layout.box()
+                box_blenrig.label(text="#TODO Blenrig...")
             box_adaptation_tools.separator(factor=0.5)
                     
         #Create/edit tools...
@@ -3699,6 +3677,33 @@ bpy.types.Scene.mbcrea_agemasstone_name = bpy.props.StringProperty(
     maxlen=1024,
     subtype='FILE_NAME')
 
+def mbcrea_enum_transfor_category(self, context):
+    cat = mblab_humanoid.transformations_data.keys()
+    mbcrea_transfor_category_list = []
+    for key in cat:
+        name = key.split("_")[0]
+        if name == "fat":
+            name = "Mass"
+        elif name == "muscle":
+            name = "Tone"
+        mbcrea_transfor_category_list.append((key, name, name))
+    return mbcrea_transfor_category_list
+   
+
+bpy.types.Scene.mbcrea_transfor_category = bpy.props.EnumProperty(
+    items=mbcrea_enum_transfor_category,
+    name="Save for",
+    default=None,
+    options={'ANIMATABLE'},
+    )
+
+bpy.types.Scene.mbcrea_transfor_minmax = bpy.props.EnumProperty(
+    items=morphcreator.min_max,
+    name="-1 to +1",
+    default=None,
+    )
+
+
 class FinalizeExpression(bpy.types.Operator):
     """
         Working like FinalizeMorph
@@ -3828,41 +3833,82 @@ class FinalizePreset(bpy.types.Operator):
         morphcreator.save_preset(path, mblab_humanoid, scn.mbcrea_integrate_material)
         return {'FINISHED'}
 
-class ResetTransforValues(bpy.types.Operator):
-    # Reset all cursors to their previous saved state
-    bl_label = 'Reset properties'
-    bl_idname = 'mbcrea.reset_transfor_values'
-    bl_description = 'Reset all properties in their previous saved state.'
+def get_transfor_filepath():
+    scn = bpy.context.scene
+    if len(scn.mbcrea_agemasstone_name) < 1:
+        return None
+    tmp = morphcreator.get_model_and_gender().split("_")
+    name = tmp[0] + "_" + tmp[1] + "_" + algorithms.split_name(scn.mbcrea_agemasstone_name.lower()) + "_transf.json"
+    filepath = os.path.join(file_ops.get_data_path(), "transformations", name)
+    return filepath
+    
+class ButtonTransforSave(bpy.types.Operator):
+    bl_label = 'Save step / Finalize'
+    bl_idname = 'mbcrea.button_transfor_save'
+    bl_description = 'Button for saving content in selected category and morph.\nSame button for a simple step or a finalization'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        global mbcrea_transfor
-        mbcrea_transfor.reset_values()
+        mode = bpy.context.active_object.mode
+        bpy.ops.object.mode_set(mode='OBJECT')
+        scn = bpy.context.scene
+        #--------------------
+        filepath = get_transfor_filepath()
+        if filepath == None:
+            return {'FINISHED'}
+        mbcrea_transfor.save_transformation(filepath, scn.mbcrea_transfor_category, scn.mbcrea_transfor_minmax)
         return {'FINISHED'}
 
-class ValidateTransforValues(bpy.types.Operator):
-    # Reset all cursors to their previous saved state
-    bl_label = 'Validate properties'
-    bl_idname = 'mbcrea.validate_transfor_values'
-    bl_description = 'Validate all properties in this state.\nRecover these values after a reset.'
+class ButtonTransforLoad(bpy.types.Operator):
+    bl_label = 'Load step'
+    bl_idname = 'mbcrea.button_transfor_load'
+    bl_description = 'Button for loading content in selected category and morph'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        global mbcrea_transfor
-        mbcrea_transfor.validate_properties()
+        mode = bpy.context.active_object.mode
+        bpy.ops.object.mode_set(mode='OBJECT')
+        scn = bpy.context.scene
+        #--------------------
+        filepath = get_transfor_filepath()
+        if filepath == None:
+            return {'FINISHED'}
+        mbcrea_transfor.load_transformation(filepath, scn.mbcrea_transfor_category, scn.mbcrea_transfor_minmax)
         return {'FINISHED'}
 
-class LoadTransformationFile(bpy.types.Operator, ImportHelper):
+class ButtonCurrentModelTransforSave(bpy.types.Operator):
+    """
+        Save the transformation database of current model.
+    """
+    bl_label = 'Export current model'
+    bl_idname = 'mbcrea.button_transfor_save_current'
+    filename_ext = ".json"
+    filter_glob: bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
+    bl_description = 'Export the data base of the current model.\ni.e its data base, not the changes from user.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        mode = bpy.context.active_object.mode
+        bpy.ops.object.mode_set(mode='OBJECT')
+        #--------------------
+        filepath = get_transfor_filepath()
+        if filepath == None:
+            return {'FINISHED'}
+        mbcrea_transfor.save_current_model(filepath)
+        return {'FINISHED'}
+
+class CheckTransformationFile(bpy.types.Operator, ImportHelper):
     """
         Load the file as a transformation.
     """
-    bl_label = 'Load file as a model'
-    bl_idname = 'mbcrea.button_load_transf'
+    bl_label = 'Check compatibility'
+    bl_idname = 'mbcrea.button_check_transf'
     filename_ext = ".json"
     filter_glob: bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
-    bl_description = 'Load a transformation file as a base model.'
+    bl_description = 'Check the compatibility of a file to current model.\nThe result is stored under same directory, same name+.txt'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -3870,7 +3916,37 @@ class LoadTransformationFile(bpy.types.Operator, ImportHelper):
         mode = bpy.context.active_object.mode
         bpy.ops.object.mode_set(mode='OBJECT')
         if not self.filepath.endswith("_transf.json"):
-            self.ShowMessageBox(message = "It's not a valid file !")
+            self.ShowMessageBox(message = "May not a valid file !")
+            return {'FINISHED'}
+        #--------------------
+        mbcrea_transfor.check_compatibility_with_current_model(self.filepath)
+        return {'FINISHED'}
+    
+    def ShowMessageBox(self, message = "", title = "Error !", icon = 'ERROR'):
+
+        def draw(self, context):
+            self.layout.label(text=message)
+        bpy.context.window_manager.popup_menu(draw, title = title, icon = icon)
+    
+
+
+class LoadTransformationFile(bpy.types.Operator, ImportHelper):
+    """
+        Load the file as a transformation.
+    """
+    bl_label = 'Import for current model'
+    bl_idname = 'mbcrea.button_load_transf'
+    filename_ext = ".json"
+    filter_glob: bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
+    bl_description = 'Load a transformation file for the current model.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        mode = bpy.context.active_object.mode
+        bpy.ops.object.mode_set(mode='OBJECT')
+        if not self.filepath.endswith("_transf.json"):
+            self.ShowMessageBox(message = "May not a valid file !")
             return {'FINISHED'}
         #--------------------
         mbcrea_transfor.load_transformation_from_file(self.filepath)
@@ -3881,8 +3957,7 @@ class LoadTransformationFile(bpy.types.Operator, ImportHelper):
         def draw(self, context):
             self.layout.label(text=message)
         bpy.context.window_manager.popup_menu(draw, title = title, icon = icon)
-    
-    
+
 
 class ButtonCompatToolsDir(bpy.types.Operator):
     #just for quick tests
@@ -4663,8 +4738,10 @@ classes = (
     FinalizePreset,
     ButtonUpdateCombMorphs,
     FinalizeCombMorph,
-    ResetTransforValues,
-    ValidateTransforValues,
+    ButtonTransforSave,
+    ButtonTransforLoad,
+    ButtonCurrentModelTransforSave,
+    CheckTransformationFile,
     LoadTransformationFile,
     Reset_expression_category,
     ImpExpression,

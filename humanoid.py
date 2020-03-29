@@ -351,8 +351,7 @@ class Humanoid:
     def load_transformation_database(self):
         self.transformations_data = file_ops.load_json_data(self.transformations_data_path, "Transformations database")
     
-    #Teto
-        
+    #Teto  
     def get_categories(self, exlude_names=[]):
         if exlude_names == []:
             categories = self.categories.values()
