@@ -85,17 +85,17 @@ mbcrea_transfor = transfor.Transfor(mblab_humanoid)
 
 gui_status = "NEW_SESSION"
 gui_err_msg = ""
+
+# GUI panels for MB-Lab
 gui_active_panel = None
-# added for future dev once it's done
 gui_active_panel_middle = None
 gui_active_panel_display = None
-
 gui_active_panel_fin = None
-#Teto
+
+# GUI panels for MB-Dev
 gui_active_panel_first = None
 gui_active_panel_second = None
 gui_active_panel_third = None
-#End Teto
 
 #Delete List
 CY_Hshader_remove = []
@@ -911,8 +911,8 @@ class ButtonParametersOff(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        global gui_active_panel
-        gui_active_panel = None
+        global gui_active_panel_middle
+        gui_active_panel_middle = None
         return {'FINISHED'}
 
 
@@ -924,8 +924,8 @@ class ButtonParametersOn(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        global gui_active_panel
-        gui_active_panel = "parameters"
+        global gui_active_panel_middle
+        gui_active_panel_middle = "parameters"
         sync_character_to_props()
         return {'FINISHED'}
 
@@ -1248,8 +1248,8 @@ class ButtonRestPoseOff(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        global gui_active_panel
-        gui_active_panel = None
+        global gui_active_panel_middle
+        gui_active_panel_middle = None
         return {'FINISHED'}
 
 
@@ -1261,8 +1261,8 @@ class ButtonRestPoseOn(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        global gui_active_panel
-        gui_active_panel = 'rest_pose'
+        global gui_active_panel_middle
+        gui_active_panel_middle = 'rest_pose'
         return {'FINISHED'}
 
 
@@ -1327,8 +1327,8 @@ class ButtonSkinOff(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        global gui_active_panel
-        gui_active_panel = None
+        global gui_active_panel_middle
+        gui_active_panel_middle = None
         return {'FINISHED'}
 
 
@@ -1340,8 +1340,8 @@ class ButtonSkinOn(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        global gui_active_panel
-        gui_active_panel = 'skin'
+        global gui_active_panel_middle
+        gui_active_panel_middle = 'skin'
         return {'FINISHED'}
 
 
@@ -1353,8 +1353,8 @@ class ButtonViewOptOff(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        global gui_active_panel
-        gui_active_panel = None
+        global gui_active_panel_display
+        gui_active_panel_display = None
         return {'FINISHED'}
 
 
@@ -1366,8 +1366,8 @@ class ButtonViewOptOn(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        global gui_active_panel
-        gui_active_panel = 'display_opt'
+        global gui_active_panel_display
+        gui_active_panel_display = 'display_opt'
         return {'FINISHED'}
 
 
@@ -1405,8 +1405,8 @@ class ButtonFilesOff(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        global gui_active_panel
-        gui_active_panel = None
+        global gui_active_panel_display
+        gui_active_panel_display = None
         return {'FINISHED'}
 
 
@@ -1418,8 +1418,8 @@ class ButtonFilesOn(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        global gui_active_panel
-        gui_active_panel = 'file'
+        global gui_active_panel_display
+        gui_active_panel_display = 'file'
         return {'FINISHED'}
 
 
@@ -1431,8 +1431,8 @@ class ButtonFinalizeOff(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        global gui_active_panel
-        gui_active_panel = None
+        global gui_active_panel_display
+        gui_active_panel_display = None
         return {'FINISHED'}
 
 
@@ -1444,8 +1444,8 @@ class ButtonFinalizeOn(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        global gui_active_panel
-        gui_active_panel = 'finalize'
+        global gui_active_panel_display
+        gui_active_panel_display = 'finalize'
         return {'FINISHED'}
 
 
@@ -2528,6 +2528,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                 box_post_opt.operator('mbast.button_facerig_off', icon=icon_collapse)
 
             # Face Rig
+            
                 box_face_rig = box_post_opt.box()
                 #box_face_rig.label(text="Face Rig")
                 box_face_rig.operator('mbast.create_face_rig', icon='USER')
@@ -2535,7 +2536,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                 box_face_rig.prop(scn, "mblab_facs_rig")
 
             # Expressions
-
+            
             if gui_active_panel_fin != "expressions":
                 box_post_opt.operator('mbast.button_expressions_on', icon=icon_expand)
             else:
@@ -2708,7 +2709,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
             obj = mblab_humanoid.get_object()
             armature = mblab_humanoid.get_armature()
             if obj and armature:
-                self.layout.label(text="CREATION TOOLS", icon="RNA")
+                self.layout.label(text="CHARACTER SHAPE", icon="RNA")
                 box_act_opt = self.layout.box()
                 box_act_opt_sub = box_act_opt.box()
 
@@ -2729,26 +2730,32 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                     box_act_opt_sub.separator(factor=0.2)
                     #if mblab_humanoid.get_subd_visibility() is True:
                         #self.layout.label(text="Tip: for slow PC, disable the subdivision in Display Options below", icon='INFO')
-
+                # Sub-panel for all tools below
+                box_act_tools_sub = self.layout.box()
+                # Character library
+                
+                box_act_tools_sub.label(text="CHARACTER SET-UP", icon="RNA")
                 if gui_active_panel != "library":
-                    box_act_opt.operator('mbast.button_library_on', icon=icon_expand)
+                    box_act_tools_sub.operator('mbast.button_library_on', icon=icon_expand)
                 else:
-                    box_act_opt.operator('mbast.button_library_off', icon=icon_collapse)
-                    box_lib = box_act_opt.box()
+                    box_act_tools_sub.operator('mbast.button_library_off', icon=icon_collapse)
+                    box_lib = self.layout.box()
 
-                    box_lib.label(text="Characters library", icon='ARMATURE_DATA')
+                    #box_lib.label(text="Characters library", icon='ARMATURE_DATA')
                     if mblab_humanoid.exists_preset_database():
                         box_lib.prop(obj, "preset")
                     if mblab_humanoid.exists_phenotype_database():
                         box_lib.prop(obj, "ethnic")
                     box_lib.prop(scn, 'mblab_mix_characters', icon='FORCE_CHARGE')
-
+                
+                # Randomize character
+                
                 if gui_active_panel != "random":
-                    box_act_opt.operator('mbast.button_random_on', icon=icon_expand)
+                    box_act_tools_sub.operator('mbast.button_random_on', icon=icon_expand)
                 else:
-                    box_act_opt.operator('mbast.button_random_off', icon=icon_collapse)
+                    box_act_tools_sub.operator('mbast.button_random_off', icon=icon_collapse)
 
-                    box_rand = box_act_opt.box()
+                    box_rand = self.layout.box()
                     box_rand.prop(scn, "mblab_random_engine")
                     box_rand.prop(scn, "mblab_set_tone_and_mass")
                     if scn.mblab_set_tone_and_mass:
@@ -2765,13 +2772,31 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                     box_rand.prop(scn, "mblab_preserve_fantasy")
 
                     box_rand.operator('mbast.character_generator', icon="FILE_REFRESH")
-
-                if gui_active_panel != "parameters":
-                    box_act_opt.operator('mbast.button_parameters_on', icon=icon_expand)
+                
+                # Automodelling tools
+                
+                if mblab_humanoid.exists_measure_database():
+                    if gui_active_panel != "automodelling":
+                        box_act_tools_sub.operator('mbast.button_automodelling_on', icon=icon_expand)
+                    else:
+                        box_act_tools_sub.operator('mbast.button_automodelling_off', icon=icon_collapse)
+                        box_auto = box_act_content_one.box()
+                        box_auto.operator("mbast.auto_modelling", icon='OUTLINER_DATA_MESH')
+                        box_auto.operator("mbast.auto_modelling_mix", icon='OUTLINER_OB_MESH')
                 else:
-                    box_act_opt.operator('mbast.button_parameters_off', icon=icon_collapse)
+                    box_auto = self.layout.box()
+                    box_auto.enabled = False
+                    box_auto.label(text="Automodelling not available for this character", icon='INFO')
+                
+                # Body measures
+                
+                box_act_tools_sub.label(text="CHARACTER DESIGN", icon="RNA")
+                if gui_active_panel_middle != "parameters":
+                    box_act_tools_sub.operator('mbast.button_parameters_on', icon=icon_expand)
+                else:
+                    box_act_tools_sub.operator('mbast.button_parameters_off', icon=icon_collapse)
 
-                    box_param = box_act_opt.box()
+                    box_param = self.layout.box()
                     mblab_humanoid.bodydata_realtime_activated = True
                     if mblab_humanoid.exists_measure_database():
                         box_param.prop(scn, 'mblab_show_measures', icon='SNAP_INCREMENT')
@@ -2812,26 +2837,15 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                     sub = box_param.box()
                     sub.label(text="RESET")
                     sub.operator("mbast.reset_categoryonly", icon="RECOVER_LAST")
-
-                if mblab_humanoid.exists_measure_database():
-                    if gui_active_panel != "automodelling":
-                        box_act_opt.operator('mbast.button_automodelling_on', icon=icon_expand)
-                    else:
-                        box_act_opt.operator('mbast.button_automodelling_off', icon=icon_collapse)
-                        box_auto = box_act_opt.box()
-                        box_auto.operator("mbast.auto_modelling", icon='OUTLINER_DATA_MESH')
-                        box_auto.operator("mbast.auto_modelling_mix", icon='OUTLINER_OB_MESH')
-                else:
-                    box_auto = box_act_opt.box()
-                    box_auto.enabled = False
-                    box_auto.label(text="Automodelling not available for this character", icon='INFO')
-
+                
+                # Poses
+                
                 if mblab_humanoid.exists_rest_poses_database():
-                    if gui_active_panel != "rest_pose":
-                        box_act_opt.operator('mbast.button_rest_pose_on', icon=icon_expand)
+                    if gui_active_panel_middle != "rest_pose":
+                        box_act_tools_sub.operator('mbast.button_rest_pose_on', icon=icon_expand)
                     else:
-                        box_act_opt.operator('mbast.button_rest_pose_off', icon=icon_collapse)
-                        box_act_pose = box_act_opt.box()
+                        box_act_tools_sub.operator('mbast.button_rest_pose_off', icon=icon_collapse)
+                        box_act_pose = self.layout.box()
 
                         if utils.is_ik_armature(armature):
                             box_act_pose.enabled = False
@@ -2842,13 +2856,15 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
 
                             box_act_pose.operator("mbast.restpose_load", icon='IMPORT')
                             box_act_pose.operator("mbast.restpose_save", icon='EXPORT')
-
-                if gui_active_panel != "skin":
-                    box_act_opt.operator('mbast.button_skin_on', icon=icon_expand)
+                
+                # Skin editor
+                
+                if gui_active_panel_middle != "skin":
+                    box_act_tools_sub.operator('mbast.button_skin_on', icon=icon_expand)
                 else:
-                    box_act_opt.operator('mbast.button_skin_off', icon=icon_collapse)
+                    box_act_tools_sub.operator('mbast.button_skin_off', icon=icon_collapse)
 
-                    box_skin = box_act_opt.box()
+                    box_skin = self.layout.box()
                     box_skin.enabled = True
                     if scn.render.engine != 'CYCLES' and scn.render.engine != 'BLENDER_EEVEE':
                         box_skin.enabled = False
@@ -2860,12 +2876,14 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
 
                     for material_data_prop in sorted(mblab_humanoid.character_material_properties.keys()):
                         box_skin.prop(obj, material_data_prop)
-
-                if gui_active_panel != "finalize":
-                    box_act_opt.operator('mbast.button_finalize_on', icon=icon_expand)
+                
+                # Finalize character
+                box_act_tools_sub.label(text="OTHERS", icon="RNA")
+                if gui_active_panel_display != "finalize":
+                    box_act_tools_sub.operator('mbast.button_finalize_on', icon=icon_expand)
                 else:
-                    box_act_opt.operator('mbast.button_finalize_off', icon=icon_collapse)
-                    box_fin = box_act_opt.box()
+                    box_act_tools_sub.operator('mbast.button_finalize_off', icon=icon_collapse)
+                    box_fin = self.layout.box()
                     box_fin.prop(scn, 'mblab_save_images_and_backup', icon='EXPORT')
                     box_fin.prop(scn, 'mblab_remove_all_modifiers', icon='CANCEL')
                     box_fin.prop(scn, 'mblab_final_prefix')
@@ -2873,12 +2891,14 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                         box_fin.operator("mbast.finalize_character_and_images", icon='FREEZE')
                     else:
                         box_fin.operator("mbast.finalize_character", icon='FREEZE')
-
-                if gui_active_panel != "file":
-                    box_act_opt.operator('mbast.button_file_on', icon=icon_expand)
+                
+                # File tools
+                
+                if gui_active_panel_display != "file":
+                    box_act_tools_sub.operator('mbast.button_file_on', icon=icon_expand)
                 else:
-                    box_act_opt.operator('mbast.button_file_off', icon=icon_collapse)
-                    box_file = box_act_opt.box()
+                    box_act_tools_sub.operator('mbast.button_file_off', icon=icon_collapse)
+                    box_file = self.layout.box()
                     box_file.prop(scn, 'mblab_show_texture_load_save', icon='TEXTURE')
                     if scn.mblab_show_texture_load_save:
 
@@ -2901,12 +2921,14 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                     box_file.prop(scn, 'mblab_export_materials', icon='MATERIAL')
                     box_file.operator("mbast.export_character", icon='EXPORT')
                     box_file.operator("mbast.import_character", icon='IMPORT')
-
-                if gui_active_panel != "display_opt":
-                    box_act_opt.operator('mbast.button_display_on', icon=icon_expand)
+                
+                # Display character
+                
+                if gui_active_panel_display != "display_opt":
+                    box_act_tools_sub.operator('mbast.button_display_on', icon=icon_expand)
                 else:
-                    box_act_opt.operator('mbast.button_display_off', icon=icon_collapse)
-                    box_disp = box_act_opt.box()
+                    box_act_tools_sub.operator('mbast.button_display_off', icon=icon_collapse)
+                    box_disp = self.layout.box()
 
                     if mblab_humanoid.exists_displace_texture():
                         if mblab_humanoid.get_disp_visibility() is False:
