@@ -1103,7 +1103,7 @@ class FinalizeMorph(bpy.types.Operator):
         sculpted = []
 
         if len(scn.mblab_morph_name) < 1:
-            self.ShowMessageBox("Please choose a name for the morph !\nNo file saved", "Warning", 'ERROR')
+            self.ShowMessageBox("Please choose a name for the morph ! No file saved", "Warning", 'ERROR')
             return {'FINISHED'}
         try:
             base = morphcreator.get_vertices_list(0)
@@ -1117,7 +1117,7 @@ class FinalizeMorph(bpy.types.Operator):
             return {'FINISHED'}
         indexed_vertices = morphcreator.substract_with_index(base, sculpted)
         if len(indexed_vertices) < 1:
-            self.ShowMessageBox("Models base / sculpted are equals !\nNo file saved", "Warning", 'INFO')
+            self.ShowMessageBox("Models base / sculpted are equals ! No file saved", "Warning", 'INFO')
             return {'FINISHED'}
         #-------File name----------
         file_name = ""
@@ -2993,6 +2993,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                 box_adaptation_tools.operator('mbcrea.button_morphcreator_off', icon=icon_collapse)
                 box_morphcreator = self.layout.box()
                 if is_objet == "FOUND":
+                    box_morphcreator.operator("mbast.reset_allproperties", icon="RECOVER_LAST") # Reset character.
                     box_morphcreator.operator('mbast.button_store_base_vertices', icon="SPHERE") #Store all vertices of the actual body.
                     box_morphcreator.label(text="Morph wording - Body parts", icon='SORT_ASC')
                     box_morphcreator.prop(scn, "mblab_body_part_name") #first part of the morph's name : jaws, legs, ...
@@ -4216,10 +4217,7 @@ class FinalizeCombMorph(bpy.types.Operator):
         scn = bpy.context.scene
         base = []
         sculpted = []
-
-        if len(scn.mblab_morph_name) < 1:
-            self.ShowMessageBox("Please choose a name for the morph !\nNo file saved", "Warning", 'ERROR')
-            return {'FINISHED'}
+        
         try:
             base = morphcreator.get_vertices_list(0)
         except:
@@ -4251,12 +4249,10 @@ class FinalizeCombMorph(bpy.types.Operator):
         #-------Morph name-----------
         morph_name = morphcreator.get_combined_morph_name()
         #-------Morphs path----------
-        #Teto
         file_path_name = os.path.join(file_ops.get_data_path(), "morphs", file_name + ".json")
-        file = file_ops.load_json_data(file_path_name, "Try to load a morph file")
+        file = file_ops.load_json_data(file_path_name, "Try to save a morph file")
         if file == None:
             file = {}
-        #End Teto
         #---Creating new morph-------
         file[morph_name] = indexed_vertices
         file_ops.save_json_data(file_path_name, file)
