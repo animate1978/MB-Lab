@@ -2732,6 +2732,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                         #self.layout.label(text="Tip: for slow PC, disable the subdivision in Display Options below", icon='INFO')
                 # Sub-panel for all tools below
                 box_act_tools_sub = self.layout.box()
+                
                 # Character library
                 
                 box_act_tools_sub.label(text="CHARACTER SET-UP", icon="RNA")
@@ -2780,7 +2781,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                         box_act_tools_sub.operator('mbast.button_automodelling_on', icon=icon_expand)
                     else:
                         box_act_tools_sub.operator('mbast.button_automodelling_off', icon=icon_collapse)
-                        box_auto = box_act_content_one.box()
+                        box_auto = self.layout.box()
                         box_auto.operator("mbast.auto_modelling", icon='OUTLINER_DATA_MESH')
                         box_auto.operator("mbast.auto_modelling_mix", icon='OUTLINER_OB_MESH')
                 else:
@@ -3612,7 +3613,6 @@ def mbcrea_enum_morph_items_update(self, context):
     mbcrea_combined_morph_list = algorithms.create_enum_property_items(props)
     return mbcrea_combined_morph_list
    
-
 bpy.types.Scene.mbcrea_morphs_items_1 = bpy.props.EnumProperty(
     items=mbcrea_enum_morph_items_update,
     name="",
