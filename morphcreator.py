@@ -87,6 +87,8 @@ modifiers_for_combined = ["", [], []]
 current_cmd_morph_file = ""
 gender_cmd_morphs_files = []
 body_type_cmd_morphs_files = []
+cmd_categories_in_file = []
+cmd_morphs_in_category = []
 # Below:
 # Keys = Name of files.
 # Values = dict of morphs files
@@ -376,6 +378,16 @@ def save_preset(filepath, humanoid, integrate_material=False):
 #    All methods to ùove/vopy/delete morphs
 # ------------------------------------------------------------------------
 
+def init_cmd_tools():
+    global current_cmd_morph_file
+    global gender_cmd_morphs_files
+    global body_type_cmd_morphs_files
+    global properties_for_cmd
+    current_cmd_morph_file = ""
+    gender_cmd_morphs_files.clear()
+    body_type_cmd_morphs_files.clear()
+    properties_for_cmd.clear()
+    
 # Create tuples for UI.
 def get_gender_type_files(humanoid, type, with_new=False): #OK, checked.
     gender, body_type = get_all_compatible_files(humanoid)
@@ -402,6 +414,7 @@ def get_all_compatible_files(humanoid): #OK, checked.
     global gender_cmd_morphs_files
     global body_type_cmd_morphs_files
     global properties_for_cmd
+    
     if humanoid == None:
         return gender_cmd_morphs_files, body_type_cmd_morphs_files
     if len(gender_cmd_morphs_files) > 0 or len(body_type_cmd_morphs_files) > 0:
@@ -457,46 +470,58 @@ def get_all_cmd_attr_names(humanoid): # OK, checked
 # Get all keys, sorted, no doubles, of all categories for morphs in the file.
 # User give the content of the file.
 def get_morph_file_categories(file_name):
-    global properties_for_cmd
+    global cmd_categories_in_file
+    
+    if len(cmd_categories_in_file) > 0:
+        return cmd_categories_in_file
     categories = []
     tmp = ""
-    return_tuples = []
     prop_values = get_cmd_properties(file_name)
     for morph in prop_values.values():
         tmp = morph.split("_")[0]
         if tmp not in categories:
             categories.append(tmp)
-            return_tuples.append((tmp, tmp, tmp))
-    return sorted(return_tuples)
+            cmd_categories_in_file.append((tmp, tmp, tmp))
+    cmd_categories_in_file = sorted(cmd_categories_in_file)
+    return cmd_categories_in_file
 
 def get_morphs_in_category(file, category):
     global properties_for_cmd
+    global cmd_morphs_in_category
+    
+    if len(cmd_morphs_in_category) > 0:
+        return cmd_morphs_in_category
     content = properties_for_cmd[file]
-    return_cmd_morphs = []
     splitted = ""
     for key, value in content.items():
         splitted = value.split("_")[0]
-        if splitted == category and not key in return_cmd_morphs:
-            return_cmd_morphs.append(key)
-    return return_cmd_morphs
-    
-def init_cmd_content():
-    Print("init_cmd_content")
+        if splitted == category and not key in cmd_morphs_in_category:
+            cmd_morphs_in_category.append(key)
+    cmd_morphs_in_category = sorted(cmd_morphs_in_category)
+    return cmd_morphs_in_category
+
 
 # Trick to avoid the file to be loaded constantly.
 # Must be used to open a file for copy/move/delete/rename.
-def set_raw_file(file_name): #OK, checked.
+def update_cmd_file(file_name): #OK, checked.
     global current_cmd_morph_file
+    global cmd_categories_in_file
+    global cmd_morphs_in_category
+    
     if file_name == None:
         current_cmd_morph_file = ""
+        cmd_categories_in_file.clear()
+        cmd_morphs_in_category.clear()
         return
     if current_cmd_morph_file != file_name:
         current_cmd_morph_file = file_name
-        global gender_cmd_morphs_files
-        global body_type_cmd_morphs_files
-        gender_cmd_morphs_files.clear()
-        body_type_cmd_morphs_files.clear()
- 
+        cmd_categories_in_file.clear()
+        cmd_morphs_in_category.clear()
+
+def update_cmd_morphs():
+    global cmd_morphs_in_category
+    cmd_morphs_in_category.clear()
+
 # Should not be used directly outside this file.
 def get_morph_file_raw_content(file_name):
     path = os.path.join(file_ops.get_data_path(), "morphs", file_name)
