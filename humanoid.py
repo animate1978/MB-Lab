@@ -95,14 +95,6 @@ class HumanModifier:
                 return True
         return False
 
-    def sync_modifier_data_to_obj_prop(self, char_data):
-        obj = self.get_object()
-        for prop in self.properties:
-            if hasattr(obj, prop):
-                current_val = getattr(obj, prop, 0.5)
-                char_data[prop] = current_val
-
-
     def __lt__(self, other):
         return self.name < other.name
 
@@ -351,7 +343,6 @@ class Humanoid:
     def load_transformation_database(self):
         self.transformations_data = file_ops.load_json_data(self.transformations_data_path, "Transformations database")
     
-    #Teto  
     def get_categories(self, exlude_names=[]):
         if exlude_names == []:
             categories = self.categories.values()
@@ -378,12 +369,10 @@ class Humanoid:
                     self.root_model_name = "human"
                 return self.root_model_name
         
-    #End Teto
-
     def get_category(self, name):
         if name in self.categories:
             return self.categories[name]
-
+    
     def get_properties_in_category(self, name):
         return self.categories[name].get_all_properties()
 

@@ -27,6 +27,7 @@
 import logging
 
 import time
+import datetime
 import json
 import os
 import numpy
@@ -187,6 +188,7 @@ def start_lab_session():
             morphcreator.init_morph_names_database()
             mbcrea_expressionscreator.reset_expressions_items()
             mbcrea_transfor.set_scene(scn)
+            init_cmd_props(mblab_humanoid)
             # End for that.
             algorithms.deselect_all_objects()
     algorithms.remove_censors()
@@ -351,9 +353,7 @@ def init_morphing_props(humanoid_instance):
             bpy.types.Object,
             prop,
             bpy.props.FloatProperty(
-                #Teto
                 name=prop.split("_")[1],
-                #End Teto
                 min=-5.0,
                 max=5.0,
                 soft_min=0.0,
@@ -363,6 +363,15 @@ def init_morphing_props(humanoid_instance):
                 subtype='FACTOR',
                 update=realtime_update))
 
+def init_cmd_props(humanoid_instance):
+    for prop in morphcreator.get_all_cmd_attr_names(humanoid_instance):
+        setattr(
+            bpy.types.Object,
+            prop,
+            bpy.props.BoolProperty(
+                name=prop.split("_")[2],
+                default=False,
+                ))
 
 def init_measures_props(humanoid_instance):
     for measure_name, measure_val in humanoid_instance.morph_engine.measures.items():
@@ -513,7 +522,6 @@ def init_material_parameters_props(humanoid_instance):
                 subtype='FACTOR',
                 update=material_update,
                 default=value))
-
 
 def angle_update_0(self, context):
     global mblab_retarget
@@ -1125,10 +1133,11 @@ class FinalizeMorph(bpy.types.Operator):
             #File name for whole gender, like human_female or anime_male.
             file_name = morphcreator.get_model_and_gender()
         else:
-            if len(scn.mblab_morphing_body_type) < 1:
+            splitted = algorithms.split_name(scn.mblab_morphing_body_type)
+            if len(splitted) < 1:
                 file_name = morphcreator.get_body_type() + "_morphs"
             else:
-                file_name = morphcreator.get_body_type()[0:2] + scn.mblab_morphing_body_type + "_morphs"
+                file_name = morphcreator.get_body_type()[0:2] + splitted + "_morphs"
             if len(scn.mblab_morphing_file_extra_name) > 0:
                 file_name = file_name + "_" + scn.mblab_morphing_file_extra_name
         if scn.mblab_incremental_saves:
@@ -3011,10 +3020,11 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     box_morphcreator.prop(scn, "mblab_morphing_spectrum") #Ask if the new morph is global or just for a specific body
                     spectrum = morphcreator.get_spectrum(scn.mblab_morphing_spectrum)
                     box_morphcreator.prop(scn, 'mblab_morphing_body_type') #The name of the type (4 letters)
-                    if len(scn.mblab_morphing_body_type) > 3:
+                    splitted = algorithms.split_name(scn.mblab_morphing_body_type)
+                    if len(splitted) > 3:
                         box_morphcreator.label(text="(Delete to reset the name)", icon='BLANK1')
-                    elif len(scn.mblab_morphing_body_type) > 0:
-                        box_morphcreator.label(text="4 letters please (but that will work)", icon='BLANK1')
+                    elif len(splitted) > 0:
+                        box_morphcreator.label(text="4 letters please (but that'll do)", icon='BLANK1')
                     box_morphcreator.prop(scn, 'mblab_morphing_file_extra_name') #The extra name for the file (basically the name of the author)
                     txt = "File name : "
                     if spectrum == "Gender":
@@ -3023,8 +3033,8 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                             txt += "_" + scn.mblab_morphing_file_extra_name
                         box_morphcreator.label(text=txt, icon='INFO')
                     else:
-                        if len(scn.mblab_morphing_body_type) > 0:
-                            txt +=  morphcreator.get_body_type().split('_')[0] + "_" + scn.mblab_morphing_body_type + "_morphs"
+                        if len(splitted) > 0:
+                            txt +=  morphcreator.get_body_type().split('_')[0] + "_" + splitted + "_morphs"
                         else:
                             txt += morphcreator.get_body_type() + "_morphs"
                         if len(scn.mblab_morphing_file_extra_name) > 0:
@@ -3117,26 +3127,23 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                         box_comb_morphcreator.label(text="Morph wording - File", icon='SORT_ASC')
                         box_comb_morphcreator.prop(scn, "mblab_morphing_spectrum") #Ask if the new morph is global or just for a specific body
                         spectrum = morphcreator.get_spectrum(scn.mblab_morphing_spectrum)
-                        box_comb_morphcreator.prop(scn, 'mblab_morphing_body_type') #The name of the type (4 letters)
-                        if len(scn.mblab_morphing_body_type) > 3:
-                            box_comb_morphcreator.label(text="(delete to reset the name)", icon='BLANK1')
-                        elif len(scn.mblab_morphing_body_type) > 0:
-                            box_comb_morphcreator.label(text="4 letters please (but that will work)", icon='BLANK1')
-                        box_comb_morphcreator.prop(scn, 'mblab_morphing_file_extra_name') #The extra name for the file (basically the name of the author)
                         txt = "File name : "
                         if spectrum == "Gender":
                             txt += morphcreator.get_model_and_gender()
-                            if len(scn.mblab_morphing_file_extra_name) > 0:
-                                txt += "_" + scn.mblab_morphing_file_extra_name
-                            box_comb_morphcreator.label(text=txt, icon='INFO')
                         else:
+                            box_comb_morphcreator.prop(scn, 'mblab_morphing_body_type') #The name of the type (4 letters)
+                            if len(scn.mblab_morphing_body_type) > 3:
+                                box_comb_morphcreator.label(text="(delete to reset the name)", icon='BLANK1')
+                            elif len(scn.mblab_morphing_body_type) > 0:
+                                box_comb_morphcreator.label(text="4 letters please (but that'll do)", icon='BLANK1')
                             if len(scn.mblab_morphing_body_type) > 0:
                                 txt +=  morphcreator.get_body_type().split('_')[0] + "_" + scn.mblab_morphing_body_type + "_morphs"
                             else:
                                 txt += morphcreator.get_body_type() + "_morphs"
-                            if len(scn.mblab_morphing_file_extra_name) > 0:
-                                txt += "_" + scn.mblab_morphing_file_extra_name
-                            box_comb_morphcreator.label(text=txt, icon='INFO')
+                        box_comb_morphcreator.prop(scn, 'mblab_morphing_file_extra_name') #The extra name for the file (basically the name of the author)
+                        if len(scn.mblab_morphing_file_extra_name) > 0:
+                            txt += "_" + scn.mblab_morphing_file_extra_name
+                        box_comb_morphcreator.label(text=txt, icon='INFO')
                         box_comb_morphcreator.prop(scn, 'mblab_incremental_saves') #If user wants to overide morph in final file or not.
                         box_comb_morphcreator.operator('mbast.button_store_work_in_progress', icon="MONKEY") #Store all vertices of the modified body in a work-in-progress file.
                         box_comb_morphcreator.operator('mbcrea.button_save_final_comb_morph', icon="FREEZE") #Save the final morph.
@@ -3369,6 +3376,73 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                 else:
                     box_combinexpression.label(text="!NO COMPATIBLE MODEL!", icon='ERROR')
                     box_combinexpression.enabled = False
+                
+            # Copy / Move / Delete utilities.
+            
+            if gui_active_panel_second != "cmd_utilities":
+                box_adaptation_tools.operator('mbcrea.button_cmd_utilities_on', icon=icon_expand)
+            else:
+                box_adaptation_tools.operator('mbcrea.button_cmd_utilities_off', icon=icon_collapse)
+                box_cmd_morphs = self.layout.box()
+                if is_objet == "FOUND":
+                    box_cmd_morphs.operator("mbcrea.rescan_morph_files", icon="RECOVER_LAST")
+                    # -------------------
+                    box_cmd_morphs.label(text="Morph file source", icon='SORT_ASC')
+                    box_cmd_morphs.prop(scn, "mbcrea_cmd_spectrum") #Ask if the new morph is global or just for a specific body
+                    spectrum = morphcreator.get_spectrum(scn.mbcrea_cmd_spectrum)
+                    if spectrum == "Gender":
+                        box_cmd_morphs.prop(scn, "mbcrea_gender_files_in")
+                    else:
+                        box_cmd_morphs.prop(scn, "mbcrea_body_type_files_in")
+                    # -------------------
+                    box_cmd_morphs.label(text="File content", icon='SORT_ASC')
+                    obj = mblab_humanoid.get_object()
+                    box_cmd_morphs.prop(scn, "mbcrea_file_categories_content")
+                    box_cmd_morphs_sub = box_cmd_morphs.box()
+                    props = []
+                    if spectrum == "Gender":
+                        props = morphcreator.get_morphs_in_category(scn.mbcrea_gender_files_in, scn.mbcrea_file_categories_content)
+                    else:
+                        props = morphcreator.get_morphs_in_category(scn.mbcrea_body_type_files_in, scn.mbcrea_file_categories_content)
+                    for prop in props:
+                        if hasattr(obj, prop): # In case of rescaning, and there are new props, that can't be displayed.
+                            box_cmd_morphs_sub.prop(obj, prop)
+                    # -------------------
+                    box_cmd_morphs.label(text="Destination file", icon='SORT_ASC')
+                    if spectrum == "Gender":
+                        box_cmd_morphs.prop(scn, "mbcrea_gender_files_out")
+                        box_cmd_morphs.label(text="New file not allowed", icon='INFO')
+                    else:
+                        box_cmd_morphs.prop(scn, "mbcrea_body_type_files_out")
+                        if scn.mbcrea_body_type_files_out == "NEW":
+                            box_cmd_morphs.prop(scn, 'mblab_morphing_body_type') #The name of the type (4 letters)
+                            splitted = algorithms.split_name(scn.mblab_morphing_body_type)
+                            if len(splitted) < 1:
+                                box_cmd_morphs.label(text="Nothing allowed while empty!", icon='ERROR')
+                            elif len(splitted) < 4:
+                                box_cmd_morphs.label(text="4 letters please (but that'll do)", icon='BLANK1')
+                        box_cmd_morphs.prop(scn, 'mblab_morphing_file_extra_name') #The extra name for the file (basically the name of the author)
+                    # ------ File name
+                    file_name = get_cmd_output_file_name()
+                    if len(file_name) > 0:
+                        box_cmd_morphs.label(text="File name : " + file_name, icon='INFO')
+                    # ---- Counting and preparing content for cmd
+                    # -------------------
+                    box_cmd_morphs.label(text="Tools", icon='SORT_ASC')
+                    box_cmd_morphs.operator('mbcrea.button_backup_morph')
+                    if len(file_name) > 0:
+                        box_cmd_morphs.label(text="Reminder : No undo !", icon='ERROR')
+                        box_cmd_morphs.operator('mbcrea.button_copy_morph')
+                        box_cmd_morphs.operator('mbcrea.button_move_morph')
+                        box_cmd_morphs.operator('mbcrea.button_delete_morph')
+                        # Below : only if ONE simple morph is selected...
+                        box_cmd_morphs.prop(scn, 'mbcrea_morphing_rename')
+                        box_cmd_morphs.label(text="Morph name : " + scn.mbcrea_file_categories_content + "_" + scn.mbcrea_morphing_rename + "_min(max)", icon='INFO')
+                        box_cmd_morphs.operator('mbcrea.button_rename_morph')
+                        # Here
+                else:
+                    box_cmd_morphs.label(text="!NO COMPATIBLE MODEL!", icon='ERROR')
+                    box_cmd_morphs.enabled = False
             #------------Rigify------------
             box_adaptation_tools.label(text="After finalization", icon='MODIFIER_ON')
             if gui_active_panel_second != "Rigify":
@@ -3385,7 +3459,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                 box_blenrig = self.layout.box()
                 box_blenrig.label(text="#TODO Blenrig...")
             box_adaptation_tools.separator(factor=0.5)
-                    
+
         #Create/edit tools...
         if gui_active_panel_first != "compat_tools":
             box_tools.operator('mbcrea.button_compat_tools_on', icon=icon_expand)
@@ -3487,23 +3561,6 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                 box_management_tools.label(text="#TODO files management tools...")
         box_tools.separator(factor=0.5)
 
-"""
-bpy.types.Scene.mblab_incremental_saves = bpy.props.BoolProperty(
-    name="Autosaves",
-    description="Does an incremental save each time\n  the final save button is pressed.\nFrom 001 to 999\nCaution : returns to 001 between sessions")
-
-bpy.types.Scene.mblab_morph_name = bpy.props.StringProperty(
-    name="Name",
-    description="ExplicitBodyPartMorphed",
-    default="",
-    maxlen=1024,
-    subtype='FILE_NAME')
-
-bpy.types.Scene.mblab_body_part_name = bpy.props.EnumProperty(
-    items=morphcreator.get_body_parts(),
-    name="Body part",
-    default="BO")
-"""
 bpy.types.Scene.mbcrea_project_name = bpy.props.StringProperty(
     name="Project's name",
     description="Like MyProject",
@@ -3726,6 +3783,66 @@ bpy.types.Scene.mbcrea_transfor_minmax = bpy.props.EnumProperty(
     default=None,
     )
 
+bpy.types.Scene.mbcrea_gender_files_out = bpy.props.EnumProperty(
+    items=morphcreator.get_gender_type_files(mblab_humanoid, "Gender"),
+    name="Write to",
+    default=None)
+
+bpy.types.Scene.mbcrea_body_type_files_out = bpy.props.EnumProperty(
+    items=morphcreator.get_gender_type_files(mblab_humanoid, "Type", True),
+    name="Write to",
+    default=None)
+
+def update_cmd_file(self, context):
+    scn = bpy.context.scene
+    spectrum = morphcreator.get_spectrum(scn.mbcrea_cmd_spectrum)
+    if spectrum == "Gender":
+        morphcreator.update_cmd_file(scn.mbcrea_gender_files_in)
+    else:
+        morphcreator.update_cmd_file(scn.mbcrea_body_type_files_in)
+
+bpy.types.Scene.mbcrea_cmd_spectrum = bpy.props.EnumProperty(
+    items=morphcreator.get_spectrum(),
+    name="Spectrum",
+    update=update_cmd_file,
+    default="GE")
+    
+bpy.types.Scene.mbcrea_gender_files_in = bpy.props.EnumProperty(
+    items=morphcreator.get_gender_type_files(mblab_humanoid, "Gender"),
+    name="Gender",
+    update=update_cmd_file,
+    default=None)
+
+bpy.types.Scene.mbcrea_body_type_files_in = bpy.props.EnumProperty(
+    items=morphcreator.get_gender_type_files(mblab_humanoid, "Type"),
+    name="Type",
+    update=update_cmd_file,
+    default=None)
+
+def get_morph_file_categories(self, context):
+    scn = bpy.context.scene
+    spectrum = morphcreator.get_spectrum(scn.mbcrea_cmd_spectrum)
+    if spectrum == "Gender":
+        return morphcreator.get_morph_file_categories(scn.mbcrea_gender_files_in)
+    return morphcreator.get_morph_file_categories(scn.mbcrea_body_type_files_in)
+
+def update_cmd_categories(self, context):
+    morphcreator.update_cmd_morphs()
+    
+bpy.types.Scene.mbcrea_file_categories_content = bpy.props.EnumProperty(
+    items=get_morph_file_categories,
+    name="Category",
+    default=None,
+    update=update_cmd_categories,
+    options={'ANIMATABLE'},
+    )
+
+bpy.types.Scene.mbcrea_morphing_rename = bpy.props.StringProperty(
+    name="Rename",
+    description="New name for the morph without category.\nExample : NewMorph01",
+    default="NewName",
+    maxlen=1024,
+    subtype='FILE_NAME')
 
 class FinalizeExpression(bpy.types.Operator):
     """
@@ -3981,6 +4098,100 @@ class LoadTransformationFile(bpy.types.Operator, ImportHelper):
             self.layout.label(text=message)
         bpy.context.window_manager.popup_menu(draw, title = title, icon = icon)
 
+class ButtonRescanMorphFiles(bpy.types.Operator):
+    bl_label = 'Rescan all'
+    bl_idname = 'mbcrea.rescan_morph_files'
+    bl_description = 'rescan directory and input file'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        morphcreator.init_cmd_tools()
+        morphcreator.get_all_compatible_files(mblab_humanoid)
+        return {'FINISHED'}
+
+class ButtonBackupMorphFile(bpy.types.Operator):
+    bl_label = 'Backup morph input file'
+    bl_idname = 'mbcrea.button_backup_morph'
+    bl_description = 'Create a backup of source file\nName : same_name_aaaa-mm-dd-hh-mn-se'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        date = datetime.datetime.now()
+        str_date = str(date.year) + "-" + str(date.month).zfill(2) + "-" + str(date.day).zfill(2) + "_" + str(date.hour).zfill(2) + "-" + str(date.minute).zfill(2) + "-" + str(date.second).zfill(2)
+        morphcreator.backup_morph_file(str_date)
+        return {'FINISHED'}
+
+def get_cmd_output_file_name():
+    scn = bpy.context.scene
+    spectrum = morphcreator.get_spectrum(scn.mbcrea_cmd_spectrum)
+    file_name = ""
+    splitted_type = algorithms.split_name(scn.mblab_morphing_body_type)
+    splitted_extra_name = algorithms.split_name(scn.mblab_morphing_file_extra_name)
+    if spectrum == "Gender":
+        file_name = scn.mbcrea_gender_files_out
+    elif scn.mbcrea_body_type_files_out != "NEW":
+        file_name = scn.mbcrea_body_type_files_out.split(".")[0]
+        if len(splitted_extra_name) > 0:
+            file_name += "_" + splitted_extra_name
+        file_name += ".json"
+    elif len(splitted_type) > 0:
+        file_name = scn.mbcrea_body_type_files_in.split("_")[0] + "_" + splitted_type + "_morphs"
+        if len(splitted_extra_name) > 0:
+            file_name += "_" + splitted_extra_name
+        file_name += ".json"
+    return file_name
+    
+class ButtonCopyMorphs(bpy.types.Operator):
+    bl_label = 'Copy to output file'
+    bl_idname = 'mbcrea.button_copy_morph'
+    bl_description = 'Copy selected morphs to file'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        file_name = get_cmd_output_file_name()
+        if len(file_name) < 1:
+            return {'FINISHED'}
+        # To do...
+        return {'FINISHED'}
+
+class ButtonMoveMorphs(bpy.types.Operator):
+    bl_label = 'Move to output file'
+    bl_idname = 'mbcrea.button_move_morph'
+    bl_description = 'Move selected morphs to file'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        # To do...
+        #morphcreator.init_cmd_content(dir=True, file=True) # To update morphs
+        return {'FINISHED'}
+
+class ButtonDeleteMorphs(bpy.types.Operator):
+    bl_label = 'Delete selected'
+    bl_idname = 'mbcrea.button_delete_morph'
+    bl_description = '! NO UNDO ! Delete selected morphs'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        # To do...
+        #morphcreator.init_cmd_content(dir=False, file=True) # To update morphs
+        return {'FINISHED'}
+
+class ButtonRenameMorphs(bpy.types.Operator):
+    bl_label = 'Rename selected'
+    bl_idname = 'mbcrea.button_rename_morph'
+    bl_description = 'Rename selected morph'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        # To do...
+        #morphcreator.init_cmd_content(dir=False, file=True) # To update morphs
+        return {'FINISHED'}
 
 class ButtonCompatToolsDir(bpy.types.Operator):
     #just for quick tests
@@ -4301,6 +4512,32 @@ class ButtonCombineExpressionON(bpy.types.Operator):
     def execute(self, context):
         global gui_active_panel_second
         gui_active_panel_second = "combine_expressions"
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonCMDMorphOFF(bpy.types.Operator):
+    bl_label = 'Copy / Move / Delete morphs'
+    bl_idname = 'mbcrea.button_cmd_utilities_off'
+    bl_description = 'Utilities to move/copy/delete morphs\nfrom one file to another'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = None
+        #Other things to do...
+        return {'FINISHED'}
+
+class ButtonCMDMorphON(bpy.types.Operator):
+    bl_label = 'Copy / Move / Delete morphs'
+    bl_idname = 'mbcrea.button_cmd_utilities_on'
+    bl_description = 'Utilities to move/copy/delete morphs\nfrom one file to another'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        global gui_active_panel_second
+        gui_active_panel_second = "cmd_utilities"
         #Other things to do...
         return {'FINISHED'}
 
@@ -4726,6 +4963,8 @@ classes = (
     ButtonMorphExpressionOFF,
     ButtonCombineExpressionON,
     ButtonCombineExpressionOFF,
+    ButtonCMDMorphON,
+    ButtonCMDMorphOFF,
     ButtonFastCreationsON,
     ButtonFastCreationsOFF,
     ButtonAgeMassToneON,
@@ -4761,6 +5000,12 @@ classes = (
     ButtonCurrentModelTransforSave,
     CheckTransformationFile,
     LoadTransformationFile,
+    ButtonRescanMorphFiles,
+    ButtonBackupMorphFile,
+    ButtonCopyMorphs,
+    ButtonMoveMorphs,
+    ButtonDeleteMorphs,
+    ButtonRenameMorphs,
     Reset_expression_category,
     ImpExpression,
     VIEW3D_PT_tools_MBCrea,

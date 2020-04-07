@@ -48,9 +48,9 @@ def is_writeable(filepath):
     return False
 
 
-def get_data_path():
+def get_data_path(root_dir="data"):
     addon_directory = os.path.dirname(os.path.realpath(__file__))
-    data_dir = os.path.join(addon_directory, "data")
+    data_dir = os.path.join(addon_directory, root_dir)
     logger.info("Looking for the retarget data in the folder %s...", simple_path(data_dir))
 
     if not os.path.isdir(data_dir):

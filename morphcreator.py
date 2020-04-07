@@ -83,6 +83,19 @@ modifiers_for_combined = ["", [], []]
 # 2nd list of body parts
 # 3rd list of corresponding min/max
 
+# Below = Variables for copy/move/delete utilities.
+current_cmd_morph_file = ""
+gender_cmd_morphs_files = []
+body_type_cmd_morphs_files = []
+cmd_categories_in_file = []
+cmd_morphs_in_category = []
+# Below:
+# Keys = Name of files.
+# Values = dict of morphs files
+#   Keys = cmd_morphName (with category)
+#   Values = morphName (with category)
+properties_for_cmd = {}
+
 logger = logging.getLogger(__name__)
 
 # ------------------------------------------------------------------------
@@ -110,12 +123,18 @@ def get_min_max(key = None):
 def init_morph_names_database():
     global morphs_names
     global modifiers_for_combined
+    global gender_cmd_morphs_files
+    global body_type_cmd_morphs_files
+    global properties_for_cmd
     morphs_names[0] = ""
     morphs_names[1] = ""
     morphs_names[2] = 0
     modifiers_for_combined[0] = ""
-    modifiers_for_combined[1] = []
-    modifiers_for_combined[2] = []
+    modifiers_for_combined[1].clear()
+    modifiers_for_combined[2].clear()
+    gender_cmd_morphs_files.clear()
+    body_type_cmd_morphs_files.clear()
+    properties_for_cmd.clear()
     
 def get_model_and_gender():
     if len(morphs_names[0]) == 0:
@@ -354,4 +373,170 @@ def save_preset(filepath, humanoid, integrate_material=False):
         with open(filepath, "w") as j_file:
             json.dump(char_data, j_file, indent=2)
         j_file.close()
+
+# ------------------------------------------------------------------------
+#    All methods to ùove/vopy/delete morphs
+# ------------------------------------------------------------------------
+
+def init_cmd_tools():
+    global current_cmd_morph_file
+    global gender_cmd_morphs_files
+    global body_type_cmd_morphs_files
+    global properties_for_cmd
+    current_cmd_morph_file = ""
+    gender_cmd_morphs_files.clear()
+    body_type_cmd_morphs_files.clear()
+    properties_for_cmd.clear()
+    
+# Create tuples for UI.
+def get_gender_type_files(humanoid, type, with_new=False): #OK, checked.
+    gender, body_type = get_all_compatible_files(humanoid)
+    return_list = []
+    if type == "Gender":
+        for file in gender:
+            return_list.append((file+".json", file, file))
+        if with_new:
+            return_list.append(("NEW", "New file", "Add a new file"))
+        return return_list
+    else:
+        for file in body_type:
+            return_list.append((file+".json", file, file))
+        if with_new:
+            return_list.append(("NEW", "New file", "Add a new file"))
+        return return_list
         
+# return all compatible files
+# return : gender, body_type
+def get_all_compatible_files(humanoid): #OK, checked.
+    # humanoid will be useful later,
+    # when for each humanoid you will have a dedicated
+    # data directory...
+    global gender_cmd_morphs_files
+    global body_type_cmd_morphs_files
+    global properties_for_cmd
+    
+    if humanoid == None:
+        return gender_cmd_morphs_files, body_type_cmd_morphs_files
+    if len(gender_cmd_morphs_files) > 0 or len(body_type_cmd_morphs_files) > 0:
+        return gender_cmd_morphs_files, body_type_cmd_morphs_files
+    properties_for_cmd.clear()
+    path = os.path.join(file_ops.get_data_path(), "morphs")
+    list_dir = os.listdir(path)
+    split_name = []
+    for file in list_dir:
+        split_name = file.split("_")
+        try:
+            if split_name[0] == "m" or split_name[0] == "f" or split_name[0] == "u":
+                body_type_cmd_morphs_files.append(file.split(".")[0])
+            else:
+                gender_cmd_morphs_files.append(file.split(".")[0])
+            properties_for_cmd[file] = {}
+        except:
+            logger.info("File {0} not valid for morphs".format(file))
+    gender_cmd_morphs_files = sorted(gender_cmd_morphs_files)
+    body_type_cmd_morphs_files = sorted(body_type_cmd_morphs_files)
+    return gender_cmd_morphs_files, body_type_cmd_morphs_files
+
+def get_cmd_properties(file): # OK, checked
+    global properties_for_cmd
+    if len(properties_for_cmd[file]) < 1:
+        content = get_morph_file_raw_content(file)
+        tmp = properties_for_cmd[file] # to clear the code...
+        key = ""
+        morph_name = ""
+        splitted = ""
+        for morph in content.keys():
+            splitted = morph.split("_")
+            morph_name = splitted[0] + "_" + splitted[1]
+            key = "cmd_" + morph_name # The key, used later for setattr
+            if not key in tmp:
+                tmp[key] = morph_name
+    return properties_for_cmd[file]
+    
+def get_all_cmd_attr_names(humanoid): # OK, checked
+    global properties_for_cmd
+    if len(properties_for_cmd) < 1:
+        get_all_compatible_files(humanoid)
+    complete_files = properties_for_cmd.keys()
+    return_properties = []
+    props = []
+    for file in complete_files:
+        props = get_cmd_properties(file)
+        for prop in props.keys():
+            if not prop in return_properties:
+                return_properties.append(prop)
+    return return_properties
+    
+# Get all keys, sorted, no doubles, of all categories for morphs in the file.
+# User give the content of the file.
+def get_morph_file_categories(file_name):
+    global cmd_categories_in_file
+    
+    if len(cmd_categories_in_file) > 0:
+        return cmd_categories_in_file
+    categories = []
+    tmp = ""
+    prop_values = get_cmd_properties(file_name)
+    for morph in prop_values.values():
+        tmp = morph.split("_")[0]
+        if tmp not in categories:
+            categories.append(tmp)
+            cmd_categories_in_file.append((tmp, tmp, tmp))
+    cmd_categories_in_file = sorted(cmd_categories_in_file)
+    return cmd_categories_in_file
+
+def get_morphs_in_category(file, category):
+    global properties_for_cmd
+    global cmd_morphs_in_category
+    
+    if len(cmd_morphs_in_category) > 0:
+        return cmd_morphs_in_category
+    content = properties_for_cmd[file]
+    splitted = ""
+    for key, value in content.items():
+        splitted = value.split("_")[0]
+        if splitted == category and not key in cmd_morphs_in_category:
+            cmd_morphs_in_category.append(key)
+    cmd_morphs_in_category = sorted(cmd_morphs_in_category)
+    return cmd_morphs_in_category
+
+
+# Trick to avoid the file to be loaded constantly.
+# Must be used to open a file for copy/move/delete/rename.
+def update_cmd_file(file_name): #OK, checked.
+    global current_cmd_morph_file
+    global cmd_categories_in_file
+    global cmd_morphs_in_category
+    
+    if file_name == None:
+        current_cmd_morph_file = ""
+        cmd_categories_in_file.clear()
+        cmd_morphs_in_category.clear()
+        return
+    if current_cmd_morph_file != file_name:
+        current_cmd_morph_file = file_name
+        cmd_categories_in_file.clear()
+        cmd_morphs_in_category.clear()
+
+def update_cmd_morphs():
+    global cmd_morphs_in_category
+    cmd_morphs_in_category.clear()
+
+# Should not be used directly outside this file.
+def get_morph_file_raw_content(file_name):
+    path = os.path.join(file_ops.get_data_path(), "morphs", file_name)
+    return file_ops.load_json_data(path)
+
+
+def cmd_morphs(source_name, destination_name=None, morphs_names=[], copy=True, delete=False):
+    print("cmd_morphs")
+
+def rename_morph(old_name_new_name):
+    print("rename_morph")
+
+def backup_morph_file(extra_name): #OK, checked.
+    if len(current_cmd_morph_file) < 1:
+        return
+    path = os.path.join(file_ops.get_data_path(), "morphs", current_cmd_morph_file + "_" + extra_name + ".json")
+    content_for_cmd = get_morph_file_raw_content(current_cmd_morph_file)
+    file_ops.save_json_data(path, content_for_cmd)
