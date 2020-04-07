@@ -3436,9 +3436,15 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                         box_cmd_morphs.operator('mbcrea.button_move_morph')
                         box_cmd_morphs.operator('mbcrea.button_delete_morph')
                         # Below : only if ONE simple morph is selected...
-                        box_cmd_morphs.prop(scn, 'mbcrea_morphing_rename')
-                        box_cmd_morphs.label(text="Morph name : " + scn.mbcrea_file_categories_content + "_" + scn.mbcrea_morphing_rename + "_min(max)", icon='INFO')
-                        box_cmd_morphs.operator('mbcrea.button_rename_morph')
+                        box_cmd_rename = box_cmd_morphs.box()
+                        box_cmd_rename.prop(scn, 'mbcrea_morphing_rename')
+                        box_cmd_rename.label(text="Morph name : " + scn.mbcrea_file_categories_content + "_" + scn.mbcrea_morphing_rename + "_min(max)", icon='INFO')
+                        box_cmd_rename.operator('mbcrea.button_rename_morph')
+                        selected = morphcreator.get_selected_cmd_morphs(get_cmd_input_file_name(), obj)
+                        if len(selected) == 1:
+                            box_cmd_rename.enabled = True
+                        else:
+                            box_cmd_rename.enabled = False
                         # Here
                 else:
                     box_cmd_morphs.label(text="!NO COMPATIBLE MODEL!", icon='ERROR')
@@ -4099,13 +4105,14 @@ class LoadTransformationFile(bpy.types.Operator, ImportHelper):
         bpy.context.window_manager.popup_menu(draw, title = title, icon = icon)
 
 class ButtonRescanMorphFiles(bpy.types.Operator):
-    bl_label = 'Rescan all'
+    bl_label = 'Reset morphs and rescan'
     bl_idname = 'mbcrea.rescan_morph_files'
-    bl_description = 'rescan directory and input file'
+    bl_description = 'reset all selected morphs and rescan directory + input file'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
+        morphcreator.reset_cmd_morphs(mblab_humanoid.get_object())
         morphcreator.init_cmd_tools()
         morphcreator.get_all_compatible_files(mblab_humanoid)
         return {'FINISHED'}
@@ -4142,7 +4149,13 @@ def get_cmd_output_file_name():
             file_name += "_" + splitted_extra_name
         file_name += ".json"
     return file_name
-    
+
+def get_cmd_input_file_name():
+    scn = bpy.context.scene
+    if morphcreator.get_spectrum(scn.mbcrea_cmd_spectrum) == "Gender":
+        return scn.mbcrea_gender_files_in
+    return scn.mbcrea_body_type_files_in
+        
 class ButtonCopyMorphs(bpy.types.Operator):
     bl_label = 'Copy to output file'
     bl_idname = 'mbcrea.button_copy_morph'
@@ -4151,10 +4164,14 @@ class ButtonCopyMorphs(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        file_name = get_cmd_output_file_name()
-        if len(file_name) < 1:
+        input_file_name = get_cmd_input_file_name()
+        output_file_name = get_cmd_output_file_name()
+        if len(output_file_name) < 1:
             return {'FINISHED'}
-        # To do...
+        morphs_list = morphcreator.get_morphs_list(input_file_name, mblab_humanoid.get_object())
+        if len(morphs_list) < 1:
+            return {'FINISHED'}
+        morphcreator.cmd_morphs(input_file_name, output_file_name, morphs_names=morphs_list, new_names=[], copy=True, delete=False)
         return {'FINISHED'}
 
 class ButtonMoveMorphs(bpy.types.Operator):
@@ -4165,8 +4182,14 @@ class ButtonMoveMorphs(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        # To do...
-        #morphcreator.init_cmd_content(dir=True, file=True) # To update morphs
+        input_file_name = get_cmd_input_file_name()
+        output_file_name = get_cmd_output_file_name()
+        if len(output_file_name) < 1:
+            return {'FINISHED'}
+        morphs_list = morphcreator.get_morphs_list(input_file_name, mblab_humanoid.get_object())
+        if len(morphs_list) < 1:
+            return {'FINISHED'}
+        morphcreator.cmd_morphs(input_file_name, output_file_name, morphs_names=morphs_list, new_names=[], copy=True, delete=True)
         return {'FINISHED'}
 
 class ButtonDeleteMorphs(bpy.types.Operator):
@@ -4177,8 +4200,11 @@ class ButtonDeleteMorphs(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        # To do...
-        #morphcreator.init_cmd_content(dir=False, file=True) # To update morphs
+        input_file_name = get_cmd_input_file_name()
+        morphs_list = morphcreator.get_morphs_list(input_file_name, mblab_humanoid.get_object())
+        if len(morphs_list) < 1:
+            return {'FINISHED'}
+        morphcreator.cmd_morphs(input_file_name, None, morphs_names=morphs_list, new_names=[], copy=False, delete=True)
         return {'FINISHED'}
 
 class ButtonRenameMorphs(bpy.types.Operator):
@@ -4189,8 +4215,11 @@ class ButtonRenameMorphs(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        # To do...
-        #morphcreator.init_cmd_content(dir=False, file=True) # To update morphs
+        """input_file_name = get_cmd_input_file_name()
+        morphs_list = morphcreator.get_morphs_list(input_file_name, mblab_humanoid.get_object())
+        if len(morphs_list) < 1:
+            return {'FINISHED'}
+        morphcreator.cmd_morphs(input_file_name, None, morphs_names=morphs_list, new_names=[], copy=False, delete=False)"""
         return {'FINISHED'}
 
 class ButtonCompatToolsDir(bpy.types.Operator):
