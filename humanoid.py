@@ -248,7 +248,10 @@ class Humanoid:
         logger.info("Init the database...")
         
         #Teto
-        self.root_model_name = ""
+        if "data_directory" in self.characters_config:
+            self.data_directory = self.characters_config["data_directory"]
+        else:
+            self.data_directory = "data"
         #End Teto
         self.no_categories = "BasisAsymTest"
         self.categories = {}
@@ -314,7 +317,10 @@ class Humanoid:
             disp_tex = file_ops.new_texture(self.mat_engine.generated_disp_modifier_ID, disp_img)
             parameters = {"texture_coords":'UV', "strength": 0.01, "show_viewport": False, "texture": disp_tex}
             displacement_modifier = object_ops.new_modifier(obj, self.mat_engine.generated_disp_modifier_ID, 'DISPLACE', parameters)
-
+    
+    def get_data_directory():
+        return self.data_directory
+        
     def rename_obj(self, prefix):
         obj = self.get_object()
         if prefix != "":
