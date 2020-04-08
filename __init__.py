@@ -3438,9 +3438,12 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                         # Below : only if ONE simple morph is selected...
                         box_cmd_rename = box_cmd_morphs.box()
                         box_cmd_rename.prop(scn, 'mbcrea_morphing_rename')
-                        box_cmd_rename.label(text="Morph name : " + scn.mbcrea_file_categories_content + "_" + scn.mbcrea_morphing_rename + "_min(max)", icon='INFO')
-                        box_cmd_rename.operator('mbcrea.button_rename_morph')
                         selected = morphcreator.get_selected_cmd_morphs(get_cmd_input_file_name(), obj)
+                        if len(selected) > 0:
+                            cat = selected[0].split("_")[0]
+                            new_name = algorithms.split_name(scn.mbcrea_morphing_rename, ' _²&=¨^$£%µ,?;!§+*/')
+                            box_cmd_rename.label(text="Morph name : " + cat + "_" + new_name + "_min(max)", icon='INFO')
+                        box_cmd_rename.operator('mbcrea.button_rename_morph')
                         if len(selected) == 1:
                             box_cmd_rename.enabled = True
                         else:
@@ -3806,6 +3809,7 @@ def update_cmd_file(self, context):
         morphcreator.update_cmd_file(scn.mbcrea_gender_files_in)
     else:
         morphcreator.update_cmd_file(scn.mbcrea_body_type_files_in)
+    morphcreator.reset_cmd_morphs(mblab_humanoid.get_object())
 
 bpy.types.Scene.mbcrea_cmd_spectrum = bpy.props.EnumProperty(
     items=morphcreator.get_spectrum(),
@@ -4171,7 +4175,7 @@ class ButtonCopyMorphs(bpy.types.Operator):
         morphs_list = morphcreator.get_morphs_list(input_file_name, mblab_humanoid.get_object())
         if len(morphs_list) < 1:
             return {'FINISHED'}
-        morphcreator.cmd_morphs(input_file_name, output_file_name, morphs_names=morphs_list, new_names=[], copy=True, delete=False)
+        morphcreator.cmd_morphs_action(input_file_name, output_file_name, morphs_names=morphs_list, new_names=[], copy=True, delete=False)
         return {'FINISHED'}
 
 class ButtonMoveMorphs(bpy.types.Operator):
@@ -4189,7 +4193,7 @@ class ButtonMoveMorphs(bpy.types.Operator):
         morphs_list = morphcreator.get_morphs_list(input_file_name, mblab_humanoid.get_object())
         if len(morphs_list) < 1:
             return {'FINISHED'}
-        morphcreator.cmd_morphs(input_file_name, output_file_name, morphs_names=morphs_list, new_names=[], copy=True, delete=True)
+        morphcreator.cmd_morphs_action(input_file_name, output_file_name, morphs_names=morphs_list, new_names=[], copy=True, delete=True)
         return {'FINISHED'}
 
 class ButtonDeleteMorphs(bpy.types.Operator):
@@ -4204,7 +4208,7 @@ class ButtonDeleteMorphs(bpy.types.Operator):
         morphs_list = morphcreator.get_morphs_list(input_file_name, mblab_humanoid.get_object())
         if len(morphs_list) < 1:
             return {'FINISHED'}
-        morphcreator.cmd_morphs(input_file_name, None, morphs_names=morphs_list, new_names=[], copy=False, delete=True)
+        morphcreator.cmd_morphs_action(input_file_name, None, morphs_names=morphs_list, new_names=[], copy=False, delete=True)
         return {'FINISHED'}
 
 class ButtonRenameMorphs(bpy.types.Operator):
@@ -4215,11 +4219,12 @@ class ButtonRenameMorphs(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        """input_file_name = get_cmd_input_file_name()
+        input_file_name = get_cmd_input_file_name()
         morphs_list = morphcreator.get_morphs_list(input_file_name, mblab_humanoid.get_object())
         if len(morphs_list) < 1:
             return {'FINISHED'}
-        morphcreator.cmd_morphs(input_file_name, None, morphs_names=morphs_list, new_names=[], copy=False, delete=False)"""
+        n_name = algorithms.split_name(bpy.context.scene.mbcrea_morphing_rename, ' _²&=¨^$£%µ,?;!§+*/')
+        morphcreator.cmd_morphs_action(input_file_name, None, morphs_names=morphs_list, new_name=n_name, copy=False, delete=False)
         return {'FINISHED'}
 
 class ButtonCompatToolsDir(bpy.types.Operator):
