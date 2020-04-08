@@ -437,7 +437,7 @@ def get_all_compatible_files(humanoid): #OK, checked.
     body_type_cmd_morphs_files = sorted(body_type_cmd_morphs_files)
     return gender_cmd_morphs_files, body_type_cmd_morphs_files
 
-def get_cmd_properties(file): # OK, checked
+def get_cmd_properties(file):
     global properties_for_cmd
     if len(properties_for_cmd[file]) < 1:
         content = get_morph_file_raw_content(file)
@@ -450,10 +450,10 @@ def get_cmd_properties(file): # OK, checked
             morph_name = splitted[0] + "_" + splitted[1]
             key = "cmd_" + morph_name # The key, used later for setattr
             if not key in tmp:
-                tmp[key] = morph_name
+                tmp[key] = morph_name + "_"
     return properties_for_cmd[file]
     
-def get_all_cmd_attr_names(humanoid): # OK, checked
+def get_all_cmd_attr_names(humanoid):
     global properties_for_cmd
     if len(properties_for_cmd) < 1:
         get_all_compatible_files(humanoid)
@@ -527,9 +527,73 @@ def get_morph_file_raw_content(file_name):
     path = os.path.join(file_ops.get_data_path(), "morphs", file_name)
     return file_ops.load_json_data(path)
 
+# Should not be used directly outside this file.
+def save_morph_file_raw_content(file_name, data):
+    path = os.path.join(file_ops.get_data_path(), "morphs", file_name)
+    file_ops.save_json_data(path, data)
 
-def cmd_morphs(source_name, destination_name=None, morphs_names=[], copy=True, delete=False):
-    print("cmd_morphs")
+# return all cmd_morphs that are selected via GUI
+# The returned values are under form "Category_morphName"
+def get_selected_cmd_morphs(source_file, obj):
+    if len(properties_for_cmd[source_file]) < 1:
+        get_cmd_properties(source_file)
+    selected_morphs_list = []
+    for key, value in properties_for_cmd[source_file].items():
+        if getattr(obj, key):
+            selected_morphs_list.append(value)
+    return sorted(selected_morphs_list)
+
+# Reset all selected morphs
+def reset_cmd_morphs(obj):
+    cmd_to_reset = []
+    for content in properties_for_cmd.values():
+        for key in content.keys():
+            if getattr(obj, key) and not key in cmd_to_reset:
+                cmd_to_reset.append(key)
+    for reset in cmd_to_reset:
+        setattr(obj, reset, False)
+    
+# Return all morphs from a file that are selected in the GUI.
+# A dict is returned with the morphs and their content.
+def get_morphs_list(source_file, obj):
+    selected_morphs_list = get_selected_cmd_morphs(source_file, obj)
+    output_morphs_list = {}
+    if len(selected_morphs_list) < 1:
+        return output_morphs_list
+    content_file = get_morph_file_raw_content(source_file)
+    for key, value in content_file.items():
+        for morph_name in selected_morphs_list:
+            if key.startswith(morph_name):
+                output_morphs_list[key] = value
+    return output_morphs_list
+
+# Do the copy/move/delete operations from input_file to output_file.
+# copy = False and delete = False ==> rename, indexes must match for old->new name
+def cmd_morphs(input_name, output_name=None, morphs_names=[], new_names=[], copy=True, delete=False):
+    if morphs_names == None or len(morphs_names) < 1:
+        return
+    input_file = get_morph_file_raw_content(input_name)
+    transfer = {}
+    if copy:
+        if output_name == None:
+            return
+        output_file = get_morph_file_raw_content(output_name)
+        if output_file == None:
+            output_file = {}
+        for morph in morphs_names:
+            output_file[morph] = input_file[morph]
+        save_morph_file_raw_content(output_name, output_file)
+    if delete:
+        for morph in morphs_names:
+            del input_file[morph]
+        save_morph_file_raw_content(input_name, input_file)
+    if not copy and not delete:
+        if len(morphs_names) != len(new_names):
+            return
+        for i in range(len(morphs_names)):
+            input_file[new_names[i]] = input_file[morphs_names[i]][:]
+            del input_file[morphs_names[i]]
+        save_morph_file_raw_content(input_name, input_file)
 
 def rename_morph(old_name_new_name):
     print("rename_morph")
