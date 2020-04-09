@@ -67,8 +67,9 @@ def get_data_path(data_dir=None, humanoid=None):
 
 
 def get_configuration():
-    data_path = get_data_path()
-
+    data_path = get_data_path(data_dir="data")
+    # Here something to change :
+    # Allow to load every file that ends with _config.json
     if data_path:
         configuration_path = os.path.join(data_path, "characters_config.json")
         if os.path.isfile(configuration_path):

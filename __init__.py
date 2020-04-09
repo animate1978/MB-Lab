@@ -3482,41 +3482,43 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                 box_compat_tools.operator('mbcrea.button_init_compat_off', icon=icon_collapse)
                 box_init = box_compat_tools.box()
                 box_init.operator('mbcrea.button_init_compat', icon="ERROR")
+            box_compat_tools_sub = box_compat_tools.box()
             if creation_tools_ops.is_project_loaded():
-                box_compat_tools.label(text="Body full name : " + creation_tools_ops.get_created_name('body'), icon='INFO')
-                box_compat_tools.label(text="Body short name : " + creation_tools_ops.get_created_name('body_short'), icon='INFO')
-                box_compat_tools.label(text="Gender short name : " + creation_tools_ops.get_created_name('gender'), icon='INFO')
-                box_compat_tools.label(text="Gender short name : " + creation_tools_ops.get_created_name('gender_short'), icon='INFO')
-                box_compat_tools.label(text="Body type : " + creation_tools_ops.get_created_name('type'), icon='INFO')
+                box_compat_tools_sub.label(text="/data/ directory : " + creation_tools_ops.get_created_name('project_name'), icon='INFO')
+                box_compat_tools_sub.label(text="Body full name : " + creation_tools_ops.get_created_name('body'), icon='INFO')
+                box_compat_tools_sub.label(text="Body short name : " + creation_tools_ops.get_created_name('body_short'), icon='INFO')
+                box_compat_tools_sub.label(text="Gender short name : " + creation_tools_ops.get_created_name('gender'), icon='INFO')
+                box_compat_tools_sub.label(text="Gender short name : " + creation_tools_ops.get_created_name('gender_short'), icon='INFO')
+                box_compat_tools_sub.label(text="Body type : " + creation_tools_ops.get_created_name('type'), icon='INFO')
             else:
-                box_compat_tools.prop(scn, 'mbcrea_project_name')
-                box_compat_tools.label(text="New model names", icon='QUESTION')
-                box_compat_tools.prop(scn, 'mbcrea_body_name')
-                box_compat_tools.prop(scn, 'mbcrea_body_gender')
-                box_compat_tools.prop(scn, 'mbcrea_body_type')
+                box_compat_tools_sub.prop(scn, 'mbcrea_project_name')
+                box_compat_tools_sub.label(text="New model names", icon='QUESTION')
+                box_compat_tools_sub.prop(scn, 'mbcrea_body_name')
+                box_compat_tools_sub.prop(scn, 'mbcrea_body_gender')
+                box_compat_tools_sub.prop(scn, 'mbcrea_body_type')
                 if len(scn.mbcrea_body_name) > 0:
                     body_name = str(scn.mbcrea_body_name).lower().split("_")[0]
                     if body_name not in creation_tools_ops.get_forbidden_names():
                         creation_tools_ops.set_created_name('body', body_name)
                         creation_tools_ops.set_created_name('body_short', body_name[0:2])
-                        box_compat_tools.label(text="Body full name : " + body_name, icon='INFO')
-                        box_compat_tools.label(text="Body short name : " + creation_tools_ops.get_created_name('body_short'), icon='INFO')
+                        box_compat_tools_sub.label(text="Body full name : " + body_name, icon='INFO')
+                        box_compat_tools_sub.label(text="Body short name : " + creation_tools_ops.get_created_name('body_short'), icon='INFO')
                     else:
                         creation_tools_ops.set_created_name('body', "")
                         creation_tools_ops.set_created_name('body_short', "")
-                        box_compat_tools.label(text="Body name not allowed !", icon='ERROR')
+                        box_compat_tools_sub.label(text="Body name not allowed !", icon='ERROR')
                 gender_name = creation_tools_ops.get_static_genders(scn.mbcrea_body_gender)
                 creation_tools_ops.set_created_name('gender', gender_name)
                 creation_tools_ops.set_created_name('gender_short', gender_name[0:1] + "_")
-                box_compat_tools.label(text="Gender short name : " + creation_tools_ops.get_created_name('gender_short'), icon='INFO')
+                box_compat_tools_sub.label(text="Gender short name : " + creation_tools_ops.get_created_name('gender_short'), icon='INFO')
                 if len(scn.mbcrea_body_type) > 0:
                     body_type = str(scn.mbcrea_body_type).lower().split("_")[0]
                     creation_tools_ops.set_created_name('type', body_type)
-                    box_compat_tools.label(text="Body type : " + body_type, icon='INFO')
+                    box_compat_tools_sub.label(text="Body type : " + body_type, icon='INFO')
                 else:
                     creation_tools_ops.set_created_name('type', '')
                 #-------------
-                project_creation_buttons=box_compat_tools.box()
+                project_creation_buttons=box_compat_tools_sub.box()
                 if len(str(scn.mbcrea_project_name)) > 0:
                     creation_tools_ops.set_created_name("project_name", str(scn.mbcrea_project_name))
                     project_creation_buttons.operator('mbcrea.button_create_directories', icon='FREEZE')
@@ -3524,7 +3526,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                 else:
                     creation_tools_ops.set_created_name("project_name", "")
                     project_creation_buttons.label(text="Choose a project name !", icon='ERROR')
-            box_compat_tools.operator('mbcrea.button_load_compat_project', icon='IMPORT')
+            box_compat_tools_sub.operator('mbcrea.button_load_compat_project', icon='IMPORT')
             #-------------
             if gui_active_panel_second != "Body_tools":
                 box_compat_tools.operator('mbcrea.button_body_tools_on', icon=icon_expand)

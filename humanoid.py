@@ -208,9 +208,12 @@ class Humanoid:
         self.has_data = False
         self.obj_name = ""
         #Teto
-        self.root_model_name = ""
+        if "data_directory" in self.characters_config:
+            self.data_directory = self.characters_config["data_directory"]
+        else:
+            self.data_directory = "data"
+        self.data_path = file_ops.get_data_path(self.data_directory)
         #End Teto
-        self.data_path = file_ops.get_data_path()
         self.characters_config = file_ops.get_configuration()
         self.lib_filepath = file_ops.get_blendlibrary_path()
         if self.characters_config:
@@ -247,12 +250,6 @@ class Humanoid:
 
         logger.info("Init the database...")
         
-        #Teto
-        if "data_directory" in self.characters_config:
-            self.data_directory = self.characters_config["data_directory"]
-        else:
-            self.data_directory = "data"
-        #End Teto
         self.no_categories = "BasisAsymTest"
         self.categories = {}
         self.bodydata_realtime_activated = True
