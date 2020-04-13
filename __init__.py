@@ -370,8 +370,7 @@ def init_cmd_props(humanoid_instance):
             prop,
             bpy.props.BoolProperty(
                 name=prop.split("_")[2],
-                default=False,
-                ))
+                default=False))
 
 def init_measures_props(humanoid_instance):
     for measure_name, measure_val in humanoid_instance.morph_engine.measures.items():
@@ -2003,7 +2002,7 @@ class RemoveProxy(bpy.types.Operator):
         scn = bpy.context.scene
         mblab_proxy.remove_fitting()
         return {'FINISHED'}
-
+        
 
 class ApplyMeasures(bpy.types.Operator):
     """Fit the character to the measures"""
@@ -3405,7 +3404,9 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     else:
                         props = morphcreator.get_morphs_in_category(scn.mbcrea_body_type_files_in, scn.mbcrea_file_categories_content)
                     for prop in props:
-                        if hasattr(obj, prop): # In case of rescaning, and there are new props, that can't be displayed.
+                        if hasattr(obj, prop):
+                            # In case of rescaning, if there are new props,
+                            # they can't be displayed, so that's why there's hasattr
                             box_cmd_morphs_sub.prop(obj, prop)
                     # -------------------
                     box_cmd_morphs.label(text="Destination file", icon='SORT_ASC')
@@ -3497,7 +3498,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                 box_compat_tools_sub.prop(scn, 'mbcrea_body_gender')
                 box_compat_tools_sub.prop(scn, 'mbcrea_body_type')
                 if len(scn.mbcrea_body_name) > 0:
-                    body_name = str(scn.mbcrea_body_name).lower().split("_")[0]
+                    body_name = algorithms.split_name(scn.mbcrea_body_name)
                     if body_name not in creation_tools_ops.get_forbidden_names():
                         creation_tools_ops.set_created_name('body', body_name)
                         creation_tools_ops.set_created_name('body_short', body_name[0:2])
@@ -3512,7 +3513,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                 creation_tools_ops.set_created_name('gender_short', gender_name[0:1] + "_")
                 box_compat_tools_sub.label(text="Gender short name : " + creation_tools_ops.get_created_name('gender_short'), icon='INFO')
                 if len(scn.mbcrea_body_type) > 0:
-                    body_type = str(scn.mbcrea_body_type).lower().split("_")[0]
+                    body_type = algorithms.split_name(scn.mbcrea_body_type)
                     creation_tools_ops.set_created_name('type', body_type)
                     box_compat_tools_sub.label(text="Body type : " + body_type, icon='INFO')
                 else:
@@ -3527,48 +3528,49 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     creation_tools_ops.set_created_name("project_name", "")
                     project_creation_buttons.label(text="Choose a project name !", icon='ERROR')
             box_compat_tools_sub.operator('mbcrea.button_load_compat_project', icon='IMPORT')
-            #-------------
-            if gui_active_panel_second != "Body_tools":
-                box_compat_tools.operator('mbcrea.button_body_tools_on', icon=icon_expand)
+            
+            # Tools about vertex creation
+            if gui_active_panel_second != "Vertex_creation":
+                box_compat_tools.operator('mbcrea.button_vertex_creation_on', icon=icon_expand)
             else:
-                box_compat_tools.operator('mbcrea.button_body_tools_off', icon=icon_collapse)
-                box_body_tools = box_compat_tools.box()
-                box_body_tools.label(text="#TODO Body tools...")
+                box_compat_tools.operator('mbcrea.button_vertex_creation_off', icon=icon_collapse)
+                box_body_tools = self.layout.box()
+                box_body_tools.operator('mbast.button_store_base_vertices', icon="SPHERE")
             if gui_active_panel_second != "Bboxes_tools":
                 box_compat_tools.operator('mbcrea.button_bboxes_tools_on', icon=icon_expand)
             else:
                 box_compat_tools.operator('mbcrea.button_bboxes_tools_off', icon=icon_collapse)
-                box_bboxes_tools = box_compat_tools.box()
+                box_bboxes_tools = self.layout.box()
                 box_bboxes_tools.label(text="#TODO bboxes tools...")
             if gui_active_panel_second != "Weight_painting":
                 box_compat_tools.operator('mbcrea.button_weight_painting_tools_on', icon=icon_expand)
             else:
                 box_compat_tools.operator('mbcrea.button_weight_painting_tools_off', icon=icon_collapse)
-                box_weight_painting_tools = box_compat_tools.box()
+                box_weight_painting_tools = self.layout.box()
                 box_weight_painting_tools.label(text="#TODO weight painting tools...")
             if gui_active_panel_second != "Vertices_groups":
                 box_compat_tools.operator('mbcrea.button_vertices_groups_tools_on', icon=icon_expand)
             else:
                 box_compat_tools.operator('mbcrea.button_vertices_groups_tools_off', icon=icon_collapse)
-                box_vertices_groups_tools = box_compat_tools.box()
+                box_vertices_groups_tools = self.layout.box()
                 box_vertices_groups_tools.label(text="#TODO vertices groups tools...")
             if gui_active_panel_second != "Muscles":
                 box_compat_tools.operator('mbcrea.button_muscles_tools_on', icon=icon_expand)
             else:
                 box_compat_tools.operator('mbcrea.button_muscles_tools_off', icon=icon_collapse)
-                box_muscles_tools = box_compat_tools.box()
+                box_muscles_tools = self.layout.box()
                 box_muscles_tools.label(text="#TODO muscles tools...")
             if gui_active_panel_second != "Config":
                 box_compat_tools.operator('mbcrea.button_config_tools_on', icon=icon_expand)
             else:
                 box_compat_tools.operator('mbcrea.button_config_tools_off', icon=icon_collapse)
-                box_config_tools = box_compat_tools.box()
+                box_config_tools = self.layout.box()
                 box_config_tools.label(text="#TODO config files tools...")
             if gui_active_panel_second != "Files_management":
                 box_compat_tools.operator('mbcrea.button_management_tools_on', icon=icon_expand)
             else:
                 box_compat_tools.operator('mbcrea.button_management_tools_off', icon=icon_collapse)
-                box_management_tools = box_compat_tools.box()
+                box_management_tools = self.layout.box()
                 box_management_tools.label(text="#TODO files management tools...")
         box_tools.separator(factor=0.5)
 
@@ -4642,23 +4644,23 @@ class ButtonAgeMassToneOFF(bpy.types.Operator):
         #Other things to do...
         return {'FINISHED'}
 
-class ButtonBodyToolsON(bpy.types.Operator):
-    bl_label = 'Body tools'
-    bl_idname = 'mbcrea.button_body_tools_on'
-    bl_description = 'All tools to create a compatible body'
+class ButtonVertexCreationON(bpy.types.Operator):
+    bl_label = 'Vertex creation tools'
+    bl_idname = 'mbcrea.button_vertex_creation_on'
+    bl_description = 'All tools to create vertex for the body.\nFrom scratch or from an existing model'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
         global gui_active_panel_second
-        gui_active_panel_second = "Body_tools"
+        gui_active_panel_second = "Vertex_creation"
         #Other things to do...
         return {'FINISHED'}
 
-class ButtonBodyToolsOFF(bpy.types.Operator):
-    bl_label = 'Body tools'
-    bl_idname = 'mbcrea.button_body_tools_off'
-    bl_description = 'All tools to create a compatible body'
+class ButtonVertexCreationOFF(bpy.types.Operator):
+    bl_label = 'Vertex creation tools'
+    bl_idname = 'mbcrea.button_vertex_creation_off'
+    bl_description = 'All tools to create vertex for the body.\nFrom scratch or from an existing model'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -5005,8 +5007,8 @@ classes = (
     ButtonFastCreationsOFF,
     ButtonAgeMassToneON,
     ButtonAgeMassToneOFF,
-    ButtonBodyToolsON,
-    ButtonBodyToolsOFF,
+    ButtonVertexCreationON,
+    ButtonVertexCreationOFF,
     ButtonBboxesToolsON,
     ButtonBboxesToolsOFF,
     ButtonWeightToolsON,
@@ -5069,3 +5071,5 @@ def unregister():
 
 if __name__ == "__main__":
     register()
+
+# <pep8 compliant>

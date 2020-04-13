@@ -375,7 +375,7 @@ def save_preset(filepath, humanoid, integrate_material=False):
         j_file.close()
 
 # ------------------------------------------------------------------------
-#    All methods to ùove/vopy/delete morphs
+#    All methods to move/copy/delete morphs
 # ------------------------------------------------------------------------
 
 def init_cmd_tools():
@@ -389,7 +389,7 @@ def init_cmd_tools():
     properties_for_cmd.clear()
     
 # Create tuples for UI.
-def get_gender_type_files(humanoid, type, with_new=False): #OK, checked.
+def get_gender_type_files(humanoid, type, with_new=False):
     gender, body_type = get_all_compatible_files(humanoid)
     return_list = []
     if type == "Gender":
@@ -407,7 +407,7 @@ def get_gender_type_files(humanoid, type, with_new=False): #OK, checked.
         
 # return all compatible files
 # return : gender, body_type
-def get_all_compatible_files(humanoid): #OK, checked.
+def get_all_compatible_files(humanoid):
     # humanoid will be useful later,
     # when for each humanoid you will have a dedicated
     # data directory...

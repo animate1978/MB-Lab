@@ -149,3 +149,8 @@ def load_project(path_name):
 
 def is_project_loaded():
     return loaded_project[0]
+
+# ------------------------------------------------------------------------
+#    All methods about manipulating vertices
+# ------------------------------------------------------------------------
+

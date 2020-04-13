@@ -95,6 +95,13 @@ class HumanModifier:
                 return True
         return False
 
+    def sync_modifier_data_to_obj_prop(self, char_data):
+        obj = self.get_object()
+        for prop in self.properties:
+            if hasattr(obj, prop):
+                current_val = getattr(obj, prop, 0.5)
+                char_data[prop] = current_val
+
     def __lt__(self, other):
         return self.name < other.name
 
@@ -208,13 +215,13 @@ class Humanoid:
         self.has_data = False
         self.obj_name = ""
         #Teto
+        self.characters_config = file_ops.get_configuration()
         if "data_directory" in self.characters_config:
             self.data_directory = self.characters_config["data_directory"]
         else:
             self.data_directory = "data"
         self.data_path = file_ops.get_data_path(self.data_directory)
         #End Teto
-        self.characters_config = file_ops.get_configuration()
         self.lib_filepath = file_ops.get_blendlibrary_path()
         if self.characters_config:
             self.humanoid_types = self.build_items_list("character_list")

@@ -71,10 +71,20 @@ def get_configuration():
     # Here something to change :
     # Allow to load every file that ends with _config.json
     if data_path:
-        configuration_path = os.path.join(data_path, "characters_config.json")
-        if os.path.isfile(configuration_path):
-            return load_json_data(configuration_path, "Characters definition")
-
+        return_configuration = {}
+        tmp = {}
+        for list_dir in os.listdir(data_path):
+            configuration_path = os.path.join(data_path, list_dir)
+            if os.path.isfile(configuration_path) and configuration_path.endswith("_config.json"):
+                tmp = load_json_data(configuration_path, "Characters definition")
+                for prop in tmp:
+                    if not prop in return_configuration:
+                        return_configuration[prop] = tmp[prop]
+                    elif prop == "templates_list" or prop == "character_list":
+                        return_configuration[prop] += tmp[prop]
+                    else :
+                        return_configuration[prop] = tmp[prop]
+        return return_configuration
     logger.critical("Configuration database not found. Please check your Blender addons directory.")
     return None
 
