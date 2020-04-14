@@ -364,12 +364,11 @@ class Humanoid:
         return sorted(categories)
     
     def get_root_model_name(self):
-        if len(self.root_model_name) > 0:
-            return self.root_model_name
+        if len(self.data_directory) > 0 and self.data_directory != "data":
+            return self.data_directory
         if len(self.obj_name) < 1:
             return ""
-        # This method below must change when the root model name
-        # will be available directly in the config file.
+        # Legacy... lines below are just for anime and human models...
         for name in self.get_category("Expressions").get_all_properties():
             if name.startswith("Expressions_ID"):
                 rmn = name.split("_")[1]
