@@ -370,8 +370,7 @@ def init_cmd_props(humanoid_instance):
             prop,
             bpy.props.BoolProperty(
                 name=prop.split("_")[2],
-                default=False,
-                ))
+                default=False))
 
 def init_measures_props(humanoid_instance):
     for measure_name, measure_val in humanoid_instance.morph_engine.measures.items():
@@ -2003,7 +2002,7 @@ class RemoveProxy(bpy.types.Operator):
         scn = bpy.context.scene
         mblab_proxy.remove_fitting()
         return {'FINISHED'}
-
+        
 
 class ApplyMeasures(bpy.types.Operator):
     """Fit the character to the measures"""
@@ -2996,11 +2995,9 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
             box_tools.operator('mbcrea.button_adaptation_tools_off', icon=icon_collapse)
             box_adaptation_tools = self.layout.box()
             box_adaptation_tools.label(text="Before finalization", icon='MODIFIER_ON')
+            box_adaptation_tools.prop(scn, "mbcrea_before_edition_tools")
             #------------Morph creator------------
-            if gui_active_panel_second != "Morphcreator":
-                box_adaptation_tools.operator('mbcrea.button_morphcreator_on', icon=icon_expand)
-            else:
-                box_adaptation_tools.operator('mbcrea.button_morphcreator_off', icon=icon_collapse)
+            if scn.mbcrea_before_edition_tools == "Morphcreator":
                 box_morphcreator = self.layout.box()
                 if is_objet == "FOUND":
                     box_morphcreator.operator("mbast.reset_allproperties", icon="RECOVER_LAST") # Reset character.
@@ -3051,10 +3048,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     box_morphcreator.label(text="!NO COMPATIBLE MODEL!", icon='ERROR')
                     box_morphcreator.enabled = False
             #----------Combined Morph creator-----------
-            if gui_active_panel_second != "Comb_morphcreator":
-                box_adaptation_tools.operator('mbcrea.button_combined_morphcreator_on', icon=icon_expand)
-            else:
-                box_adaptation_tools.operator('mbcrea.button_combined_morphcreator_off', icon=icon_collapse)
+            elif scn.mbcrea_before_edition_tools == "Comb_morphcreator":
                 box_comb_morphcreator = self.layout.box()
                 if is_objet == "FOUND":
                     box_comb_morphcreator.operator("mbast.reset_allproperties", icon="RECOVER_LAST")
@@ -3157,10 +3151,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     box_comb_morphcreator.label(text="!NO COMPATIBLE MODEL!", icon='ERROR')
                     box_comb_morphcreator.enabled = False
             #------Age/Fat/Muscle Creator------
-            if gui_active_panel_second != "agemasstone_creator":
-                box_adaptation_tools.operator('mbcrea.button_agemasstonecreator_on', icon=icon_expand)
-            else:
-                box_adaptation_tools.operator('mbcrea.button_agemasstonecreator_off', icon=icon_collapse)
+            elif scn.mbcrea_before_edition_tools == "agemasstone_creator":
                 box_agemasstone = self.layout.box()
                 if is_objet == "FOUND":
                     mblab_humanoid.bodydata_realtime_activated = True
@@ -3201,10 +3192,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     box_agemasstone.label(text="! NO COMPATIBLE MODEL !", icon='ERROR')
                     box_agemasstone.enabled = False
             #----------Fast creators-----------
-            if gui_active_panel_second != "fast_creators":
-                box_adaptation_tools.operator('mbcrea.button_fastcreators_on', icon=icon_expand)
-            else:
-                box_adaptation_tools.operator('mbcrea.button_fastcreators_off', icon=icon_collapse)
+            elif scn.mbcrea_before_edition_tools == "fast_creators":
                 box_fast_creators = self.layout.box()
                 if is_objet == "FOUND":
                     mblab_humanoid.bodydata_realtime_activated = True
@@ -3284,10 +3272,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     box_fast_creators.label(text="! NO COMPATIBLE MODEL !", icon='ERROR')
                     box_fast_creators.enabled = False
             #------------Expressions creator------------
-            if gui_active_panel_second != "morphs_for_expressions":
-                box_adaptation_tools.operator('mbcrea.button_morphexpression_on', icon=icon_expand)
-            else:
-                box_adaptation_tools.operator('mbcrea.button_morphexpression_off', icon=icon_collapse)
+            elif scn.mbcrea_before_edition_tools == "morphs_for_expressions":
                 box_morphexpression = self.layout.box()
                 if is_objet == "FOUND":
                     box_morphexpression.operator('mbast.button_store_base_vertices', icon="SPHERE") #Store all vertices of the actual body.
@@ -3331,10 +3316,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     box_morphexpression.label(text="!NO COMPATIBLE MODEL!", icon='ERROR')
                     box_morphexpression.enabled = False
             #------------Combine expressions creator------------
-            if gui_active_panel_second != "combine_expressions":
-                box_adaptation_tools.operator('mbcrea.button_combinexpression_on', icon=icon_expand)
-            else:
-                box_adaptation_tools.operator('mbcrea.button_combinexpression_off', icon=icon_collapse)
+            elif scn.mbcrea_before_edition_tools == "combine_expressions":
                 box_combinexpression = self.layout.box()
                 if is_objet == "FOUND":
                     obj = algorithms.get_active_body() #to be sure...
@@ -3378,11 +3360,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     box_combinexpression.enabled = False
                 
             # Copy / Move / Delete utilities.
-            
-            if gui_active_panel_second != "cmd_utilities":
-                box_adaptation_tools.operator('mbcrea.button_cmd_utilities_on', icon=icon_expand)
-            else:
-                box_adaptation_tools.operator('mbcrea.button_cmd_utilities_off', icon=icon_collapse)
+            elif scn.mbcrea_before_edition_tools == "cmd_utilities":
                 box_cmd_morphs = self.layout.box()
                 if is_objet == "FOUND":
                     box_cmd_morphs.operator("mbcrea.rescan_morph_files", icon="RECOVER_LAST")
@@ -3405,7 +3383,9 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     else:
                         props = morphcreator.get_morphs_in_category(scn.mbcrea_body_type_files_in, scn.mbcrea_file_categories_content)
                     for prop in props:
-                        if hasattr(obj, prop): # In case of rescaning, and there are new props, that can't be displayed.
+                        if hasattr(obj, prop):
+                            # In case of rescaning, if there are new props,
+                            # they can't be displayed, so that's why there's hasattr
                             box_cmd_morphs_sub.prop(obj, prop)
                     # -------------------
                     box_cmd_morphs.label(text="Destination file", icon='SORT_ASC')
@@ -3438,9 +3418,12 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                         # Below : only if ONE simple morph is selected...
                         box_cmd_rename = box_cmd_morphs.box()
                         box_cmd_rename.prop(scn, 'mbcrea_morphing_rename')
-                        box_cmd_rename.label(text="Morph name : " + scn.mbcrea_file_categories_content + "_" + scn.mbcrea_morphing_rename + "_min(max)", icon='INFO')
-                        box_cmd_rename.operator('mbcrea.button_rename_morph')
                         selected = morphcreator.get_selected_cmd_morphs(get_cmd_input_file_name(), obj)
+                        if len(selected) > 0:
+                            cat = selected[0].split("_")[0]
+                            new_name = algorithms.split_name(scn.mbcrea_morphing_rename, ' _²&=¨^$£%µ,?;!§+*/')
+                            box_cmd_rename.label(text="Morph name : " + cat + "_" + new_name + "_min(max)", icon='INFO')
+                        box_cmd_rename.operator('mbcrea.button_rename_morph')
                         if len(selected) == 1:
                             box_cmd_rename.enabled = True
                         else:
@@ -3451,17 +3434,12 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     box_cmd_morphs.enabled = False
             #------------Rigify------------
             box_adaptation_tools.label(text="After finalization", icon='MODIFIER_ON')
-            if gui_active_panel_second != "Rigify":
-                box_adaptation_tools.operator('mbcrea.button_rigify_on', icon=icon_expand)
-            else:
-                box_adaptation_tools.operator('mbcrea.button_rigify_off', icon=icon_collapse)
+            box_adaptation_tools.prop(scn, "mbcrea_after_edition_tools")
+            if scn.mbcrea_after_edition_tools == "Rigify":
                 box_rigify = self.layout.box()
                 box_rigify.label(text="#TODO Rigify...")
             #------------Blenrig------------
-            if gui_active_panel_second != "Blenrig":
-                box_adaptation_tools.operator('mbcrea.button_blenrig_on', icon=icon_expand)
-            else:
-                box_adaptation_tools.operator('mbcrea.button_blenrig_off', icon=icon_collapse)
+            elif scn.mbcrea_after_edition_tools == "Blenrig":
                 box_blenrig = self.layout.box()
                 box_blenrig.label(text="#TODO Blenrig...")
             box_adaptation_tools.separator(factor=0.5)
@@ -3479,41 +3457,43 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                 box_compat_tools.operator('mbcrea.button_init_compat_off', icon=icon_collapse)
                 box_init = box_compat_tools.box()
                 box_init.operator('mbcrea.button_init_compat', icon="ERROR")
+            box_compat_tools_sub = box_compat_tools.box()
             if creation_tools_ops.is_project_loaded():
-                box_compat_tools.label(text="Body full name : " + creation_tools_ops.get_created_name('body'), icon='INFO')
-                box_compat_tools.label(text="Body short name : " + creation_tools_ops.get_created_name('body_short'), icon='INFO')
-                box_compat_tools.label(text="Gender short name : " + creation_tools_ops.get_created_name('gender'), icon='INFO')
-                box_compat_tools.label(text="Gender short name : " + creation_tools_ops.get_created_name('gender_short'), icon='INFO')
-                box_compat_tools.label(text="Body type : " + creation_tools_ops.get_created_name('type'), icon='INFO')
+                box_compat_tools_sub.label(text="/data/ directory : " + creation_tools_ops.get_created_name('project_name'), icon='INFO')
+                box_compat_tools_sub.label(text="Body full name : " + creation_tools_ops.get_created_name('body'), icon='INFO')
+                box_compat_tools_sub.label(text="Body short name : " + creation_tools_ops.get_created_name('body_short'), icon='INFO')
+                box_compat_tools_sub.label(text="Gender short name : " + creation_tools_ops.get_created_name('gender'), icon='INFO')
+                box_compat_tools_sub.label(text="Gender short name : " + creation_tools_ops.get_created_name('gender_short'), icon='INFO')
+                box_compat_tools_sub.label(text="Body type : " + creation_tools_ops.get_created_name('type'), icon='INFO')
             else:
-                box_compat_tools.prop(scn, 'mbcrea_project_name')
-                box_compat_tools.label(text="New model names", icon='QUESTION')
-                box_compat_tools.prop(scn, 'mbcrea_body_name')
-                box_compat_tools.prop(scn, 'mbcrea_body_gender')
-                box_compat_tools.prop(scn, 'mbcrea_body_type')
+                box_compat_tools_sub.prop(scn, 'mbcrea_project_name')
+                box_compat_tools_sub.label(text="New model names", icon='QUESTION')
+                box_compat_tools_sub.prop(scn, 'mbcrea_body_name')
+                box_compat_tools_sub.prop(scn, 'mbcrea_body_gender')
+                box_compat_tools_sub.prop(scn, 'mbcrea_body_type')
                 if len(scn.mbcrea_body_name) > 0:
-                    body_name = str(scn.mbcrea_body_name).lower().split("_")[0]
+                    body_name = algorithms.split_name(scn.mbcrea_body_name)
                     if body_name not in creation_tools_ops.get_forbidden_names():
                         creation_tools_ops.set_created_name('body', body_name)
                         creation_tools_ops.set_created_name('body_short', body_name[0:2])
-                        box_compat_tools.label(text="Body full name : " + body_name, icon='INFO')
-                        box_compat_tools.label(text="Body short name : " + creation_tools_ops.get_created_name('body_short'), icon='INFO')
+                        box_compat_tools_sub.label(text="Body full name : " + body_name, icon='INFO')
+                        box_compat_tools_sub.label(text="Body short name : " + creation_tools_ops.get_created_name('body_short'), icon='INFO')
                     else:
                         creation_tools_ops.set_created_name('body', "")
                         creation_tools_ops.set_created_name('body_short', "")
-                        box_compat_tools.label(text="Body name not allowed !", icon='ERROR')
+                        box_compat_tools_sub.label(text="Body name not allowed !", icon='ERROR')
                 gender_name = creation_tools_ops.get_static_genders(scn.mbcrea_body_gender)
                 creation_tools_ops.set_created_name('gender', gender_name)
                 creation_tools_ops.set_created_name('gender_short', gender_name[0:1] + "_")
-                box_compat_tools.label(text="Gender short name : " + creation_tools_ops.get_created_name('gender_short'), icon='INFO')
+                box_compat_tools_sub.label(text="Gender short name : " + creation_tools_ops.get_created_name('gender_short'), icon='INFO')
                 if len(scn.mbcrea_body_type) > 0:
-                    body_type = str(scn.mbcrea_body_type).lower().split("_")[0]
+                    body_type = algorithms.split_name(scn.mbcrea_body_type)
                     creation_tools_ops.set_created_name('type', body_type)
-                    box_compat_tools.label(text="Body type : " + body_type, icon='INFO')
+                    box_compat_tools_sub.label(text="Body type : " + body_type, icon='INFO')
                 else:
                     creation_tools_ops.set_created_name('type', '')
                 #-------------
-                project_creation_buttons=box_compat_tools.box()
+                project_creation_buttons=box_compat_tools_sub.box()
                 if len(str(scn.mbcrea_project_name)) > 0:
                     creation_tools_ops.set_created_name("project_name", str(scn.mbcrea_project_name))
                     project_creation_buttons.operator('mbcrea.button_create_directories', icon='FREEZE')
@@ -3521,49 +3501,50 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                 else:
                     creation_tools_ops.set_created_name("project_name", "")
                     project_creation_buttons.label(text="Choose a project name !", icon='ERROR')
-            box_compat_tools.operator('mbcrea.button_load_compat_project', icon='IMPORT')
-            #-------------
-            if gui_active_panel_second != "Body_tools":
-                box_compat_tools.operator('mbcrea.button_body_tools_on', icon=icon_expand)
+            box_compat_tools_sub.operator('mbcrea.button_load_compat_project', icon='IMPORT')
+            
+            # Tools about vertex creation
+            if gui_active_panel_second != "Vertex_creation":
+                box_compat_tools.operator('mbcrea.button_vertex_creation_on', icon=icon_expand)
             else:
-                box_compat_tools.operator('mbcrea.button_body_tools_off', icon=icon_collapse)
-                box_body_tools = box_compat_tools.box()
-                box_body_tools.label(text="#TODO Body tools...")
+                box_compat_tools.operator('mbcrea.button_vertex_creation_off', icon=icon_collapse)
+                box_body_tools = self.layout.box()
+                box_body_tools.operator('mbast.button_store_base_vertices', icon="SPHERE")
             if gui_active_panel_second != "Bboxes_tools":
                 box_compat_tools.operator('mbcrea.button_bboxes_tools_on', icon=icon_expand)
             else:
                 box_compat_tools.operator('mbcrea.button_bboxes_tools_off', icon=icon_collapse)
-                box_bboxes_tools = box_compat_tools.box()
+                box_bboxes_tools = self.layout.box()
                 box_bboxes_tools.label(text="#TODO bboxes tools...")
             if gui_active_panel_second != "Weight_painting":
                 box_compat_tools.operator('mbcrea.button_weight_painting_tools_on', icon=icon_expand)
             else:
                 box_compat_tools.operator('mbcrea.button_weight_painting_tools_off', icon=icon_collapse)
-                box_weight_painting_tools = box_compat_tools.box()
+                box_weight_painting_tools = self.layout.box()
                 box_weight_painting_tools.label(text="#TODO weight painting tools...")
             if gui_active_panel_second != "Vertices_groups":
                 box_compat_tools.operator('mbcrea.button_vertices_groups_tools_on', icon=icon_expand)
             else:
                 box_compat_tools.operator('mbcrea.button_vertices_groups_tools_off', icon=icon_collapse)
-                box_vertices_groups_tools = box_compat_tools.box()
+                box_vertices_groups_tools = self.layout.box()
                 box_vertices_groups_tools.label(text="#TODO vertices groups tools...")
             if gui_active_panel_second != "Muscles":
                 box_compat_tools.operator('mbcrea.button_muscles_tools_on', icon=icon_expand)
             else:
                 box_compat_tools.operator('mbcrea.button_muscles_tools_off', icon=icon_collapse)
-                box_muscles_tools = box_compat_tools.box()
+                box_muscles_tools = self.layout.box()
                 box_muscles_tools.label(text="#TODO muscles tools...")
             if gui_active_panel_second != "Config":
                 box_compat_tools.operator('mbcrea.button_config_tools_on', icon=icon_expand)
             else:
                 box_compat_tools.operator('mbcrea.button_config_tools_off', icon=icon_collapse)
-                box_config_tools = box_compat_tools.box()
+                box_config_tools = self.layout.box()
                 box_config_tools.label(text="#TODO config files tools...")
             if gui_active_panel_second != "Files_management":
                 box_compat_tools.operator('mbcrea.button_management_tools_on', icon=icon_expand)
             else:
                 box_compat_tools.operator('mbcrea.button_management_tools_off', icon=icon_collapse)
-                box_management_tools = box_compat_tools.box()
+                box_management_tools = self.layout.box()
                 box_management_tools.label(text="#TODO files management tools...")
         box_tools.separator(factor=0.5)
 
@@ -3806,6 +3787,7 @@ def update_cmd_file(self, context):
         morphcreator.update_cmd_file(scn.mbcrea_gender_files_in)
     else:
         morphcreator.update_cmd_file(scn.mbcrea_body_type_files_in)
+    morphcreator.reset_cmd_morphs(mblab_humanoid.get_object())
 
 bpy.types.Scene.mbcrea_cmd_spectrum = bpy.props.EnumProperty(
     items=morphcreator.get_spectrum(),
@@ -3849,6 +3831,31 @@ bpy.types.Scene.mbcrea_morphing_rename = bpy.props.StringProperty(
     default="NewName",
     maxlen=1024,
     subtype='FILE_NAME')
+
+bpy.types.Scene.mbcrea_after_edition_tools = bpy.props.EnumProperty(
+    items=[
+        ("None", "Choose ...", "Tools available after finalization"),
+        ("Rigify", "Add Rigify to model", "All tools to add Rigify to the model"),
+        ("Blenrig", "Add Blenrig to model", "All tools to add Blenrig to the model")
+        ],
+    name="",
+    default="None",
+    )
+
+bpy.types.Scene.mbcrea_before_edition_tools = bpy.props.EnumProperty(
+    items=[
+        ("None", "Choose ...", "Tools available before finalization"),
+        ("Morphcreator", "Simple Morph Creation", "Simple morph creation panel"),
+        ("Comb_morphcreator", "Combined Morph Creation", "Combined morph creation panel"),
+        ("agemasstone_creator", "Age/Mass/Tone Creation", "Quick tool to create interpolation between\nage, mass (or fat), tone (or muscle)\nand the character."),
+        ("fast_creators", "Character Library Creation", "Quick tools to create :\n- Phenotypes\n- Presets\nfor Character Library"),
+        ("morphs_for_expressions", "Base Expressions Creation", "Tool for morphing base expressions"),
+        ("combine_expressions", "Facial Expressions Creation", "Tool for combining base expressions"),
+        ("cmd_utilities", "Copy / Move / Delete morphs", "Utilities to move/copy/delete morphs\nfrom one file to another")
+        ],
+    name="",
+    default="None",
+    )
 
 class FinalizeExpression(bpy.types.Operator):
     """
@@ -4171,7 +4178,7 @@ class ButtonCopyMorphs(bpy.types.Operator):
         morphs_list = morphcreator.get_morphs_list(input_file_name, mblab_humanoid.get_object())
         if len(morphs_list) < 1:
             return {'FINISHED'}
-        morphcreator.cmd_morphs(input_file_name, output_file_name, morphs_names=morphs_list, new_names=[], copy=True, delete=False)
+        morphcreator.cmd_morphs_action(input_file_name, output_file_name, morphs_names=morphs_list, new_names=[], copy=True, delete=False)
         return {'FINISHED'}
 
 class ButtonMoveMorphs(bpy.types.Operator):
@@ -4189,7 +4196,7 @@ class ButtonMoveMorphs(bpy.types.Operator):
         morphs_list = morphcreator.get_morphs_list(input_file_name, mblab_humanoid.get_object())
         if len(morphs_list) < 1:
             return {'FINISHED'}
-        morphcreator.cmd_morphs(input_file_name, output_file_name, morphs_names=morphs_list, new_names=[], copy=True, delete=True)
+        morphcreator.cmd_morphs_action(input_file_name, output_file_name, morphs_names=morphs_list, new_names=[], copy=True, delete=True)
         return {'FINISHED'}
 
 class ButtonDeleteMorphs(bpy.types.Operator):
@@ -4204,7 +4211,7 @@ class ButtonDeleteMorphs(bpy.types.Operator):
         morphs_list = morphcreator.get_morphs_list(input_file_name, mblab_humanoid.get_object())
         if len(morphs_list) < 1:
             return {'FINISHED'}
-        morphcreator.cmd_morphs(input_file_name, None, morphs_names=morphs_list, new_names=[], copy=False, delete=True)
+        morphcreator.cmd_morphs_action(input_file_name, None, morphs_names=morphs_list, new_names=[], copy=False, delete=True)
         return {'FINISHED'}
 
 class ButtonRenameMorphs(bpy.types.Operator):
@@ -4215,11 +4222,12 @@ class ButtonRenameMorphs(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        """input_file_name = get_cmd_input_file_name()
+        input_file_name = get_cmd_input_file_name()
         morphs_list = morphcreator.get_morphs_list(input_file_name, mblab_humanoid.get_object())
         if len(morphs_list) < 1:
             return {'FINISHED'}
-        morphcreator.cmd_morphs(input_file_name, None, morphs_names=morphs_list, new_names=[], copy=False, delete=False)"""
+        n_name = algorithms.split_name(bpy.context.scene.mbcrea_morphing_rename, ' _²&=¨^$£%µ,?;!§+*/')
+        morphcreator.cmd_morphs_action(input_file_name, None, morphs_names=morphs_list, new_name=n_name, copy=False, delete=False)
         return {'FINISHED'}
 
 class ButtonCompatToolsDir(bpy.types.Operator):
@@ -4329,106 +4337,6 @@ class ButtonCompatToolsOFF(bpy.types.Operator):
         #Other things to do...
         return {'FINISHED'}
 
-class ButtonRigifyON(bpy.types.Operator):
-    bl_label = 'Add Rigify to model'
-    bl_idname = 'mbcrea.button_rigify_on'
-    bl_description = 'All tools to add Rigify to the model'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = "Rigify"
-        #Other things to do...
-        return {'FINISHED'}
-
-class ButtonRigifyOFF(bpy.types.Operator):
-    bl_label = 'Add Rigify to model'
-    bl_idname = 'mbcrea.button_rigify_off'
-    bl_description = 'All tools to add Rigify to the model'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = None
-        #Other things to do...
-        return {'FINISHED'}
-
-class ButtonBlenrigON(bpy.types.Operator):
-    bl_label = 'Add Blenrig to model'
-    bl_idname = 'mbcrea.button_blenrig_on'
-    bl_description = 'All tools to add Blenrig to the model'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = "Blenrig"
-        #Other things to do...
-        return {'FINISHED'}
-
-class ButtonBlenrigOFF(bpy.types.Operator):
-    bl_label = 'Add Blenrig to model'
-    bl_idname = 'mbcrea.button_blenrig_off'
-    bl_description = 'All tools to add Blenrig to the model'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = None
-        #Other things to do...
-        return {'FINISHED'}
-
-class ButtonMorphingON(bpy.types.Operator):
-    bl_label = 'Simple Morph Creation'
-    bl_idname = 'mbcrea.button_morphcreator_on'
-    bl_description = 'Simple morph creation panel'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = 'Morphcreator'
-        return {'FINISHED'}
-
-class ButtonMorphingOFF(bpy.types.Operator):
-    bl_label = 'Simple Morph Creation'
-    bl_idname = 'mbcrea.button_morphcreator_off'
-    bl_description = 'Simple morph creation panel'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = None
-        return {'FINISHED'}
-
-class ButtonCombMorphingON(bpy.types.Operator):
-    bl_label = 'Combined Morph Creation'
-    bl_idname = 'mbcrea.button_combined_morphcreator_on'
-    bl_description = 'Combined morph creation panel'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = 'Comb_morphcreator'
-        return {'FINISHED'}
-
-class ButtonCombMorphingOFF(bpy.types.Operator):
-    bl_label = 'Combined Morph Creation'
-    bl_idname = 'mbcrea.button_combined_morphcreator_off'
-    bl_description = 'Combined morph creation panel'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = None
-        return {'FINISHED'}
-
 class ButtonUpdateCombMorphs(bpy.types.Operator):
     """Reset all morphings."""
     bl_label = 'Update character'
@@ -4505,153 +4413,23 @@ class FinalizeCombMorph(bpy.types.Operator):
             self.layout.label(text=message)
         bpy.context.window_manager.popup_menu(draw, title = title, icon = icon)
 
-class ButtonMorphExpressionON(bpy.types.Operator):
-    bl_label = 'Base Expressions Creation'
-    bl_idname = 'mbcrea.button_morphexpression_on'
-    bl_description = 'Tool for morphing base expressions'
+class ButtonVertexCreationON(bpy.types.Operator):
+    bl_label = 'Vertex creation tools'
+    bl_idname = 'mbcrea.button_vertex_creation_on'
+    bl_description = 'All tools to create vertex for the body.\nFrom scratch or from an existing model'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
         global gui_active_panel_second
-        gui_active_panel_second = "morphs_for_expressions"
+        gui_active_panel_second = "Vertex_creation"
         #Other things to do...
         return {'FINISHED'}
 
-class ButtonMorphExpressionOFF(bpy.types.Operator):
-    bl_label = 'Base Expressions Creation'
-    bl_idname = 'mbcrea.button_morphexpression_off'
-    bl_description = 'Tool for morphing base expressions'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = None
-        #Other things to do...
-        return {'FINISHED'}
-
-class ButtonCombineExpressionON(bpy.types.Operator):
-    bl_label = 'Facial Expressions Creation'
-    bl_idname = 'mbcrea.button_combinexpression_on'
-    bl_description = 'Tool for combining base expressions'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = "combine_expressions"
-        #Other things to do...
-        return {'FINISHED'}
-
-class ButtonCMDMorphOFF(bpy.types.Operator):
-    bl_label = 'Copy / Move / Delete morphs'
-    bl_idname = 'mbcrea.button_cmd_utilities_off'
-    bl_description = 'Utilities to move/copy/delete morphs\nfrom one file to another'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = None
-        #Other things to do...
-        return {'FINISHED'}
-
-class ButtonCMDMorphON(bpy.types.Operator):
-    bl_label = 'Copy / Move / Delete morphs'
-    bl_idname = 'mbcrea.button_cmd_utilities_on'
-    bl_description = 'Utilities to move/copy/delete morphs\nfrom one file to another'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = "cmd_utilities"
-        #Other things to do...
-        return {'FINISHED'}
-
-class ButtonCombineExpressionOFF(bpy.types.Operator):
-    bl_label = 'Facial Expressions Creation'
-    bl_idname = 'mbcrea.button_combinexpression_off'
-    bl_description = 'Tool for combining base expressions'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = None
-        #Other things to do...
-        return {'FINISHED'}
-
-class ButtonFastCreationsON(bpy.types.Operator):
-    bl_label = 'Character Library Creation'
-    bl_idname = 'mbcrea.button_fastcreators_on'
-    bl_description = 'Quick tools to create :\n- Phenotypes\n- Presets\nfor Character Library'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = "fast_creators"
-        #Other things to do...
-        return {'FINISHED'}
-
-class ButtonFastCreationsOFF(bpy.types.Operator):
-    bl_label = 'Character Library Creation'
-    bl_idname = 'mbcrea.button_fastcreators_off'
-    bl_description = 'Quick tools to create :\n- Phenotypes\n- Presets\nfor Character Library'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = None
-        #Other things to do...
-        return {'FINISHED'}
-
-class ButtonAgeMassToneON(bpy.types.Operator):
-    bl_label = 'Age/Mass/Tone Creation'
-    bl_idname = 'mbcrea.button_agemasstonecreator_on'
-    bl_description = 'Quick tool to create interpolation between\nage, mass (or fat), tone (or muscle)\nand the character.'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = "agemasstone_creator"
-        #Other things to do...
-        return {'FINISHED'}
-
-class ButtonAgeMassToneOFF(bpy.types.Operator):
-    bl_label = 'Age/Mass/Tone Creation'
-    bl_idname = 'mbcrea.button_agemasstonecreator_off'
-    bl_description = 'Quick tool to create interpolation between\nage, mass (or fat), tone (or muscle)\nand the character.'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = None
-        #Other things to do...
-        return {'FINISHED'}
-
-class ButtonBodyToolsON(bpy.types.Operator):
-    bl_label = 'Body tools'
-    bl_idname = 'mbcrea.button_body_tools_on'
-    bl_description = 'All tools to create a compatible body'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = "Body_tools"
-        #Other things to do...
-        return {'FINISHED'}
-
-class ButtonBodyToolsOFF(bpy.types.Operator):
-    bl_label = 'Body tools'
-    bl_idname = 'mbcrea.button_body_tools_off'
-    bl_description = 'All tools to create a compatible body'
+class ButtonVertexCreationOFF(bpy.types.Operator):
+    bl_label = 'Vertex creation tools'
+    bl_idname = 'mbcrea.button_vertex_creation_off'
+    bl_description = 'All tools to create vertex for the body.\nFrom scratch or from an existing model'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -4980,26 +4758,8 @@ classes = (
     ButtonAdaptationToolsOFF,
     ButtonCompatToolsON,
     ButtonCompatToolsOFF,
-    ButtonRigifyON,
-    ButtonRigifyOFF,
-    ButtonBlenrigON,
-    ButtonBlenrigOFF,
-    ButtonMorphingON,
-    ButtonMorphingOFF,
-    ButtonCombMorphingON,
-    ButtonCombMorphingOFF,
-    ButtonMorphExpressionON,
-    ButtonMorphExpressionOFF,
-    ButtonCombineExpressionON,
-    ButtonCombineExpressionOFF,
-    ButtonCMDMorphON,
-    ButtonCMDMorphOFF,
-    ButtonFastCreationsON,
-    ButtonFastCreationsOFF,
-    ButtonAgeMassToneON,
-    ButtonAgeMassToneOFF,
-    ButtonBodyToolsON,
-    ButtonBodyToolsOFF,
+    ButtonVertexCreationON,
+    ButtonVertexCreationOFF,
     ButtonBboxesToolsON,
     ButtonBboxesToolsOFF,
     ButtonWeightToolsON,
@@ -5062,3 +4822,5 @@ def unregister():
 
 if __name__ == "__main__":
     register()
+
+# <pep8 compliant>

@@ -375,7 +375,7 @@ def save_preset(filepath, humanoid, integrate_material=False):
         j_file.close()
 
 # ------------------------------------------------------------------------
-#    All methods to ùove/vopy/delete morphs
+#    All methods to move/copy/delete morphs
 # ------------------------------------------------------------------------
 
 def init_cmd_tools():
@@ -389,7 +389,7 @@ def init_cmd_tools():
     properties_for_cmd.clear()
     
 # Create tuples for UI.
-def get_gender_type_files(humanoid, type, with_new=False): #OK, checked.
+def get_gender_type_files(humanoid, type, with_new=False):
     gender, body_type = get_all_compatible_files(humanoid)
     return_list = []
     if type == "Gender":
@@ -407,7 +407,7 @@ def get_gender_type_files(humanoid, type, with_new=False): #OK, checked.
         
 # return all compatible files
 # return : gender, body_type
-def get_all_compatible_files(humanoid): #OK, checked.
+def get_all_compatible_files(humanoid):
     # humanoid will be useful later,
     # when for each humanoid you will have a dedicated
     # data directory...
@@ -539,7 +539,7 @@ def get_selected_cmd_morphs(source_file, obj):
         get_cmd_properties(source_file)
     selected_morphs_list = []
     for key, value in properties_for_cmd[source_file].items():
-        if getattr(obj, key):
+        if hasattr(obj, key) and getattr(obj, key):
             selected_morphs_list.append(value)
     return sorted(selected_morphs_list)
 
@@ -548,7 +548,7 @@ def reset_cmd_morphs(obj):
     cmd_to_reset = []
     for content in properties_for_cmd.values():
         for key in content.keys():
-            if getattr(obj, key) and not key in cmd_to_reset:
+            if hasattr(obj, key) and getattr(obj, key) and not key in cmd_to_reset:
                 cmd_to_reset.append(key)
     for reset in cmd_to_reset:
         setattr(obj, reset, False)
@@ -569,11 +569,10 @@ def get_morphs_list(source_file, obj):
 
 # Do the copy/move/delete operations from input_file to output_file.
 # copy = False and delete = False ==> rename, indexes must match for old->new name
-def cmd_morphs(input_name, output_name=None, morphs_names=[], new_names=[], copy=True, delete=False):
+def cmd_morphs_action(input_name, output_name=None, morphs_names=[], new_name="", copy=True, delete=False):
     if morphs_names == None or len(morphs_names) < 1:
         return
     input_file = get_morph_file_raw_content(input_name)
-    transfer = {}
     if copy:
         if output_name == None:
             return
@@ -587,16 +586,15 @@ def cmd_morphs(input_name, output_name=None, morphs_names=[], new_names=[], copy
         for morph in morphs_names:
             del input_file[morph]
         save_morph_file_raw_content(input_name, input_file)
-    if not copy and not delete:
-        if len(morphs_names) != len(new_names):
-            return
-        for i in range(len(morphs_names)):
-            input_file[new_names[i]] = input_file[morphs_names[i]][:]
-            del input_file[morphs_names[i]]
+    if not copy and not delete and len(new_name) > 0:
+        splitted = []
+        final_name = ""
+        for name in morphs_names:
+            splitted = name.split("_")
+            final_name = splitted[0] + "_" + new_name + "_" + splitted[2]
+            input_file[final_name] = input_file[name][:]
+            del input_file[name]
         save_morph_file_raw_content(input_name, input_file)
-
-def rename_morph(old_name_new_name):
-    print("rename_morph")
 
 def backup_morph_file(extra_name): #OK, checked.
     if len(current_cmd_morph_file) < 1:

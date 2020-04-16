@@ -53,7 +53,9 @@ class MorphingEngine:
         self.final_form = []
         self.cache_form = []
         self.obj_name = obj_name
-
+        
+        if "data_directory" in character_config:
+            data_path = file_ops.get_data_path(character_config["data_directory"])
         self.vertices_filename = character_config["name"]+"_verts.json"
         self.expressions_filename = character_config["name"]+"_exprs.json"
         self.morphs_filename = character_config["name"]+"_morphs.json"

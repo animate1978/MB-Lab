@@ -38,6 +38,7 @@ from .utils import get_object_parent
 
 logger = logging.getLogger(__name__)
 
+data_directory = "data"
 
 def is_writeable(filepath):
     try:
@@ -48,26 +49,42 @@ def is_writeable(filepath):
     return False
 
 
-def get_data_path(root_dir="data"):
+def get_data_path(data_dir=None, humanoid=None):
+    global data_directory
     addon_directory = os.path.dirname(os.path.realpath(__file__))
-    data_dir = os.path.join(addon_directory, root_dir)
-    logger.info("Looking for the retarget data in the folder %s...", simple_path(data_dir))
+    if humanoid != None:
+        data_directory = humanoid.data_directory
+    elif data_dir != None:
+        data_directory = data_dir
+    root_dir = os.path.join(addon_directory, data_directory)
+    logger.info("Looking for the retarget data in the folder %s...", simple_path(root_dir))
 
-    if not os.path.isdir(data_dir):
+    if not os.path.isdir(root_dir):
         logger.critical("Tools data not found. Please check your Blender addons directory.")
         return None
 
-    return data_dir
+    return root_dir
 
 
 def get_configuration():
-    data_path = get_data_path()
-
+    data_path = get_data_path(data_dir="data")
+    # Here something to change :
+    # Allow to load every file that ends with _config.json
     if data_path:
-        configuration_path = os.path.join(data_path, "characters_config.json")
-        if os.path.isfile(configuration_path):
-            return load_json_data(configuration_path, "Characters definition")
-
+        return_configuration = {}
+        tmp = {}
+        for list_dir in os.listdir(data_path):
+            configuration_path = os.path.join(data_path, list_dir)
+            if os.path.isfile(configuration_path) and configuration_path.endswith("_config.json"):
+                tmp = load_json_data(configuration_path, "Characters definition")
+                for prop in tmp:
+                    if not prop in return_configuration:
+                        return_configuration[prop] = tmp[prop]
+                    elif prop == "templates_list" or prop == "character_list":
+                        return_configuration[prop] += tmp[prop]
+                    else :
+                        return_configuration[prop] = tmp[prop]
+        return return_configuration
     logger.critical("Configuration database not found. Please check your Blender addons directory.")
     return None
 

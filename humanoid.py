@@ -95,6 +95,13 @@ class HumanModifier:
                 return True
         return False
 
+    def sync_modifier_data_to_obj_prop(self, char_data):
+        obj = self.get_object()
+        for prop in self.properties:
+            if hasattr(obj, prop):
+                current_val = getattr(obj, prop, 0.5)
+                char_data[prop] = current_val
+
     def __lt__(self, other):
         return self.name < other.name
 
@@ -208,10 +215,13 @@ class Humanoid:
         self.has_data = False
         self.obj_name = ""
         #Teto
-        self.root_model_name = ""
-        #End Teto
-        self.data_path = file_ops.get_data_path()
         self.characters_config = file_ops.get_configuration()
+        if "data_directory" in self.characters_config:
+            self.data_directory = self.characters_config["data_directory"]
+        else:
+            self.data_directory = "data"
+        self.data_path = file_ops.get_data_path(self.data_directory)
+        #End Teto
         self.lib_filepath = file_ops.get_blendlibrary_path()
         if self.characters_config:
             self.humanoid_types = self.build_items_list("character_list")
@@ -247,9 +257,6 @@ class Humanoid:
 
         logger.info("Init the database...")
         
-        #Teto
-        self.root_model_name = ""
-        #End Teto
         self.no_categories = "BasisAsymTest"
         self.categories = {}
         self.bodydata_realtime_activated = True
@@ -314,7 +321,10 @@ class Humanoid:
             disp_tex = file_ops.new_texture(self.mat_engine.generated_disp_modifier_ID, disp_img)
             parameters = {"texture_coords":'UV', "strength": 0.01, "show_viewport": False, "texture": disp_tex}
             displacement_modifier = object_ops.new_modifier(obj, self.mat_engine.generated_disp_modifier_ID, 'DISPLACE', parameters)
-
+    
+    def get_data_directory():
+        return self.data_directory
+        
     def rename_obj(self, prefix):
         obj = self.get_object()
         if prefix != "":
@@ -354,12 +364,11 @@ class Humanoid:
         return sorted(categories)
     
     def get_root_model_name(self):
-        if len(self.root_model_name) > 0:
-            return self.root_model_name
+        if len(self.data_directory) > 0 and self.data_directory != "data":
+            return self.data_directory
         if len(self.obj_name) < 1:
             return ""
-        # This method below must change when the root model name
-        # will be available directly in the config file.
+        # Legacy... lines below are just for anime and human models...
         for name in self.get_category("Expressions").get_all_properties():
             if name.startswith("Expressions_ID"):
                 rmn = name.split("_")[1]
