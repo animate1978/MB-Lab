@@ -96,6 +96,7 @@ class RetargetEngine:
                 self.is_animated_bone = "{0} has not animation data".format(armat.name)
         else:
             self.is_animated_bone = "No armature selected"
+        return self.is_animated_bone
 
     @staticmethod
     def get_action(target_armature):

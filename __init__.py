@@ -1057,11 +1057,6 @@ class ButtonStoreBaseBodyVertices(bpy.types.Operator):
         #vertices
         morphcreator.set_vertices_list(0, morphcreator.create_vertices_list(vt))
         return {'FINISHED'}
-    #Teto
-    #@classmethod
-    #def get_stored_base_vertices(self):
-    #    return morphcreator.set_vertices_list(0)
-    #End Teto -> I think that this method is useless, because unused.
 
 class ButtonSaveWorkInProgress(bpy.types.Operator):
     bl_label = 'Quick save wip'
@@ -1164,7 +1159,7 @@ class SaveBodyAsIs(bpy.types.Operator, ExportHelper):
     """
         Save the model shown on screen.
     """
-    bl_label = 'Save in a file all vertices of the actual model'
+    bl_label = 'Save actual model\'s vertices in a file'
     bl_idname = 'mbast.button_save_body_as_is'
     filename_ext = ".json"
     filter_glob: bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
@@ -2511,9 +2506,10 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
         if gui_status == "NEW_SESSION":
 
             self.layout.label(text="CREATION OPTIONS", icon='RNA_ADD')
-            box_new_opt = self.layout.box()
+            box_new_opt = self.layout.column(align=True)
             box_new_opt.prop(scn, 'mblab_character_name')
-
+            box_new_opt.separator(factor=0.5)
+            
             if mblab_humanoid.is_ik_rig_available(scn.mblab_character_name):
                 box_new_opt.prop(scn, 'mblab_use_ik', icon='BONE_DATA')
             if mblab_humanoid.is_muscle_rig_available(scn.mblab_character_name):
@@ -2523,13 +2519,15 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
             box_new_opt.prop(scn, 'mblab_use_eevee', icon='SHADING_RENDERED')
             if scn.mblab_use_cycles or scn.mblab_use_eevee:
                 box_new_opt.prop(scn, 'mblab_use_lamps', icon='LIGHT_DATA')
-            box_new_opt.operator('mbast.init_character', icon='ARMATURE_DATA')
+            
+            self.layout.separator(factor=0.5)
+            self.layout.operator('mbast.init_character', icon='ARMATURE_DATA')
 
         if gui_status != "ACTIVE_SESSION":
             self.layout.separator(factor=0.5)
             self.layout.label(text="AFTER-CREATION TOOLS", icon='MODIFIER_ON')
 
-            box_post_opt = self.layout.box()
+            box_post_opt = self.layout.column(align=True)
             if gui_active_panel_fin != "face_rig":
                 box_post_opt.operator('mbast.button_facerig_on', icon=icon_expand)
             else:
@@ -2537,11 +2535,12 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
 
             # Face Rig
             
-                box_face_rig = box_post_opt.box()
+                box_face_rig = self.layout.box()
+                box_face_rig_a = box_face_rig.column(align=True)
                 #box_face_rig.label(text="Face Rig")
-                box_face_rig.operator('mbast.create_face_rig', icon='USER')
-                box_face_rig.operator('mbast.delete_face_rig', icon='CANCEL')
-                box_face_rig.prop(scn, "mblab_facs_rig")
+                box_face_rig_a.operator('mbast.create_face_rig', icon='USER')
+                box_face_rig_a.operator('mbast.delete_face_rig', icon='CANCEL')
+                box_face_rig_a.prop(scn, "mblab_facs_rig")
 
             # Expressions
             
@@ -2549,7 +2548,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                 box_post_opt.operator('mbast.button_expressions_on', icon=icon_expand)
             else:
                 box_post_opt.operator('mbast.button_expressions_off', icon=icon_collapse)
-                box_exp = box_post_opt.box()
+                box_exp = self.layout.box()
                 mblab_shapekeys.update_expressions_data()
                 if mblab_shapekeys.model_type != "NONE":
                     box_exp.enabled = True
@@ -2560,9 +2559,10 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                         sorted_expressions = sorted(mblab_shapekeys.expressions_data.keys())
                         obj = algorithms.get_active_body()
                         if len(str(scn.mblab_expression_filter)) > 0:
+                            box_exp_a = box_exp.column(align=True)
                             for expr_name in sorted_expressions:
                                 if hasattr(obj, expr_name) and scn.mblab_expression_filter in expr_name:
-                                    box_exp.prop(obj, expr_name)
+                                    box_exp_a.prop(obj, expr_name)
                         else:
                             mbcrea_expressionscreator.set_expressions_items(sorted_expressions)
                             box_exp.prop(scn, 'mbcrea_enum_expressions_items')
@@ -2581,23 +2581,27 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
             else:
                 box_post_opt.operator('mbast.button_assets_off', icon=icon_collapse)
                 # assets_status = mblab_proxy.validate_assets_fitting()
-                box_asts = box_post_opt.box()
-                box_asts.label(text="Mesh Assets")
+                box_asts = self.layout.box()
+                box_asts.label(text="Mesh Assets", icon='SPHERE')
                 box_asts.prop(scn, 'mblab_proxy_library')
                 box_asts.prop(scn, 'mblab_assets_models')
                 # box.operator('mbast.load_assets_element')
-                box_asts.label(text="To adapt the asset, use the proxy fitting tool", icon='INFO')
+                box_asts_t = box_asts.column(align=True)
+                box_asts_t.label(text="To adapt the asset,", icon='INFO')
+                box_asts_t.label(text="use the proxy fitting tool", icon='BLANK1')
                 # Add Particle Hair
-                box_asts = box_post_opt.box()
-                box_asts.label(text="Hair")
+                box_asts = self.layout.box()
+                box_asts.label(text="Hair", icon='HAIR')
                 box_asts.prop(scn, 'mblab_hair_color')
-                box_asts.operator("mbast.particle_hair", icon='USER')
-                box_asts.operator("mbast.manual_hair", icon='USER')
-                box_asts.operator("mbast.change_hair", icon='USER')
+                box_asts_a = box_asts.column(align=True)
+                box_asts_a.operator("mbast.particle_hair", icon='USER')
+                box_asts_a.operator("mbast.manual_hair", icon='USER')
+                box_asts_a.operator("mbast.change_hair", icon='USER')
                 box_asts.prop(scn, 'mblab_new_hair_color')
-                box_asts.operator("mbast.add_hair_preset", icon='USER')
-                box_asts.operator("mbast.del_hair_preset", icon='USER')
-                box_asts.operator("mbast.rep_hair_preset", icon='USER')
+                box_asts_b = box_asts.column(align=True)
+                box_asts_b.operator("mbast.add_hair_preset", icon='USER')
+                box_asts_b.operator("mbast.del_hair_preset", icon='USER')
+                box_asts_b.operator("mbast.rep_hair_preset", icon='USER')
 
             # Proxy Fitting
 
@@ -2607,9 +2611,9 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                 box_post_opt.operator('mbast.button_proxy_fit_off', icon=icon_collapse)
                 fitting_status, proxy_obj, reference_obj = mblab_proxy.get_proxy_fitting_ingredients()
 
-                box_prox = box_post_opt.box()
-                box_prox.label(text="PROXY FITTING")
-                box_prox.label(text="Please select character and proxy:")
+                box_prox = self.layout.box()
+                box_prox.label(text="PROXY FITTING", icon='MATCLOTH')
+                box_prox.label(text="Select character & proxy :")
                 box_prox.prop(scn, 'mblab_fitref_name')
                 box_prox.prop(scn, 'mblab_proxy_name')
                 if fitting_status == "NO_REFERENCE":
@@ -2636,11 +2640,11 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                     box_prox.prop(scn, 'mblab_proxy_threshold')
                     box_prox.prop(scn, 'mblab_proxy_use_advanced', icon="PLUS")
                     if scn.mblab_proxy_use_advanced:
-                        col = box_prox.column()
+                        col = box_prox.column(align=True)
                         col.prop(scn, 'mblab_proxy_use_all_faces', icon="FACESEL")
                         col.prop(scn, 'mblab_proxy_no_smoothing', icon="MOD_SMOOTH")
                         col.prop(scn, 'mblab_proxy_reverse_fit', icon="COMMUNITY")
-                    col = box_prox.column()
+                    col = box_prox.column(align=True)
                     col.active = not (scn.mblab_proxy_use_advanced and scn.mblab_proxy_reverse_fit)
                     col.prop(scn, 'mblab_add_mask_group', icon="XRAY")
                     col.prop(scn, 'mblab_transfer_proxy_weights',icon="UV_SYNC_SELECT")
@@ -2662,7 +2666,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                 box_post_opt.operator('mbast.button_pose_on', icon=icon_expand)
             else:
                 box_post_opt.operator('mbast.button_pose_off', icon=icon_collapse)
-                box_pose = box_post_opt.box()
+                box_pose = self.layout.box()
 
                 armature = utils.get_active_armature()
                 if armature is not None and not utils.is_ik_armature(armature):
@@ -2692,24 +2696,26 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
             else:
                 box_post_opt.operator('mbast.button_utilities_off', icon=icon_collapse)
 
-                box_util_prox = box_post_opt.box()
-                box_util_prox.label(text="Choose a proxy reference")
+                box_util_prox = self.layout.box()
+                box_util_prox.label(text="Choose a proxy reference", icon='MATCLOTH')
                 box_util_prox.prop(scn, 'mblab_template_name')
                 box_util_prox.operator('mbast.load_base_template')
 
-                box_util_bvh = box_post_opt.box()
-                box_util_bvh.label(text="Bones rot. offset")
-                box_util_bvh.operator('mbast.button_adjustrotation', icon='BONE_DATA')
-                box_util_bvh.operator('mbast.button_save_bvh_adjustments', icon='EXPORT')
-                box_util_bvh.operator('mbast.button_load_bvh_adjustments', icon='IMPORT')
+                box_util_bvh = self.layout.box()
+                box_util_bvh.label(text="Bones rot. offset", icon='DRIVER_ROTATIONAL_DIFFERENCE')
+                box_util_bvh_a = box_util_bvh.column(align=True)
+                box_util_bvh_a.operator('mbast.button_adjustrotation', icon='BONE_DATA')
+                box_util_bvh_a.operator('mbast.button_save_bvh_adjustments', icon='EXPORT')
+                box_util_bvh_a.operator('mbast.button_load_bvh_adjustments', icon='IMPORT')
                 mblab_retarget.check_correction_sync()
                 if mblab_retarget.is_animated_bone == "VALID_BONE":
                     if mblab_retarget.correction_is_sync:
-                        box_util_bvh.prop(scn, 'mblab_rot_offset_0')
-                        box_util_bvh.prop(scn, 'mblab_rot_offset_1')
-                        box_util_bvh.prop(scn, 'mblab_rot_offset_2')
+                        box_util_bvh_b = box_util_bvh.column(align=True)
+                        box_util_bvh_b.prop(scn, 'mblab_rot_offset_0')
+                        box_util_bvh_b.prop(scn, 'mblab_rot_offset_1')
+                        box_util_bvh_b.prop(scn, 'mblab_rot_offset_2')
                 else:
-                    box_util_bvh.label(text=mblab_retarget.is_animated_bone)
+                    box_util_bvh.label(text=mblab_retarget.is_editable_bone(), icon='INFO')
 
         # Pre-Finalized State
 
@@ -2717,9 +2723,9 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
             obj = mblab_humanoid.get_object()
             armature = mblab_humanoid.get_armature()
             if obj and armature:
-                self.layout.label(text="CHARACTER SHAPE", icon="RNA")
                 box_act_opt = self.layout.box()
-                box_act_opt_sub = box_act_opt.box()
+                box_act_opt.label(text="CHARACTER SHAPE", icon="RNA")
+                box_act_opt_sub = box_act_opt.column(align=True)
 
                 if mblab_humanoid.exists_transform_database():
                     x_age = getattr(obj, 'character_age', 0)
@@ -2744,10 +2750,11 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                 # Character library
                 
                 box_act_tools_sub.label(text="CHARACTER SET-UP", icon="RNA")
+                box_act_tools_a = box_act_tools_sub.column(align=True)
                 if gui_active_panel != "library":
-                    box_act_tools_sub.operator('mbast.button_library_on', icon=icon_expand)
+                    box_act_tools_a.operator('mbast.button_library_on', icon=icon_expand)
                 else:
-                    box_act_tools_sub.operator('mbast.button_library_off', icon=icon_collapse)
+                    box_act_tools_a.operator('mbast.button_library_off', icon=icon_collapse)
                     box_lib = self.layout.box()
 
                     #box_lib.label(text="Characters library", icon='ARMATURE_DATA')
@@ -2760,11 +2767,12 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                 # Randomize character
                 
                 if gui_active_panel != "random":
-                    box_act_tools_sub.operator('mbast.button_random_on', icon=icon_expand)
+                    box_act_tools_a.operator('mbast.button_random_on', icon=icon_expand)
                 else:
-                    box_act_tools_sub.operator('mbast.button_random_off', icon=icon_collapse)
+                    box_act_tools_a.operator('mbast.button_random_off', icon=icon_collapse)
 
-                    box_rand = self.layout.box()
+                    box_rand_b = self.layout.box()
+                    box_rand = box_rand_b.column(align=True)
                     box_rand.prop(scn, "mblab_random_engine")
                     box_rand.prop(scn, "mblab_set_tone_and_mass")
                     if scn.mblab_set_tone_and_mass:
@@ -2786,10 +2794,11 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                 
                 if mblab_humanoid.exists_measure_database():
                     if gui_active_panel != "automodelling":
-                        box_act_tools_sub.operator('mbast.button_automodelling_on', icon=icon_expand)
+                        box_act_tools_a.operator('mbast.button_automodelling_on', icon=icon_expand)
                     else:
-                        box_act_tools_sub.operator('mbast.button_automodelling_off', icon=icon_collapse)
-                        box_auto = self.layout.box()
+                        box_act_tools_a.operator('mbast.button_automodelling_off', icon=icon_collapse)
+                        box_auto_b = self.layout.box()
+                        box_auto = box_auto_b.column(align=True)
                         box_auto.operator("mbast.auto_modelling", icon='OUTLINER_DATA_MESH')
                         box_auto.operator("mbast.auto_modelling_mix", icon='OUTLINER_OB_MESH')
                 else:
@@ -2800,27 +2809,30 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                 # Body measures
                 
                 box_act_tools_sub.label(text="CHARACTER DESIGN", icon="RNA")
+                box_act_tools_b = box_act_tools_sub.column(align=True)
                 if gui_active_panel_middle != "parameters":
-                    box_act_tools_sub.operator('mbast.button_parameters_on', icon=icon_expand)
+                    box_act_tools_b.operator('mbast.button_parameters_on', icon=icon_expand)
                 else:
-                    box_act_tools_sub.operator('mbast.button_parameters_off', icon=icon_collapse)
+                    box_act_tools_b.operator('mbast.button_parameters_off', icon=icon_collapse)
 
-                    box_param = self.layout.box()
+                    box_param_b = self.layout.box()
+                    box_param = box_param_b.column(align=True)
                     mblab_humanoid.bodydata_realtime_activated = True
                     if mblab_humanoid.exists_measure_database():
                         box_param.prop(scn, 'mblab_show_measures', icon='SNAP_INCREMENT')
                     split = box_param.split()
 
-                    col = split.column()
+                    col = split.column(align=True)
                     col.label(text="PARAMETERS")
                     col.prop(scn, "morphingCategory")
-
+                    col.separator(factor=0.2)
+                    
                     for prop in mblab_humanoid.get_properties_in_category(scn.morphingCategory):
                         if hasattr(obj, prop) and not prop.startswith("Expressions_ID"):
                             col.prop(obj, prop)
 
                     if mblab_humanoid.exists_measure_database() and scn.mblab_show_measures:
-                        col = split.column()
+                        col = split.column(align=True)
                         col.label(text="DIMENSIONS")
                         #col.label(text="Experimental feature", icon='ERROR')
                         col.prop(obj, 'mblab_use_inch')
@@ -2843,7 +2855,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                         col.operator("mbast.export_measures", icon='EXPORT')
                         col.operator("mbast.import_measures", icon='IMPORT')
 
-                    sub = box_param.box()
+                    sub = box_param.column(align=True)
                     sub.label(text="RESET")
                     sub.operator("mbast.reset_categoryonly", icon="RECOVER_LAST")
                 
@@ -2851,10 +2863,11 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                 
                 if mblab_humanoid.exists_rest_poses_database():
                     if gui_active_panel_middle != "rest_pose":
-                        box_act_tools_sub.operator('mbast.button_rest_pose_on', icon=icon_expand)
+                        box_act_tools_b.operator('mbast.button_rest_pose_on', icon=icon_expand)
                     else:
-                        box_act_tools_sub.operator('mbast.button_rest_pose_off', icon=icon_collapse)
-                        box_act_pose = self.layout.box()
+                        box_act_tools_b.operator('mbast.button_rest_pose_off', icon=icon_collapse)
+                        box_act_pose_b = self.layout.box()
+                        box_act_pose = box_act_pose_b.column(align=True)
 
                         if utils.is_ik_armature(armature):
                             box_act_pose.enabled = False
@@ -2862,36 +2875,38 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                         else:
                             box_act_pose.enabled = True
                             box_act_pose.prop(armature, "rest_pose")
-
+                            box_act_pose.separator(factor=0.2)
                             box_act_pose.operator("mbast.restpose_load", icon='IMPORT')
                             box_act_pose.operator("mbast.restpose_save", icon='EXPORT')
                 
                 # Skin editor
                 
                 if gui_active_panel_middle != "skin":
-                    box_act_tools_sub.operator('mbast.button_skin_on', icon=icon_expand)
+                    box_act_tools_b.operator('mbast.button_skin_on', icon=icon_expand)
                 else:
-                    box_act_tools_sub.operator('mbast.button_skin_off', icon=icon_collapse)
+                    box_act_tools_b.operator('mbast.button_skin_off', icon=icon_collapse)
 
-                    box_skin = self.layout.box()
-                    box_skin.enabled = True
+                    box_skin_b = self.layout.box()
+                    box_skin_b.enabled = True
                     if scn.render.engine != 'CYCLES' and scn.render.engine != 'BLENDER_EEVEE':
-                        box_skin.enabled = False
-                        box_skin.label(text="Skin editor requires Cycles or EEVEE", icon='INFO')
+                        box_skin_b.enabled = False
+                        box_skin_b.label(text="Skin editor requires Cycles or EEVEE", icon='INFO')
 
                     if mblab_humanoid.exists_displace_texture():
-                        box_skin.operator("mbast.skindisplace_calculate", icon='MOD_DISPLACE')
-                        box_skin.label(text="Enable Displacement Preview to view updates", icon='INFO')
-
+                        box_skin_b.operator("mbast.skindisplace_calculate", icon='MOD_DISPLACE')
+                        box_skin_b.label(text="Enable Displacement Preview to view updates", icon='INFO')
+                    
+                    box_skin = box_skin_b.column(align=True)
                     for material_data_prop in sorted(mblab_humanoid.character_material_properties.keys()):
                         box_skin.prop(obj, material_data_prop)
                 
                 # Finalize character
                 box_act_tools_sub.label(text="OTHERS", icon="RNA")
+                box_act_tools_c = box_act_tools_sub.column(align=True)
                 if gui_active_panel_display != "finalize":
-                    box_act_tools_sub.operator('mbast.button_finalize_on', icon=icon_expand)
+                    box_act_tools_c.operator('mbast.button_finalize_on', icon=icon_expand)
                 else:
-                    box_act_tools_sub.operator('mbast.button_finalize_off', icon=icon_collapse)
+                    box_act_tools_c.operator('mbast.button_finalize_off', icon=icon_collapse)
                     box_fin = self.layout.box()
                     box_fin.prop(scn, 'mblab_save_images_and_backup', icon='EXPORT')
                     box_fin.prop(scn, 'mblab_remove_all_modifiers', icon='CANCEL')
@@ -2904,21 +2919,24 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                 # File tools
                 
                 if gui_active_panel_display != "file":
-                    box_act_tools_sub.operator('mbast.button_file_on', icon=icon_expand)
+                    box_act_tools_c.operator('mbast.button_file_on', icon=icon_expand)
                 else:
-                    box_act_tools_sub.operator('mbast.button_file_off', icon=icon_collapse)
-                    box_file = self.layout.box()
+                    box_act_tools_c.operator('mbast.button_file_off', icon=icon_collapse)
+                    box_file_b = self.layout.box()
+                    box_file = box_file_b.column(align=True)
                     box_file.prop(scn, 'mblab_show_texture_load_save', icon='TEXTURE')
                     if scn.mblab_show_texture_load_save:
 
                         if mblab_humanoid.exists_dermal_texture():
-                            box_file_drtx = box_file.box()
+                            box_file_drtx_b = box_file.box()
+                            box_file_drtx = box_file_drtx_b.column(align=True)
                             box_file_drtx.label(text="Dermal texture")
                             box_file_drtx.operator("mbast.export_dermimage", icon='EXPORT')
                             box_file_drtx.operator("mbast.import_dermal", icon='IMPORT')
 
                         if mblab_humanoid.exists_displace_texture():
-                            box_file_dstx = box_file.box()
+                            box_file_dstx_b = box_file.box()
+                            box_file_dstx = box_file_dstx_b.column(align=True)
                             box_file_dstx.label(text="Displacement texture")
                             box_file_dstx.operator("mbast.export_dispimage", icon='EXPORT')
                             box_file_dstx.operator("mbast.import_displacement", icon='IMPORT')
@@ -2934,9 +2952,9 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                 # Display character
                 
                 if gui_active_panel_display != "display_opt":
-                    box_act_tools_sub.operator('mbast.button_display_on', icon=icon_expand)
+                    box_act_tools_c.operator('mbast.button_display_on', icon=icon_expand)
                 else:
-                    box_act_tools_sub.operator('mbast.button_display_off', icon=icon_collapse)
+                    box_act_tools_c.operator('mbast.button_display_off', icon=icon_collapse)
                     box_disp = self.layout.box()
 
                     if mblab_humanoid.exists_displace_texture():
@@ -2989,10 +3007,11 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
 
         box_tools = self.layout.box()
         box_tools.label(text="TOOLS CATEGORIES", icon="RNA")
+        box_tools_a = box_tools.column(align=True)
         if gui_active_panel_first != "adaptation_tools":
-            box_tools.operator('mbcrea.button_adaptation_tools_on', icon=icon_expand)
+            box_tools_a.operator('mbcrea.button_adaptation_tools_on', icon=icon_expand)
         else:
-            box_tools.operator('mbcrea.button_adaptation_tools_off', icon=icon_collapse)
+            box_tools_a.operator('mbcrea.button_adaptation_tools_off', icon=icon_collapse)
             box_adaptation_tools = self.layout.box()
             box_adaptation_tools.label(text="Before finalization", icon='MODIFIER_ON')
             box_adaptation_tools.prop(scn, "mbcrea_before_edition_tools")
@@ -3000,8 +3019,9 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
             if scn.mbcrea_before_edition_tools == "Morphcreator":
                 box_morphcreator = self.layout.box()
                 if is_objet == "FOUND":
-                    box_morphcreator.operator("mbast.reset_allproperties", icon="RECOVER_LAST") # Reset character.
-                    box_morphcreator.operator('mbast.button_store_base_vertices', icon="SPHERE") #Store all vertices of the actual body.
+                    box_morphcreator_a = box_morphcreator.column(align=True)
+                    box_morphcreator_a.operator("mbast.reset_allproperties", icon="RECOVER_LAST") # Reset character.
+                    box_morphcreator_a.operator('mbast.button_store_base_vertices', icon="SPHERE") #Store all vertices of the actual body.
                     box_morphcreator.label(text="Morph wording - Body parts", icon='SORT_ASC')
                     box_morphcreator.prop(scn, "mblab_body_part_name") #first part of the morph's name : jaws, legs, ...
                     box_morphcreator.prop(scn, 'mblab_morph_name') #name for the morph
@@ -3038,12 +3058,14 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                             txt += "_" + scn.mblab_morphing_file_extra_name
                         box_morphcreator.label(text=txt, icon='INFO')
                     box_morphcreator.prop(scn, 'mblab_incremental_saves') #If user wants to overide morph in final file or not.
-                    box_morphcreator.operator('mbast.button_store_work_in_progress', icon="MONKEY") #Store all vertices of the modified body in a work-in-progress file.
-                    box_morphcreator.operator('mbast.button_save_final_morph', icon="FREEZE") #Save the final morph.
+                    box_morphcreator_b = box_morphcreator.column(align=True)
+                    box_morphcreator_b.operator('mbast.button_store_work_in_progress', icon="MONKEY") #Store all vertices of the modified body in a work-in-progress file.
+                    box_morphcreator_b.operator('mbast.button_save_final_morph', icon="FREEZE") #Save the final morph.
                     box_morphcreator.label(text="Tools", icon='SORT_ASC')
-                    box_morphcreator.operator('mbast.button_save_body_as_is', icon='EXPORT')
-                    box_morphcreator.operator('mbast.button_load_base_body', icon='IMPORT')
-                    box_morphcreator.operator('mbast.button_load_sculpted_body', icon='IMPORT')
+                    box_morphcreator_c = box_morphcreator.column(align=True)
+                    box_morphcreator_c.operator('mbast.button_save_body_as_is', icon='EXPORT')
+                    box_morphcreator_c.operator('mbast.button_load_base_body', icon='IMPORT')
+                    box_morphcreator_c.operator('mbast.button_load_sculpted_body', icon='IMPORT')
                 else:
                     box_morphcreator.label(text="!NO COMPATIBLE MODEL!", icon='ERROR')
                     box_morphcreator.enabled = False
@@ -3051,23 +3073,25 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
             elif scn.mbcrea_before_edition_tools == "Comb_morphcreator":
                 box_comb_morphcreator = self.layout.box()
                 if is_objet == "FOUND":
-                    box_comb_morphcreator.operator("mbast.reset_allproperties", icon="RECOVER_LAST")
-                    box_comb_morphcreator.operator('mbast.button_store_base_vertices', icon="SPHERE")
+                    box_comb_morphcreator_a = box_comb_morphcreator.column(align=True)
+                    box_comb_morphcreator_a.operator("mbast.reset_allproperties", icon="RECOVER_LAST")
+                    box_comb_morphcreator_a.operator('mbast.button_store_base_vertices', icon="SPHERE")
                     #box_comb_morphcreator.separator(factor=0.5)
                     box_comb_morphcreator.label(text="Morph wording - Mix bases", icon='SORT_ASC')
                     box_comb_morphcreator.prop(scn, "mbcrea_mixing_morphs_number")
                     nb = int(scn.mbcrea_mixing_morphs_number)
                     # If 2 combined morphs or more
                     box_comb_morphcreator.prop(scn, "morphingCategory")
+                    box_comb_morphcreator_b = box_comb_morphcreator.column(align=True)
                     cat = algorithms.get_enum_property_item(scn.morphingCategory, get_categories_enum())
-                    items_1, minmax_1 = morphs_items_minmax(box_comb_morphcreator, "mbcrea_morphs_items_1", "mbcrea_morphs_minmax_1")
+                    items_1, minmax_1 = morphs_items_minmax(box_comb_morphcreator_b, "mbcrea_morphs_items_1", "mbcrea_morphs_minmax_1")
                     check_name_1 = algorithms.get_enum_property_item(scn.mbcrea_morphs_items_1, items_1)
                     check_minmax_1 = algorithms.get_enum_property_item(scn.mbcrea_morphs_minmax_1, minmax_1)
                     combined_name = check_name_1
                     combined_minmax = check_minmax_1
                     check_fail_1 = morphcreator.is_modifier_combined_morph(mblab_humanoid, combined_name, cat)
                     #
-                    items_2, minmax_2 = morphs_items_minmax(box_comb_morphcreator, "mbcrea_morphs_items_2", "mbcrea_morphs_minmax_2")
+                    items_2, minmax_2 = morphs_items_minmax(box_comb_morphcreator_b, "mbcrea_morphs_items_2", "mbcrea_morphs_minmax_2")
                     check_name_2 = morphcreator.secure_modifier_name(scn.mbcrea_morphs_items_2, items_2)
                     check_minmax_2 = algorithms.get_enum_property_item(scn.mbcrea_morphs_minmax_2, minmax_2)
                     combined_name += "-" + check_name_2.split("_")[1]
@@ -3078,7 +3102,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     check_minmax_3 = ""
                     check_fail_3 = False
                     if nb > 2:
-                        items_3, minmax_3 = morphs_items_minmax(box_comb_morphcreator, "mbcrea_morphs_items_3", "mbcrea_morphs_minmax_3")
+                        items_3, minmax_3 = morphs_items_minmax(box_comb_morphcreator_b, "mbcrea_morphs_items_3", "mbcrea_morphs_minmax_3")
                         check_name_3 = morphcreator.secure_modifier_name(scn.mbcrea_morphs_items_3, items_3)
                         check_minmax_3 = algorithms.get_enum_property_item(scn.mbcrea_morphs_minmax_3, minmax_3)
                         combined_name += "-" + check_name_3.split("_")[1]
@@ -3089,7 +3113,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     check_minmax_4 = ""
                     check_fail_4 = False
                     if nb > 3:
-                        items_4, minmax_4 = morphs_items_minmax(box_comb_morphcreator, "mbcrea_morphs_items_4", "mbcrea_morphs_minmax_4")
+                        items_4, minmax_4 = morphs_items_minmax(box_comb_morphcreator_b, "mbcrea_morphs_items_4", "mbcrea_morphs_minmax_4")
                         check_name_4 = morphcreator.secure_modifier_name(scn.mbcrea_morphs_items_4, items_4)
                         check_minmax_4 = algorithms.get_enum_property_item(scn.mbcrea_morphs_minmax_4, minmax_4)
                         combined_name += "-" + check_name_4.split("_")[1]
@@ -3139,14 +3163,16 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                             txt += "_" + scn.mblab_morphing_file_extra_name
                         box_comb_morphcreator.label(text=txt, icon='INFO')
                         box_comb_morphcreator.prop(scn, 'mblab_incremental_saves') #If user wants to overide morph in final file or not.
-                        box_comb_morphcreator.operator('mbast.button_store_work_in_progress', icon="MONKEY") #Store all vertices of the modified body in a work-in-progress file.
-                        box_comb_morphcreator.operator('mbcrea.button_save_final_comb_morph', icon="FREEZE") #Save the final morph.
+                        box_comb_morphcreator_c = box_comb_morphcreator.column(align=True)
+                        box_comb_morphcreator_c.operator('mbast.button_store_work_in_progress', icon="MONKEY") #Store all vertices of the modified body in a work-in-progress file.
+                        box_comb_morphcreator_c.operator('mbcrea.button_save_final_comb_morph', icon="FREEZE") #Save the final morph.
                     else:
                         box_comb_morphcreator.label(text="You cannot save while there are warnings ! ", icon='ERROR')
                     box_comb_morphcreator.label(text="Tools", icon='SORT_ASC')
-                    box_comb_morphcreator.operator('mbast.button_save_body_as_is', icon='EXPORT')
-                    box_comb_morphcreator.operator('mbast.button_load_base_body', icon='IMPORT')
-                    box_comb_morphcreator.operator('mbast.button_load_sculpted_body', icon='IMPORT')
+                    box_comb_morphcreator_d = box_comb_morphcreator.column(align=True)
+                    box_comb_morphcreator_d.operator('mbast.button_save_body_as_is', icon='EXPORT')
+                    box_comb_morphcreator_d.operator('mbast.button_load_base_body', icon='IMPORT')
+                    box_comb_morphcreator_d.operator('mbast.button_load_sculpted_body', icon='IMPORT')
                 else:
                     box_comb_morphcreator.label(text="!NO COMPATIBLE MODEL!", icon='ERROR')
                     box_comb_morphcreator.enabled = False
@@ -3161,9 +3187,10 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     box_agemasstone.label(text="Selection", icon='SORT_ASC')
                     box_agemasstone_sub = box_agemasstone.box()
                     box_agemasstone_sub.prop(scn, "transforMorphingCategory")
+                    box_agemasstone_sub_a = box_agemasstone_sub.column(align=True)
                     for prop in mblab_humanoid.get_properties_in_category(scn.transforMorphingCategory):
                         if hasattr(obj, prop):
-                            box_agemasstone_sub.prop(obj, prop)
+                            box_agemasstone_sub_a.prop(obj, prop)
                     #---------- The name
                     box_agemasstone.label(text="Tool wording - Content", icon='SORT_ASC')
                     box_agemasstone.prop(scn, "mbcrea_transfor_category")
@@ -3184,10 +3211,11 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                         box_agemasstone.label(text="Name needed ! ", icon="ERROR")
                     #---------- Tools
                     box_agemasstone.label(text="Tools", icon='SORT_ASC')
-                    box_agemasstone.operator('mbcrea.button_check_transf', icon='IMPORT')
+                    box_agemasstone_a = box_agemasstone.column(align=True)
+                    box_agemasstone_a.operator('mbcrea.button_check_transf', icon='IMPORT')
                     if len(scn.mbcrea_agemasstone_name) > 0:
-                        box_agemasstone.operator('mbcrea.button_transfor_save_current', icon='FREEZE')
-                    box_agemasstone.operator('mbcrea.button_load_transf', icon='IMPORT')
+                        box_agemasstone_a.operator('mbcrea.button_transfor_save_current', icon='FREEZE')
+                    box_agemasstone_a.operator('mbcrea.button_load_transf', icon='IMPORT')
                 else:
                     box_agemasstone.label(text="! NO COMPATIBLE MODEL !", icon='ERROR')
                     box_agemasstone.enabled = False
@@ -3200,6 +3228,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     box_fast_creators.operator("mbast.reset_allproperties", icon="RECOVER_LAST")
                     #----------
                     box_fast_creators_sub = box_fast_creators.box()
+                    box_fast_creators_a = box_fast_creators_sub.column(align=True)
                     if mblab_humanoid.exists_transform_database():
                         x_age = getattr(obj, 'character_age', 0)
                         x_mass = getattr(obj, 'character_mass', 0)
@@ -3208,21 +3237,22 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                         mass_lbl = round(50 * (x_mass + 1))
                         tone_lbl = round(50 * (x_tone + 1))
                         lbl_text = "Age : {0} yr.  Mass : {1}%  Tone : {2}% ".format(age_lbl, mass_lbl, tone_lbl)
-                        box_fast_creators_sub.label(text=lbl_text)
+                        box_fast_creators_a.label(text=lbl_text)
 
                         for meta_data_prop in sorted(mblab_humanoid.character_metaproperties.keys()):
                             if "last" not in meta_data_prop:
-                                box_fast_creators_sub.prop(obj, meta_data_prop)
+                                box_fast_creators_a.prop(obj, meta_data_prop)
                     else:
                         box_fast_creators_sub.label(text="No transform database !", icon="ERROR")
                     #----------
                     box_fast_creators_sub.prop(scn, "morphingCategory")
+                    box_fast_creators_b = box_fast_creators_sub.column(align=True)
                     for prop in mblab_humanoid.get_properties_in_category(scn.morphingCategory):
                         if hasattr(obj, prop) and not prop.startswith("Expressions_"):
-                            box_fast_creators_sub.prop(obj, prop)
+                            box_fast_creators_b.prop(obj, prop)
                     box_fast_creators_sub.operator("mbast.reset_categoryonly", icon="RECOVER_LAST")
                     #----------
-                    box_fast_creators.separator(factor=0.2)
+                    #box_fast_creators.separator(factor=0.2)
                     box_fast_creators.label(text="Phenotype Creator", icon='SORT_ASC')
                     body_type = morphcreator.get_body_type()
                     path = os.path.join("data", "phenotypes", body_type + "_ptypes")
@@ -3254,8 +3284,9 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                             if mblab_humanoid.exists_displace_texture():
                                 box_skin.operator("mbast.skindisplace_calculate", icon='MOD_DISPLACE')
                                 box_skin.label(text="Enable Displacement Preview to view updates", icon='INFO')
+                                box_skin_a = box_skin.column(align=True)
                             for material_data_prop in sorted(mblab_humanoid.character_material_properties.keys()):
-                                box_skin.prop(obj, material_data_prop)
+                                box_skin_a.prop(obj, material_data_prop)
                         box_fast_creators.prop(scn, 'mbcrea_special_preset') # Common or Special ?
                         preset_name = ""
                         if scn.mbcrea_special_preset:
@@ -3306,12 +3337,14 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                         mbcrea_expressionscreator.set_expression_ID(scn.mbcrea_other_ID_expr)
                     else:
                         mbcrea_expressionscreator.set_expression_ID(str(scn.mbcrea_standard_ID_expr).capitalize())
-                    box_morphexpression.operator('mbast.button_store_work_in_progress', icon="MONKEY") #Store all vertices of the modified expression in a wip.
-                    box_morphexpression.operator('mbcrea.button_save_final_base_expression', icon="FREEZE") #Save the final expression.
+                    box_morphexpression_a = box_morphexpression.column(align=True)
+                    box_morphexpression_a.operator('mbast.button_store_work_in_progress', icon="MONKEY") #Store all vertices of the modified expression in a wip.
+                    box_morphexpression_a.operator('mbcrea.button_save_final_base_expression', icon="FREEZE") #Save the final expression.
                     box_morphexpression.label(text="Tools", icon='SORT_ASC')
-                    box_morphexpression.operator('mbast.button_save_body_as_is', icon='EXPORT')
-                    box_morphexpression.operator('mbast.button_load_base_body', icon='IMPORT')
-                    box_morphexpression.operator('mbast.button_load_sculpted_body', icon='IMPORT')
+                    box_morphexpression_b = box_morphexpression.column(align=True)
+                    box_morphexpression_b.operator('mbast.button_save_body_as_is', icon='EXPORT')
+                    box_morphexpression_b.operator('mbast.button_load_base_body', icon='IMPORT')
+                    box_morphexpression_b.operator('mbast.button_load_sculpted_body', icon='IMPORT')
                 else:
                     box_morphexpression.label(text="!NO COMPATIBLE MODEL!", icon='ERROR')
                     box_morphexpression.enabled = False
@@ -3322,8 +3355,9 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     obj = algorithms.get_active_body() #to be sure...
                     mblab_humanoid.bodydata_realtime_activated = True
                     #-------------------------------------
-                    box_combinexpression.operator("mbcrea.reset_expressionscategory", icon="RECOVER_LAST")
-                    box_combinexpression.operator("mbcrea.import_expression", icon='IMPORT')
+                    box_combinexpression_a = box_combinexpression.column(align=True)
+                    box_combinexpression_a.operator("mbcrea.reset_expressionscategory", icon="RECOVER_LAST")
+                    box_combinexpression_a.operator("mbcrea.import_expression", icon='IMPORT')
                     box_combinexpression.label(text="Base expressions", icon='SORT_ASC')
                     #--------- Expression filter ---------
                     box_combinexpression.prop(scn, 'mbcrea_base_expression_filter')
@@ -3335,21 +3369,22 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     #-------- Expression enumProp --------
                     else:
                         box_combinexpression.prop(scn, 'expressionsSubCategory')
+                        box_combinexpression_b = box_combinexpression.column(align=True)
                         props = sorted(mbcrea_expressionscreator.get_items_in_sub(scn.expressionsSubCategory), reverse = True)
                         for prop in props:
                             if hasattr(obj, prop):
-                                box_combinexpression.prop(obj, prop)
+                                box_combinexpression_b.prop(obj, prop)
                     #-------- New expression name --------
                     box_combinexpression.label(text="Expr. wording - Name", icon='SORT_ASC')
                     box_combinexpression.prop(scn, 'mbcrea_comb_expression_filter')
                     comb_name = str(scn.mbcrea_comb_expression_filter).lower()
                     comb_name = algorithms.split_name(comb_name, splitting_char=mbcrea_expressionscreator.forbidden_char_list)
+                    #-------- New expression file --------
+                    box_combinexpression.label(text="Expr. wording - File", icon='SORT_ASC')
                     box_combinexpression.label(text="File name : " + comb_name, icon='INFO')
                     check_root = mblab_humanoid.get_root_model_name()
                     if mbcrea_expressionscreator.is_comb_expression_exists(check_root, comb_name):
                         box_combinexpression.label(text="File already exists !", icon='ERROR')
-                    #-------- New expression file --------
-                    box_combinexpression.label(text="Expr. wording - File", icon='SORT_ASC')
                     if len(comb_name) < 1:
                         box_combinexpression.label(text="Choose a name !", icon='ERROR')
                     else:
@@ -3377,6 +3412,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     obj = mblab_humanoid.get_object()
                     box_cmd_morphs.prop(scn, "mbcrea_file_categories_content")
                     box_cmd_morphs_sub = box_cmd_morphs.box()
+                    box_cmd_morphs_a = box_cmd_morphs_sub.column(align=True)
                     props = []
                     if spectrum == "Gender":
                         props = morphcreator.get_morphs_in_category(scn.mbcrea_gender_files_in, scn.mbcrea_file_categories_content)
@@ -3386,7 +3422,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                         if hasattr(obj, prop):
                             # In case of rescaning, if there are new props,
                             # they can't be displayed, so that's why there's hasattr
-                            box_cmd_morphs_sub.prop(obj, prop)
+                            box_cmd_morphs_a.prop(obj, prop)
                     # -------------------
                     box_cmd_morphs.label(text="Destination file", icon='SORT_ASC')
                     if spectrum == "Gender":
@@ -3412,9 +3448,10 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     box_cmd_morphs.operator('mbcrea.button_backup_morph')
                     if len(file_name) > 0:
                         box_cmd_morphs.label(text="Reminder : No undo !", icon='ERROR')
-                        box_cmd_morphs.operator('mbcrea.button_copy_morph')
-                        box_cmd_morphs.operator('mbcrea.button_move_morph')
-                        box_cmd_morphs.operator('mbcrea.button_delete_morph')
+                        box_cmd_morphs_b = box_cmd_morphs.column(align=True)
+                        box_cmd_morphs_b.operator('mbcrea.button_copy_morph')
+                        box_cmd_morphs_b.operator('mbcrea.button_move_morph')
+                        box_cmd_morphs_b.operator('mbcrea.button_delete_morph')
                         # Below : only if ONE simple morph is selected...
                         box_cmd_rename = box_cmd_morphs.box()
                         box_cmd_rename.prop(scn, 'mbcrea_morphing_rename')
@@ -3446,10 +3483,11 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
 
         #Create/edit tools...
         if gui_active_panel_first != "compat_tools":
-            box_tools.operator('mbcrea.button_compat_tools_on', icon=icon_expand)
+            box_tools_a.operator('mbcrea.button_compat_tools_on', icon=icon_expand)
         else:
-            box_tools.operator('mbcrea.button_compat_tools_off', icon=icon_collapse)
+            box_tools_a.operator('mbcrea.button_compat_tools_off', icon=icon_collapse)
             box_compat_tools = self.layout.box()
+            box_compat_tools.label(text="PROJECT", icon="MODIFIER_ON")
             #-------------
             if gui_active_panel_second != "Init_compat":
                 box_compat_tools.operator('mbcrea.button_init_compat_on', icon=icon_expand)
@@ -3504,46 +3542,28 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
             box_compat_tools_sub.operator('mbcrea.button_load_compat_project', icon='IMPORT')
             
             # Tools about vertex creation
-            if gui_active_panel_second != "Vertex_creation":
-                box_compat_tools.operator('mbcrea.button_vertex_creation_on', icon=icon_expand)
-            else:
-                box_compat_tools.operator('mbcrea.button_vertex_creation_off', icon=icon_collapse)
+            box_project_tools = self.layout.box()
+            box_project_tools.label(text="TOOLS", icon="MODIFIER_ON")
+            box_project_tools.prop(scn, "mbcrea_creation_tools")
+            if scn.mbcrea_creation_tools == "Vertex_creation":
                 box_body_tools = self.layout.box()
                 box_body_tools.operator('mbast.button_store_base_vertices', icon="SPHERE")
-            if gui_active_panel_second != "Bboxes_tools":
-                box_compat_tools.operator('mbcrea.button_bboxes_tools_on', icon=icon_expand)
-            else:
-                box_compat_tools.operator('mbcrea.button_bboxes_tools_off', icon=icon_collapse)
+            elif scn.mbcrea_creation_tools == "Bboxes_tools":
                 box_bboxes_tools = self.layout.box()
                 box_bboxes_tools.label(text="#TODO bboxes tools...")
-            if gui_active_panel_second != "Weight_painting":
-                box_compat_tools.operator('mbcrea.button_weight_painting_tools_on', icon=icon_expand)
-            else:
-                box_compat_tools.operator('mbcrea.button_weight_painting_tools_off', icon=icon_collapse)
+            elif scn.mbcrea_creation_tools == "Weight_painting":
                 box_weight_painting_tools = self.layout.box()
                 box_weight_painting_tools.label(text="#TODO weight painting tools...")
-            if gui_active_panel_second != "Vertices_groups":
-                box_compat_tools.operator('mbcrea.button_vertices_groups_tools_on', icon=icon_expand)
-            else:
-                box_compat_tools.operator('mbcrea.button_vertices_groups_tools_off', icon=icon_collapse)
+            elif scn.mbcrea_creation_tools == "Vertices_groups":
                 box_vertices_groups_tools = self.layout.box()
                 box_vertices_groups_tools.label(text="#TODO vertices groups tools...")
-            if gui_active_panel_second != "Muscles":
-                box_compat_tools.operator('mbcrea.button_muscles_tools_on', icon=icon_expand)
-            else:
-                box_compat_tools.operator('mbcrea.button_muscles_tools_off', icon=icon_collapse)
+            elif scn.mbcrea_creation_tools == "Muscles":
                 box_muscles_tools = self.layout.box()
                 box_muscles_tools.label(text="#TODO muscles tools...")
-            if gui_active_panel_second != "Config":
-                box_compat_tools.operator('mbcrea.button_config_tools_on', icon=icon_expand)
-            else:
-                box_compat_tools.operator('mbcrea.button_config_tools_off', icon=icon_collapse)
+            elif scn.mbcrea_creation_tools == "Config":
                 box_config_tools = self.layout.box()
                 box_config_tools.label(text="#TODO config files tools...")
-            if gui_active_panel_second != "Files_management":
-                box_compat_tools.operator('mbcrea.button_management_tools_on', icon=icon_expand)
-            else:
-                box_compat_tools.operator('mbcrea.button_management_tools_off', icon=icon_collapse)
+            elif scn.mbcrea_creation_tools == "Files_management":
                 box_management_tools = self.layout.box()
                 box_management_tools.label(text="#TODO files management tools...")
         box_tools.separator(factor=0.5)
@@ -4413,190 +4433,23 @@ class FinalizeCombMorph(bpy.types.Operator):
             self.layout.label(text=message)
         bpy.context.window_manager.popup_menu(draw, title = title, icon = icon)
 
-class ButtonVertexCreationON(bpy.types.Operator):
-    bl_label = 'Vertex creation tools'
-    bl_idname = 'mbcrea.button_vertex_creation_on'
-    bl_description = 'All tools to create vertex for the body.\nFrom scratch or from an existing model'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = "Vertex_creation"
-        #Other things to do...
-        return {'FINISHED'}
-
-class ButtonVertexCreationOFF(bpy.types.Operator):
-    bl_label = 'Vertex creation tools'
-    bl_idname = 'mbcrea.button_vertex_creation_off'
-    bl_description = 'All tools to create vertex for the body.\nFrom scratch or from an existing model'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = None
-        #Other things to do...
-        return {'FINISHED'}
-
-class ButtonBboxesToolsON(bpy.types.Operator):
-    bl_label = 'Bboxes tools'
-    bl_idname = 'mbcrea.button_bboxes_tools_on'
-    bl_description = 'All tools to create bboxes for a model'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = "Bboxes_tools"
-        #Other things to do...
-        return {'FINISHED'}
-
-class ButtonBboxesToolsOFF(bpy.types.Operator):
-    bl_label = 'Bboxes tools'
-    bl_idname = 'mbcrea.button_bboxes_tools_off'
-    bl_description = 'All tools to create bboxes for a model'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = None
-        #Other things to do...
-        return {'FINISHED'}
-
-class ButtonWeightToolsON(bpy.types.Operator):
-    bl_label = 'Weight painting tools'
-    bl_idname = 'mbcrea.button_weight_painting_tools_on'
-    bl_description = 'All tools related to weight painting'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = "Weight_painting"
-        #Other things to do...
-        return {'FINISHED'}
-
-class ButtonWeightToolsOFF(bpy.types.Operator):
-    bl_label = 'Weight painting tools'
-    bl_idname = 'mbcrea.button_weight_painting_tools_off'
-    bl_description = 'All tools related to weight painting'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = None
-        #Other things to do...
-        return {'FINISHED'}
-
-class ButtonVerticesGroupsToolsON(bpy.types.Operator):
-    bl_label = 'Vertices groups tools'
-    bl_idname = 'mbcrea.button_vertices_groups_tools_on'
-    bl_description = 'All tools related to vertices groups'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = "Vertices_groups"
-        #Other things to do...
-        return {'FINISHED'}
-
-class ButtonVerticesGroupsToolsOFF(bpy.types.Operator):
-    bl_label = 'Vertices groups tools'
-    bl_idname = 'mbcrea.button_vertices_groups_tools_off'
-    bl_description = 'All tools related to vertices groups'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = None
-        #Other things to do...
-        return {'FINISHED'}
-
-class ButtonMusclesToolsON(bpy.types.Operator):
-    bl_label = 'Muscles tools'
-    bl_idname = 'mbcrea.button_muscles_tools_on'
-    bl_description = 'All tools related to muscles system'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = "Muscles"
-        #Other things to do...
-        return {'FINISHED'}
-
-class ButtonMusclesToolsOFF(bpy.types.Operator):
-    bl_label = 'Muscles tools'
-    bl_idname = 'mbcrea.button_muscles_tools_off'
-    bl_description = 'All tools related to muscles system'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = None
-        #Other things to do...
-        return {'FINISHED'}
-
-class ButtonConfigToolsON(bpy.types.Operator):
-    bl_label = 'Configs tools'
-    bl_idname = 'mbcrea.button_config_tools_on'
-    bl_description = 'All tools for managing configuration files'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = "Config"
-        #Other things to do...
-        return {'FINISHED'}
-
-class ButtonConfigToolsOFF(bpy.types.Operator):
-    bl_label = 'Configs tools'
-    bl_idname = 'mbcrea.button_config_tools_off'
-    bl_description = 'All tools for managing configuration files'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = None
-        #Other things to do...
-        return {'FINISHED'}
-
-class ButtonFilesManagementON(bpy.types.Operator):
-    bl_label = 'Files management'
-    bl_idname = 'mbcrea.button_management_tools_on'
-    bl_description = 'All tools for addon files management'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = "Files_management"
-        #Other things to do...
-        return {'FINISHED'}
-
-class ButtonFilesManagementOFF(bpy.types.Operator):
-    bl_label = 'Files management'
-    bl_idname = 'mbcrea.button_management_tools_off'
-    bl_description = 'All tools for addon files management'
-    bl_context = 'objectmode'
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        global gui_active_panel_second
-        gui_active_panel_second = None
-        #Other things to do...
-        return {'FINISHED'}
+bpy.types.Scene.mbcrea_creation_tools = bpy.props.EnumProperty(
+    items=[
+        ("None", "Choose ...", "Tools available before finalization"),
+        ("Vertex_creation", "Vertex creation tools", "All tools to create vertex for the body.\nFrom scratch or from an existing model"),
+        ("Bboxes_tools", "Bboxes tools", "All tools to create bboxes for a model"),
+        ("Weight_painting", "Weight painting tools", "All tools related to weight painting"),
+        ("Vertices_groups", "Vertices groups tools", "All tools related to vertices groups"),
+        ("Muscles", "Muscles tools", "All tools related to muscles system"),
+        ("Config", "Configs tools", "All tools for managing configuration files"),
+        ("Files_management", "Files management", "All tools for addon files management")
+        ],
+    name="",
+    default="None",
+    )
 
 class ButtonInitCompatON(bpy.types.Operator):
-    bl_label = 'Init all compatibilty tools'
+    bl_label = 'Init project and tools'
     bl_idname = 'mbcrea.button_init_compat_on'
     bl_description = 'Init all names and tools for\ncreating a new compatible model'
     bl_context = 'objectmode'
@@ -4609,7 +4462,7 @@ class ButtonInitCompatON(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonInitCompatOFF(bpy.types.Operator):
-    bl_label = 'Init all compatibilty tools'
+    bl_label = 'Init project and tools'
     bl_idname = 'mbcrea.button_init_compat_off'
     bl_description = 'Init all names and tools for\ncreating a new compatible model'
     bl_context = 'objectmode'
@@ -4758,20 +4611,6 @@ classes = (
     ButtonAdaptationToolsOFF,
     ButtonCompatToolsON,
     ButtonCompatToolsOFF,
-    ButtonVertexCreationON,
-    ButtonVertexCreationOFF,
-    ButtonBboxesToolsON,
-    ButtonBboxesToolsOFF,
-    ButtonWeightToolsON,
-    ButtonWeightToolsOFF,
-    ButtonVerticesGroupsToolsON,
-    ButtonVerticesGroupsToolsOFF,
-    ButtonMusclesToolsON,
-    ButtonMusclesToolsOFF,
-    ButtonConfigToolsON,
-    ButtonConfigToolsOFF,
-    ButtonFilesManagementON,
-    ButtonFilesManagementOFF,
     ButtonInitCompatON,
     ButtonInitCompatOFF,
     ButtonInitCompat,
