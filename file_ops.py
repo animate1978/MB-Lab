@@ -39,6 +39,12 @@ from .utils import get_object_parent
 logger = logging.getLogger(__name__)
 
 data_directory = "data"
+# Below is a trick. For un unknown reason, get_configuration()
+# is invoked multiple times in some occasions like expressions tool
+# after finalization. That's why the tool is so long.
+# As the configuration need to be loaded a single time by session,
+# this variable was created.
+configuration_done = None
 
 def is_writeable(filepath):
     try:
@@ -49,14 +55,9 @@ def is_writeable(filepath):
     return False
 
 
-def get_data_path(data_dir=None, humanoid=None):
-    global data_directory
+def get_data_path():
     addon_directory = os.path.dirname(os.path.realpath(__file__))
-    if humanoid != None:
-        data_directory = humanoid.data_directory
-    elif data_dir != None:
-        data_directory = data_dir
-    root_dir = os.path.join(addon_directory, data_directory)
+    root_dir = os.path.join(addon_directory, "data")
     logger.info("Looking for the retarget data in the folder %s...", simple_path(root_dir))
 
     if not os.path.isdir(root_dir):
@@ -65,29 +66,36 @@ def get_data_path(data_dir=None, humanoid=None):
 
     return root_dir
 
-
 def get_configuration():
-    data_path = get_data_path(data_dir="data")
+    global configuration_done
+    # For a reason, after finalization, some functions use this
+    # but they don't need it. As a configuration doesn't change
+    # during a session, no need to recalculate it each time.
+    # what's why the variable below exists.
+    if configuration_done != None:
+        return configuration_done
+    data_path = get_data_path()
     # Here something to change :
     # Allow to load every file that ends with _config.json
     if data_path:
-        return_configuration = {}
+        configuration_done = {}
         tmp = {}
         for list_dir in os.listdir(data_path):
             configuration_path = os.path.join(data_path, list_dir)
             if os.path.isfile(configuration_path) and configuration_path.endswith("_config.json"):
                 tmp = load_json_data(configuration_path, "Characters definition")
                 for prop in tmp:
-                    if not prop in return_configuration:
-                        return_configuration[prop] = tmp[prop]
+                    if prop == 'data_directory':
+                        pass
+                    elif not prop in configuration_done:
+                        configuration_done[prop] = tmp[prop]
                     elif prop == "templates_list" or prop == "character_list":
-                        return_configuration[prop] += tmp[prop]
-                    else :
-                        return_configuration[prop] = tmp[prop]
-        return return_configuration
+                        configuration_done[prop] += tmp[prop]
+                    else:
+                        configuration_done[prop] = tmp[prop]
+        return configuration_done
     logger.critical("Configuration database not found. Please check your Blender addons directory.")
     return None
-
 
 def get_blendlibrary_path():
     data_path = get_data_path()
@@ -187,6 +195,17 @@ def generate_items_list(folderpath, file_type="json"):
         items_list.sort()
     return items_list
 
+# A convenient way to not create the items list all the time
+items_dict = {}
+
+def get_items_list(folderpath, file_type="json", reset=False):
+    global items_dict
+    if folderpath in items_dict and not reset:
+        return items_dict[folderpath]
+    items_list = generate_items_list(folderpath, file_type)
+    if len(items_list) > 0:
+        items_dict[folderpath] = items_list
+    return items_list
 
 # Append humanoid objects
 
@@ -228,7 +247,8 @@ def append_object_from_library(lib_filepath, obj_names, suffix=None):
                 data_to.objects = [name for name in names_to_append if name in data_from.objects]
     except OSError:
         logger.critical("lib %s not found", lib_filepath)
-
+        return
+        
     for obj in data_to.objects:
         link_to_collection(obj)
         obj_parent = utils.get_object_parent(obj)

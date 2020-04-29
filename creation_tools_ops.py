@@ -27,9 +27,10 @@ import json
 import os
 import bpy
 import numpy
-#from . import algorithms
-from . import numpy_ops
+from . import algorithms
 from . import file_ops
+from . import numpy_ops
+from . import utils
 #from . import 
 
 logger = logging.getLogger(__name__)
@@ -51,18 +52,6 @@ needed_directories = ["animations", "anthropometry", "bboxes", "expressions_comb
     "Particle_Hair", "pgroups", "phenotypes", "poses", "presets", "textures", "transformations",
     "vertices", "vgroups"]
 
-created_names = {} #The names created while making a new compatible model.
-"""
-The keys are (values are string):
-body = the name of the body like "human"
-body_short = the short name like "hu"
-gender = the gender like "female"
-gender_short = "f_"
-project_name = the name of the project
-type = The name of the type (2 digits) + a number
-...
-"""
-
 static_names = {
     "human": ["human", "hu"],
     "anime": ["anime", "an"],
@@ -72,11 +61,18 @@ static_names = {
     }
 #with complete name, short name.
 
-static_genders = [("MA", "male", "All male characters"),
-   ("FE", "female", "All female characters"),
-   ("UN", "undefined", "CHaracter with no specific gender")]
- 
-loaded_project = [False]
+static_genders = [("male", "male", "m_"),
+   ("female", "female", "f_"),
+   ("undefined", "undefined", "u_")]
+
+# The content of the config file
+config_content = {"templates_list": [], "character_list": [], "data_directory": ""}
+
+# The content of blend file associated to project.
+blend_file_content = None
+blend_file_content_loaded = False
+
+loaded_project = False
 #--------------------------------------
 
 def get_forbidden_directories():
@@ -94,34 +90,17 @@ def is_forbidden_name(name):
 def get_static_names():
     return static_names
 
-def get_created_names():
-    return created_names
+def get_static_genders():
+    return static_genders
 
-def get_created_name(key):
-    return created_names.get(key, '')
-
-def set_created_name(key, value):
-    created_names[key] = value
-
-def init_project():
-    global created_names
-    created_names = {}
-    loaded_project[0] = False
-
-def get_static_genders(key=None):
-    if key == None:
-        return static_genders
-    value = None
-    for index in range(len(static_genders)):
-        if key in static_genders[index]:
-            value = static_genders[index]
-            return value[1]
-    return ""
 #--------------------------------------
 
 def create_needed_directories(name=""):
-    if name == None or name == "" or is_forbidden_name(name):
-        logger.critical("!WARNING! Name doesn't exist or is forbidden.")
+    if name == None or name == "":
+        logger.critical("!WARNING! Name doesn't exist.")
+        return
+    elif is_forbidden_name(name):
+        logger.critical("!WARNING! Name is forbidden.")
         return
     path = os.path.join(os.path.dirname(os.path.realpath(__file__)), name)
     if os.path.exists(path):
@@ -132,25 +111,262 @@ def create_needed_directories(name=""):
         except FileExistsError:
             logger.warning("Directory " + sub_dir + " already exists. Skipped.")
 
-def save_project():
-    if len(created_names) < 1:
+def set_data_directory(dir):
+    global config_content
+    config_content["data_directory"] = dir
+
+def get_data_directory():
+    global config_content
+    return config_content["data_directory"]
+    
+def save_config():
+    global config_content
+    if config_content["data_directory"] == "" or config_content["data_directory"] == "data":
         return
-    file_name = created_names.get("project_name", "")
     addon_directory = os.path.dirname(os.path.realpath(__file__))
-    file_name = os.path.join(addon_directory, file_name, file_name + ".json")
-    file_ops.save_json_data(file_name, created_names)
+    file_name = os.path.join(addon_directory, "data", config_content["data_directory"] + "_config.json")
+    # Save of the content, except data directory
+    temp = config_content.copy()
+    del temp["data_directory"]
+    with open(file_name, "w") as j_file:
+        json.dump(temp, j_file, indent=2)
+    j_file.close()
 
-def load_project(path_name):
-    if len(path_name) < 1:
+def load_config(config_name):
+    global loaded_project
+    global config_content
+    path = os.path.join(os.path.dirname(os.path.realpath(__file__)), config_name)
+    if os.path.exists(path):
+        file_name = os.path.join(file_ops.get_data_path(), config_name + "_config.json")
+        config_content = file_ops.load_json_data(file_name, "Load config file")
+        config_content["data_directory"] = config_name
+        loaded_project = True
+
+# User never add a complete content. He always add a single value led
+# by a key.
+# Important : Before adding content in a base (like "human_female_base")
+# or an body type (like "f_ca01"), the key must be added in
+# "templates_list" or "character_list" before.
+def add_content(key, key_in, content):
+    global config_content
+    if key == "":
         return
-    global created_names
-    created_names = file_ops.load_json_data(path_name, "loading compatibility project")
-    loaded_project[0] = True
+    # Now we figure out what we're talking about.
+    if key == "data_directory":
+        pass
+    elif key == "templates_list" or key == "character_list":
+        if not content in config_content[key]:
+            config_content[key].append(content)
+    elif key in config_content["templates_list"]:
+        if not key in config_content:
+            config_content[key] = {
+                "description": "", "template_model": "",
+                "template_polygons": "", "name": key,
+                "vertices": 0, "faces": 0, "label": ""}
+        if key_in != None:
+            config_content[key][key_in] = content
+    elif key in config_content["character_list"]:
+        if not key in config_content:
+            config_content[key] = {
+                "description": "", "template_model": "", "name": key,
+                "label": "", "texture_albedo": "", "texture_bump": "",
+                "texture_displacement": "", "texture_eyes": "",
+                "texture_tongue_albedo": "", "texture_teeth_albedo": "",
+                "texture_nails_albedo": "", "texture_eyelash_albedo": "",
+                "texture_frecklemask": "", "texture_blush": "", 
+                "texture_sebum": "", "texture_lipmap": "", "texture_subdermal": "",
+                "texture_thickness": "", "texture_iris_color": "",
+                "texture_iris_bump": "", "texture_sclera_color": "",
+                "texture_translucent_mask": "", "texture_sclera_mask": "",
+                "morphs_extra_file": "", "shared_morphs_file": "",
+                "shared_morphs_extra_file": "", "bounding_boxes_file": "",
+                "proportions_folder": "", "joints_base_file": "",
+                "joints_offset_file": "", "measures_file": "",
+                "presets_folder": "", "transformations_file": "",
+                "vertexgroup_base_file": "", "vertexgroup_muscle_file": ""}
+        if not key_in in config_content[key]:
+            config_content[key][key_in] = content
+        elif key_in != None:
+            config_content[key][key_in] = content
 
+def set_content(key, content):
+    global config_content
+    if key == None or key == "":
+        return
+    config_content[key] = content
+
+def delete_content(key):
+    global config_content
+    if key == None or key == "":
+        return
+    del config_content[key]
+
+def get_content(key, key_in):
+    global config_content
+    if key == None:
+        return ""
+    if key in config_content["templates_list"] or key in config_content["character_list"]:
+        if not key in config_content:
+            add_content(key, None, "")
+    if key in config_content:
+        content = config_content[key]
+        if type(content) is dict and key_in != None:
+            return content[key_in]
+        else:
+            return content
+    return ""
+    
+def init_config():
+    global config_content
+    global loaded_project
+    global blend_file_content_loaded
+    # init collection
+    c = bpy.data.collections.get('MB_LAB_Character')
+    if c is not None:
+        for name in blend_file_content[1]:
+            obj = algorithms.get_object_by_name(name)
+            bpy.data.objects.remove(obj)
+        bpy.data.collections.remove(c)
+    # Init variables
+    config_content = {"templates_list": [], "character_list": [], "data_directory": ""}
+    loaded_project = False
+    blend_file_content_loaded = False
+    
 def is_project_loaded():
-    return loaded_project[0]
+    global loaded_project
+    return loaded_project
 
+def is_directories_created():
+    global config_content
+    addon_directory = os.path.dirname(os.path.realpath(__file__))
+    dirpath = os.path.join(addon_directory, config_content["data_directory"])
+    if os.path.isdir(dirpath):
+        return True
+    return False
+
+def is_config_created():
+    global config_content
+    dirpath = os.path.join(file_ops.get_data_path(), config_content["data_directory"] + "_config.json")
+    if os.path.isfile(dirpath):
+        return True
+    return False
+
+def delete_template(name):
+    global config_content
+    if name in config_content:
+        del config_content[name]
+    if name in config_content["templates_list"]:
+        config_content["templates_list"].remove(name)
+
+def delete_character(name):
+    global config_content
+    if name in config_content:
+        del config_content[name]
+    if name in config_content["character_list"]:
+        config_content["character_list"].remove(name)
+
+def get_file_list(dir, file_type="json"):
+    path = os.path.join(
+        os.path.dirname(os.path.realpath(__file__)),
+        get_data_directory(), dir)
+    return [('NONE', 'Unknown', 'Unknown file for the moment')] + file_ops.get_items_list(path, file_type)
+
+def get_presets_folder_list():
+    dir_list = get_content("templates_list", None)
+    if len(dir_list) < 1:
+        dir_list["Please create templates"]
+    return [('NONE', 'Unknown', 'Unknown folder for the moment')] + algorithms.create_enum_property_items(dir_list, tip_length=20)
+    
 # ------------------------------------------------------------------------
-#    All methods about manipulating vertices
+#    All methods dedicated to the content of blend file
 # ------------------------------------------------------------------------
 
+def is_blend_file_exist():
+    global config_content
+    if len(config_content["data_directory"]) < 1:
+        return False
+    dirpath = os.path.join(file_ops.get_data_path(), config_content["data_directory"] + "_library.blend")
+    if os.path.isfile(dirpath):
+        return True
+    return False
+
+def get_blend_file_pathname():
+    return os.path.join(file_ops.get_data_path(), config_content["data_directory"] + "_library.blend")
+
+def get_blend_file_name():
+    return config_content["data_directory"] + "_library.blend"
+
+def load_blend_file():
+    global blend_file_content
+    global blend_file_content_loaded
+    
+    if blend_file_content_loaded:
+        return blend_file_content
+    
+    if is_blend_file_exist():
+        lib_filepath = get_blend_file_pathname()
+    
+    # Import objects name from library
+    with bpy.data.libraries.load(lib_filepath) as (data_from, data_to):
+        blend_file_content = [data_from, data_from.objects, data_from.meshes]
+    # Import objects name from library
+    file_ops.append_object_from_library(lib_filepath, data_from.objects)
+    blend_file_content_loaded = True
+    return blend_file_content
+    
+def blend_is_loaded():
+    global blend_file_content_loaded
+    return blend_file_content_loaded
+    
+def get_meshes_names():
+    global blend_file_content
+    global blend_file_content_loaded
+    if blend_file_content_loaded:
+        return blend_file_content[2]
+    return []
+
+def get_objects_names():
+    global blend_file_content
+    global blend_file_content_loaded
+    if blend_file_content_loaded:
+        return blend_file_content[1]
+    return []
+
+def get_vertices_faces_count(model_name):
+    global blend_file_content
+    global blend_file_content_loaded
+    if not blend_file_content_loaded:
+        return 0, 0
+    obj = bpy.data.meshes[model_name]
+    return len(obj.vertices.values()), len(obj.polygons.values())
+# ------------------------------------------------------------------------
+#    All methods to return tuples for drop-down lists
+# ------------------------------------------------------------------------
+
+def get_templates_list():
+    global config_content
+    return_list = [("NEW", "New template...", "Create a new template")]
+    if len(config_content["templates_list"]) < 1:
+        return return_list
+    for tl in config_content["templates_list"]:
+        return_list.append((tl, tl, tl))
+    return return_list
+
+def get_character_list():
+    global config_content
+    return_list = [("NEW", "New character...", "Create a new character")]
+    if len(config_content["character_list"]) < 1:
+        return return_list
+    for cl in config_content["character_list"]:
+        return_list.append((cl, cl, cl))
+    return return_list
+
+def get_meshes_list():
+    global blend_file_content
+    global blend_file_content_loaded
+    if not blend_file_content_loaded:
+        return [("NONE", "No blend file", "Must load a blend file to work")]
+    return_list = []
+    for mesh in blend_file_content[2]:
+        return_list.append((mesh, mesh, "mesh : " + mesh))
+    return return_list

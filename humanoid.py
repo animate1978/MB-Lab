@@ -214,14 +214,8 @@ class Humanoid:
         self.lab_vers = list(lab_version)
         self.has_data = False
         self.obj_name = ""
-        #Teto
         self.characters_config = file_ops.get_configuration()
-        if "data_directory" in self.characters_config:
-            self.data_directory = self.characters_config["data_directory"]
-        else:
-            self.data_directory = "data"
-        self.data_path = file_ops.get_data_path(self.data_directory)
-        #End Teto
+        self.data_path = file_ops.get_data_path()
         self.lib_filepath = file_ops.get_blendlibrary_path()
         if self.characters_config:
             self.humanoid_types = self.build_items_list("character_list")
