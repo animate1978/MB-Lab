@@ -21,7 +21,6 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import logging
-
 import bpy
 
 
@@ -72,7 +71,6 @@ def is_ik_armature(armature=None):
     return False
 
 # MB-Lab version check
-
 def check_version(m_vers, min_version=(1, 5, 0)):
 
     # m_vers can be a list, tuple, IDfloatarray or str

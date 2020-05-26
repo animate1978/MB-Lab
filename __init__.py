@@ -57,6 +57,8 @@ from . import proxyengine
 from . import transfor
 from . import utils
 from . import preferences
+from . import mesh_ops
+from . import measurescreator
 
 
 logger = logging.getLogger(__name__)
@@ -193,6 +195,8 @@ def start_lab_session():
             mbcrea_expressionscreator.reset_expressions_items()
             mbcrea_transfor.set_scene(scn)
             init_cmd_props(mblab_humanoid)
+            measurescreator.init_all()
+            init_measures_weights()
             # End for that.
             algorithms.deselect_all_objects()
     algorithms.remove_censors()
@@ -3015,7 +3019,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
         
         box_general = self.layout.box()
         box_general.label(text="https://www.mblab.dev")
-        #box_general.operator('mbcrea.button_for_tests', icon='BLENDER')
+        box_general.operator('mbcrea.button_for_tests', icon='BLENDER')
 
         box_tools = self.layout.box()
         box_tools.label(text="TOOLS CATEGORIES", icon="RNA")
@@ -3272,7 +3276,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     box_fast_creators.label(text="(age, mass & tone useless here)", icon='FORWARD')
                     box_fast_creators.prop(scn, 'mbcrea_phenotype_name_filter')
                     if len(scn.mbcrea_phenotype_name_filter) > 0:
-                        pheno_name = algorithms.split_name(scn.mbcrea_phenotype_name_filter, '-²&=¨^$£%µ,?;!§+*/').lower()
+                        pheno_name = algorithms.split_name(scn.mbcrea_phenotype_name_filter, '-²&=¨^$£%µ,?;!§+*/:').lower()
                         box_fast_creators.label(text="Name : " + pheno_name, icon='INFO')
                         if morphcreator.is_phenotype_exists(body_type, pheno_name):
                             box_fast_creators.label(text="File already exists !", icon='ERROR')
@@ -3303,7 +3307,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                         preset_name = ""
                         if scn.mbcrea_special_preset:
                             preset_name = "special"
-                        tmp = algorithms.split_name(scn.mbcrea_preset_name_filter, '-²&=¨^$£%µ,?;!§+*/').lower()
+                        tmp = algorithms.split_name(scn.mbcrea_preset_name_filter, '-²&=¨^$£%µ,?;!§+*/:').lower()
                         if not tmp.startswith("type_"):
                             preset_name += "type_"
                         preset_name += tmp
@@ -3470,7 +3474,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                         selected = morphcreator.get_selected_cmd_morphs(get_cmd_input_file_name(), obj)
                         if len(selected) > 0:
                             cat = selected[0].split("_")[0]
-                            new_name = algorithms.split_name(scn.mbcrea_morphing_rename, ' _²&=¨^$£%µ,?;!§+*/')
+                            new_name = algorithms.split_name(scn.mbcrea_morphing_rename, ' _²&=¨^$£%µ,?;!§+*/:')
                             box_cmd_rename.label(text="Morph name : " + cat + "_" + new_name + "_min(max)", icon='INFO')
                         box_cmd_rename.operator('mbcrea.button_rename_morph')
                         if len(selected) == 1:
@@ -3531,6 +3535,9 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
             box_project_tools = self.layout.box()
             box_project_tools.label(text="TOOLS", icon="MODIFIER_ON")
             if creation_tools_ops.blend_is_loaded():
+                box_project_tools_a=box_project_tools.column(align=True)
+                box_project_tools_a.prop(scn, "mbcrea_allow_edit_mode", toggle=1)
+                box_project_tools_a.prop(scn, "mbcrea_toggle_edit_object", toggle=1)
                 box_project_tools.prop(scn, "mbcrea_creation_tools")
                 if scn.mbcrea_creation_tools == "Base_model_creation":
                     b_m_c = self.layout.box()
@@ -3541,7 +3548,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                         b_m_c.label(text="Name of new template", icon='QUESTION')
                         b_m_c.prop(scn, "mbcrea_gender_list")
                         b_m_c.prop(scn, "mbcrea_template_new_name")
-                        txt = algorithms.split_name(scn.mbcrea_template_new_name, splitting_char=' -²&=¨^$£%µ,?;!§+*/').lower()
+                        txt = algorithms.split_name(scn.mbcrea_template_new_name, splitting_char=' -²&=¨^$£%µ,?;!§+*/:').lower()
                         if len(txt) > 0:
                             txt += "_" + scn.mbcrea_gender_list + "_base"
                             b_m_c.label(text="Full : " + txt, icon='INFO')
@@ -3601,7 +3608,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                                 scn.mbcrea_gender_list,
                                 creation_tools_ops.get_static_genders(), 2)
                             b_m_c.label(text="Name : " + gender + splitted, icon='BLANK1')
-                    else:
+                    elif key != 'NONE':
                         b_m_c.operator('mbcrea.button_delete_character', icon='CANCEL')
                         b_m_c.label(text="Template content", icon='SORT_ASC')
                         b_m_c_c=b_m_c.column(align=False)
@@ -3750,6 +3757,132 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                         b_m_c_d.operator('mbcrea.button_del_chara_content', icon='FREEZE')
                         b_m_c_d.operator('mbcrea.button_save_character', icon='FREEZE')
                         b_m_c_d.operator('mbcrea.button_save_config', icon='FREEZE')
+                # Tools to register a character (like as01) in data base.
+                if scn.mbcrea_creation_tools == "Body_type_registration":
+                    bt_register = self.layout.box()
+                    bt_register.label(text="Character's name", icon='SORT_ASC')
+                    bt_register.prop(scn, "mbcrea_character_list_without")
+                    if bpy.context.active_object != None:
+                        if creation_tools_ops.is_mesh_compatible(bpy.context.object, chara_name=scn.mbcrea_character_list_without):
+                            bt_register.operator('mbcrea.button_save_chara_vertices', icon='FREEZE')
+                        else:
+                            bt_register.label(text="No compatible mesh !", icon='ERROR')
+                    else:
+                        bt_register.label(text="No mesh selected !", icon='ERROR')
+                # Tools about creating measures files.
+                if scn.mbcrea_creation_tools == "Measures_creation":
+                    measures_creation = self.layout.box()
+                    measures_creation.prop(scn, "mbcrea_character_list_without")
+                    key = scn.mbcrea_character_list_without
+                    if key != 'NONE':
+                        measures_name = creation_tools_ops.get_content(key, "measures_file")
+                        if measures_name == "":
+                            measures_creation.label(text="Measures file name", icon='SORT_ASC')
+                            measures_creation.prop(scn, "mbcrea_measures_file")
+                            # Name ----------------
+                            name = scn.mbcrea_measures_file
+                            if name == 'NONE':
+                                measures_creation.prop(scn, "mbcrea_measures_file_name")
+                                name = algorithms.split_name(scn.mbcrea_measures_file_name, splitting_char=' -²&=¨^$£%µ,?;!§+*/:[]\"\'{}').lower()
+                                if name != "":
+                                    if not name.endswith("_measures"):
+                                        name += "_measures"
+                                    measures_creation.label(text="Name : " + name + ".json", icon='INFO')
+                                    # Ceation if name not in list ----------------
+                                    measures_creation.operator('mbcrea.button_create_measures_file', icon='FREEZE')
+                                else:
+                                    measures_creation.label(text="Name not valid !", icon='ERROR')
+                            else:
+                                creation_tools_ops.add_content(scn.mbcrea_character_list_without, "measures_file", name)
+                        else:
+                            measures_creation.label(text="Name in config : " + creation_tools_ops.get_content(key, "measures_file"), icon='CHECKMARK')
+                            # We automatically select the model, and if there
+                            # isn't, we ask to select one and add it in the database.
+                            mesh_name = creation_tools_ops.get_content(key, "template_model")
+                            if mesh_name == "":
+                                measures_creation.label(text="Please select the model", icon='ERROR')
+                                measures_creation.label(text="Will be saved in config", icon='BLANK1')
+                            elif not bpy.data.objects[mesh_name].select_get():
+                                bpy.data.objects[mesh_name].select_set(True)
+                            else:
+                                # Now the name is known, we can change its content.
+                                measures_creation.operator('mbcrea.button_measures_inconsistancies', icon='FREEZE')
+                                measures_creation.label(text="Check file : " + measurescreator.get_inconsistancies_file_name(key), icon='INFO')
+                                measurescreator.set_current_measures_file(measures_name)
+                                # Measures points/girths
+                                measures_creation.label(text="Topics", icon='MODIFIER_ON')
+                                measures_creation_a = measures_creation.row(align=True)
+                                measures_creation_a.prop(scn, "mbcrea_measures_type", expand=True)
+                                tmp = scn.mbcrea_measures_type
+                                if tmp == 'POINTS':
+                                    measures_creation_b = measures_creation.column(align=True)
+                                    hist = measurescreator.get_two_points()
+                                    if hist != None:
+                                        measures_creation_b.label(text=hist.name, icon='COPY_ID')
+                                        measures_creation_b.prop(scn, "mbcrea_measures_select", icon='PARTICLE_POINT', toggle=1)
+                                        measures_creation_c = measures_creation_b.row(align=True)
+                                        measures_creation_c.operator('mbcrea.button_measures_previous', icon='PLAY_REVERSE')
+                                        measures_creation_c.operator('mbcrea.button_measures_current', icon='DECORATE_KEYFRAME')
+                                        measures_creation_c.operator('mbcrea.button_measures_next', icon='PLAY')
+                                        measures_creation_b.separator()
+                                        measures_creation_d = measures_creation_b.row(align=True)
+                                        measures_creation_d.operator('mbcrea.button_measures_add', icon='CON_TRACKTO')
+                                        measures_creation_d.operator('mbcrea.button_measures_add_2points', icon='PARTICLE_TIP')
+                                        measures_creation_e = measures_creation_b.row(align=True)
+                                        measures_creation_e.operator('mbcrea.button_measures_remove_last', icon='CANCEL')
+                                        measures_creation_e.operator('mbcrea.button_measures_remove_selected', icon='CANCEL')
+                                        measures_creation_e.operator('mbcrea.button_measures_remove_all', icon='CANCEL')
+                                        measures_creation_b.operator('mbcrea.button_measures_recover', icon='RECOVER_LAST')
+                                    else:
+                                        measures_creation_b.label(text="Click on the model", icon='ERROR')
+                                elif tmp == 'GIRTH':
+                                    measures_creation_b = measures_creation.column(align=True)
+                                    hist = measurescreator.get_girth()
+                                    if hist != None:
+                                        measures_creation_b.label(text=hist.name, icon='COPY_ID')
+                                        measures_creation_b.prop(scn, "mbcrea_measures_select", icon='PARTICLE_POINT', toggle=1)
+                                        measures_creation_c = measures_creation_b.row(align=True)
+                                        measures_creation_c.operator('mbcrea.button_measures_previous', icon='PLAY_REVERSE')
+                                        measures_creation_c.operator('mbcrea.button_measures_current', icon='DECORATE_KEYFRAME')
+                                        measures_creation_c.operator('mbcrea.button_measures_next', icon='PLAY')
+                                        measures_creation_b.separator()
+                                        measures_creation_b.operator('mbcrea.button_measures_add', icon='CON_TRACKTO')
+                                        measures_creation_e = measures_creation_b.row(align=True)
+                                        measures_creation_e.operator('mbcrea.button_measures_remove_last', icon='CANCEL')
+                                        measures_creation_e.operator('mbcrea.button_measures_remove_selected', icon='CANCEL')
+                                        measures_creation_e.operator('mbcrea.button_measures_remove_all', icon='CANCEL')
+                                        measures_creation_b.operator('mbcrea.button_measures_recover', icon='RECOVER_LAST')
+                                    else:
+                                        measures_creation_b.label(text="Click on the model", icon='ERROR')
+                                else:
+                                    measures_creation.label(text="Score weights", icon='SORT_ASC')
+                                    measures_creation_f = measures_creation.column(align=True)
+                                    measurescreator.set_weights_layout(measures_creation_f)
+                                    measures_creation_f.operator('mbcrea.button_measures_save_weights', icon='FREEZE')
+                            # Finish by saves.
+                            measures_creation.label(text="File saves", icon='SORT_ASC')
+                            measures_creation_z = measures_creation.column(align=True)
+                            measures_creation_z.operator('mbcrea.button_save_config', icon='FREEZE')
+                            measures_creation_z.operator('mbcrea.button_save_measures_file', icon='FREEZE')
+                # Tool that creates the base of morph file, with morphs needed
+                # for topics like measures.
+                
+                # Tools about small tools for manual things.
+                if scn.mbcrea_creation_tools == "Utilities":
+                    utils = self.layout.box()
+                    utils.label(text="Manual tools", icon='MODIFIER_ON')
+                    utils.prop(scn, "mbcrea_meshes_list")
+                    key = scn.mbcrea_character_list
+                    # Here we select vertices/lines/faces.
+                    utils.separator(factor=0.5)
+                    utils.label(text="Selection by indices", icon='SORT_ASC')
+                    utils.prop(scn, "mbcrea_indices_to_check")
+                    indices = algorithms.split(str(scn.mbcrea_indices_to_check))
+                    utils_b = utils.column(align=True)
+                    utils_c = utils_b.row(align=True)
+                    utils_c.prop(scn, "mbcrea_check_element", expand=True)
+                    utils_b.prop(scn, "mbcrea_unselect_before", toggle=1)
+                    utils_b.operator('mbcrea.button_select', icon='RESTRICT_SELECT_OFF')
         box_tools.separator(factor=0.5)
 
 bpy.types.Scene.mbcrea_project_name = bpy.props.StringProperty(
@@ -4044,13 +4177,15 @@ bpy.types.Scene.mbcrea_before_edition_tools = bpy.props.EnumProperty(
 
 bpy.types.Scene.mbcrea_creation_tools = bpy.props.EnumProperty(
     items=[
-        ("None", "Choose ...", "Tools available before finalization"),
+        ("None", "Choose ...", "Tools available for creating a model"),
         ("Base_model_creation", "Base model creation tools", "All tools to create base models for the project.\nThings must be done for config file too"),
         ("Body_type_creation", "Character creation tools", "All tools to create body tupes for a model"),
+        ("Body_type_registration", "Body's vertices registration", "Register the character's vertices in data base"),
+        ("Measures_creation", "Create measures template", "register all points for the measures engine"),
         #("Weight_painting", "Weight painting tools", "All tools related to weight painting"),
         #("Vertices_groups", "Vertices groups tools", "All tools related to vertices groups"),
         #("Muscles", "Muscles tools", "All tools related to muscles system"),
-        #("Files_management", "Files management", "All tools for addon files management")
+        ("Utilities", "Manual tools", "Small tools for manual operations")
         ],
     name="",
     default="None",
@@ -4067,7 +4202,7 @@ bpy.types.Scene.mbcrea_template_list = bpy.props.EnumProperty(
 
 def update_template_new_name(self, context):
     scn = bpy.context.scene
-    txt = algorithms.split_name(scn.mbcrea_template_new_name, splitting_char=' -²&=¨^$£%µ,?;!§+*/').lower()
+    txt = algorithms.split_name(scn.mbcrea_template_new_name, splitting_char=' -²&=¨^$£%µ,?;!§+*/:').lower()
     if len(txt) < 1:
         return
     txt += "_" + scn.mbcrea_gender_list + "_base"
@@ -4104,20 +4239,49 @@ bpy.types.Scene.mbcrea_base_description = bpy.props.StringProperty(
 def update_meshes_list(self, context):
     return creation_tools_ops.get_meshes_list()
 
+def update_meshes_show(self, context):
+    name = str(bpy.context.scene.mbcrea_meshes_list)
+    for item in creation_tools_ops.get_objects_names():
+        if item == name:
+            bpy.data.objects[item].hide_viewport = False
+        else:
+            bpy.data.objects[item].hide_viewport = True
+
 bpy.types.Scene.mbcrea_meshes_list = bpy.props.EnumProperty(
     items=update_meshes_list,
     description="The name used for the template",
     name="",
     default=None,
+    update=update_meshes_show,
     options={'ANIMATABLE'})
 
-def update_character_list(self, context):
+def get_character_list(self, context):
     return creation_tools_ops.get_character_list()
     
+def get_character_list_without(self, context):
+    return creation_tools_ops.get_character_list(with_new=False)
+
+def update_character_list(self, context):
+    chara = bpy.context.scene.mbcrea_character_list_without
+    name = creation_tools_ops.get_content(chara, "template_model")
+    if name != "":
+        for item in creation_tools_ops.get_objects_names():
+            if item == name:
+                bpy.data.objects[item].hide_viewport = False
+            else:
+                bpy.data.objects[item].hide_viewport = True
+
 bpy.types.Scene.mbcrea_character_list = bpy.props.EnumProperty(
-    items=update_character_list,
+    items=get_character_list,
     name="",
     default=None,
+    options={'ANIMATABLE'})
+
+bpy.types.Scene.mbcrea_character_list_without = bpy.props.EnumProperty(
+    items=get_character_list_without,
+    name="",
+    default=None,
+    update=update_character_list,
     options={'ANIMATABLE'})
 
 def update_character_new_name(self, context):
@@ -4330,6 +4494,67 @@ bpy.types.Scene.mbcrea_presets_folder = bpy.props.EnumProperty(
     items=update_presets_folder,
     name="Presets folder",
     default=None)
+
+bpy.types.Scene.mbcrea_indices_to_check = bpy.props.StringProperty(
+    name="",
+    description="All indices to select.\nMany indices at once allowed.\nSpace, comma are permitted to seperate indices",
+    default="",
+    maxlen=1024,
+    subtype='FILE_NAME')
+
+bpy.types.Scene.mbcrea_check_element = bpy.props.EnumProperty(
+    items=[
+        ('vert', 'vert', 'Choose vertex'),
+        ('edge', 'edge', 'Choose edge'),
+        ('face', 'face', 'Choose face')],
+    name="whatever",
+    default='vert')
+
+def allow_edit_mode(self, context):
+    global gui_allows_edit_mode
+    gui_allows_edit_mode = bpy.context.scene.mbcrea_allow_edit_mode
+
+bpy.types.Scene.mbcrea_allow_edit_mode = bpy.props.BoolProperty(
+    name="Allow edit mode",
+    update=allow_edit_mode,
+    description="Allow edit mode")
+
+def toggle_edit_object(self, context):
+    if bpy.context.active_object != None:
+        mode = bpy.context.active_object.mode
+        scn = bpy.context.scene
+        if mode == 'EDIT' and not scn.mbcrea_toggle_edit_object:
+            bpy.ops.object.mode_set(mode='OBJECT')
+        elif mode == 'OBJECT' and scn.mbcrea_toggle_edit_object:
+            bpy.ops.object.mode_set(mode='EDIT')
+
+bpy.types.Scene.mbcrea_toggle_edit_object = bpy.props.BoolProperty(
+    name="Edit / Object mode",
+    update=toggle_edit_object,
+    description="Toggle between edit and object mode")
+
+bpy.types.Scene.mbcrea_unselect_before = bpy.props.BoolProperty(
+    name="Unselect all before",
+    description="Unselect all before select\nnew vertices/edges/faces")
+    
+bpy.types.Scene.mbcrea_measures_file_name = bpy.props.StringProperty(
+    name="Other",
+    description="Another name if you want to create a new measures file",
+    default="",
+    maxlen=1024,
+    subtype='FILE_NAME')
+
+bpy.types.Scene.mbcrea_measures_type = bpy.props.EnumProperty(
+    items=[
+        ('POINTS', '2 points', 'Measures made by 2 points'),
+        ('GIRTH', 'Girth', 'Measures made by girth'),
+        ('WEIGHTS', 'Weights', 'Measures made by girth')],
+    name="whatever",
+    default='POINTS')
+
+bpy.types.Scene.mbcrea_measures_select = bpy.props.BoolProperty(
+    name="Show points",
+    description="Show points when on")
 
 class ButtonCreatePolygs(bpy.types.Operator):
     bl_label = 'Create polygons file'
@@ -4603,9 +4828,69 @@ class ButtonSaveConfig(bpy.types.Operator):
         if bpy.context.active_object != None:
             mode = bpy.context.active_object.mode
             bpy.ops.object.mode_set(mode='OBJECT')
-        scn = bpy.context.scene
         #--------------------
         creation_tools_ops.save_config()
+        return {'FINISHED'}
+
+class ButtonSaveCharaVertices(bpy.types.Operator):
+    bl_label = 'GO'
+    bl_idname = 'mbcrea.button_save_chara_vertices'
+    bl_description = 'Button for saving the character\nas vertices under /data/vertices.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        if bpy.context.active_object != None:
+            vt = bpy.context.object.data.vertices
+            # Check the length of vertices and compare with config.
+            vertices_to_save = morphcreator.create_vertices_list(vt)
+            vertices_to_save = numpy.around(vertices_to_save, decimals=5).tolist()
+            #--------------------
+            addon_directory = os.path.dirname(os.path.realpath(__file__))
+            data_path = creation_tools_ops.get_data_directory()
+            name = bpy.context.scene.mbcrea_character_list_without
+            filepath = os.path.join(addon_directory, data_path, "vertices", name + "_verts.json")
+            file_ops.save_json_data(filepath, vertices_to_save)
+        return {'FINISHED'}
+
+
+class ButtonSelect(bpy.types.Operator):
+    bl_label = 'Select'
+    bl_idname = 'mbcrea.button_select'
+    bl_description = 'Select vertices, edges or/and faces.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        obj = bpy.context.active_object
+        if obj != None:
+            mode = obj.mode
+            bpy.ops.object.mode_set(mode='EDIT')
+        else:
+            return {'FINISHED'}
+        scn = bpy.context.scene
+        # make a list from StringProperty
+        indices_list = algorithms.split(str(scn.mbcrea_indices_to_check))
+        # Now we change the values by their int counterpart
+        if len(indices_list) < 1 :
+            return {'FINISHED'}
+        int_list = []
+        for i in indices_list:
+            try:
+                int_list.append(int(i))
+            except:
+                pass
+        # Do the thing.
+        value = scn.mbcrea_check_element
+        vert=True if value == 'vert' else False
+        edge=True if value == 'edge' else False
+        face=True if value == 'face' else False
+        mesh_ops.select_global(
+            obj, int_list,
+            unselect_all=scn.mbcrea_unselect_before,
+            vertices=vert,
+            edges=edge,
+            faces=face)
         return {'FINISHED'}
 
 class FinalizeExpression(bpy.types.Operator):
@@ -4707,7 +4992,7 @@ class FinalizePhenotype(bpy.types.Operator):
     def execute(self, context):
         scn = bpy.context.scene
         #-------File name----------
-        pheno_name = algorithms.split_name(scn.mbcrea_phenotype_name_filter, '-²&=¨^$£%µ,?;!§+*/').lower()
+        pheno_name = algorithms.split_name(scn.mbcrea_phenotype_name_filter, '-²&=¨^$£%µ,?;!§+*/:').lower()
         #---phenotype path + name--
         path = os.path.join(file_ops.get_data_path(), "phenotypes", morphcreator.get_body_type() + "_ptypes", pheno_name+".json")
         #--------Saving file-------
@@ -4728,7 +5013,7 @@ class FinalizePreset(bpy.types.Operator):
     def execute(self, context):
         scn = bpy.context.scene
         #-------File name----------
-        preset_name = algorithms.split_name(scn.mbcrea_preset_name_filter, '-²&=¨^$£%µ,?;!§+*/').lower()
+        preset_name = algorithms.split_name(scn.mbcrea_preset_name_filter, '-²&=¨^$£%µ,?;!§+*/:').lower()
         if not preset_name.startswith("type_"):
             preset_name = "type_" + preset_name
         #----preset path + name----
@@ -4977,12 +5262,11 @@ class ButtonRenameMorphs(bpy.types.Operator):
         morphs_list = morphcreator.get_morphs_list(input_file_name, mblab_humanoid.get_object())
         if len(morphs_list) < 1:
             return {'FINISHED'}
-        n_name = algorithms.split_name(bpy.context.scene.mbcrea_morphing_rename, ' _²&=¨^$£%µ,?;!§+*/')
+        n_name = algorithms.split_name(bpy.context.scene.mbcrea_morphing_rename, ' _²&=¨^$£%µ,?;!§+*/:')
         morphcreator.cmd_morphs_action(input_file_name, None, morphs_names=morphs_list, new_name=n_name, copy=False, delete=False)
         return {'FINISHED'}
 
 class ButtonCompatToolsDir(bpy.types.Operator):
-    #just for quick tests
     bl_label = 'Create project directories'
     bl_idname = 'mbcrea.button_create_directories'
     bl_description = 'Button for create all needed\ndirectories for the projet'
@@ -5062,8 +5346,56 @@ class ButtonForTest(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        thing = "abcdef"
-        print(type(thing[0:2]))
+        scn = bpy.context.scene
+        path = file_ops.get_data_path()
+        file_path = os.path.join(path, "morphs", "human_female_morphs.json")
+        file = file_ops.load_json_data(file_path)
+        file_path_bis = os.path.join(path, "bboxes", "human_female_bbox.json")
+        file_bis = file_ops.load_json_data(file_path_bis)
+        # Now we try things.
+        indices = algorithms.split(str(scn.mbcrea_indices_to_check))
+        indice = int(indices[0])
+        print(indice)
+        match = morphcreator.get_all_morphs(indice, file)
+        print(sorted(match))
+        print ("------------")
+        # Now we clean the list
+        match = sorted(morphcreator.clean_redundant_morphs(match))
+        print(match)
+        print ("------------")
+        # Now we check all common indices for these morphs
+        match = sorted(morphcreator.common_indices(match, file))
+        print(match)
+        print ("------------")
+        """six = file_bis[str(indice)]
+        print(six)
+        print ("------------")
+        match = []
+        for each in six:
+            ind = int(each)
+            for key in file:
+                for index in file[key]:
+                    if ind == index[0]:
+                        match.append(key)
+            print (str(each) + " : " + str(match))
+            print ("------------")
+            match = []"""
+        # Let's show all vertices as key in bbox file
+        """obj = bpy.context.active_object
+        indices = file_bis.keys()
+        int_list = []
+        for i in indices:
+            try:
+                int_list.append(int(i))
+            except:
+                pass
+        mesh_ops.select_in_a_mesh(
+            obj, int_list,
+            unselect_all=scn.mbcrea_unselect_before,
+            vertices=True)"""
+        # Let's try to know first where we can find a given vertex
+        
+        
         return {'FINISHED'}
 
 class ButtonAdaptationToolsON(bpy.types.Operator):
@@ -5263,6 +5595,277 @@ class ImpExpression(bpy.types.Operator, ImportHelper):
         char_data = mbcrea_expressionscreator.load_face_expression(self.filepath)
         return {'FINISHED'}
 
+class ButtonCreateMeasuresFile(bpy.types.Operator):
+    bl_label = 'Create measures file'
+    bl_idname = 'mbcrea.button_create_measures_file'
+    bl_description = 'Create a file about measures for this character'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        scn = bpy.context.scene
+        name = algorithms.split_name(scn.mbcrea_measures_file_name, splitting_char=' -²&=¨^$£%µ,?;!§+*/:[]\"\'{}').lower()
+        if not name.endswith("_measures"):
+            name += "_measures"
+        name += ".json"
+        addon_directory = os.path.dirname(os.path.realpath(__file__))
+        filepath = os.path.join(addon_directory, creation_tools_ops.get_data_directory(), "measures", name)
+        measurescreator.create_measures_file(filepath)
+        # Now we write the name in the config file.
+        creation_tools_ops.add_content(scn.mbcrea_character_list_without, "measures_file", name)
+        return {'FINISHED'}
+
+class ButtonMeasuresInconsistancies(bpy.types.Operator):
+    bl_label = 'Check inconsistancies'
+    bl_idname = 'mbcrea.button_measures_inconsistancies'
+    bl_description = 'Check the inconsistancies between\nthe file and associated morph files\nThe result is a file named "measures_name.txt"'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        scn = bpy.context.scene
+        # Now we check and write the file.
+        measurescreator.check_inconsistancies(scn.mbcrea_character_list_without)
+        return {'FINISHED'}
+
+class ButtonMeasuresPrevious(bpy.types.Operator):
+    bl_label = 'Prev'
+    bl_idname = 'mbcrea.button_measures_previous'
+    bl_description = 'Seek the previous points/girth.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        obj = bpy.context.active_object
+        if obj != None:
+            mode = obj.mode
+            bpy.ops.object.mode_set(mode='EDIT')
+        else:
+            return {'FINISHED'}
+        scn = bpy.context.scene
+        # Now we check the previous points.
+        tmp = scn.mbcrea_measures_type
+        hist = measurescreator.get(tmp, -1)
+        if scn.mbcrea_measures_select:
+            if hist.has_elements():
+                hist.select_all()
+            else:
+                mesh_ops.unselect_all()
+        return {'FINISHED'}
+
+class ButtonMeasuresCurrent(bpy.types.Operator):
+    bl_label = 'Curr'
+    bl_idname = 'mbcrea.button_measures_current'
+    bl_description = 'Seek the current points/girth.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        obj = bpy.context.active_object
+        if obj != None:
+            mode = obj.mode
+            bpy.ops.object.mode_set(mode='EDIT')
+        else:
+            return {'FINISHED'}
+        scn = bpy.context.scene
+        # Now we check the current points.
+        tmp = scn.mbcrea_measures_type
+        hist = measurescreator.get(tmp)
+        if scn.mbcrea_measures_select:
+            if hist.has_elements():
+                hist.select_all()
+            else:
+                mesh_ops.unselect_all()
+        return {'FINISHED'}
+
+class ButtonMeasuresNext(bpy.types.Operator):
+    bl_label = 'Next'
+    bl_idname = 'mbcrea.button_measures_next'
+    bl_description = 'Seek the next points/girth.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        obj = bpy.context.active_object
+        if obj != None:
+            mode = obj.mode
+            bpy.ops.object.mode_set(mode='EDIT')
+        else:
+            return {'FINISHED'}
+        scn = bpy.context.scene
+        # Now we check the next points.
+        tmp = scn.mbcrea_measures_type
+        hist = measurescreator.get(tmp, 1)
+        if scn.mbcrea_measures_select:
+            if hist.has_elements():
+                hist.select_all()
+            else:
+                mesh_ops.unselect_all()
+        return {'FINISHED'}
+
+class ButtonMeasuresAdd(bpy.types.Operator):
+    bl_label = 'Add'
+    bl_idname = 'mbcrea.button_measures_add'
+    bl_description = 'Add the last selected point.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        obj = bpy.context.active_object
+        if obj != None:
+            mode = obj.mode
+            bpy.ops.object.mode_set(mode='EDIT')
+        else:
+            return {'FINISHED'}
+        scn = bpy.context.scene
+        # Now we check the last point and add to the hist.
+        tmp = scn.mbcrea_measures_type
+        hist = measurescreator.get(tmp)
+        if tmp == 'POINTS':
+            if len(hist.vertices_history) < 2:
+                hist.add_selection()
+            else:
+                hist.push_selection()
+        else:
+            hist.add_selection()
+        if scn.mbcrea_measures_select:
+            hist.select_all()
+        return {'FINISHED'}
+
+class ButtonMeasuresAdd2Points(bpy.types.Operator):
+    bl_label = 'Show sym'
+    bl_idname = 'mbcrea.button_measures_add_2points'
+    bl_description = 'Show the symmetry of the last selected point.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        obj = bpy.context.active_object
+        if obj != None:
+            mode = obj.mode
+            bpy.ops.object.mode_set(mode='EDIT')
+        else:
+            return {'FINISHED'}
+        scn = bpy.context.scene
+        # We check the symetry.
+        bpy.ops.mesh.select_mirror(axis={'X'}, extend=False)
+        return {'FINISHED'}
+
+class ButtonMeasuresRemoveLast(bpy.types.Operator):
+    bl_label = 'Last'
+    bl_idname = 'mbcrea.button_measures_remove_last'
+    bl_description = 'Remove the last point on list.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        obj = bpy.context.active_object
+        if obj != None:
+            mode = obj.mode
+            bpy.ops.object.mode_set(mode='EDIT')
+        else:
+            return {'FINISHED'}
+        scn = bpy.context.scene
+        # Now we check the last point and add to the hist.
+        tmp = scn.mbcrea_measures_type
+        hist = measurescreator.get(tmp)
+        index = hist.get_length()-1
+        hist.remove('VERTEX', index)
+        if scn.mbcrea_measures_select:
+            hist.select_all()
+        return {'FINISHED'}
+
+class ButtonMeasuresRemoveSelected(bpy.types.Operator):
+    bl_label = 'Selected'
+    bl_idname = 'mbcrea.button_measures_remove_selected'
+    bl_description = 'Remove the selected point.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        obj = bpy.context.active_object
+        if obj != None:
+            mode = obj.mode
+            bpy.ops.object.mode_set(mode='EDIT')
+        else:
+            return {'FINISHED'}
+        scn = bpy.context.scene
+        # Now we check the last point and add to the hist.
+        tmp = scn.mbcrea_measures_type
+        hist = measurescreator.get(tmp)
+        hist.remove_selected()
+        if scn.mbcrea_measures_select:
+            hist.select_all()
+        return {'FINISHED'}
+
+class ButtonMeasuresRemoveAll(bpy.types.Operator):
+    bl_label = 'All'
+    bl_idname = 'mbcrea.button_measures_remove_all'
+    bl_description = 'Remove all points.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        obj = bpy.context.active_object
+        if obj != None:
+            mode = obj.mode
+            bpy.ops.object.mode_set(mode='EDIT')
+        else:
+            return {'FINISHED'}
+        scn = bpy.context.scene
+        # Now we check the last point and add to the hist.
+        tmp = scn.mbcrea_measures_type
+        hist = measurescreator.get(tmp)
+        hist.remove_all()
+        if scn.mbcrea_measures_select:
+            hist.select_all()
+        return {'FINISHED'}
+
+class ButtonMeasuresRecoverPoints(bpy.types.Operator):
+    bl_label = 'Recover all points'
+    bl_idname = 'mbcrea.button_measures_recover'
+    bl_description = 'Recover all points from file.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        obj = bpy.context.active_object
+        if obj != None:
+            mode = obj.mode
+            bpy.ops.object.mode_set(mode='EDIT')
+        else:
+            return {'FINISHED'}
+        scn = bpy.context.scene
+        # Now we check the last point and add to the hist.
+        tmp = scn.mbcrea_measures_type
+        hist = measurescreator.get(tmp)
+        hist.recover('VERTEX')
+        if scn.mbcrea_measures_select:
+            hist.select_all()
+        return {'FINISHED'}
+
+class ButtonMeasuresSaveWeights(bpy.types.Operator):
+    bl_label = 'Save all weights'
+    bl_idname = 'mbcrea.button_measures_save_weights'
+    bl_description = 'Save all weights in memory.\nThey are not saved in file'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        measurescreator.save_weights()
+        return {'FINISHED'}
+
+class ButtonSaveMeasuresFile(bpy.types.Operator):
+    bl_label = 'Save measures file'
+    bl_idname = 'mbcrea.button_save_measures_file'
+    bl_description = 'Button for saving the measures file.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        measurescreator.save_measures_file()
+        return {'FINISHED'}
+
 
 classes = (
     ButtonParametersOff,
@@ -5393,7 +5996,22 @@ classes = (
     ButtonDelTemplateContent,
     ButtonDeleteCharacter,
     ButtonDelCharaContent,
-    ButtonSaveCharacter
+    ButtonSaveCharacter,
+    ButtonSaveCharaVertices,
+    ButtonSelect,
+    ButtonCreateMeasuresFile,
+    ButtonSaveMeasuresFile,
+    ButtonMeasuresInconsistancies,
+    ButtonMeasuresPrevious,
+    ButtonMeasuresCurrent,
+    ButtonMeasuresNext,
+    ButtonMeasuresAdd,
+    ButtonMeasuresAdd2Points,
+    ButtonMeasuresRemoveLast,
+    ButtonMeasuresRemoveSelected,
+    ButtonMeasuresRemoveAll,
+    ButtonMeasuresRecoverPoints,
+    ButtonMeasuresSaveWeights
 )
 
 def register():

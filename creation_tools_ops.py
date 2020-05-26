@@ -222,7 +222,7 @@ def init_config():
     global blend_file_content_loaded
     # init collection
     c = bpy.data.collections.get('MB_LAB_Character')
-    if c is not None:
+    if c is not None and blend_file_content != None:
         for name in blend_file_content[1]:
             obj = algorithms.get_object_by_name(name)
             bpy.data.objects.remove(obj)
@@ -269,7 +269,7 @@ def get_file_list(dir, file_type="json"):
     path = os.path.join(
         os.path.dirname(os.path.realpath(__file__)),
         get_data_directory(), dir)
-    return [('NONE', 'Unknown', 'Unknown file for the moment')] + file_ops.get_items_list(path, file_type)
+    return [('NONE', 'Unknown', 'Unknown file for the moment')] + file_ops.get_items_list(path, file_type, with_type=True)
 
 def get_presets_folder_list():
     dir_list = get_content("templates_list", None)
@@ -352,11 +352,13 @@ def get_templates_list():
         return_list.append((tl, tl, tl))
     return return_list
 
-def get_character_list():
+def get_character_list(with_new=True):
     global config_content
-    return_list = [("NEW", "New character...", "Create a new character")]
-    if len(config_content["character_list"]) < 1:
-        return return_list
+    return_list = []
+    if with_new:
+        return_list = [("NEW", "New character...", "Create a new character")]
+    elif len(config_content["character_list"]) < 1:
+        return [('NONE', "No character", "No character created")]
     for cl in config_content["character_list"]:
         return_list.append((cl, cl, cl))
     return return_list
@@ -370,3 +372,22 @@ def get_meshes_list():
     for mesh in blend_file_content[2]:
         return_list.append((mesh, mesh, "mesh : " + mesh))
     return return_list
+
+def is_mesh_compatible(mesh, chara_name="", model_name=""):
+    if mesh == None:
+        return False
+    length = len(mesh.data.vertices)
+    final_name = model_name
+    if len(chara_name) > 0:
+        content = get_content(chara_name, "template_model")
+        for temp in get_content("templates_list", None):
+            sub_content = get_content(temp, "template_model")
+            if sub_content == content:
+                final_name = temp
+                break
+    if len(final_name) > 0:
+        content = get_content(final_name, "vertices")
+        if content == length:
+            return True
+        return False
+    return False

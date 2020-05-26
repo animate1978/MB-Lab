@@ -220,6 +220,7 @@ class Humanoid:
         if self.characters_config:
             self.humanoid_types = self.build_items_list("character_list")
             self.template_types = self.build_items_list("templates_list")
+        self.data_directory = file_ops.get_data_path() # For the moment.
 
     def is_muscle_rig_available(self, character_identifier):
         if self.characters_config[character_identifier]["vertexgroup_muscle_file"] != "":

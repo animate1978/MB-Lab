@@ -183,26 +183,27 @@ def set_verts_coords_from_file(obj, vertices_path):
                 vert.co = new_vertices[i]
 
 
-def generate_items_list(folderpath, file_type="json"):
+def generate_items_list(folderpath, file_type="json", with_type = False):
     items_list = []
     if os.path.isdir(folderpath):
         for database_file in os.listdir(folderpath):
             the_item, extension = os.path.splitext(database_file)
             if file_type in extension:
-                if the_item not in items_list:
+                final_name = the_item if not with_type else database_file
+                if final_name not in items_list:
                     the_descr = "Load and apply {0} from lab library".format(the_item)
-                    items_list.append((the_item, the_item, the_descr))
+                    items_list.append((final_name, final_name, the_descr))
         items_list.sort()
     return items_list
 
 # A convenient way to not create the items list all the time
 items_dict = {}
 
-def get_items_list(folderpath, file_type="json", reset=False):
+def get_items_list(folderpath, file_type="json", with_type=False, reset=False):
     global items_dict
     if folderpath in items_dict and not reset:
         return items_dict[folderpath]
-    items_list = generate_items_list(folderpath, file_type)
+    items_list = generate_items_list(folderpath, file_type, with_type)
     if len(items_list) > 0:
         items_dict[folderpath] = items_list
     return items_list

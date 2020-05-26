@@ -1162,7 +1162,7 @@ def create_enum_property_items(values=[], key_length=3, tip_length=4):
             str(values[i])[0:tip_length]))
     return return_list
     
-def split_name(name, splitting_char=' -_²&=¨^$£%µ,?;!§+*/', indexes=[]):
+def split_name(name, splitting_char=' -_²&=¨^$£%µ,?;!§+*/:[]\"\'{}', indexes=[]):
     if len(splitting_char) < 1:
         return name
     if len(indexes) < 1:
@@ -1172,4 +1172,20 @@ def split_name(name, splitting_char=' -_²&=¨^$£%µ,?;!§+*/', indexes=[]):
     for i in range(len(chars)):
         result = result.split(chars[i])[indexes[i]]
     return result
-#End Teto
+
+# Remade it because in Blender, the actual split() doesn't work
+# as intented, only one character is permitted for a reason.
+def split(name, splitting_char=' -_²&=¨^$£%µ,?;!§+*/:[]\"\'{}'):
+    if len(splitting_char) < 1:
+        return name
+    return_list = []
+    tmp = []
+    if not isinstance(name, list):
+        name = [name]
+    for txt in name:
+        tmp = txt.split(splitting_char[0])
+        for t in tmp:
+            if len(t) > 0:
+                return_list.append(t)
+    return split(return_list, splitting_char[1:])
+        
