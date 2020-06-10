@@ -59,6 +59,8 @@ from . import utils
 from . import preferences
 from . import mesh_ops
 from . import measurescreator
+from . import skeleton_ops
+from . import jointscreator
 
 
 logger = logging.getLogger(__name__)
@@ -196,7 +198,7 @@ def start_lab_session():
             mbcrea_transfor.set_scene(scn)
             init_cmd_props(mblab_humanoid)
             measurescreator.init_all()
-            init_measures_weights()
+            creation_tools_ops.init_config()
             # End for that.
             algorithms.deselect_all_objects()
     algorithms.remove_censors()
@@ -3589,7 +3591,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                         b_m_c_b.operator('mbcrea.button_save_template', icon='FREEZE')
                         b_m_c_b.operator('mbcrea.button_save_config', icon='FREEZE')
                 # Tools about Config file creation - Body types
-                if scn.mbcrea_creation_tools == "Body_type_creation":
+                elif scn.mbcrea_creation_tools == "Body_type_creation":
                     b_m_c = self.layout.box()
                     b_m_c.label(text="Choose or create body names", icon='SORT_ASC')
                     b_m_c.prop(scn, "mbcrea_character_list")
@@ -3758,7 +3760,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                         b_m_c_d.operator('mbcrea.button_save_character', icon='FREEZE')
                         b_m_c_d.operator('mbcrea.button_save_config', icon='FREEZE')
                 # Tools to register a character (like as01) in data base.
-                if scn.mbcrea_creation_tools == "Body_type_registration":
+                elif scn.mbcrea_creation_tools == "Body_type_registration":
                     bt_register = self.layout.box()
                     bt_register.label(text="Character's name", icon='SORT_ASC')
                     bt_register.prop(scn, "mbcrea_character_list_without")
@@ -3770,7 +3772,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     else:
                         bt_register.label(text="No mesh selected !", icon='ERROR')
                 # Tools about creating measures files.
-                if scn.mbcrea_creation_tools == "Measures_creation":
+                elif scn.mbcrea_creation_tools == "Measures_creation":
                     measures_creation = self.layout.box()
                     measures_creation.prop(scn, "mbcrea_character_list_without")
                     key = scn.mbcrea_character_list_without
@@ -3788,7 +3790,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                                     if not name.endswith("_measures"):
                                         name += "_measures"
                                     measures_creation.label(text="Name : " + name + ".json", icon='INFO')
-                                    # Ceation if name not in list ----------------
+                                    # Creation if name not in list ----------------
                                     measures_creation.operator('mbcrea.button_create_measures_file', icon='FREEZE')
                                 else:
                                     measures_creation.label(text="Name not valid !", icon='ERROR')
@@ -3806,7 +3808,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                                 bpy.data.objects[mesh_name].select_set(True)
                             else:
                                 # Now the name is known, we can change its content.
-                                measures_creation.operator('mbcrea.button_measures_inconsistancies', icon='FREEZE')
+                                measures_creation.operator('mbcrea.button_measures_inconsistancies', icon='VIEWZOOM')
                                 measures_creation.label(text="Check file : " + measurescreator.get_inconsistancies_file_name(key), icon='INFO')
                                 measurescreator.set_current_measures_file(measures_name)
                                 # Measures points/girths
@@ -3866,9 +3868,138 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                             measures_creation_z.operator('mbcrea.button_save_measures_file', icon='FREEZE')
                 # Tool that creates the base of morph file, with morphs needed
                 # for topics like measures.
-                
+                elif scn.mbcrea_creation_tools == "Template_morph_creation":
+                    morphs_template = self.layout.box()
+                    morphs_template.prop(scn, "mbcrea_character_list_without")
+                    key = scn.mbcrea_character_list_without
+                    if key != 'NONE':
+                        morphs_name = creation_tools_ops.get_content(key, "shared_morphs_file")
+                        if morphs_name == "":
+                            morphs_template.label(text="Morphs file name", icon='SORT_ASC')
+                            morphs_template.prop(scn, "mbcrea_shared_morphs_file")
+                            # Name ----------------
+                            name = scn.mbcrea_shared_morphs_file
+                            if name == 'NONE':
+                                morphs_template.prop(scn, "mbcrea_morphs_file_name")
+                                name = algorithms.split_name(scn.mbcrea_morphs_file_name, splitting_char=' -²&=¨^$£%µ,?;!§+*/:[]\"\'{}').lower()
+                                if name != "":
+                                    if not name.endswith("_morphs"):
+                                        name += "_morphs"
+                                    morphs_template.label(text="Name : " + name + ".json", icon='INFO')
+                                    # Creation if name not in list ----------------
+                                    morphs_template.operator('mbcrea.button_template_morphs_file', icon='FREEZE')
+                                else:
+                                    morphs_template.label(text="Name not valid !", icon='ERROR')
+                            else:
+                                creation_tools_ops.add_content(scn.mbcrea_character_list_without, "shared_morphs_file", name)
+                        else:
+                            morphs_template.label(text="File existing or created :", icon='INFO')
+                            morphs_template.label(text=morphs_name, icon='BLANK1')
+                            morphs_template.operator('mbcrea.button_check_morphs_file', icon='VIEWZOOM')
+                            morphs_template.operator('mbcrea.button_save_config', icon='FREEZE')
+                # Tool that creates the 2 files about joints, the base and offsets.
+                elif scn.mbcrea_creation_tools == "Joints_creation":
+                    joints_creation = self.layout.box()
+                    joints_creation.prop(scn, "mbcrea_character_list_without")
+                    key = scn.mbcrea_character_list_without
+                    if key != 'NONE':
+                        # We start by the base file.
+                        base_joints_name = creation_tools_ops.get_content(key, "joints_base_file")
+                        if base_joints_name == "":
+                            joints_creation.label(text="Joints base file name", icon='SORT_ASC')
+                            joints_creation.prop(scn, "mbcrea_joints_base_file")
+                            # Name ----------------
+                            name =  scn.mbcrea_joints_base_file
+                            if name == 'NONE':
+                                joints_creation.prop(scn, "mbcrea_joints_base_file_name")
+                                name = algorithms.split_name(scn.mbcrea_joints_base_file_name, splitting_char=' -²&=¨^$£%µ,?;!§+*/:[]\"\'{}').lower()
+                                if name != "":
+                                    if not name.endswith("_joints"):
+                                        name += "_joints"
+                                    joints_creation.label(text="Name : " + name + ".json", icon='INFO')
+                                    # Creation if name not in list ----------------
+                                    joints_creation.operator('mbcrea.button_joints_base_file', icon='FREEZE')
+                                else:
+                                    joints_creation.label(text="Name not valid !", icon='ERROR')
+                            else:
+                                creation_tools_ops.add_content(scn.mbcrea_character_list_without, "joints_base_file", name)
+                        else:
+                            joints_creation.label(text="File existing or created :", icon='INFO')
+                            joints_creation.label(text=base_joints_name, icon='BLANK1')
+                            joints_creation.operator('mbcrea.button_save_config', icon='FREEZE')
+                            # We automatically select the model, and if there
+                            # isn't, we ask to select one and add it in the database.
+                            mesh_name = creation_tools_ops.get_content(key, "template_model")
+                            if mesh_name == "":
+                                joints_creation.label(text="Please select the model", icon='ERROR')
+                                joints_creation.label(text="Will be saved in config", icon='BLANK1')
+                            elif not bpy.data.objects[mesh_name].select_get():
+                                bpy.data.objects[mesh_name].select_set(True)
+                            else:
+                                # Now the name is known, we can change its content.
+                                jointscreator.set_current_joints_base_file(base_joints_name)
+                                # Joints points
+                                joints_creation.label(text="Topics", icon='MODIFIER_ON')
+                                jointscreator.create_joints_base_layout(joints_creation)
+                                hist = jointscreator.get_points()
+                                if hist != None:
+                                    joints_creation_a = joints_creation.column(align=True)
+                                    joints_creation_a.label(text="Joints base points", icon='SORT_ASC')
+                                    joints_creation_a.label(text=hist.name, icon='COPY_ID')
+                                    joints_creation_a.prop(scn, "mbcrea_measures_select", icon='PARTICLE_POINT', toggle=1)
+                                    joints_creation_b = joints_creation_a.row(align=True)
+                                    joints_creation_b.operator('mbcrea.button_joints_base_previous', icon='PLAY_REVERSE')
+                                    joints_creation_b.operator('mbcrea.button_joints_base_current', icon='DECORATE_KEYFRAME')
+                                    joints_creation_b.operator('mbcrea.button_joints_base_next', icon='PLAY')
+                                    joints_creation_a.separator()
+                                    joints_creation_a.operator('mbcrea.button_joints_base_add', icon='CON_TRACKTO')
+                                    joints_creation_d = joints_creation_a.row(align=True)
+                                    joints_creation_d.operator('mbcrea.button_joints_base_remove_last', icon='CANCEL')
+                                    joints_creation_d.operator('mbcrea.button_joints_base_remove_selected', icon='CANCEL')
+                                    joints_creation_d.operator('mbcrea.button_joints_base_remove_all', icon='CANCEL')
+                                    joints_creation_a.operator('mbcrea.button_joints_base_recover', icon='RECOVER_LAST')
+                                else:
+                                    joints_creation.label(text="Select model or", icon='ERROR')
+                                    joints_creation.label(text="change filters", icon='BLANK1')
+                            # We continue by the offset file.
+                            offset_joints_name = creation_tools_ops.get_content(key, "joints_offset_file")
+                            if offset_joints_name == "":
+                                joints_creation.label(text="Joints offset file name", icon='SORT_ASC')
+                                joints_creation.prop(scn, "mbcrea_joints_offset_file")
+                                # Name ----------------
+                                name =  scn.mbcrea_joints_offset_file
+                                if name == 'NONE':
+                                    joints_creation.prop(scn, "mbcrea_joints_offset_file_name")
+                                    name = algorithms.split_name(scn.mbcrea_joints_offset_file_name, splitting_char=' -²&=¨^$£%µ,?;!§+*/:[]\"\'{}').lower()
+                                    if name != "":
+                                        if not name.endswith("_joints_offset"):
+                                            name += "_joints_offset"
+                                        joints_creation.label(text="Name : " + name + ".json", icon='INFO')
+                                        # Creation if name not in list ----------------
+                                        joints_creation.operator('mbcrea.button_joints_offset_file', icon='FREEZE')
+                                    else:
+                                        joints_creation.label(text="Name not valid !", icon='ERROR')
+                                else:
+                                    creation_tools_ops.add_content(scn.mbcrea_character_list_without, "joints_offset_file", name)
+                            else:
+                                # Now we check if an offset point exists for this joint
+                                jointscreator.set_current_joints_offset_file(offset_joints_name)
+                                joints_creation_e = joints_creation.column(align=True)
+                                joints_creation_e.label(text="Joints offset point", icon='SORT_ASC')
+                                joints_creation_e.prop(scn, "mbcrea_offset_select", icon='MESH_ICOSPHERE', toggle=1)
+                                joints_creation_f = joints_creation_e.row(align=True)
+                                joints_creation_f.operator('mbcrea.button_create_offset_point', icon='CON_TRACKTO')
+                                joints_creation_f.operator('mbcrea.button_delete_offset_point', icon='CANCEL')
+                                joints_creation_f.operator('mbcrea.button_recover_offset_point', icon='RECOVER_LAST')
+                                joints_creation_e.operator('mbcrea.button_save_offset_point', icon='FREEZE')
+                            # Finish by saves.
+                            joints_creation_g = joints_creation.column(align=True)
+                            joints_creation_g.label(text="File saves", icon='SORT_ASC')
+                            joints_creation_g.operator('mbcrea.button_save_joints_base_file', icon='FREEZE')
+                            joints_creation_g.operator('mbcrea.button_save_joints_offset_file', icon='FREEZE')
+
                 # Tools about small tools for manual things.
-                if scn.mbcrea_creation_tools == "Utilities":
+                elif scn.mbcrea_creation_tools == "Utilities":
                     utils = self.layout.box()
                     utils.label(text="Manual tools", icon='MODIFIER_ON')
                     utils.prop(scn, "mbcrea_meshes_list")
@@ -4165,11 +4296,11 @@ bpy.types.Scene.mbcrea_before_edition_tools = bpy.props.EnumProperty(
         ("None", "Choose ...", "Tools available before finalization"),
         ("Morphcreator", "Simple Morph Creation", "Simple morph creation panel"),
         ("Comb_morphcreator", "Combined Morph Creation", "Combined morph creation panel"),
+        ("cmd_utilities", "Copy / Move / Delete morphs", "Utilities to move/copy/delete morphs\nfrom one file to another"),
         ("agemasstone_creator", "Age/Mass/Tone Creation", "Quick tool to create interpolation between\nage, mass (or fat), tone (or muscle)\nand the character."),
         ("fast_creators", "Character Library Creation", "Quick tools to create :\n- Phenotypes\n- Presets\nfor Character Library"),
         ("morphs_for_expressions", "Base Expressions Creation", "Tool for morphing base expressions"),
-        ("combine_expressions", "Facial Expressions Creation", "Tool for combining base expressions"),
-        ("cmd_utilities", "Copy / Move / Delete morphs", "Utilities to move/copy/delete morphs\nfrom one file to another")
+        ("combine_expressions", "Facial Expressions Creation", "Tool for combining base expressions")
         ],
     name="",
     default="None",
@@ -4181,7 +4312,9 @@ bpy.types.Scene.mbcrea_creation_tools = bpy.props.EnumProperty(
         ("Base_model_creation", "Base model creation tools", "All tools to create base models for the project.\nThings must be done for config file too"),
         ("Body_type_creation", "Character creation tools", "All tools to create body tupes for a model"),
         ("Body_type_registration", "Body's vertices registration", "Register the character's vertices in data base"),
-        ("Measures_creation", "Create measures template", "register all points for the measures engine"),
+        ("Measures_creation", "Create measures template", "Register all points for the measures engine"),
+        ("Template_morph_creation", "Create morphs template", "Create a template of morphs that helps the engine to work\nAll morphs can be created later."),
+        ("Joints_creation", "Create joints templates", "Create 2 templates about joints that are used for skeleton"),
         #("Weight_painting", "Weight painting tools", "All tools related to weight painting"),
         #("Vertices_groups", "Vertices groups tools", "All tools related to vertices groups"),
         #("Muscles", "Muscles tools", "All tools related to muscles system"),
@@ -4555,6 +4688,31 @@ bpy.types.Scene.mbcrea_measures_type = bpy.props.EnumProperty(
 bpy.types.Scene.mbcrea_measures_select = bpy.props.BoolProperty(
     name="Show points",
     description="Show points when on")
+
+bpy.types.Scene.mbcrea_morphs_file_name = bpy.props.StringProperty(
+    name="Other",
+    description="Another name if you want to create a new morphs file template.",
+    default="",
+    maxlen=1024,
+    subtype='FILE_NAME')
+
+bpy.types.Scene.mbcrea_joints_base_file_name = bpy.props.StringProperty(
+    name="Other",
+    description="Another name if you want to create a new joints base file template.",
+    default="",
+    maxlen=1024,
+    subtype='FILE_NAME')
+
+bpy.types.Scene.mbcrea_joints_offset_file_name = bpy.props.StringProperty(
+    name="Other",
+    description="Another name if you want to create a new joints offset file template.",
+    default="",
+    maxlen=1024,
+    subtype='FILE_NAME')
+
+bpy.types.Scene.mbcrea_offset_select = bpy.props.BoolProperty(
+    name="Show offset",
+    description="Show offset when on\nIt's an icosphere\nThe offset must exist in the file.")
 
 class ButtonCreatePolygs(bpy.types.Operator):
     bl_label = 'Create polygons file'
@@ -5347,55 +5505,9 @@ class ButtonForTest(bpy.types.Operator):
 
     def execute(self, context):
         scn = bpy.context.scene
-        path = file_ops.get_data_path()
-        file_path = os.path.join(path, "morphs", "human_female_morphs.json")
-        file = file_ops.load_json_data(file_path)
-        file_path_bis = os.path.join(path, "bboxes", "human_female_bbox.json")
-        file_bis = file_ops.load_json_data(file_path_bis)
         # Now we try things.
-        indices = algorithms.split(str(scn.mbcrea_indices_to_check))
-        indice = int(indices[0])
-        print(indice)
-        match = morphcreator.get_all_morphs(indice, file)
-        print(sorted(match))
-        print ("------------")
-        # Now we clean the list
-        match = sorted(morphcreator.clean_redundant_morphs(match))
-        print(match)
-        print ("------------")
-        # Now we check all common indices for these morphs
-        match = sorted(morphcreator.common_indices(match, file))
-        print(match)
-        print ("------------")
-        """six = file_bis[str(indice)]
-        print(six)
-        print ("------------")
-        match = []
-        for each in six:
-            ind = int(each)
-            for key in file:
-                for index in file[key]:
-                    if ind == index[0]:
-                        match.append(key)
-            print (str(each) + " : " + str(match))
-            print ("------------")
-            match = []"""
-        # Let's show all vertices as key in bbox file
-        """obj = bpy.context.active_object
-        indices = file_bis.keys()
-        int_list = []
-        for i in indices:
-            try:
-                int_list.append(int(i))
-            except:
-                pass
-        mesh_ops.select_in_a_mesh(
-            obj, int_list,
-            unselect_all=scn.mbcrea_unselect_before,
-            vertices=True)"""
-        # Let's try to know first where we can find a given vertex
-        
-        
+        tmp = skeleton_ops.sort_joints(ik=False, head=False, content=['lwrm_muscle', '_02_'])
+        print(tmp)
         return {'FINISHED'}
 
 class ButtonAdaptationToolsON(bpy.types.Operator):
@@ -5618,7 +5730,7 @@ class ButtonCreateMeasuresFile(bpy.types.Operator):
 class ButtonMeasuresInconsistancies(bpy.types.Operator):
     bl_label = 'Check inconsistancies'
     bl_idname = 'mbcrea.button_measures_inconsistancies'
-    bl_description = 'Check the inconsistancies between\nthe file and associated morph files\nThe result is a file named "measures_name.txt"'
+    bl_description = 'Check the inconsistancies between\nthe file and associated morph files\nThe result is a file named "measures_name.json.txt"'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -5866,6 +5978,396 @@ class ButtonSaveMeasuresFile(bpy.types.Operator):
         measurescreator.save_measures_file()
         return {'FINISHED'}
 
+class ButtonCreateMorphFile(bpy.types.Operator):
+    bl_label = 'Create morphs template'
+    bl_idname = 'mbcrea.button_template_morphs_file'
+    bl_description = 'Create a file with all necessary morphs for\nengine to work properly.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        scn = bpy.context.scene
+        name = algorithms.split_name(scn.mbcrea_morphs_file_name, splitting_char=' -²&=¨^$£%µ,?;!§+*/:[]\"\'{}').lower()
+        if not name.endswith("_morphs"):
+            name += "_morphs"
+        name += ".json"
+        addon_directory = os.path.dirname(os.path.realpath(__file__))
+        filepath = os.path.join(addon_directory, creation_tools_ops.get_data_directory(), "morphs", name)
+        morphcreator.create_template_file(filepath)
+        # Now we write the name in the config file.
+        creation_tools_ops.add_content(scn.mbcrea_character_list_without, "shared_morphs_file", name)
+        return {'FINISHED'}
+
+class ButtonMorphsInconsistancies(bpy.types.Operator):
+    bl_label = 'Check morphs file'
+    bl_idname = 'mbcrea.button_check_morphs_file'
+    bl_description = 'Check if morphs file has all needed morphs\nfor other topics like measures\nThe result is a file named "morphs_name.json.txt"'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        scn = bpy.context.scene
+        # Now we check and write the file.
+        morphcreator.check_needed_morphs(scn.mbcrea_character_list_without)
+        return {'FINISHED'}
+
+class ButtonCreateJointsBaseFile(bpy.types.Operator):
+    bl_label = 'Create joints base template'
+    bl_idname = 'mbcrea.button_joints_base_file'
+    bl_description = 'Create a file with all necessary joints for skeleton.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        scn = bpy.context.scene
+        name = algorithms.split_name(scn.mbcrea_joints_base_file_name, splitting_char=' -²&=¨^$£%µ,?;!§+*/:[]\"\'{}').lower()
+        if not name.endswith("_joints"):
+            name += "_joints"
+        name += ".json"
+        addon_directory = os.path.dirname(os.path.realpath(__file__))
+        filepath = os.path.join(addon_directory, creation_tools_ops.get_data_directory(), "joints", name)
+        jointscreator.create_base_template_file(filepath)
+        # Now we write the name in the config file.
+        creation_tools_ops.add_content(scn.mbcrea_character_list_without, "joints_base_file", name)
+        return {'FINISHED'}
+
+class ButtonJointsPrevious(bpy.types.Operator):
+    bl_label = 'Prev'
+    bl_idname = 'mbcrea.button_joints_base_previous'
+    bl_description = 'Seek the previous points.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        obj = bpy.context.active_object
+        if obj != None:
+            mode = obj.mode
+            bpy.ops.object.mode_set(mode='EDIT')
+        else:
+            return {'FINISHED'}
+        scn = bpy.context.scene
+        # Now we check the previous points.
+        hist = jointscreator.get_points(-1)
+        if scn.mbcrea_measures_select:
+            if hist.has_elements():
+                hist.select_all()
+                # Now we show the point that is the center of all points.
+                jointscreator.show_central_point(hist)
+            else:
+                jointscreator.hide_central_point()
+                mesh_ops.unselect_all()
+        if scn.mbcrea_offset_select:
+            jointscreator.show_offset_point(hist)
+        return {'FINISHED'}
+
+class ButtonJointsCurrent(bpy.types.Operator):
+    bl_label = 'Curr'
+    bl_idname = 'mbcrea.button_joints_base_current'
+    bl_description = 'Seek the current points.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        obj = bpy.context.active_object
+        if obj != None:
+            mode = obj.mode
+            bpy.ops.object.mode_set(mode='EDIT')
+        else:
+            return {'FINISHED'}
+        scn = bpy.context.scene
+        # Now we check the current points.
+        hist = jointscreator.get_points()
+        if scn.mbcrea_measures_select:
+            if hist.has_elements():
+                hist.select_all()
+                # Now we show the point that is the center of all points.
+                jointscreator.show_central_point(hist)
+            else:
+                jointscreator.hide_central_point()
+                mesh_ops.unselect_all()
+        if scn.mbcrea_offset_select:
+            jointscreator.show_offset_point(hist)
+        return {'FINISHED'}
+
+class ButtonJointsNext(bpy.types.Operator):
+    bl_label = 'Next'
+    bl_idname = 'mbcrea.button_joints_base_next'
+    bl_description = 'Seek the next points.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        obj = bpy.context.active_object
+        if obj != None:
+            mode = obj.mode
+            bpy.ops.object.mode_set(mode='EDIT')
+        else:
+            return {'FINISHED'}
+        scn = bpy.context.scene
+        # Now we check the next points.
+        hist = jointscreator.get_points(1)
+        if scn.mbcrea_measures_select:
+            if hist.has_elements():
+                hist.select_all()
+                # Now we show the point that is the center of all points.
+                jointscreator.show_central_point(hist)
+            else:
+                jointscreator.hide_central_point()
+                mesh_ops.unselect_all()
+        if scn.mbcrea_offset_select:
+            jointscreator.show_offset_point(hist)
+        return {'FINISHED'}
+
+class ButtonJointsAdd(bpy.types.Operator):
+    bl_label = 'Add'
+    bl_idname = 'mbcrea.button_joints_base_add'
+    bl_description = 'Add the last selected point.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        obj = bpy.context.active_object
+        if obj != None:
+            mode = obj.mode
+            bpy.ops.object.mode_set(mode='EDIT')
+        else:
+            return {'FINISHED'}
+        scn = bpy.context.scene
+        # Now we check the last point and add to the hist.
+        hist = jointscreator.get_points()
+        hist.add_selection()
+        if scn.mbcrea_measures_select:
+            # Now we show the point that is the center of all points.
+            jointscreator.show_central_point(hist)
+            hist.select_all()
+        else:
+            jointscreator.hide_central_point()
+        if scn.mbcrea_offset_select:
+            jointscreator.show_offset_point(hist)
+        return {'FINISHED'}
+
+class ButtonJointsRemoveLast(bpy.types.Operator):
+    bl_label = 'Last'
+    bl_idname = 'mbcrea.button_joints_base_remove_last'
+    bl_description = 'Remove the last point on list.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        obj = bpy.context.active_object
+        if obj != None:
+            mode = obj.mode
+            bpy.ops.object.mode_set(mode='EDIT')
+        else:
+            return {'FINISHED'}
+        scn = bpy.context.scene
+        # Now we check the last point and add to the hist.
+        hist = jointscreator.get_points()
+        index = hist.get_length()-1
+        hist.remove('VERTEX', index)
+        if scn.mbcrea_measures_select:
+            # Now we show the point that is the center of all points.
+            jointscreator.show_central_point(hist)
+            hist.select_all()
+        else:
+            jointscreator.hide_central_point()
+        if scn.mbcrea_offset_select:
+            jointscreator.show_offset_point(hist)
+        return {'FINISHED'}
+
+class ButtonJointsRemoveSelected(bpy.types.Operator):
+    bl_label = 'Selected'
+    bl_idname = 'mbcrea.button_joints_base_remove_selected'
+    bl_description = 'Remove the selected point.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        obj = bpy.context.active_object
+        if obj != None:
+            mode = obj.mode
+            bpy.ops.object.mode_set(mode='EDIT')
+        else:
+            return {'FINISHED'}
+        scn = bpy.context.scene
+        # Now we check the last point and add to the hist.
+        hist = jointscreator.get_points()
+        hist.remove_selected()
+        if scn.mbcrea_measures_select:
+            # Now we show the point that is the center of all points.
+            jointscreator.show_central_point(hist)
+            hist.select_all()
+        else:
+            jointscreator.hide_central_point()
+        if scn.mbcrea_offset_select:
+            jointscreator.show_offset_point(hist)
+        return {'FINISHED'}
+
+class ButtonJointsRemoveAll(bpy.types.Operator):
+    bl_label = 'All'
+    bl_idname = 'mbcrea.button_joints_base_remove_all'
+    bl_description = 'Remove all points.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        obj = bpy.context.active_object
+        if obj != None:
+            mode = obj.mode
+            bpy.ops.object.mode_set(mode='EDIT')
+        else:
+            return {'FINISHED'}
+        scn = bpy.context.scene
+        # Now we check the last point and add to the hist.
+        hist = jointscreator.get_points()
+        hist.remove_all()
+        if scn.mbcrea_measures_select:
+            # Now we show the point that is the center of all points.
+            jointscreator.show_central_point(hist)
+            hist.select_all()
+        else:
+            jointscreator.hide_central_point()
+        if scn.mbcrea_offset_select:
+            jointscreator.show_offset_point(hist)
+        return {'FINISHED'}
+
+class ButtonJointsRecoverPoints(bpy.types.Operator):
+    bl_label = 'Recover all points'
+    bl_idname = 'mbcrea.button_joints_base_recover'
+    bl_description = 'Recover all points from file.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        obj = bpy.context.active_object
+        if obj != None:
+            mode = obj.mode
+            bpy.ops.object.mode_set(mode='EDIT')
+        else:
+            return {'FINISHED'}
+        scn = bpy.context.scene
+        # Now we check the last point and add to the hist.
+        hist = jointscreator.get_points()
+        hist.recover('VERTEX')
+        if scn.mbcrea_measures_select:
+            # Now we show the point that is the center of all points.
+            jointscreator.show_central_point(hist)
+            hist.select_all()
+        else:
+            jointscreator.hide_central_point()
+        if scn.mbcrea_offset_select:
+            jointscreator.show_offset_point(hist)
+        return {'FINISHED'}
+
+class ButtonSaveJointsFile(bpy.types.Operator):
+    bl_label = 'Save joints file'
+    bl_idname = 'mbcrea.button_save_joints_base_file'
+    bl_description = 'Button for saving the joints file.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        jointscreator.save_joints_base_file()
+        return {'FINISHED'}
+
+class ButtonCreateJointsOffsetFile(bpy.types.Operator):
+    bl_label = 'Create joints offset template'
+    bl_idname = 'mbcrea.button_joints_offset_file'
+    bl_description = 'Create a file for creating all offsets needed for some joints.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        scn = bpy.context.scene
+        name = algorithms.split_name(scn.mbcrea_joints_offset_file_name, splitting_char=' -²&=¨^$£%µ,?;!§+*/:[]\"\'{}').lower()
+        if not name.endswith("_joints_offset"):
+            name += "_joints_offset"
+        name += ".json"
+        addon_directory = os.path.dirname(os.path.realpath(__file__))
+        filepath = os.path.join(addon_directory, creation_tools_ops.get_data_directory(), "joints", name)
+        jointscreator.create_offset_template_file(filepath)
+        # Now we write the name in the config file.
+        creation_tools_ops.add_content(scn.mbcrea_character_list_without, "joints_offset_file", name)
+        return {'FINISHED'}
+
+class ButtonSaveOffsetFile(bpy.types.Operator):
+    bl_label = 'Save offset file'
+    bl_idname = 'mbcrea.button_save_joints_offset_file'
+    bl_description = 'Button for saving the offset file.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        jointscreator.save_joints_offset_file()
+        return {'FINISHED'}
+
+class ButtonCreateOffsetPoint(bpy.types.Operator):
+    bl_label = 'Add'
+    bl_idname = 'mbcrea.button_create_offset_point'
+    bl_description = 'Create an offset point attached to the current joint.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        obj = bpy.context.active_object
+        if obj != None:
+            mode = obj.mode
+            bpy.ops.object.mode_set(mode='EDIT')
+        else:
+            return {'FINISHED'}
+        jointscreator.create_offset_and_set_to_center()
+        return {'FINISHED'}
+
+class ButtonDeleteOffsetPoint(bpy.types.Operator):
+    bl_label = 'Del'
+    bl_idname = 'mbcrea.button_delete_offset_point'
+    bl_description = 'Delete the offset point attached to the current joint.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        obj = bpy.context.active_object
+        if obj != None:
+            mode = obj.mode
+            bpy.ops.object.mode_set(mode='EDIT')
+        else:
+            return {'FINISHED'}
+        jointscreator.delete_offset_point()
+        return {'FINISHED'}
+
+class ButtonRecoverOffsetPoint(bpy.types.Operator):
+    bl_label = 'Reco.'
+    bl_idname = 'mbcrea.button_recover_offset_point'
+    bl_description = 'Recover the deleted offset point.\nWorks only'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        obj = bpy.context.active_object
+        if obj != None:
+            mode = obj.mode
+            bpy.ops.object.mode_set(mode='EDIT')
+        else:
+            return {'FINISHED'}
+        jointscreator.recover_offset_point()
+        return {'FINISHED'}
+
+class ButtonSaveOffsetPoint(bpy.types.Operator):
+    bl_label = 'Set point'
+    bl_idname = 'mbcrea.button_save_offset_point'
+    bl_description = 'Set the actual location in data base.\nThe file is saved elsewhere.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        obj = bpy.context.active_object
+        if obj != None:
+            mode = obj.mode
+            bpy.ops.object.mode_set(mode='EDIT')
+        else:
+            return {'FINISHED'}
+        jointscreator.set_offset_point()
+        return {'FINISHED'}
 
 classes = (
     ButtonParametersOff,
@@ -6011,7 +6513,25 @@ classes = (
     ButtonMeasuresRemoveSelected,
     ButtonMeasuresRemoveAll,
     ButtonMeasuresRecoverPoints,
-    ButtonMeasuresSaveWeights
+    ButtonMeasuresSaveWeights,
+    ButtonCreateMorphFile,
+    ButtonMorphsInconsistancies,
+    ButtonCreateJointsBaseFile,
+    ButtonJointsPrevious,
+    ButtonJointsCurrent,
+    ButtonJointsNext,
+    ButtonJointsAdd,
+    ButtonJointsRemoveLast,
+    ButtonJointsRemoveSelected,
+    ButtonJointsRemoveAll,
+    ButtonJointsRecoverPoints,
+    ButtonSaveJointsFile,
+    ButtonCreateJointsOffsetFile,
+    ButtonSaveOffsetFile,
+    ButtonCreateOffsetPoint,
+    ButtonDeleteOffsetPoint,
+    ButtonRecoverOffsetPoint,
+    ButtonSaveOffsetPoint
 )
 
 def register():

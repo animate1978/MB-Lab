@@ -49,7 +49,13 @@ class MeshHistory:
         self.edges_history = []
         self.faces_history = []
         self.object = None
-    
+        
+    # reset recovery with actual values.
+    def clear_recover(self):
+        self.vertices_recover = self.vertices_history.copy()
+        self.edges_recover = self.edges_history.copy()
+        self.faces_recover = self.faces_history.copy()
+        
     def has_elements(self, type='VERTEX'):
         if type == "EDGE":
             return len(self.edges_history) > 0
@@ -339,7 +345,10 @@ class MeshHandling:
             key, item = value.get_measures_file_form()
             return_dict[key] = item
         return return_dict
-                
+    
+    def get_histories(self):
+        return self.history
+        
 # -----------------------------------------------------------
 #                   General methods
 # -----------------------------------------------------------    

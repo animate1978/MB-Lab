@@ -180,7 +180,7 @@ def create_measures_file(filepath):
         "buttock_girth": 3,
         "chest_width_X": 1}
     with open(filepath, "w") as j_file:
-            json.dump(file, j_file, indent=2)
+        json.dump(file, j_file, indent=2)
     j_file.close()
 
 # Method that can be used when a config file is active
@@ -194,16 +194,24 @@ def check_inconsistancies(key):
     txt_content = []
     txt_content.append(str("Header : Check inconstancies in file " + measures_name))
     # We open the measures file and if it exists, we load it.
-    measures_file = get_measures_file(measures_name)
+    measures_file = get_set_measures_file(measures_name)
     if measures_file == None:
         txt_content.append(str("Measures file : " + measures_name + " doesn't exist"))
+        txt_content.append(str("Stop checking."))
     else:
         txt_content.append(str("Measures file : " + measures_name))
     # We check if morph file exist and if yes, we load it.
-    if morph_file == None:
-        txt_content.append(str("Morph file : " + morph_name + " doesn't exist"))
-    else:
-        txt_content.append(str("Morph file : " + morph_name))
+    morph_name = creation_tools_ops.get_content(key, "shared_morphs_file")
+    if morph_name == "":
+        txt_content.append(str("Morph file is unknown, stop checking."))
+    elif measures_file != None:
+        addon_directory = os.path.dirname(os.path.realpath(__file__))
+        filepath = os.path.join(
+            addon_directory,
+            creation_tools_ops.get_data_directory(),
+            "morphs", morph_name)
+        morph_file = file_ops.load_json_data(filepath, "")
+        txt_content.append("Morph file : " + morph_name)
         txt_content.append("---------------")
         txt_content.append("Check morph file content :")
         # Now we check "relations" key and check if any morphs are missing.
@@ -333,6 +341,7 @@ def save_measures_file():
         hist = mesh_handling.get_mesh_history(points)
         if hist != None:
             topic[points] = hist.get_measures_file_form()
+            hist.clear_recover()
     # For key "measures", we continue with the "girths"
     for girth in measures_parts_girths:
         hist = mesh_handling.get_mesh_history(girth)
@@ -342,6 +351,7 @@ def save_measures_file():
             if last_index > 1 and tmp[0] != tmp[last_index]:
                 tmp.append(tmp[0])
             topic[girth] = tmp
+            hist.clear_recover()
     # In the file, we save nothing for "relations".
     # In the file, we save things about "score_weights"
     save_weights()
@@ -386,6 +396,8 @@ def get_two_points(direction=0):
         two_points_index += 1
         if two_points_index >= len(measures_parts_points):
             two_points_index = 0
+    if two_points_index >= measures_parts_points: # It happens
+        two_points_index = len(measures_parts_points)-1
     measure_name = measures_parts_points[two_points_index]
     # Now we seek and keep the values in the MeshHandling.
     mh = get_mesh_handling(file_name, obj)
@@ -396,7 +408,7 @@ def get_two_points(direction=0):
         hist = mh.create_mesh_history(measure_name)
         # The history is created, so we copy values from file
         file_points_value = current_measures_file[file_name]["measures"][measure_name]
-        hist.set('VERTICES', file_points_value)
+        hist.set('VERTEX', file_points_value)
     # return the History
     return hist
 
@@ -419,6 +431,8 @@ def get_girth(direction=0):
         girth_index += 1
         if girth_index >= len(measures_parts_girths):
             girth_index = 0
+    if girth_index >= measures_parts_girths: # It happens
+        girth_index = len(measures_parts_girths)-1
     measure_name = measures_parts_girths[girth_index]
     # Now we seek and keep the values in the MeshHandling.
     mh = get_mesh_handling(file_name, obj)
@@ -429,7 +443,7 @@ def get_girth(direction=0):
         hist = mh.create_mesh_history(measure_name)
         # The history is created, so we copy values from file
         file_girth_value = current_measures_file[file_name]["measures"][measure_name]
-        hist.set('VERTICES', file_girth_value)
+        hist.set('VERTEX', file_girth_value)
     # return the History
     return hist
 
@@ -735,62 +749,3 @@ bpy.types.Scene.mbcrea_recover_measures_weights = bpy.props.BoolProperty(
     name="Recover last save",
     default=False,
     update=weights_update)
-
-""" Yep
-obj = bpy.context.object
-bm = bmesh.from_edit_mesh(obj.data)
-vert = bm.select_history
-v = vert.active
-index = v.index
-"""
-
-"""
-class MeshSelectNext(Operator):
-	    #Select the next element (using selection order)
-	    bl_idname = "mesh.select_next_item"
-	    bl_label = "Select Next Element"
-	    bl_options = {'REGISTER', 'UNDO'}
-	
-	    @classmethod
-	    def poll(cls, context):
-	        return (context.mode == 'EDIT_MESH')
-	
-	    def execute(self, context):
-	        import bmesh
-	        from .bmesh import find_adjacent
-	
-	        obj = context.active_object
-	        me = obj.data
-	        bm = bmesh.from_edit_mesh(me)
-	
-	        if find_adjacent.select_next(bm, self.report):
-	            bm.select_flush_mode()
-	            bmesh.update_edit_mesh(me, False)
-	
-	        return {'FINISHED'}
-	
-	
-	class MeshSelectPrev(Operator):
-	    #Select the previous element (using selection order)
-	    bl_idname = "mesh.select_prev_item"
-	    bl_label = "Select Previous Element"
-	    bl_options = {'REGISTER', 'UNDO'}
-	
-	    @classmethod
-	    def poll(cls, context):
-	        return (context.mode == 'EDIT_MESH')
-	
-	    def execute(self, context):
-	        import bmesh
-	        from .bmesh import find_adjacent
-	
-	        obj = context.active_object
-	        me = obj.data
-	        bm = bmesh.from_edit_mesh(me)
-	
-	        if find_adjacent.select_prev(bm, self.report):
-	            bm.select_flush_mode()
-	            bmesh.update_edit_mesh(me, False)
-	
-	        return {'FINISHED'}
-"""

@@ -31,6 +31,7 @@ import numpy
 import mathutils
 from . import algorithms
 from . import file_ops
+from . import creation_tools_ops
 
 
 body_parts = [("AB", "Abdomen", ""),
@@ -97,22 +98,40 @@ cmd_morphs_in_category = []
 #   Values = morphName (with category)
 properties_for_cmd = {}
 
+essential_morphs = sorted([
+    "Body_Size", "Torso_Length", "Chest_SizeX",
+    "Chest_SizeY", "Chest_Girth", "Neck_Size",
+    "Neck_Back", "Head_SizeX", "Head_SizeY",
+    "Head_SizeZ", "Neck_Length", "Shoulders_SizeX",
+    "Pelvis_Length", "Pelvis_SizeY", "Pelvis_SizeX",
+    "Pelvis_Girth", "Stomach_LocalFat", "Stomach_Volume",
+    "Legs_UpperlegLength", "Legs_LowerlegLength", "Legs_UpperlegSize",
+    "Legs_UpperThighGirth", "Legs_LowerThighGirth", "Legs_CalfGirth",
+    "Legs_AnkleSize", "Arms_UpperarmGirth", "Shoulders_Size",
+    "Arms_UpperarmLength", "Arms_ForearmLength", "Elbows_Size",
+    "Wrists_Size", "Feet_SizeX", "Feet_SizeY",
+    "Feet_SizeZ", "Hands_Length", "Hands_FingersInterDist",
+    "Feet_HeelWidth"])
+
 logger = logging.getLogger(__name__)
 
 # ------------------------------------------------------------------------
 #    All methods to help creating morph names
 # ------------------------------------------------------------------------
 def get_body_parts(key = None):
+    global body_parts
     if key == None:
         return body_parts
     return algorithms.get_enum_property_item(key, body_parts)
 
 def get_spectrum(key = None):
+    global spectrum
     if key == None:
         return spectrum
     return algorithms.get_enum_property_item(key, spectrum)
 
 def get_min_max(key = None):
+    global min_max
     if key == None:
         return min_max
     return algorithms.get_enum_property_item(key, min_max)
@@ -165,9 +184,11 @@ def get_next_number():
 #0 base vertices.
 #1 Sculpted vertices.
 def set_vertices_list(index, list):
+    global vertices_lists
     vertices_lists[index] = list
 
 def get_vertices_list(index):
+    global vertices_lists
     return vertices_lists[index]
 
 def create_vertices_list(raw_vertices):
@@ -250,6 +271,7 @@ def get_all_morph_files(data_path, data_type_path, body_type):
 # ------------------------------------------------------------------------
 
 def get_combined_morph_name():
+    global modifiers_for_combined
     return modifiers_for_combined[0]
 
 # Answer if the morph "name" is already part of a combined morph or not.
@@ -735,3 +757,72 @@ def create_vector_from_two_points(point_a, point_b):
         point_b.y - point_a.y,
         point_b.z - point_a.z)
     return vector, vector.length
+
+# ---------------------------------------------
+#       All methods about templates
+# ---------------------------------------------
+
+def create_template_file(filepath):
+    global essential_morphs
+    final_dict = {}
+    value = [[1, 0.0, 0.0, 0.0]]
+    for morph_name in essential_morphs:
+        min = morph_name + "_min"
+        max = morph_name + "_max"
+        final_dict[min] = value
+        final_dict[max] = value
+    file_ops.save_json_data(filepath, final_dict)
+
+# Method that can be used when a config file is active
+def get_needed_morphs_file_name(key):
+    if not creation_tools_ops.is_project_loaded():
+        return
+    addon_directory = os.path.dirname(os.path.realpath(__file__))
+    return os.path.join(
+        addon_directory,
+        creation_tools_ops.get_data_directory(),
+        "morphs", creation_tools_ops.get_content(key, "shared_morphs_file")+".txt")
+
+# Method that can be used when a config file is active
+def check_needed_morphs(key):
+    global essential_morphs
+    if not creation_tools_ops.is_project_loaded():
+        return
+    morphs_name = creation_tools_ops.get_content(key, "shared_morphs_file")
+    if morphs_name == '':
+        return # Just in case...
+    # we create the txt file content.
+    txt_content = []
+    txt_content.append(str("Header : Check needed morphs in file " + morphs_name))
+    # We open the morphs file and if it exists, we load it.
+    addon_directory = os.path.dirname(os.path.realpath(__file__))
+    filepath = os.path.join(
+        addon_directory,
+        creation_tools_ops.get_data_directory(),
+        "morphs", morphs_name)
+    morphs_file = file_ops.load_json_data(filepath, "")
+    if morphs_file == None:
+        txt_content.append(str("Morphs file : " + morphs_name + " doesn't exist"))
+        txt_content.append(str("Stop checking."))
+    else:
+        txt_content.append("---------------")
+        txt_content.append("Check morph file content :")
+        # Now we check "relations" key and check if any morphs are missing.
+        keys = list(morphs_file.keys())
+        perfect = True
+        for morph_name in essential_morphs:
+            min = morph_name + "_min"
+            max = morph_name + "_max"
+            if not min in keys:
+                txt_content.append(str("Essential morph not in file : " + min))
+                perfect = False
+            if not max in keys:
+                txt_content.append(str("Essential morph not in file : " + max))
+                perfect = False
+        if perfect:
+            txt_content.append("All essential morphs are in the file.")
+    # At the end we save the file.
+    final_name = get_needed_morphs_file_name(key)
+    with open(final_name, "w") as j_file:
+        json.dump(txt_content, j_file, indent=2)
+    j_file.close()
