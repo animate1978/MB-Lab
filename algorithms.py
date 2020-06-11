@@ -226,25 +226,24 @@ def is_excluded(property_name, excluded_properties):
 
 # Improved random fix
 def generate_parameter(val, random_value, preserve_phenotype=False):
-
-   if preserve_phenotype:
-       if val > 0.5:
-           if val > 0.8:
-               new_value = 0.8 + 0.2*random.random()
-           else:
-               new_value = 0.5+random.random()*random_value
-       else:
-           if val < 0.2:
-               new_value = 0.2*random.random()
-           else:
-               new_value = 0.5-random.random()*random_value
-   else:
-       r = random.random()
-       if r > 0.5:
-           new_value = min(1.0, 0.5+r*random_value)
-       else:
-           new_value = max(0.0, 0.5-r*random_value)
-   return new_value
+    r = random.random()
+    if preserve_phenotype:
+        if val > 0.5:
+            if val > 0.8:
+                new_value = 0.8 + 0.2*r
+            else:
+                new_value = 0.5+r*random_value
+        else:
+            if val < 0.2:
+                new_value = 0.2*r
+            else:
+                new_value = 0.5-r*random_value
+    else:
+        if r > 0.5:
+            new_value = min(1.0, 0.5+random.random()*random_value)
+        else:
+            new_value = max(0.0, 0.5-random.random()*random_value)
+    return new_value
 
 
 def polygon_forma(list_of_verts):
