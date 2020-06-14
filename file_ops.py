@@ -130,7 +130,7 @@ def exists_database(lib_path):
 def save_json_data(json_path, char_data):
     try:
         with open(json_path, "w") as j_file:
-            json.dump(char_data, j_file)
+            json.dump(char_data, j_file, indent=2)
         j_file.close()
     except IOError:
         if simple_path(json_path) != "":
