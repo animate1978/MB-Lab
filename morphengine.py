@@ -36,7 +36,7 @@ from . import morphcreator
 from . import proxyengine
 from . import utils
 #End Teto
-import time, json
+import time, json, glob
 import operator
 
 logger = logging.getLogger(__name__)
@@ -173,6 +173,14 @@ class MorphingEngine:
 
     def __repr__(self):
         return "MorphEngine {0} with {1} morphings".format(self.obj_name, len(self.morph_data))
+
+    def get_expressions_file(self):
+        return os.path.join(file_ops.get_data_path(), "expressions_morphs",
+                            self.expressions_filename)
+
+    def get_all_expressions_files(self):
+        file_filter = os.path.join(file_ops.get_data_path(), "expressions_morphs", "*.json")
+        return glob.glob(file_filter)
 
     def get_object(self):
         if self.obj_name in bpy.data.objects:

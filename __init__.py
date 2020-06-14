@@ -26,7 +26,7 @@
 
 import logging
 
-import time
+import time, ntpath
 import datetime
 import json
 import os
@@ -895,6 +895,11 @@ bpy.types.Scene.mblab_random_engine = bpy.props.EnumProperty(
 
 bpy.types.Scene.mblab_facs_rig = bpy.props.BoolProperty(
     name="Import FACS Rig")
+
+bpy.types.Scene.mblab_copy_to_all_phenotype = bpy.props.BoolProperty(
+    name="Apply to all Phenotype")
+bpy.types.Scene.mblab_override_expressions = bpy.props.BoolProperty(
+    name="Override Existing Expressions")
 
 #Hair color Drop Down List
 bpy.types.Scene.mblab_hair_color = bpy.props.EnumProperty(
@@ -2989,6 +2994,9 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
 
         box_tools = self.layout.box()
         box_tools.label(text="TOOLS CATEGORIES", icon="RNA")
+        box_tools.operator('mbcrea.button_import_shape_keys', icon='EXPORT')
+        box_tools.prop(scn, "mblab_copy_to_all_phenotype")
+        box_tools.prop(scn, "mblab_override_expressions")
         if gui_active_panel_first != "adaptation_tools":
             box_tools.operator('mbcrea.button_adaptation_tools_on', icon=icon_expand)
         else:
@@ -4285,6 +4293,115 @@ class ButtonForTest(bpy.types.Operator):
         print(copie)
         return {'FINISHED'}
 
+class ButtonExportShapeKeys(bpy.types.Operator):
+    bl_label = 'Import Expression Shape Keys'
+    bl_idname = 'mbcrea.button_import_shape_keys'
+    bl_description = 'PRE-FINALIZATION Tool: Import character shape keys to character morphs.\n\
+Morphs will be available next time you create same character type'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        # iterate through all shape keys on the mesh data and generate
+        # The delta between given shape key and the basis shape key.
+        # If no basis shape key operation will fail.
+        # If any of the shape keys override existing shape keys, operation
+        # will fail. This operation is meant to amend to current Lab keys
+        # and not to override them.
+        mesh = algorithms.get_active_body()
+        mname = mesh.name
+        if not mesh:
+            self.report({'ERROR'}, "No active mesh. Please select an MB-Lab Character")
+        # do a first pass over existing
+        basis_found = False
+        key_blocks = None
+        try:
+            key_blocks = bpy.data.objects[mname].data.shape_keys.key_blocks
+        except:
+            self.ShowMessageBox("Mesh has no shape keys", "Error", 'ERROR')
+            return {'FINISHED'}
+
+        expression_keys = self.getExpressionKeys()
+        for key in bpy.data.objects[mname].data.shape_keys.key_blocks:
+            if key.name == 'Basis':
+                if basis_found:
+                    self.ShowMessageBox("More than one instance of the Basis Shape Key. Invalid",
+                                        "Error", 'ERROR')
+                    return {'FINISHED'}
+                basis_found = True
+                continue
+            if key.name in expression_keys and not mblab_override_expressions:
+                self.ShowMessageBox("Shape key %s already exists. Aborting operation" % key.name, "Error", 'ERROR')
+                return {'FINISHED'}
+        if not basis_found:
+            self.ShowMessageBox("Basis shape key not found. Invalid setup", "Error", 'ERROR')
+            return {'FINISHED'}
+
+        # keys are good lets calculate each one relative to the basis
+        basis_vertices = []
+        new_expressions = {}
+        for key in bpy.data.objects[mname].data.shape_keys.key_blocks:
+            if key.name == 'Basis':
+                basis_vertices = self.getVertexList(key.data)
+                continue
+            key_vertices = self.getVertexList(key.data)
+            indexed_vertices = morphcreator.substract_with_index(basis_vertices, key_vertices)
+            if len(indexed_vertices) < 1:
+                continue
+            # append and write to the expressions file
+            new_expressions[key.name] = indexed_vertices
+        self.writeShapeKeyData(new_expressions)
+        return {'FINISHED'}
+
+    def writeData(self, path, new_data):
+        data = file_ops.load_json_data(path)
+        data = dict(data, **new_data)
+        file_ops.save_json_data(path, data)
+
+    def writeShapeKeyData(self, new_data):
+        phenotype_path = mblab_humanoid.morph_engine.get_expressions_file()
+        id1 = ntpath.basename(phenotype_path).split('_')[0]
+        id2 = ntpath.basename(phenotype_path).split('_')[1]
+        if bpy.context.scene.mblab_copy_to_all_phenotype:
+            # we have to check all files
+            for path in mblab_humanoid.morph_engine.get_all_expressions_files():
+                fname = ntpath.basename(path)
+                cur_id1 = fname.split('_')[0]
+                cur_id2 = fname.split('_')[1]
+                # Apply if this is the same phenotype
+                if cur_id1 == id1 and (cur_id2 == id2 or not 'an' in cur_id2):
+                    self.writeData(path, new_data)
+        else:
+            path = mblab_humanoid.morph_engine.get_expressions_file()
+            self.writeData(path, new_data)
+
+    def getExpressionKeys(self):
+        keys = []
+        if bpy.context.scene.mblab_copy_to_all_phenotype:
+            # we have to check all files
+            for path in mblab_humanoid.morph_engine.get_all_expressions_files():
+                data = file_ops.load_json_data(path)
+                keys += list(data.keys())
+        else:
+            path = mblab_humanoid.morph_engine.get_expressions_file()
+            data = file_ops.load_json_data(path)
+            keys += list(data.keys())
+        return keys
+
+    def getVertexList(self, key_data):
+        kl_v = key_data.values()
+        result = []
+        for l in kl_v:
+            result.append(l.co)
+        return result
+
+    def ShowMessageBox(self, message = "", title = "Error !", icon = 'ERROR'):
+
+        def draw(self, context):
+            self.layout.label(text=message)
+        bpy.context.window_manager.popup_menu(draw, title = title, icon = icon)
+
+
 class ButtonAdaptationToolsON(bpy.types.Operator):
     bl_label = 'Model edition'
     bl_idname = 'mbcrea.button_adaptation_tools_on'
@@ -4754,6 +4871,7 @@ classes = (
     OBJECT_OT_remove_color_preset,
     OBJECT_OT_undo_remove_color,
     ButtonForTest,
+    ButtonExportShapeKeys,
     ButtonAdaptationToolsON,
     ButtonAdaptationToolsOFF,
     ButtonCompatToolsON,
