@@ -898,6 +898,8 @@ bpy.types.Scene.mblab_facs_rig = bpy.props.BoolProperty(
 
 bpy.types.Scene.mblab_copy_to_all_phenotype = bpy.props.BoolProperty(
     name="Apply to all Phenotype")
+bpy.types.Scene.mblab_override_expressions = bpy.props.BoolProperty(
+    name="Override Existing Expressions")
 
 #Hair color Drop Down List
 bpy.types.Scene.mblab_hair_color = bpy.props.EnumProperty(
@@ -2992,8 +2994,9 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
 
         box_tools = self.layout.box()
         box_tools.label(text="TOOLS CATEGORIES", icon="RNA")
-        box_tools.operator('mbcrea.button_export_shape_keys', icon='EXPORT')
+        box_tools.operator('mbcrea.button_import_shape_keys', icon='EXPORT')
         box_tools.prop(scn, "mblab_copy_to_all_phenotype")
+        box_tools.prop(scn, "mblab_override_expressions")
         if gui_active_panel_first != "adaptation_tools":
             box_tools.operator('mbcrea.button_adaptation_tools_on', icon=icon_expand)
         else:
@@ -4291,9 +4294,9 @@ class ButtonForTest(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonExportShapeKeys(bpy.types.Operator):
-    bl_label = 'Export Expression Shape Keys'
-    bl_idname = 'mbcrea.button_export_shape_keys'
-    bl_description = 'PRE-FINALIZATION Tool: Export character shape keys to character morphs.\n\
+    bl_label = 'Import Expression Shape Keys'
+    bl_idname = 'mbcrea.button_import_shape_keys'
+    bl_description = 'PRE-FINALIZATION Tool: Import character shape keys to character morphs.\n\
 Morphs will be available next time you create same character type'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
@@ -4327,7 +4330,7 @@ Morphs will be available next time you create same character type'
                     return {'FINISHED'}
                 basis_found = True
                 continue
-            if key.name in expression_keys:
+            if key.name in expression_keys and not mblab_override_expressions:
                 self.ShowMessageBox("Shape key %s already exists. Aborting operation" % key.name, "Error", 'ERROR')
                 return {'FINISHED'}
         if not basis_found:
