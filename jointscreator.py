@@ -49,7 +49,6 @@ def create_base_template_file(filepath):
         file[item] = []
     with open(filepath, "w") as j_file:
         json.dump(file, j_file, indent=2)
-    j_file.close()
 
 current_filters = []
 joints_base_list = []
@@ -219,7 +218,6 @@ def save_joints_base_file():
         file_name)
     with open(filepath, "w") as j_file:
         json.dump(file_content, j_file, indent=2)
-    j_file.close()
 
 # --------------------------------------------------
 #            Central point of joints
@@ -269,7 +267,6 @@ def create_offset_template_file(filepath):
         file[item] = [0, 0, 0]
     with open(filepath, "w") as j_file:
         json.dump(file, j_file, indent=2)
-    j_file.close()
 
 def set_current_joints_offset_file(joints_offset_name):
     global current_joints_offset_file
@@ -434,7 +431,6 @@ def save_joints_offset_file():
         file_name)
     with open(filepath, "w") as j_file:
         json.dump(file_content, j_file, indent=2)
-    j_file.close()
     
 # --------------------------------------------------
 #    All layout elements for joints manipulation

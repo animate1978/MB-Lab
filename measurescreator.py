@@ -181,7 +181,6 @@ def create_measures_file(filepath):
         "chest_width_X": 1}
     with open(filepath, "w") as j_file:
         json.dump(file, j_file, indent=2)
-    j_file.close()
 
 # Method that can be used when a config file is active
 def check_inconsistancies(key):
@@ -237,7 +236,6 @@ def check_inconsistancies(key):
     final_name = get_inconsistancies_file_name(key)
     with open(final_name, "w") as j_file:
         json.dump(txt_content, j_file, indent=2)
-    j_file.close()
 
 def get_inconsistancies_file_name(key):
     if not creation_tools_ops.is_project_loaded():
@@ -363,7 +361,6 @@ def save_measures_file():
         file_name)
     with open(filepath, "w") as j_file:
         json.dump(file_content, j_file, indent=2)
-    j_file.close()
     
 # ------------------------------------------------------------------------
 #    All methods dedicated to the use of mesh_ops

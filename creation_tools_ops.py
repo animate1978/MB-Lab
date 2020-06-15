@@ -130,7 +130,6 @@ def save_config():
     del temp["data_directory"]
     with open(file_name, "w") as j_file:
         json.dump(temp, j_file, indent=2)
-    j_file.close()
 
 def load_config(config_name):
     global loaded_project

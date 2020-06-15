@@ -49,6 +49,7 @@ from . import file_ops
 from . import hairengine
 from . import humanoid
 from . import humanoid_rotations
+from . import jointscreator
 from . import morphcreator
 from . import node_ops
 from . import numpy_ops
@@ -60,7 +61,7 @@ from . import preferences
 from . import mesh_ops
 from . import measurescreator
 from . import skeleton_ops
-from . import jointscreator
+from . import vgroupscreator
 
 
 logger = logging.getLogger(__name__)
@@ -90,7 +91,7 @@ mbcrea_transfor = transfor.Transfor(mblab_humanoid)
 
 gui_status = "NEW_SESSION"
 gui_err_msg = ""
-gui_allows_edit_mode = False
+gui_allows_other_modes = False
 
 # GUI panels for MB-Lab
 gui_active_panel = None
@@ -2496,9 +2497,9 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        global gui_allows_edit_mode
-        if gui_allows_edit_mode:
-            return context.mode in {'OBJECT', 'EDIT_MESH', 'POSE'}
+        global gui_allows_other_modes
+        if gui_allows_other_modes:
+            return context.mode in {'OBJECT', 'EDIT_MESH', 'PAINT_WEIGHT', 'POSE'}
         else:
             return context.mode in {'OBJECT', 'POSE'}
 
@@ -3007,9 +3008,9 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        global gui_allows_edit_mode
-        if gui_allows_edit_mode:
-            return context.mode in {'OBJECT', 'EDIT_MESH', 'POSE'}
+        global gui_allows_other_modes
+        if gui_allows_other_modes:
+            return context.mode in {'OBJECT', 'EDIT_MESH', 'PAINT_WEIGHT', 'POSE'}
         else:
             return context.mode in {'OBJECT', 'POSE'}
 
@@ -3021,7 +3022,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
         
         box_general = self.layout.box()
         box_general.label(text="https://www.mblab.dev")
-        box_general.operator('mbcrea.button_for_tests', icon='BLENDER')
+        #box_general.operator('mbcrea.button_for_tests', icon='BLENDER')
 
         box_tools = self.layout.box()
         box_tools.label(text="TOOLS CATEGORIES", icon="RNA")
@@ -3538,8 +3539,11 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
             box_project_tools.label(text="TOOLS", icon="MODIFIER_ON")
             if creation_tools_ops.blend_is_loaded():
                 box_project_tools_a=box_project_tools.column(align=True)
-                box_project_tools_a.prop(scn, "mbcrea_allow_edit_mode", toggle=1)
-                box_project_tools_a.prop(scn, "mbcrea_toggle_edit_object", toggle=1)
+                box_project_tools_a.prop(scn, "mbcrea_allow_other_modes", toggle=1)
+                #box_project_tools_a.prop(scn, "mbcrea_toggle_edit_object", toggle=1)
+                if scn.mbcrea_allow_other_modes:
+                    box_project_tools_b = box_project_tools_a.row(align=True)
+                    box_project_tools_b.prop(scn, "mbcrea_toggle_edit_object", expand=True)
                 box_project_tools.prop(scn, "mbcrea_creation_tools")
                 if scn.mbcrea_creation_tools == "Base_model_creation":
                     b_m_c = self.layout.box()
@@ -3997,7 +4001,93 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                             joints_creation_g.label(text="File saves", icon='SORT_ASC')
                             joints_creation_g.operator('mbcrea.button_save_joints_base_file', icon='FREEZE')
                             joints_creation_g.operator('mbcrea.button_save_joints_offset_file', icon='FREEZE')
-
+                # Tool that creates the 2 files about vgroups, the base and muscles.
+                elif scn.mbcrea_creation_tools == "Vertices_groups":
+                    vgroups_creation = self.layout.box()
+                    vgroups_creation.prop(scn, "mbcrea_character_list_without")
+                    key = scn.mbcrea_character_list_without
+                    if key != 'NONE':
+                        # Now with decide beween base and muscle.
+                        vgroups_creation_a = vgroups_creation.row(align=True)
+                        vgroups_creation_a.prop(scn, "mbcrea_base_muscle_vgroups", expand=1)
+                        # We start by the base file.
+                        if scn.mbcrea_base_muscle_vgroups == 'BASE':
+                            base_vgroups_name = creation_tools_ops.get_content(key, "vertexgroup_base_file")
+                            if base_vgroups_name == "":
+                                vgroups_creation.label(text="VGroups base file name", icon='SORT_ASC')
+                                vgroups_creation.prop(scn, "mbcrea_vgroups_base_file")
+                                # Name ----------------
+                                name =  scn.mbcrea_vgroups_base_file
+                                if name == 'NONE':
+                                    vgroups_creation.prop(scn, "mbcrea_vgroups_base_file_name")
+                                    name = algorithms.split_name(scn.mbcrea_vgroups_base_file_name, splitting_char=' -²&=¨^$£%µ,?;!§+*/:[]\"\'{}').lower()
+                                    if name != "":
+                                        if not name.endswith("_vgroups_base"):
+                                            name += "_vgroups_base"
+                                        vgroups_creation.label(text="Name : " + name + ".json", icon='INFO')
+                                        # Creation if name not in list ----------------
+                                        vgroups_creation.operator('mbcrea.button_vgroups_base_file', icon='FREEZE')
+                                    else:
+                                        vgroups_creation.label(text="Name not valid !", icon='ERROR')
+                                else:
+                                    creation_tools_ops.add_content(scn.mbcrea_character_list_without, "vertexgroup_base_file", name)
+                            else:
+                                vgroups_creation.label(text="File existing or created :", icon='INFO')
+                                vgroups_creation.label(text=base_vgroups_name, icon='BLANK1')
+                                vgroups_creation.operator('mbcrea.button_save_config', icon='FREEZE')
+                                # We automatically select the model, and if there
+                                # isn't, we ask to select one and add it in the database.
+                                mesh_name = creation_tools_ops.get_content(key, "template_model")
+                                if mesh_name == "":
+                                    vgroups_creation.label(text="Please select the model", icon='ERROR')
+                                    vgroups_creation.label(text="Will be saved in config", icon='BLANK1')
+                                elif not bpy.data.objects[mesh_name].select_get():
+                                    bpy.data.objects[mesh_name].select_set(True)
+                                else:
+                                    # Now the name is known, we choose the topic base
+                                    vgroupscreator.set_current_vgroups_file('BASE', base_vgroups_name)
+                                    obj = algorithms.get_active_body()
+                                    vgroupscreator.set_current_vgroups_type('BASE', obj)
+                                    vgroups_creation.operator('mbcrea.button_save_vgroups_base_file', icon='FREEZE')
+                        # We continue with the muscle file.
+                        else:
+                            muscle_vgroups_name = creation_tools_ops.get_content(key, "vertexgroup_muscle_file")
+                            if muscle_vgroups_name == "":
+                                vgroups_creation.label(text="VGroups base file name", icon='SORT_ASC')
+                                vgroups_creation.prop(scn, "mbcrea_vgroups_muscles_file")
+                                # Name ----------------
+                                name =  scn.mbcrea_vgroups_muscles_file
+                                if name == 'NONE':
+                                    vgroups_creation.prop(scn, "mbcrea_vgroups_muscles_file_name")
+                                    name = algorithms.split_name(scn.mbcrea_vgroups_base_file_name, splitting_char=' -²&=¨^$£%µ,?;!§+*/:[]\"\'{}').lower()
+                                    if name != "":
+                                        if not name.endswith("_vgroups_muscles"):
+                                            name += "_vgroups_muscles"
+                                        vgroups_creation.label(text="Name : " + name + ".json", icon='INFO')
+                                        # Creation if name not in list ----------------
+                                        vgroups_creation.operator('mbcrea.button_vgroups_muscles_file', icon='FREEZE')
+                                    else:
+                                        vgroups_creation.label(text="Name not valid !", icon='ERROR')
+                                else:
+                                    creation_tools_ops.add_content(scn.mbcrea_character_list_without, "vertexgroup_muscle_file", name)
+                            else:
+                                vgroups_creation.label(text="File existing or created :", icon='INFO')
+                                vgroups_creation.label(text=muscle_vgroups_name, icon='BLANK1')
+                                vgroups_creation.operator('mbcrea.button_save_config', icon='FREEZE')
+                                # We automatically select the model, and if there
+                                # isn't, we ask to select one and add it in the database.
+                                mesh_name = creation_tools_ops.get_content(key, "template_model")
+                                if mesh_name == "":
+                                    vgroups_creation.label(text="Please select the model", icon='ERROR')
+                                    vgroups_creation.label(text="Will be saved in config", icon='BLANK1')
+                                elif not bpy.data.objects[mesh_name].select_get():
+                                    bpy.data.objects[mesh_name].select_set(True)
+                                else:
+                                    # Now the name is known, we choose the topic muscle
+                                    vgroupscreator.set_current_vgroups_file('MUSCLES', muscle_vgroups_name)
+                                    obj = algorithms.get_active_body()
+                                    vgroupscreator.set_current_vgroups_type('MUSCLES', obj)
+                                    vgroups_creation.operator('mbcrea.button_save_vgroups_muscles_file', icon='FREEZE')
                 # Tools about small tools for manual things.
                 elif scn.mbcrea_creation_tools == "Utilities":
                     utils = self.layout.box()
@@ -4315,8 +4405,8 @@ bpy.types.Scene.mbcrea_creation_tools = bpy.props.EnumProperty(
         ("Measures_creation", "Create measures template", "Register all points for the measures engine"),
         ("Template_morph_creation", "Create morphs template", "Create a template of morphs that helps the engine to work\nAll morphs can be created later."),
         ("Joints_creation", "Create joints templates", "Create 2 templates about joints that are used for skeleton"),
+        ("Vertices_groups", "Vertices groups tools", "All tools related to vertices groups"),
         #("Weight_painting", "Weight painting tools", "All tools related to weight painting"),
-        #("Vertices_groups", "Vertices groups tools", "All tools related to vertices groups"),
         #("Muscles", "Muscles tools", "All tools related to muscles system"),
         ("Utilities", "Manual tools", "Small tools for manual operations")
         ],
@@ -4644,27 +4734,33 @@ bpy.types.Scene.mbcrea_check_element = bpy.props.EnumProperty(
     default='vert')
 
 def allow_edit_mode(self, context):
-    global gui_allows_edit_mode
-    gui_allows_edit_mode = bpy.context.scene.mbcrea_allow_edit_mode
+    global gui_allows_other_modes
+    gui_allows_other_modes = bpy.context.scene.mbcrea_allow_other_modes
 
-bpy.types.Scene.mbcrea_allow_edit_mode = bpy.props.BoolProperty(
-    name="Allow edit mode",
+bpy.types.Scene.mbcrea_allow_other_modes = bpy.props.BoolProperty(
+    name="Allow other modes",
     update=allow_edit_mode,
-    description="Allow edit mode")
+    description="Allow other modes like edit, weight paint...")
 
 def toggle_edit_object(self, context):
     if bpy.context.active_object != None:
         mode = bpy.context.active_object.mode
         scn = bpy.context.scene
-        if mode == 'EDIT' and not scn.mbcrea_toggle_edit_object:
-            bpy.ops.object.mode_set(mode='OBJECT')
-        elif mode == 'OBJECT' and scn.mbcrea_toggle_edit_object:
+        if scn.mbcrea_toggle_edit_object == 'EDIT':
             bpy.ops.object.mode_set(mode='EDIT')
-
-bpy.types.Scene.mbcrea_toggle_edit_object = bpy.props.BoolProperty(
-    name="Edit / Object mode",
+        elif scn.mbcrea_toggle_edit_object == 'WEIGHT_PAINT':
+            bpy.ops.object.mode_set(mode='WEIGHT_PAINT')
+        else:
+            bpy.ops.object.mode_set(mode='OBJECT')
+            
+bpy.types.Scene.mbcrea_toggle_edit_object = bpy.props.EnumProperty(
+    items=[
+        ('OBJECT', 'Object', 'Object mode'),
+        ('EDIT', 'Edit', 'Edit mode'),
+        ('WEIGHT_PAINT', 'Weight', 'Weight paint mode')],
+    name="whatever",
     update=toggle_edit_object,
-    description="Toggle between edit and object mode")
+    default='OBJECT')
 
 bpy.types.Scene.mbcrea_unselect_before = bpy.props.BoolProperty(
     name="Unselect all before",
@@ -4714,6 +4810,36 @@ bpy.types.Scene.mbcrea_offset_select = bpy.props.BoolProperty(
     name="Show offset",
     description="Show offset when on\nIt's an icosphere\nThe offset must exist in the file.")
 
+bpy.types.Scene.mbcrea_base_muscle_vgroups = bpy.props.EnumProperty(
+    items=[
+        ('BASE', 'Base', 'Weights for base bones'),
+        ('MUSCLES', 'Muscles', 'Weights for muscle bones')],
+    name="whatever",
+    default='BASE')
+
+
+def update_vgroups_items(self, context):
+    return creation_tools_ops.get_file_list("vgroups", file_type="json")
+
+bpy.types.Scene.mbcrea_vgroups_base_file = bpy.props.EnumProperty(
+    items=update_vgroups_items,
+    name="VGroups base",
+    default=None)
+
+bpy.types.Scene.mbcrea_vgroups_base_file_name = bpy.props.StringProperty(
+    name="Other",
+    description="Another name if you want to create a new vgroups base file template.",
+    default="",
+    maxlen=1024,
+    subtype='FILE_NAME')
+
+bpy.types.Scene.mbcrea_vgroups_muscles_file_name = bpy.props.StringProperty(
+    name="Other",
+    description="Another name if you want to create a new vgroups muscle file template.",
+    default="",
+    maxlen=1024,
+    subtype='FILE_NAME')
+
 class ButtonCreatePolygs(bpy.types.Operator):
     bl_label = 'Create polygons file'
     bl_idname = 'mbcrea.button_create_polygs'
@@ -4722,8 +4848,8 @@ class ButtonCreatePolygs(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        global gui_allows_edit_mode
-        gui_allows_edit_mode = True
+        global gui_allows_other_modes
+        gui_allows_other_modes = True
         if bpy.context.active_object != None:
             mode = bpy.context.active_object.mode
             bpy.ops.object.mode_set(mode='EDIT')
@@ -4749,8 +4875,8 @@ class ButtonCreatePolygsGo(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        global gui_allows_edit_mode
-        gui_allows_edit_mode = True
+        global gui_allows_other_modes
+        gui_allows_other_modes = True
         if bpy.context.active_object == None:
             return {'FINISHED'}
         scn = bpy.context.scene
@@ -4770,7 +4896,6 @@ class ButtonCreatePolygsGo(bpy.types.Operator):
             name)
         with open(path, "w") as j_file:
             json.dump(indices, j_file, indent=2)
-        j_file.close()
         creation_tools_ops.add_content(key, "template_polygons", name)
         # Return to normal mode.
         for item in creation_tools_ops.get_objects_names():
@@ -4786,8 +4911,8 @@ class ButtonCreatePolygsCancel(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-        global gui_allows_edit_mode
-        gui_allows_edit_mode = True
+        global gui_allows_other_modes
+        gui_allows_other_modes = True
         if bpy.context.active_object == None:
             return {'FINISHED'}
         scn = bpy.context.scene
@@ -5506,8 +5631,6 @@ class ButtonForTest(bpy.types.Operator):
     def execute(self, context):
         scn = bpy.context.scene
         # Now we try things.
-        tmp = skeleton_ops.sort_joints(ik=False, head=False, content=['lwrm_muscle', '_02_'])
-        print(tmp)
         return {'FINISHED'}
 
 class ButtonAdaptationToolsON(bpy.types.Operator):
@@ -6369,6 +6492,68 @@ class ButtonSaveOffsetPoint(bpy.types.Operator):
         jointscreator.set_offset_point()
         return {'FINISHED'}
 
+class ButtonCreateVGroupsBaseFile(bpy.types.Operator):
+    bl_label = 'Create vgroups base template'
+    bl_idname = 'mbcrea.button_vgroups_base_file'
+    bl_description = 'Create a file with all necessary names for vgroups.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        scn = bpy.context.scene
+        name = algorithms.split_name(scn.mbcrea_vgroups_base_file_name, splitting_char=' -²&=¨^$£%µ,?;!§+*/:[]\"\'{}').lower()
+        if not name.endswith("_vgroups_base"):
+            name += "_vgroups_base"
+        name += ".json"
+        addon_directory = os.path.dirname(os.path.realpath(__file__))
+        filepath = os.path.join(addon_directory, creation_tools_ops.get_data_directory(), "vgroups", name)
+        vgroupscreator.create_base_template_file(filepath)
+        # Now we write the name in the config file.
+        creation_tools_ops.add_content(scn.mbcrea_character_list_without, "vertexgroup_base_file", name)
+        return {'FINISHED'}
+
+class ButtonCreateVGroupsMusclesFile(bpy.types.Operator):
+    bl_label = 'Create vgroups muscles template'
+    bl_idname = 'mbcrea.button_vgroups_muscles_file'
+    bl_description = 'Create a file with all necessary names for vgroups.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        scn = bpy.context.scene
+        name = algorithms.split_name(scn.mbcrea_vgroups_muscles_file_name, splitting_char=' -²&=¨^$£%µ,?;!§+*/:[]\"\'{}').lower()
+        if not name.endswith("_vgroups_muscles"):
+            name += "_vgroups_muscles"
+        name += ".json"
+        addon_directory = os.path.dirname(os.path.realpath(__file__))
+        filepath = os.path.join(addon_directory, creation_tools_ops.get_data_directory(), "vgroups", name)
+        vgroupscreator.create_muscles_template_file(filepath)
+        # Now we write the name in the config file.
+        creation_tools_ops.add_content(scn.mbcrea_character_list_without, "vertexgroup_muscle_file", name)
+        return {'FINISHED'}
+
+class ButtonSaveVGroupsBaseFile(bpy.types.Operator):
+    bl_label = 'Save vgroups base file'
+    bl_idname = 'mbcrea.button_save_vgroups_base_file'
+    bl_description = 'Save in file the base vgroups.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        vgroupscreator.save_current_vgroups_type('BASE')
+        return {'FINISHED'}
+
+class ButtonSaveVGroupsMuscleFile(bpy.types.Operator):
+    bl_label = 'Save vgroups muscles file'
+    bl_idname = 'mbcrea.button_save_vgroups_muscles_file'
+    bl_description = 'Save in file the muscles vgroups.'
+    bl_context = 'objectmode'
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        vgroupscreator.save_current_vgroups_type('MUSCLES')
+        return {'FINISHED'}
+
 classes = (
     ButtonParametersOff,
     ButtonParametersOn,
@@ -6531,7 +6716,11 @@ classes = (
     ButtonCreateOffsetPoint,
     ButtonDeleteOffsetPoint,
     ButtonRecoverOffsetPoint,
-    ButtonSaveOffsetPoint
+    ButtonSaveOffsetPoint,
+    ButtonCreateVGroupsBaseFile,
+    ButtonCreateVGroupsMusclesFile,
+    ButtonSaveVGroupsBaseFile,
+    ButtonSaveVGroupsMuscleFile
 )
 
 def register():
