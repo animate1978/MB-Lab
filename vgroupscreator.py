@@ -52,8 +52,6 @@ def create_muscle_template_file(filepath):
     with open(filepath, "w") as j_file:
         json.dump(file, j_file, indent=2)
 
-vgroups_base_list = []
-vgroups_muscle_list = []
 # Name only, because all is done with Blender.
 current_vgroups_file = ""
 # Key : Name of the file with .json
@@ -135,14 +133,14 @@ def get_current_vgroups_type(type):
     global vgroups_base_files
     global vgroups_muscle_files
     if len(current_vgroups_file) < 1:
-        return None, None
+        return None
     pack = None
     if type == 'BASE':
         pack = vgroups_base_files[current_vgroups_file]
     else:
         pack = vgroups_muscle_files[current_vgroups_file]
     if pack == None:
-        return None, None
+        return None
     # Now we get the vgroups on object.
     obj = pack["object"]
     obj.update_from_editmode() # Just in case.
@@ -155,10 +153,16 @@ def get_current_vgroups_type(type):
             new_dict[dv[0]].append([int(key), dv[1]])
     return_dict = {}
     for key, value in new_dict.items():
-        return_dict[key[5:]] = value
+        if type == 'BASE' and key.startswith('base_'):
+            return_dict[key[5:]] = value
+        elif type == 'MUSCLES' and key.startswith('mscl_'):
+            return_dict[key[5:]] = value
     return return_dict
     
 def save_current_vgroups_type(type):
+    global current_vgroups_file
+    global vgroups_base_files
+    global vgroups_muscle_files
     vg = get_current_vgroups_type(type)
     if vg == None:
         return
@@ -169,3 +173,8 @@ def save_current_vgroups_type(type):
         file_name)
     with open(filepath, "w") as j_file:
         json.dump(vg, j_file, indent=2)
+    # We put the saved file in memory again
+    if type == 'BASE':
+        del vgroups_base_files[current_vgroups_file]
+    else:
+        del vgroups_muscle_files[current_vgroups_file]
