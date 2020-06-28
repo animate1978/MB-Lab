@@ -226,25 +226,24 @@ def is_excluded(property_name, excluded_properties):
 
 # Improved random fix
 def generate_parameter(val, random_value, preserve_phenotype=False):
-
-   if preserve_phenotype:
-       if val > 0.5:
-           if val > 0.8:
-               new_value = 0.8 + 0.2*random.random()
-           else:
-               new_value = 0.5+random.random()*random_value
-       else:
-           if val < 0.2:
-               new_value = 0.2*random.random()
-           else:
-               new_value = 0.5-random.random()*random_value
-   else:
-       r = random.random()
-       if r > 0.5:
-           new_value = min(1.0, 0.5+r*random_value)
-       else:
-           new_value = max(0.0, 0.5-r*random_value)
-   return new_value
+    r = random.random()
+    if preserve_phenotype:
+        if val > 0.5:
+            if val > 0.8:
+                new_value = 0.8 + 0.2*r
+            else:
+                new_value = 0.5+r*random_value
+        else:
+            if val < 0.2:
+                new_value = 0.2*r
+            else:
+                new_value = 0.5-r*random_value
+    else:
+        if r > 0.5:
+            new_value = min(1.0, 0.5+random.random()*random_value)
+        else:
+            new_value = max(0.0, 0.5-random.random()*random_value)
+    return new_value
 
 
 def polygon_forma(list_of_verts):
@@ -1162,7 +1161,7 @@ def create_enum_property_items(values=[], key_length=3, tip_length=4):
             str(values[i])[0:tip_length]))
     return return_list
     
-def split_name(name, splitting_char=' -_²&=¨^$£%µ,?;!§+*/', indexes=[]):
+def split_name(name, splitting_char=' -_²&=¨^$£%µ,?;!§+*/:[]\"\'{}', indexes=[]):
     if len(splitting_char) < 1:
         return name
     if len(indexes) < 1:
@@ -1172,4 +1171,20 @@ def split_name(name, splitting_char=' -_²&=¨^$£%µ,?;!§+*/', indexes=[]):
     for i in range(len(chars)):
         result = result.split(chars[i])[indexes[i]]
     return result
-#End Teto
+
+# Remade it because in Blender, the actual split() doesn't work
+# as intented, only one character is permitted for a reason.
+def split(name, splitting_char=' -_²&=¨^$£%µ,?;!§+*/:[]\"\'{}'):
+    if len(splitting_char) < 1:
+        return name
+    return_list = []
+    tmp = []
+    if not isinstance(name, list):
+        name = [name]
+    for txt in name:
+        tmp = txt.split(splitting_char[0])
+        for t in tmp:
+            if len(t) > 0:
+                return_list.append(t)
+    return split(return_list, splitting_char[1:])
+        
