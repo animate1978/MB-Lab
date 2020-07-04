@@ -26,6 +26,7 @@ import logging
 
 import bpy
 import bmesh
+from . import file_ops
 
 logger = logging.getLogger(__name__)
 

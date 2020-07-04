@@ -170,7 +170,7 @@ def save_current_vgroups_type(type):
     filepath = os.path.join(
         addon_directory,
         creation_tools_ops.get_data_directory(), "vgroups",
-        file_name)
+        current_vgroups_file)
     with open(filepath, "w") as j_file:
         json.dump(vg, j_file, indent=2)
     # We put the saved file in memory again
