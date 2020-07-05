@@ -4463,9 +4463,9 @@ def update_meshes_list(self, context):
     return creation_tools_ops.get_meshes_list()
 
 def update_meshes_show(self, context):
-    name = str(bpy.context.scene.mbcrea_meshes_list)
+    name = str(bpy.context.scene.mbcrea_meshes_list).lower()
     for item in creation_tools_ops.get_objects_names():
-        if item == name:
+        if item.lower() == name:
             bpy.data.objects[item].hide_viewport = False
         else:
             bpy.data.objects[item].hide_viewport = True
@@ -4858,9 +4858,9 @@ class ButtonCreatePolygs(bpy.types.Operator):
         scn = bpy.context.scene
         # Now we hide all objects in collection except the one we want.
         key = scn.mbcrea_meshes_list
-        obj = decide_which(key, "template_model", scn.mbcrea_meshes_list)
+        obj = decide_which(key, "template_model", scn.mbcrea_meshes_list).lower()
         for item in creation_tools_ops.get_objects_names():
-            if item == obj:
+            if item.lower() == obj:
                 bpy.data.objects[item].hide_viewport = False
             else:
                 bpy.data.objects[item].hide_viewport = True
