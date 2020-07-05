@@ -304,7 +304,9 @@ def load_blend_file():
     
     if is_blend_file_exist():
         lib_filepath = get_blend_file_pathname()
-    
+    else:
+        logger.critical("Blend file does not exist or is not under /data/")
+        return []
     # Import objects name from library
     with bpy.data.libraries.load(lib_filepath) as (data_from, data_to):
         blend_file_content = [data_from, data_from.objects, data_from.meshes]
