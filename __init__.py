@@ -3582,7 +3582,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                         else:
                             b_m_c_a.operator('mbcrea.button_create_polygs', icon='QUESTION')
                             if bpy.context.active_object != None and bpy.context.active_object.mode == 'EDIT':
-                                b_m_c_a.label(text="Select 1 face of", icon='FORWARD')
+                                b_m_c_a.label(text="Select 1 FACE of", icon='FORWARD')
                                 b_m_c_a.label(text="the body, then Go.", icon='BLANK1')
                                 b_m_c_a.operator('mbcrea.button_create_polygs_go', icon='FREEZE')
                                 b_m_c_a.operator('mbcrea.button_create_polygs_cancel', icon='CANCEL')
@@ -4857,8 +4857,8 @@ class ButtonCreatePolygs(bpy.types.Operator):
             return {'FINISHED'}
         scn = bpy.context.scene
         # Now we hide all objects in collection except the one we want.
-        key = scn.mbcrea_template_list
-        obj = decide_which(key, "template_model", scn.mbcrea_base_label)
+        key = scn.mbcrea_meshes_list
+        obj = decide_which(key, "template_model", scn.mbcrea_meshes_list)
         for item in creation_tools_ops.get_objects_names():
             if item == obj:
                 bpy.data.objects[item].hide_viewport = False
