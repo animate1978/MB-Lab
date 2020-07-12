@@ -42,7 +42,7 @@ forbidden_directories = ["__pycache__", "data", "mb-lab_updater", "animations", 
     "hu_m_anthropometry", "anime_expressions", "human_expressions", "female_poses",
     "male_poses", "rest_poses"]
 
-forbiden_names = ["human", "humans", "anime", "male", "female", "anthropometry", "bbox", "expressions",
+forbidden_names = ["human", "humans", "anime", "male", "female", "anthropometry", "bbox", "expressions",
     "exprs", "Expression", "morphs", "hair", "joints", "offset", "measures", "extra", "polygs", "ptypes",
     "poses", "rest", "specialtype", "anyme", "style", "type", "base", "transf", "verts",
     "vgroups", "muscles", "none"]
@@ -82,10 +82,10 @@ def is_forbidden_directory(dir):
     return dir.lower() in forbidden_directories
 
 def get_forbidden_names():
-    return forbiden_names
+    return forbidden_names
 
 def is_forbidden_name(name):
-    return name.lower() in forbiden_names
+    return name.lower() in forbidden_names
 
 def get_static_names():
     return static_names
