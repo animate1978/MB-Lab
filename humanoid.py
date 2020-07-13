@@ -210,7 +210,6 @@ class Humanoid:
     """
 
     def __init__(self, lab_version):
-
         self.lab_vers = list(lab_version)
         self.has_data = False
         self.obj_name = ""
@@ -220,7 +219,7 @@ class Humanoid:
         if self.characters_config:
             self.humanoid_types = self.build_items_list("character_list")
             self.template_types = self.build_items_list("templates_list")
-        self.data_directory = file_ops.get_data_path() # For the moment.
+        self.data_directory = file_ops.get_data_path()
 
     def is_muscle_rig_available(self, character_identifier):
         if self.characters_config[character_identifier]["vertexgroup_muscle_file"] != "":

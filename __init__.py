@@ -404,6 +404,7 @@ def get_categories_enum(exclude=[]):
     return categories_enum
 
 def init_categories_props(humanoid_instance):
+    global mbcrea_expressionscreator
     bpy.types.Scene.morphingCategory = bpy.props.EnumProperty(
         items=get_categories_enum(),
         update=modifiers_update,
@@ -755,10 +756,35 @@ bpy.types.Scene.mblab_template_name = bpy.props.EnumProperty(
     name="Select",
     default="human_female_base")
 
+def mbcrea_root_directories_update(self, context):
+    global mblab_humanoid
+    global mblab_retarget
+    global mblab_shapekeys
+    global mblab_proxy
+    global mbcrea_expressionscreator
+    global mbcrea_transfor
+    file_ops.set_data_path(bpy.context.scene.mbcrea_root_data)
+    mblab_humanoid = humanoid.Humanoid(bl_info["version"])
+    mblab_retarget = animationengine.RetargetEngine()
+    mblab_shapekeys = expressionengine.ExpressionEngineShapeK()
+    mblab_proxy = proxyengine.ProxyEngine()
+    mbcrea_expressionscreator = expressionscreator.ExpressionsCreator()
+    mbcrea_transfor = transfor.Transfor(mblab_humanoid)
+
+bpy.types.Scene.mbcrea_root_data = bpy.props.EnumProperty(
+    items=file_ops.get_root_directories(),
+    name="Project",
+    update=mbcrea_root_directories_update,
+    default="data")
+
+def update_characters_name(self, context):
+    global mblab_humanoid
+    return mblab_humanoid.humanoid_types
+
 bpy.types.Scene.mblab_character_name = bpy.props.EnumProperty(
-    items=mblab_humanoid.humanoid_types,
+    items=update_characters_name,
     name="Select",
-    default="f_af01")
+    default=None)
 
 bpy.types.Scene.mblab_assets_models = bpy.props.EnumProperty(
     items=get_proxy_items_from_library,
@@ -2522,6 +2548,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
 
             self.layout.label(text="CREATION OPTIONS", icon='RNA_ADD')
             box_new_opt = self.layout.column(align=True)
+            box_new_opt.prop(scn, 'mbcrea_root_data')
             box_new_opt.prop(scn, 'mblab_character_name')
             box_new_opt.separator(factor=0.5)
             
