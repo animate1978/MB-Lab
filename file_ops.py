@@ -35,16 +35,16 @@ import bpy
 from . import utils
 from .utils import get_object_parent
 
-
 logger = logging.getLogger(__name__)
 
 data_directory = "data"
-# Below is a trick. For un unknown reason, get_configuration()
+# Below is a trick. For unknown reason, get_configuration()
 # is invoked multiple times in some occasions like expressions tool
 # after finalization. That's why the tool is so long.
 # As the configuration need to be loaded a single time by session,
 # this variable was created.
 configuration_done = None
+root_directories = None
 
 def is_writeable(filepath):
     try:
@@ -54,10 +54,36 @@ def is_writeable(filepath):
         logger.warning("Writing permission denied for %s", filepath)
     return False
 
+def get_root_directories():
+    global root_directories
+    if root_directories != None:
+        return root_directories
+    rd = []
+    fd = [".git", ".github", "__pycache__", "mb-lab_updater"]
+    addon_directory = os.path.dirname(os.path.realpath(__file__))
+    for root, dirs, files in os.walk(addon_directory):
+        if root == addon_directory:
+            rd = dirs
+            break
+    root_directories = []
+    for dir in rd:
+        if dir not in fd:
+            root_directories.append(
+                (dir,
+                "MB_Lab" if dir == "data" else dir,
+                dir))
+    return root_directories
+    
+def set_data_path(path):
+    global data_directory
+    global configuration_done
+    data_directory = path
+    configuration_done = None
 
 def get_data_path():
+    global data_directory
     addon_directory = os.path.dirname(os.path.realpath(__file__))
-    root_dir = os.path.join(addon_directory, "data")
+    root_dir = os.path.join(addon_directory, data_directory)
     logger.info("Looking for the retarget data in the folder %s...", simple_path(root_dir))
 
     if not os.path.isdir(root_dir):
