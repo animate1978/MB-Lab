@@ -3553,6 +3553,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                 if len(cleaned_name) > 0 :
                     box_compat_tools_sub.label(text="Cleaned : " + cleaned_name, icon='INFO')
                     creation_tools_ops.set_data_directory(cleaned_name)
+                    file_ops.set_data_path(cleaned_name)
                     project_creation_buttons=box_compat_tools_sub.column(align=True)
                     project_creation_buttons.operator('mbcrea.button_create_directories', icon='FREEZE')
                     project_creation_buttons.operator('mbcrea.button_create_config', icon='FREEZE')
