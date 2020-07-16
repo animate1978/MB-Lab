@@ -2720,6 +2720,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                     if sel_gender == "MALE":
                         if mblab_retarget.maleposes_exist:
                             box_pose.prop(armature, "male_pose")
+                    box_pose = box_pose.column(align=True)
                     box_pose.operator("mbast.pose_load", icon='IMPORT')
                     box_pose.operator("mbast.pose_save", icon='EXPORT')
                     box_pose.operator("mbast.pose_reset", icon='ARMATURE_DATA')
