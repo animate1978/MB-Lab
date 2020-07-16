@@ -6,15 +6,15 @@ All changes will be documented here
 
 ## Added
 
-- Morph Engine added
+- MB-Dev Character Development Framework introduced
 - Hair Engine now adds hair shaders to Cycles and EEVEE
 
 ## Changed
 
 - MBLabSkin2 uses Principled BSDF yet again
+- Removed SSS scale group, replaced with Vector Math node
 - Bump map added, Thickness map removed
 - Modified skin oil maps
-- Slight GUI change to the Asset and Hair box
 - Eyelash shader now has bump and gloss
 - ExpressionEngine class now in it's own file
 - Blush map converted to grayscale
@@ -23,12 +23,17 @@ All changes will be documented here
 - Modified Freckle masks
 - Modified Material Engine
 - Changed lighting code
+- MB-Lab has new version numbering scheme. Last number for dev purposes
+- Sliders are now highlighted
+- GUI update
+- MBLab Pupil use Diffuse Node instead of Emission
 
 ## Bug Fixes
 
 - Poses don't show when user selects IK model
 - Preserve Phenotype random function code fix
 - Typo: Hands_Lenght, fixed in transformation and measurements JSON
+- Typo: Various names in transformation files fixed
 
 # MB-Lab 1.7.7
 

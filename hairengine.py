@@ -77,7 +77,7 @@ def add_scalp(Name):
     except:
         pass
     bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
-    bpy.ops.object.shade_smooth()
+    #bpy.ops.object.shade_smooth()
 
 def hair_armature_mod(skeleton, hair_object):
     a_mod = hair_object.modifiers.new("armature_hair", 'ARMATURE')
