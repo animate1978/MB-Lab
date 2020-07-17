@@ -284,16 +284,16 @@ def is_blend_file_exist():
     global config_content
     if len(config_content["data_directory"]) < 1:
         return False
-    dirpath = os.path.join(file_ops.get_data_path(), config_content["data_directory"] + "_library.blend")
+    dirpath = os.path.join(file_ops.get_data_path(), "humanoid_library.blend")
     if os.path.isfile(dirpath):
         return True
     return False
 
 def get_blend_file_pathname():
-    return os.path.join(file_ops.get_data_path(), config_content["data_directory"] + "_library.blend")
+    return os.path.join(file_ops.get_data_path(), "humanoid_library.blend")
 
 def get_blend_file_name():
-    return config_content["data_directory"] + "_library.blend"
+    return "humanoid_library.blend"
 
 def load_blend_file():
     global blend_file_content
@@ -305,7 +305,7 @@ def load_blend_file():
     if is_blend_file_exist():
         lib_filepath = get_blend_file_pathname()
     else:
-        logger.critical("Blend file does not exist or is not under /data/")
+        logger.critical("Blend file does not exist or is not under /" + file_ops.get_data_path() + "/")
         return []
     # Import objects name from library
     with bpy.data.libraries.load(lib_filepath) as (data_from, data_to):
