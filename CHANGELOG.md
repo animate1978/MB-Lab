@@ -27,6 +27,7 @@ All changes will be documented here
 - Sliders are now highlighted
 - GUI update
 - MBLab Pupil use Diffuse Node instead of Emission
+- SSS Radius changed to more accurate values
 
 ## Bug Fixes
 
@@ -34,6 +35,7 @@ All changes will be documented here
 - Preserve Phenotype random function code fix
 - Typo: Hands_Lenght, fixed in transformation and measurements JSON
 - Typo: Various names in transformation files fixed
+- Hair Dynamics bug fix for Nvidia GPU cards
 
 # MB-Lab 1.7.7
 
