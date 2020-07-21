@@ -118,13 +118,18 @@ def set_data_directory(dir):
 def get_data_directory():
     global config_content
     return config_content["data_directory"]
+
+def get_project_directory():
+    global config_content
+    addon_directory = os.path.dirname(os.path.realpath(__file__))
+    return os.path.join(addon_directory, config_content["data_directory"])
     
 def save_config():
     global config_content
     if config_content["data_directory"] == "" or config_content["data_directory"] == "data":
         return
     addon_directory = os.path.dirname(os.path.realpath(__file__))
-    file_name = os.path.join(addon_directory, "data", config_content["data_directory"] + "_config.json")
+    file_name = os.path.join(addon_directory, config_content["data_directory"], config_content["data_directory"] + "_config.json")
     # Save of the content, except data directory
     temp = config_content.copy()
     del temp["data_directory"]
@@ -136,7 +141,7 @@ def load_config(config_name):
     global config_content
     path = os.path.join(os.path.dirname(os.path.realpath(__file__)), config_name)
     if os.path.exists(path):
-        file_name = os.path.join(file_ops.get_data_path(), config_name + "_config.json")
+        file_name = os.path.join(path, config_name + "_config.json")
         config_content = file_ops.load_json_data(file_name, "Load config file")
         config_content["data_directory"] = config_name
         loaded_project = True
@@ -245,7 +250,7 @@ def is_directories_created():
 
 def is_config_created():
     global config_content
-    dirpath = os.path.join(file_ops.get_data_path(), config_content["data_directory"] + "_config.json")
+    dirpath = os.path.join(get_project_directory(), config_content["data_directory"] + "_config.json")
     if os.path.isfile(dirpath):
         return True
     return False
@@ -284,13 +289,13 @@ def is_blend_file_exist():
     global config_content
     if len(config_content["data_directory"]) < 1:
         return False
-    dirpath = os.path.join(file_ops.get_data_path(), "humanoid_library.blend")
+    dirpath = os.path.join(get_project_directory(), "humanoid_library.blend")
     if os.path.isfile(dirpath):
         return True
     return False
 
 def get_blend_file_pathname():
-    return os.path.join(file_ops.get_data_path(), "humanoid_library.blend")
+    return os.path.join(get_project_directory(), "humanoid_library.blend")
 
 def get_blend_file_name():
     return "humanoid_library.blend"
@@ -305,7 +310,7 @@ def load_blend_file():
     if is_blend_file_exist():
         lib_filepath = get_blend_file_pathname()
     else:
-        logger.critical("Blend file does not exist or is not under /" + file_ops.get_data_path() + "/")
+        logger.critical("Blend file does not exist or is not under /" + get_project_directory() + "/")
         return []
     # Import objects name from library
     with bpy.data.libraries.load(lib_filepath) as (data_from, data_to):
