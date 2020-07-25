@@ -44,6 +44,7 @@ This fork is an attempt to keep this addon going forward as the original author 
 - GUI update
 - MBLab Pupil use Diffuse Node instead of Emission
 - SSS Radius changed to more accurate values
+- Freckles now include two colors
 
 ## Bug Fixes
 

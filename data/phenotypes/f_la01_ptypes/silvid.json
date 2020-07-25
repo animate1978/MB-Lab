@@ -1,0 +1,25 @@
+{
+  "structural": {
+    "Body_Size": 0.49,
+    "Nose_PosY": 0.65,
+    "Mouth_SizeX": 0.56,
+    "Nose_TipAngle": 0.44,
+    "Cheeks_ZygomPosZ": 0.54,
+    "Mouth_LowerlipSizeZ": 0.4,
+    "Eyes_OuterPosZ": 0.38,
+    "Nose_NostrilSizeY": 0.48,
+    "Jaw_Prominence": 0.56,
+    "Nose_Curve": 0.56,
+    "Mouth_UpperlipSizeZ": 0.41,
+    "Eyes_PosZ": 0.56,
+    "Eyelids_Crease": 0.67,
+    "Nose_TipPosZ": 0.45,
+    "Cheeks_Mass": 0.42,
+    "Eyes_PosX": 0.4,
+    "Jaw_Angle": 0.59,
+    "Nose_NostrilSizeX": 0.6,
+    "Eyes_TypeHooded": 0.55,
+    "Cheeks_Zygom": 0.59,
+    "Forehead_Angle": 0.6
+  }
+}

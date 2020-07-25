@@ -4562,9 +4562,11 @@ bpy.types.Scene.mbcrea_chara_label = bpy.props.StringProperty(
     maxlen=1024,
     subtype='FILE_NAME')
 
+#added CC-BY to the list, possibly more to come
 bpy.types.Scene.mbcrea_chara_license = bpy.props.EnumProperty(
     items=[
         ("CC0", "CC0 (Free)", "For commercial or personnal use"),
+        ("CC-BY", "CC-BY (Free)", "For commercial or personnal use, attribution required"),
         ("AGPL3", "AGPL3", "See documentation"),
         ("AFPL9", "AFPL9 (Personnal use)", "You can't make money with")
         ],

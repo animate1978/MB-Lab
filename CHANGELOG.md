@@ -28,6 +28,7 @@ All changes will be documented here
 - GUI update
 - MBLab Pupil use Diffuse Node instead of Emission
 - SSS Radius changed to more accurate values
+- Freckles now include two colors
 
 ## Bug Fixes
 
