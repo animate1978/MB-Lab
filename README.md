@@ -56,6 +56,8 @@ This fork is an attempt to keep this addon going forward as the original author 
 
 ## Known Issues
 
+- MB-Dev tools may contain bugs that are unknown at this time
+
 ## ManuelBastioniLAB 1.6.1a
 
 We are including this for historical purposes as the website, videos and social media accounts are offline.
