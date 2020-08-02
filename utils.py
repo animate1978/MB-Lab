@@ -21,7 +21,6 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import logging
-
 import bpy
 
 
@@ -62,17 +61,16 @@ def get_active_armature():
 def is_ik_armature(armature=None):
     if not armature:
         armature = get_active_armature()
-        if armature and armature.type == 'ARMATURE':
-            for b in armature.data.bones:
-                if 'IK' in b.name:
-                    return True
-        elif armature and armature.type != 'ARMATURE':
-            logger.warning("Cannot get the bones because the obj is not an armature")
-            return False
+    if armature and armature.type == 'ARMATURE':
+        for b in armature.data.bones:
+            if 'IK' in b.name:
+                return True
+    elif armature and armature.type != 'ARMATURE':
+        logger.warning("Cannot get the bones because the obj is not an armature")
+        return False
     return False
 
 # MB-Lab version check
-
 def check_version(m_vers, min_version=(1, 5, 0)):
 
     # m_vers can be a list, tuple, IDfloatarray or str
@@ -89,3 +87,23 @@ def check_version(m_vers, min_version=(1, 5, 0)):
 
     mesh_version = (float(mesh_version[0]), float(mesh_version[2]), float(mesh_version[4]))
     return mesh_version > min_version
+    
+# In a list of strings, return every str that has contains[] in it.
+def sort_str_content(str_list, contains=[], constraint_and=False):
+    if len(contains) < 1:
+        if constraint_and:
+            return str_list
+        else:
+            return []
+    return_list = []
+    content = contains[0]
+    for item in str_list:
+        if content in item:
+            return_list.append(item)
+    if constraint_and:
+        return sort_str_content(return_list, contains[1:], True)
+    under_list = sort_str_content(str_list, contains[1:], False)
+    for item in under_list:
+        if not item in return_list:
+            return_list.append(item)
+    return return_list

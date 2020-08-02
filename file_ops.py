@@ -35,9 +35,16 @@ import bpy
 from . import utils
 from .utils import get_object_parent
 
-
 logger = logging.getLogger(__name__)
 
+data_directory = "data"
+# Below is a trick. For unknown reason, get_configuration()
+# is invoked multiple times in some occasions like expressions tool
+# after finalization. That's why the tool is so long.
+# As the configuration need to be loaded a single time by session,
+# this variable was created.
+configuration_done = None
+root_directories = None
 
 def is_writeable(filepath):
     try:
@@ -47,30 +54,74 @@ def is_writeable(filepath):
         logger.warning("Writing permission denied for %s", filepath)
     return False
 
+def get_root_directories():
+    global root_directories
+    if root_directories != None:
+        return root_directories
+    rd = []
+    fd = [".git", ".github", "__pycache__", "mb-lab_updater"]
+    addon_directory = os.path.dirname(os.path.realpath(__file__))
+    for root, dirs, files in os.walk(addon_directory):
+        if root == addon_directory:
+            rd = dirs
+            break
+    root_directories = []
+    for dir in rd:
+        if dir not in fd:
+            root_directories.append(
+                (dir,
+                "MB_Lab" if dir == "data" else dir,
+                dir))
+    return root_directories
+    
+def set_data_path(path):
+    global data_directory
+    global configuration_done
+    data_directory = path
+    configuration_done = None
 
 def get_data_path():
+    global data_directory
     addon_directory = os.path.dirname(os.path.realpath(__file__))
-    data_dir = os.path.join(addon_directory, "data")
-    logger.info("Looking for the retarget data in the folder %s...", simple_path(data_dir))
+    root_dir = os.path.join(addon_directory, data_directory)
+    logger.info("Looking for the retarget data in the folder %s...", simple_path(root_dir))
 
-    if not os.path.isdir(data_dir):
+    if not os.path.isdir(root_dir):
         logger.critical("Tools data not found. Please check your Blender addons directory.")
         return None
 
-    return data_dir
-
+    return root_dir
 
 def get_configuration():
+    global configuration_done
+    # For a reason, after finalization, some functions use this
+    # but they don't need it. As a configuration doesn't change
+    # during a session, no need to recalculate it each time.
+    # what's why the variable below exists.
+    if configuration_done != None:
+        return configuration_done
     data_path = get_data_path()
-
+    # Here something to change :
+    # Allow to load every file that ends with _config.json
     if data_path:
-        configuration_path = os.path.join(data_path, "characters_config.json")
-        if os.path.isfile(configuration_path):
-            return load_json_data(configuration_path, "Characters definition")
-
+        configuration_done = {}
+        tmp = {}
+        for list_dir in os.listdir(data_path):
+            configuration_path = os.path.join(data_path, list_dir)
+            if os.path.isfile(configuration_path) and configuration_path.endswith("_config.json"):
+                tmp = load_json_data(configuration_path, "Characters definition")
+                for prop in tmp:
+                    if prop == 'data_directory':
+                        pass
+                    elif not prop in configuration_done:
+                        configuration_done[prop] = tmp[prop]
+                    elif prop == "templates_list" or prop == "character_list":
+                        configuration_done[prop] += tmp[prop]
+                    else:
+                        configuration_done[prop] = tmp[prop]
+        return configuration_done
     logger.critical("Configuration database not found. Please check your Blender addons directory.")
     return None
-
 
 def get_blendlibrary_path():
     data_path = get_data_path()
@@ -109,6 +160,19 @@ def exists_database(lib_path):
             logger.warning("data path %s not found", simple_path(lib_path))
     return result
 
+#Teto
+def save_json_data(json_path, char_data):
+    try:
+        with open(json_path, "w") as j_file:
+            json.dump(char_data, j_file)
+        j_file.close()
+    except IOError:
+        if simple_path(json_path) != "":
+            logger.warning("File can not be saved: %s", simple_path(json_path))
+    except Exception:
+        logger.warning("The data are not serializable: %s", simple_path(json_path))
+#End Teto
+
 def load_json_data(json_path, description=None):
     try:
         time1 = time.time()
@@ -145,18 +209,30 @@ def set_verts_coords_from_file(obj, vertices_path):
                 vert.co = new_vertices[i]
 
 
-def generate_items_list(folderpath, file_type="json"):
+def generate_items_list(folderpath, file_type="json", with_type = False):
     items_list = []
     if os.path.isdir(folderpath):
         for database_file in os.listdir(folderpath):
             the_item, extension = os.path.splitext(database_file)
             if file_type in extension:
-                if the_item not in items_list:
+                final_name = the_item if not with_type else database_file
+                if final_name not in items_list:
                     the_descr = "Load and apply {0} from lab library".format(the_item)
-                    items_list.append((the_item, the_item, the_descr))
+                    items_list.append((final_name, final_name, the_descr))
         items_list.sort()
     return items_list
 
+# A convenient way to not create the items list all the time
+items_dict = {}
+
+def get_items_list(folderpath, file_type="json", with_type=False, reset=False):
+    global items_dict
+    if folderpath in items_dict and not reset:
+        return items_dict[folderpath]
+    items_list = generate_items_list(folderpath, file_type, with_type)
+    if len(items_list) > 0:
+        items_dict[folderpath] = items_list
+    return items_list
 
 # Append humanoid objects
 
@@ -198,7 +274,8 @@ def append_object_from_library(lib_filepath, obj_names, suffix=None):
                 data_to.objects = [name for name in names_to_append if name in data_from.objects]
     except OSError:
         logger.critical("lib %s not found", lib_filepath)
-
+        return
+        
     for obj in data_to.objects:
         link_to_collection(obj)
         obj_parent = utils.get_object_parent(obj)
@@ -271,12 +348,9 @@ def get_newest_object(existing_obj_names):
             return get_object_by_name(name)
     return None
 
-
-
-
-
-def json_booleans_to_python(value):
-    return value == 0
+# This has been commented out, it doesn't seem to be used anywhere
+#def json_booleans_to_python(value):
+#    return value != 0
 
 
 def load_image(filepath):
@@ -323,4 +397,3 @@ def new_texture(name, image=None):
     if image:
         _new_texture.image = image
     return _new_texture
-

@@ -1,0 +1,26 @@
+{
+  "structural": {
+    "Legs_LowerlegLength": 0.17,
+    "Torso_SizeX": 0.71,
+    "Head_SizeX": 0.45,
+    "Waist_Size": 0.68,
+    "Torso_Length": 0.95,
+    "Head_Size": 0.65,
+    "Legs_UpperlegLength": 0.23,
+    "Mouth_SizeX": 0.68,
+    "Mouth_LowerlipVolume": 0.9,
+    "Face_Parallelepiped": 0.52,
+    "Mouth_LowerlipSizeZ": 0.6,
+    "Eyes_OuterPosZ": 0.1,
+    "Eyelids_Angle": 0.45,
+    "Mouth_UpperlipVolume": 0.65,
+    "Nose_Curve": 0.53,
+    "Mouth_UpperlipSizeZ": 0.47,
+    "Eyelids_Crease": 0.9,
+    "Nose_TipPosZ": 0.38,
+    "Chin_Prominence": 0.4,
+    "Jaw_LocY": 0.35,
+    "Jaw_Angle": 0.71,
+    "Forehead_Angle": 0.11
+  }
+}

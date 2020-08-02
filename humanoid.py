@@ -32,7 +32,6 @@ import time
 import json
 import operator
 
-
 from . import morphengine, skeletonengine, algorithms, proxyengine, materialengine, utils, file_ops, object_ops
 
 logger = logging.getLogger(__name__)
@@ -45,6 +44,9 @@ class HumanModifier:
 
     def __init__(self, name, obj_name):
         self.name = name
+        #Teto
+        self.short_name = name.split("_")[1] #can change after when added to a category
+        #End Teto
         self.obj_name = obj_name
         self.properties = []
 
@@ -56,7 +58,7 @@ class HumanModifier:
         if self.obj_name in bpy.data.objects:
             return bpy.data.objects[self.obj_name]
         return None
-
+    
     def add(self, prop):
         self.properties.append(prop)
 
@@ -65,7 +67,7 @@ class HumanModifier:
             if propx == prop:
                 return True
         return False
-
+        
     def get_properties(self):
         """
         Return the properties contained in the
@@ -100,7 +102,6 @@ class HumanModifier:
                 current_val = getattr(obj, prop, 0.5)
                 char_data[prop] = current_val
 
-
     def __lt__(self, other):
         return self.name < other.name
 
@@ -131,6 +132,50 @@ class HumanCategory:
                 return modifier
         return None
 
+    #Teto
+    def get_modifier_short_name(self, name):
+        modif = self.get_modifier(name)
+        if modif == None:
+            return ""
+        return modif.short_name
+    
+    def get_modifier_tiny_name(self, sub_categories=[], exclude_in_others=[]):
+        # Return the short name minus the beginning
+        # of its name corresponding to sub_category
+        # The key is subcategory name.
+        # The value is [tiny, short, full]
+        # Method used only for expressions editor for now
+        # exclude_in_others means that the modifiers' name that are in this
+        # list can't be put in "other" category
+        if len(sub_categories) > 0:
+            tiny = {'other': []}
+            triple = []
+            done = False
+            false_others = False
+            sub_categories = sorted(sub_categories, reverse = True)
+            for modif in self.modifiers:
+                for sub in sub_categories:
+                    if not sub in tiny:
+                        tiny[sub] = []
+                    if modif.short_name.startswith(sub):
+                        triple = [modif.short_name.lstrip(sub), modif.short_name, modif.name]
+                        tiny[sub].append(triple)
+                        done = True
+                        break
+                if done:
+                    done = False
+                else:
+                    for fo in exclude_in_others:
+                        if modif.short_name.startswith(fo) or modif.short_name.startswith("ID"):
+                            false_others = True
+                    if false_others:
+                        false_others = False
+                    else:
+                        tiny['other'].append([modif.short_name, modif.short_name, modif.name])
+            return tiny
+        return {}
+    #End Teto
+
     def get_all_properties(self):
         """
         Return all properties involved in the category,
@@ -154,7 +199,7 @@ class HumanCategory:
         return self.name < other.name
 
     def __repr__(self):
-        return "Category {0} with {1} modfiers".format(
+        return "Category {0} with {1} modifiers".format(
             self.name,
             len(self.modifiers))
 
@@ -165,16 +210,16 @@ class Humanoid:
     """
 
     def __init__(self, lab_version):
-
         self.lab_vers = list(lab_version)
         self.has_data = False
         self.obj_name = ""
-        self.data_path = file_ops.get_data_path()
         self.characters_config = file_ops.get_configuration()
+        self.data_path = file_ops.get_data_path()
         self.lib_filepath = file_ops.get_blendlibrary_path()
         if self.characters_config:
             self.humanoid_types = self.build_items_list("character_list")
             self.template_types = self.build_items_list("templates_list")
+        self.data_directory = file_ops.get_data_path()
 
     def is_muscle_rig_available(self, character_identifier):
         if self.characters_config[character_identifier]["vertexgroup_muscle_file"] != "":
@@ -205,7 +250,7 @@ class Humanoid:
         logger.info("Found the humanoid: {0}".format(character_identifier))
 
         logger.info("Init the database...")
-
+        
         self.no_categories = "BasisAsymTest"
         self.categories = {}
         self.bodydata_realtime_activated = True
@@ -261,7 +306,7 @@ class Humanoid:
     def add_subdivision_modifier(self):
         obj = self.get_object()
         parameters = {"levels": 1, "render_levels": 2, "show_viewport": True, "show_in_editmode": False}
-        algorithms.new_modifier(obj, self.mat_engine.subdivision_modifier_name, 'SUBSURF', parameters)
+        object_ops.new_modifier(obj, self.mat_engine.subdivision_modifier_name, 'SUBSURF', parameters)
 
     def add_displacement_modifier(self):
         obj = self.get_object()
@@ -269,8 +314,11 @@ class Humanoid:
         if disp_img:
             disp_tex = file_ops.new_texture(self.mat_engine.generated_disp_modifier_ID, disp_img)
             parameters = {"texture_coords":'UV', "strength": 0.01, "show_viewport": False, "texture": disp_tex}
-            displacement_modifier = algorithms.new_modifier(obj, self.mat_engine.generated_disp_modifier_ID, 'DISPLACE', parameters)
-
+            displacement_modifier = object_ops.new_modifier(obj, self.mat_engine.generated_disp_modifier_ID, 'DISPLACE', parameters)
+    
+    def get_data_directory():
+        return self.data_directory
+        
     def rename_obj(self, prefix):
         obj = self.get_object()
         if prefix != "":
@@ -298,15 +346,36 @@ class Humanoid:
 
     def load_transformation_database(self):
         self.transformations_data = file_ops.load_json_data(self.transformations_data_path, "Transformations database")
-
-    def get_categories(self):
-        categories = self.categories.values()
+    
+    def get_categories(self, exlude_names=[]):
+        if exlude_names == []:
+            categories = self.categories.values()
+            return sorted(categories)
+        categories = []
+        for key, value in self.categories.items():
+            if key not in exlude_names:
+                categories.append(value)
         return sorted(categories)
-
+    
+    def get_root_model_name(self):
+        if len(self.data_directory) > 0 and self.data_directory != "data":
+            return self.data_directory
+        if len(self.obj_name) < 1:
+            return ""
+        # Legacy... lines below are just for anime and human models...
+        for name in self.get_category("Expressions").get_all_properties():
+            if name.startswith("Expressions_ID"):
+                rmn = name.split("_")[1]
+                rmn = rmn[2:]
+                self.root_model_name = rmn.lower()
+                if self.root_model_name == "humans": # Dirty trick...
+                    self.root_model_name = "human"
+                return self.root_model_name
+        
     def get_category(self, name):
         if name in self.categories:
             return self.categories[name]
-
+    
     def get_properties_in_category(self, name):
         return self.categories[name].get_all_properties()
 
@@ -316,21 +385,24 @@ class Humanoid:
         """
         components = morph_name.split("_")
         if components[0][:4] not in self.no_categories:
-            if len(components) == 3:
+            if len(components) == 3: #Is that really necessary ?
                 category_name = components[0]
+                # Expressions and regular morphs are mixed
+                # Both are considered as morphs (that is true)
                 if category_name not in self.categories:
+                    # if category doesn't exist yet
                     category = HumanCategory(category_name)
                     self.categories[category_name] = category
                 else:
                     category = self.categories[category_name]
-
+                # The modifier is used to store properties
                 modifier_name = components[0]+"_"+components[1]
                 modifier = category.get_modifier(modifier_name)
-                if not modifier:
+                if not modifier: # Create a new property to the modifier
                     modifier = HumanModifier(modifier_name, self.obj_name)
                     category.add(modifier)
-
                 for element in components[1].split("-"):
+                    # Now add property
                     prop = components[0]+"_" + element
                     if prop not in modifier:
                         modifier.add(prop)
@@ -451,7 +523,7 @@ class Humanoid:
         self.mat_engine.save_texture(filepath, "body_derm")
 
     def save_all_textures(self, filepath):
-        targets = ["body_derm", "body_displ", "teeth_albedo", "eyes_albedo", "tongue_albedo", "freckle_mask", "blush", "sebum", "lipmap", "thickness", "iris_color", "iris_bump", "sclera_color", "translucent_mask", "sclera_mask"]
+        targets = ["body_derm", "body_displ", "teeth_albedo", "eyes_albedo", "tongue_albedo", "freckle_mask", "blush", "sebum", "lipmap", "iris_color", "iris_bump", "sclera_color", "translucent_mask", "sclera_mask", "body_bump"]
         for target in targets:
             dir_path = os.path.dirname(filepath)
             filename = os.path.basename(filepath)
@@ -1047,7 +1119,7 @@ class Humanoid:
                 char_data["proportion_index"] = self.morph_engine.proportion_index
 
             output_file = open(filepath, 'w')
-            json.dump(char_data, output_file)
+            json.dump(char_data, output_file, indent=2)
             output_file.close()
 
     def export_measures(self, filepath):
@@ -1199,4 +1271,4 @@ class Humanoid:
     def add_corrective_smooth_modifier(self):
         obj = self.get_object()
         parameters = {"show_viewport": True, "invert_vertex_group": True, "vertex_group": "head"}
-        algorithms.new_modifier(obj, self.corrective_modifier_name, 'CORRECTIVE_SMOOTH', parameters)
+        object_ops.new_modifier(obj, self.corrective_modifier_name, 'CORRECTIVE_SMOOTH', parameters)

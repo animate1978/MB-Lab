@@ -188,7 +188,7 @@
     ["feet_width", "Feet_SizeX"],
     ["feet_length", "Feet_SizeY"],
     ["feet_height_Z", "Feet_SizeZ"],
-    ["hands_length", "Hands_Lenght"],
+    ["hands_length", "Hands_Length"],
     ["hands_width", "Hands_FingersInterDist"],
     ["feet_heel_width", "Feet_HeelWidth"]
   ],
