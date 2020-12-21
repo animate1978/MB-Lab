@@ -1,6 +1,11 @@
 name: Package Builder
 
-on: [push]
+on:  
+  push:
+  pull_request:
+    branches:
+      - master
+      - dev
 
 jobs:
   python_build:
