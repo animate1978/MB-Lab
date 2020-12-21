@@ -316,7 +316,7 @@ class Humanoid:
             parameters = {"texture_coords":'UV', "strength": 0.01, "show_viewport": False, "texture": disp_tex}
             displacement_modifier = object_ops.new_modifier(obj, self.mat_engine.generated_disp_modifier_ID, 'DISPLACE', parameters)
     
-    def get_data_directory():
+    def get_data_directory(self):
         return self.data_directory
         
     def rename_obj(self, prefix):
