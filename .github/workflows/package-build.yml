@@ -1,6 +1,11 @@
 name: Package Builder
 
-on: [push]
+on:  
+  push:
+  pull_request:
+    branches:
+      - master
+      - dev
 
 jobs:
   python_build:
@@ -9,7 +14,7 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [3.6, 3.7]
+        python-version: [3.6, 3.7, 3.8, 3.9]  # Blender 2.91 uses Python 3.7
 
     steps:
     - uses: actions/checkout@v1

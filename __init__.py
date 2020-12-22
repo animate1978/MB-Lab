@@ -1199,7 +1199,7 @@ class SaveBodyAsIs(bpy.types.Operator, ExportHelper):
     bl_label = 'Save actual model\'s vertices in a file'
     bl_idname = 'mbast.button_save_body_as_is'
     filename_ext = ".json"
-    filter_glob: bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
+    filter_glob = bpy.props.StringProperty(default='*.json', options={'HIDDEN'},)
     bl_description = 'Save all vertices of the actual body shown on screen in a file.'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
@@ -1221,7 +1221,7 @@ class LoadBaseBody(bpy.types.Operator, ImportHelper):
     bl_label = 'Load all vertices as a base model'
     bl_idname = 'mbast.button_load_base_body'
     filename_ext = ".json"
-    filter_glob: bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
+    filter_glob = bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
     bl_description = 'Load all vertices as a base body model.'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
@@ -1241,7 +1241,7 @@ class LoadSculptedBody(bpy.types.Operator, ImportHelper):
     bl_label = 'Load all vertices as a sculpted model'
     bl_idname = 'mbast.button_load_sculpted_body'
     filename_ext = ".json"
-    filter_glob: bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
+    filter_glob = bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
     bl_description = 'Load all vertices as a sculpted body model.'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
@@ -1684,7 +1684,7 @@ class FinalizeCharacterAndImages(bpy.types.Operator, ExportHelper):
     bl_label = 'Finalize with textures and backup'
     bl_idname = 'mbast.finalize_character_and_images'
     filename_ext = ".png"
-    filter_glob: bpy.props.StringProperty(default="*.png", options={'HIDDEN'},)
+    filter_glob = bpy.props.StringProperty(default="*.png", options={'HIDDEN'},)
     bl_description = 'Finalize, saving all the textures and converting the parameters in shapekeys. Warning: after the conversion the character will be no longer modifiable using MB-Lab tools'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
@@ -1850,7 +1850,7 @@ class ExpDisplacementImage(bpy.types.Operator, ExportHelper):
     bl_idname = "mbast.export_dispimage"
     bl_label = "Save displacement map"
     filename_ext = ".png"
-    filter_glob: bpy.props.StringProperty(
+    filter_glob = bpy.props.StringProperty(
         default="*.png",
         options={'HIDDEN'},
     )
@@ -1867,7 +1867,7 @@ class ExpDermalImage(bpy.types.Operator, ExportHelper):
     bl_idname = "mbast.export_dermimage"
     bl_label = "Save dermal map"
     filename_ext = ".png"
-    filter_glob: bpy.props.StringProperty(
+    filter_glob = bpy.props.StringProperty(
         default="*.png",
         options={'HIDDEN'},
     )
@@ -1884,7 +1884,7 @@ class ExpAllImages(bpy.types.Operator, ExportHelper):
     bl_idname = "mbast.export_allimages"
     bl_label = "Export all maps"
     filename_ext = ".png"
-    filter_glob: bpy.props.StringProperty(
+    filter_glob = bpy.props.StringProperty(
         default="*.png",
         options={'HIDDEN'},
     )
@@ -1901,7 +1901,7 @@ class ExpCharacter(bpy.types.Operator, ExportHelper):
     bl_idname = "mbast.export_character"
     bl_label = "Export character"
     filename_ext = ".json"
-    filter_glob: bpy.props.StringProperty(
+    filter_glob = bpy.props.StringProperty(
         default="*.json",
         options={'HIDDEN'},
     )
@@ -1919,7 +1919,7 @@ class ExpMeasures(bpy.types.Operator, ExportHelper):
     bl_idname = "mbast.export_measures"
     bl_label = "Export measures"
     filename_ext = ".json"
-    filter_glob: bpy.props.StringProperty(
+    filter_glob = bpy.props.StringProperty(
         default="*.json",
         options={'HIDDEN'},
     )
@@ -1936,7 +1936,7 @@ class ImpCharacter(bpy.types.Operator, ImportHelper):
     bl_idname = "mbast.import_character"
     bl_label = "Import character"
     filename_ext = ".json"
-    filter_glob: bpy.props.StringProperty(
+    filter_glob = bpy.props.StringProperty(
         default="*.json",
         options={'HIDDEN'},
     )
@@ -1954,7 +1954,7 @@ class ImpMeasures(bpy.types.Operator, ImportHelper):
     bl_idname = "mbast.import_measures"
     bl_label = "Import measures"
     filename_ext = ".json"
-    filter_glob: bpy.props.StringProperty(
+    filter_glob = bpy.props.StringProperty(
         default="*.json",
         options={'HIDDEN'},
     )
@@ -1971,7 +1971,7 @@ class LoadDermImage(bpy.types.Operator, ImportHelper):
     bl_idname = "mbast.import_dermal"
     bl_label = "Load dermal map"
     filename_ext = ".png"
-    filter_glob: bpy.props.StringProperty(
+    filter_glob = bpy.props.StringProperty(
         default="*.png",
         options={'HIDDEN'},
     )
@@ -1988,7 +1988,7 @@ class LoadDispImage(bpy.types.Operator, ImportHelper):
     bl_idname = "mbast.import_displacement"
     bl_label = "Load displacement map"
     filename_ext = ".png"
-    filter_glob: bpy.props.StringProperty(
+    filter_glob = bpy.props.StringProperty(
         default="*.png",
         options={'HIDDEN'},
     )
@@ -2086,7 +2086,7 @@ class SaveRestPose(bpy.types.Operator, ExportHelper):
     bl_idname = "mbast.restpose_save"
     bl_label = "Save custom rest pose"
     filename_ext = ".json"
-    filter_glob: bpy.props.StringProperty(
+    filter_glob = bpy.props.StringProperty(
         default="*.json",
         options={'HIDDEN'},
     )
@@ -2104,7 +2104,7 @@ class LoadRestPose(bpy.types.Operator, ImportHelper):
     bl_idname = "mbast.restpose_load"
     bl_label = "Load custom rest pose"
     filename_ext = ".json"
-    filter_glob: bpy.props.StringProperty(
+    filter_glob = bpy.props.StringProperty(
         default="*.json",
         options={'HIDDEN'},
     )
@@ -2122,7 +2122,7 @@ class SavePose(bpy.types.Operator, ExportHelper):
     bl_idname = "mbast.pose_save"
     bl_label = "Save pose"
     filename_ext = ".json"
-    filter_glob: bpy.props.StringProperty(
+    filter_glob = bpy.props.StringProperty(
         default="*.json",
         options={'HIDDEN'},
     )
@@ -2140,7 +2140,7 @@ class ButtonLoadBvhAdjusments(bpy.types.Operator, ImportHelper):
     bl_label = "Load BVH Bone Config"
     filename_ext = ".json"
     bl_description = 'Import the json file containing bvh animation adjustments'
-    filter_glob: bpy.props.StringProperty(
+    filter_glob = bpy.props.StringProperty(
         default="*.json",
         options={'HIDDEN'},
     )
@@ -2169,7 +2169,7 @@ class ButtonSaveBvhAdjustments(bpy.types.Operator, ExportHelper):
     bl_label = 'Save BVH Bone Config'
     bl_description = 'Save bone corrections into a local json file'
     filename_ext = ".json"
-    filter_glob: bpy.props.StringProperty(
+    filter_glob = bpy.props.StringProperty(
         default="*.json",
         options={'HIDDEN'},
     )
@@ -2208,7 +2208,7 @@ class LoadPose(bpy.types.Operator, ImportHelper):
     bl_idname = "mbast.pose_load"
     bl_label = "Load pose"
     filename_ext = ".json"
-    filter_glob: bpy.props.StringProperty(
+    filter_glob = bpy.props.StringProperty(
         default="*.json",
         options={'HIDDEN'},
     )
@@ -2240,7 +2240,7 @@ class LoadBvh(bpy.types.Operator, ImportHelper):
     bl_label = "Load animation (bvh)"
     filename_ext = ".bvh"
     bl_description = 'Import the animation from a bvh motion capture file'
-    filter_glob: bpy.props.StringProperty(
+    filter_glob = bpy.props.StringProperty(
         default="*.bvh",
         options={'HIDDEN'},
     )
@@ -5388,7 +5388,7 @@ class ButtonCurrentModelTransforSave(bpy.types.Operator):
     bl_label = 'Export current model'
     bl_idname = 'mbcrea.button_transfor_save_current'
     filename_ext = ".json"
-    filter_glob: bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
+    filter_glob = bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
     bl_description = 'Export the data base of the current model.\ni.e its data base, not the changes from user.'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
@@ -5410,7 +5410,7 @@ class CheckTransformationFile(bpy.types.Operator, ImportHelper):
     bl_label = 'Check compatibility'
     bl_idname = 'mbcrea.button_check_transf'
     filename_ext = ".json"
-    filter_glob: bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
+    filter_glob = bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
     bl_description = 'Check the compatibility of a file to current model.\nThe result is stored under same directory, same name+.txt'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
@@ -5440,7 +5440,7 @@ class LoadTransformationFile(bpy.types.Operator, ImportHelper):
     bl_label = 'Import for current model'
     bl_idname = 'mbcrea.button_load_transf'
     filename_ext = ".json"
-    filter_glob: bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
+    filter_glob = bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
     bl_description = 'Load a transformation file for the current model.'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
@@ -5849,7 +5849,7 @@ class ImpExpression(bpy.types.Operator, ImportHelper):
     bl_idname = "mbcrea.import_expression"
     bl_label = "Import facial expression"
     filename_ext = ".json"
-    filter_glob: bpy.props.StringProperty(
+    filter_glob = bpy.props.StringProperty(
         default="*.json",
         options={'HIDDEN'},
         )
