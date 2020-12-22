@@ -104,54 +104,54 @@ class MeshHistory:
         if type == 'VERTEX':
             if self.counter_vert > 0:
                 self.counter_vert -= 1
-            return get_history(type, self.counter_vert)
+            return self.get_history(type, self.counter_vert)
         elif type == 'EDGE':
             if self.counter_edge > 0:
                 self.counter_edge -= 1
-            return get_history(type, self.counter_edge)
+            return self.get_history(type, self.counter_edge)
         elif type == 'FACE':
             if self.counter_face > 0:
                 self.counter_face -= 1
-            return get_history(type, self.counter_face)
+            return self.get_history(type, self.counter_face)
         return []
             
     def get_next(self, type='VERTEX'):
         if type == 'VERTEX':
             if self.counter_vert < len(self.vertices_history)-1:
                 self.counter_vert += 1
-            return get_history(type, self.counter_vert)
+            return self.get_history(type, self.counter_vert)
         elif type == 'EDGE':
             if self.counter_edge < len(self.edges_history)-1:
                 self.counter_edge += 1
-            return get_history(type, self.counter_edge)
+            return self.get_history(type, self.counter_edge)
         elif type == 'FACE':
             if self.counter_face < len(self.faces_history)-1:
                 self.counter_face += 1
-            return get_history(type, self.counter_face)
+            return self.get_history(type, self.counter_face)
         return []
     
     def get_last(self, type='VERTEX'):
         if type == 'VERTEX':
             self.counter_vert = len(self.vertices_history)-1
-            return get_history(type, self.counter_vert)
+            return self.get_history(type, self.counter_vert)
         elif type == 'EDGE':
             self.counter_edge = len(self.edges_history)-1
-            return get_history(type, self.counter_edge)
+            return self.get_history(type, self.counter_edge)
         elif type == 'FACE':
             self.counter_face = len(self.faces_history)-1
-            return get_history(type, self.counter_face)
+            return self.get_history(type, self.counter_face)
         return []
     
     def get_first(self, type='VERTEX'):
         if type == 'VERTEX':
             self.counter_vert = 0
-            return get_history(type, self.counter_vert)
+            return self.get_history(type, self.counter_vert)
         elif type == 'EDGE':
             self.counter_edge = 0
-            return get_history(type, self.counter_edge)
+            return self.get_history(type, self.counter_edge)
         elif type == 'FACE':
             self.counter_face = 0
-            return get_history(type, self.counter_face)
+            return self.get_history(type, self.counter_face)
         return []
     
     def get_history(self, type='VERTEX', index=-1):
