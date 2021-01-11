@@ -55,6 +55,7 @@ from . import humanoid_rotations
 from . import preferences
 from . import addon_updater_ops
 from . import facerig
+from . import HE_scalp_mesh
 
 
 logger = logging.getLogger(__name__)
@@ -2253,6 +2254,64 @@ class HairMesh(bpy.types.Operator):
 		bpy.context.object.parent = h_e.armature
 		return {'FINISHED'}
 
+#Scalp Mesh
+class GuideProp(bpy.types.PropertyGroup):
+    #
+    guide_bool: bpy.props.BoolProperty(
+        name = "Add Curve Guide",
+        description = "Add curve guide to hair",
+        default = False,
+        )
+
+class AddScalp(bpy.types.Operator):
+    """Add scalp mesh"""
+    bl_idname = "mbast.add_scalp"
+    bl_label = "Add Scalp Mesh"
+    #
+    def execute(self, context):
+        HE_scalp_mesh.scalp()
+        return {'FINISHED'}
+
+class VertexGrouptoHair(bpy.types.Operator):
+    """Spawn hair from vertex groups"""
+    bl_idname = "mbast.vertex_group_to_hair"
+    bl_label = "Hair from Vertex Groups"
+    #
+    @classmethod
+    def poll(cls, context):
+        return context.object.type == 'MESH'
+    #
+    def execute(self, context):
+        guide = context.scene.add_guide.guide_bool
+        HE_scalp_mesh.hair_to_vg(context.object, guide=guide)
+        return {'FINISHED'}
+
+class BakeHairShape(bpy.types.Operator):
+    """Bakes hair into shape"""
+    bl_idname = "mbast.bake_hair_shape"
+    bl_label = "Bake Hair Shape"
+    #
+    @classmethod
+    def poll(cls, context):
+        return context.object.type == 'MESH'
+    #
+    def execute(self, context):
+        HE_scalp_mesh.hair_baking(context.object , context.object.particle_systems.active.name)
+        return {'FINISHED'}
+
+def draw_scalp_layout(self, context, layout):
+    scalp_box = layout.box()
+    scalp_box.label(text="Scalp Mesh")
+    scalp_box.operator(AddScalp.bl_idname)
+    hair_box = layout.box()
+    hair_box.label(text="Vertex Group to Hair")
+    hair_box.prop(context.scene.add_guide ,"guide_bool")
+    hair_box.operator(VertexGrouptoHair.bl_idname)
+    if context.scene.add_guide.guide_bool:
+        bake_box = layout.box()
+        bake_box.label(text="Bake Active Hair Particles")
+        bake_box.operator(BakeHairShape.bl_idname)
+
 class StartSession(bpy.types.Operator):
     bl_idname = "mbast.init_character"
     bl_label = "Create character"
@@ -2399,6 +2458,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                 box_asts.operator("mbast.hair_card", icon='USER')
                 box_asts.operator("mbast.hair_mesh", icon='USER')
                 box_asts.label(text="")
+                draw_scalp_layout(self, context, box_asts)
 
             # Proxy Fitting
 
@@ -2826,6 +2886,10 @@ classes = (
     UndoRemoveColor,
     HairCard,
     HairMesh,
+    GuideProp,
+    AddScalp,
+    VertexGrouptoHair,
+    BakeHairShape,
     VIEW3D_PT_tools_MBLAB,
     
     
@@ -2840,6 +2904,8 @@ def register():
     # register the example panel, to show updater buttons
     for cls in classes:
         bpy.utils.register_class(cls)
+    #curve guide property
+    bpy.types.Scene.add_guide = bpy.props.PointerProperty(type=GuideProp)
 
 
 def unregister():
@@ -2849,6 +2915,8 @@ def unregister():
     # register the example panel, to show updater buttons
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
+    #curve guide property
+    del bpy.type.Scene.add_guide
 
 
 if __name__ == "__main__":
