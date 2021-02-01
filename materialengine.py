@@ -307,7 +307,8 @@ class MaterialEngine:
                     return
 
                 if images_scale(disp_data_image, disp_img):
-                    disp_img.pixels = self.calculate_disp_pixels(disp_data_image, age_factor, tone_factor, mass_factor)
+                    new_pixels = self.calculate_disp_pixels(disp_data_image, age_factor, tone_factor, mass_factor)
+                    disp_img.pixels.foreach_set(new_pixels)
                     disp_tex.image = disp_img
                     logger.info("Displacement calculated in %s seconds", time.time()-time1)
             else:
