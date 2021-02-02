@@ -1066,7 +1066,7 @@ def apply_modifier(obj, modifier):
     if modifier_name in obj.modifiers:
         set_active_object(obj)
         try:
-            bpy.ops.object.modifier_apply(apply_as='DATA', modifier=modifier_name)
+            bpy.ops.object.modifier_apply(modifier=modifier_name)
         except AttributeError:
             logger.warning("Problems in applying %s. Is the modifier disabled?", modifier_name)
 
