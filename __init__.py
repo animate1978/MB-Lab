@@ -192,7 +192,7 @@ def start_lab_session():
             else:
                 mblab_humanoid.reset_mesh()
                 mblab_humanoid.update_character(mode="update_all")
-            
+
             # All inits for creation tools.
             morphcreator.init_morph_names_database()
             mbcrea_expressionscreator.reset_expressions_items()
@@ -409,11 +409,11 @@ def init_categories_props(humanoid_instance):
         items=get_categories_enum(),
         update=modifiers_update,
         name="Morphing categories")
-    
+
     # Sub-categories for "Facial expressions"
     mbcrea_expressionscreator.set_expressions_modifiers(mblab_humanoid)
     sub_categories_enum = mbcrea_expressionscreator.get_expressions_sub_categories()
-    
+
     bpy.types.Scene.expressionsSubCategory = bpy.props.EnumProperty(
         items=sub_categories_enum,
         update=modifiers_update,
@@ -737,7 +737,7 @@ bpy.types.Scene.mblab_expression_filter = bpy.props.StringProperty(
 #Teto
 def mbcrea_enum_expressions_items_update(self, context):
     return mbcrea_expressionscreator.get_expressions_items()
-   
+
 
 bpy.types.Scene.mbcrea_enum_expressions_items = bpy.props.EnumProperty(
     items=mbcrea_enum_expressions_items_update,
@@ -1199,7 +1199,7 @@ class SaveBodyAsIs(bpy.types.Operator, ExportHelper):
     bl_label = 'Save actual model\'s vertices in a file'
     bl_idname = 'mbast.button_save_body_as_is'
     filename_ext = ".json"
-    filter_glob = bpy.props.StringProperty(default='*.json', options={'HIDDEN'},)
+    filter_glob: bpy.props.StringProperty(default='*.json', options={'HIDDEN'},)
     bl_description = 'Save all vertices of the actual body shown on screen in a file.'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
@@ -1221,7 +1221,7 @@ class LoadBaseBody(bpy.types.Operator, ImportHelper):
     bl_label = 'Load all vertices as a base model'
     bl_idname = 'mbast.button_load_base_body'
     filename_ext = ".json"
-    filter_glob = bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
+    filter_glob: bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
     bl_description = 'Load all vertices as a base body model.'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
@@ -1241,7 +1241,7 @@ class LoadSculptedBody(bpy.types.Operator, ImportHelper):
     bl_label = 'Load all vertices as a sculpted model'
     bl_idname = 'mbast.button_load_sculpted_body'
     filename_ext = ".json"
-    filter_glob = bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
+    filter_glob: bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
     bl_description = 'Load all vertices as a sculpted body model.'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
@@ -1684,7 +1684,7 @@ class FinalizeCharacterAndImages(bpy.types.Operator, ExportHelper):
     bl_label = 'Finalize with textures and backup'
     bl_idname = 'mbast.finalize_character_and_images'
     filename_ext = ".png"
-    filter_glob = bpy.props.StringProperty(default="*.png", options={'HIDDEN'},)
+    filter_glob: bpy.props.StringProperty(default="*.png", options={'HIDDEN'},)
     bl_description = 'Finalize, saving all the textures and converting the parameters in shapekeys. Warning: after the conversion the character will be no longer modifiable using MB-Lab tools'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
@@ -1850,7 +1850,7 @@ class ExpDisplacementImage(bpy.types.Operator, ExportHelper):
     bl_idname = "mbast.export_dispimage"
     bl_label = "Save displacement map"
     filename_ext = ".png"
-    filter_glob = bpy.props.StringProperty(
+    filter_glob: bpy.props.StringProperty(
         default="*.png",
         options={'HIDDEN'},
     )
@@ -1867,7 +1867,7 @@ class ExpDermalImage(bpy.types.Operator, ExportHelper):
     bl_idname = "mbast.export_dermimage"
     bl_label = "Save dermal map"
     filename_ext = ".png"
-    filter_glob = bpy.props.StringProperty(
+    filter_glob: bpy.props.StringProperty(
         default="*.png",
         options={'HIDDEN'},
     )
@@ -1884,7 +1884,7 @@ class ExpAllImages(bpy.types.Operator, ExportHelper):
     bl_idname = "mbast.export_allimages"
     bl_label = "Export all maps"
     filename_ext = ".png"
-    filter_glob = bpy.props.StringProperty(
+    filter_glob: bpy.props.StringProperty(
         default="*.png",
         options={'HIDDEN'},
     )
@@ -1901,7 +1901,7 @@ class ExpCharacter(bpy.types.Operator, ExportHelper):
     bl_idname = "mbast.export_character"
     bl_label = "Export character"
     filename_ext = ".json"
-    filter_glob = bpy.props.StringProperty(
+    filter_glob: bpy.props.StringProperty(
         default="*.json",
         options={'HIDDEN'},
     )
@@ -1919,7 +1919,7 @@ class ExpMeasures(bpy.types.Operator, ExportHelper):
     bl_idname = "mbast.export_measures"
     bl_label = "Export measures"
     filename_ext = ".json"
-    filter_glob = bpy.props.StringProperty(
+    filter_glob: bpy.props.StringProperty(
         default="*.json",
         options={'HIDDEN'},
     )
@@ -1936,7 +1936,7 @@ class ImpCharacter(bpy.types.Operator, ImportHelper):
     bl_idname = "mbast.import_character"
     bl_label = "Import character"
     filename_ext = ".json"
-    filter_glob = bpy.props.StringProperty(
+    filter_glob: bpy.props.StringProperty(
         default="*.json",
         options={'HIDDEN'},
     )
@@ -1954,7 +1954,7 @@ class ImpMeasures(bpy.types.Operator, ImportHelper):
     bl_idname = "mbast.import_measures"
     bl_label = "Import measures"
     filename_ext = ".json"
-    filter_glob = bpy.props.StringProperty(
+    filter_glob: bpy.props.StringProperty(
         default="*.json",
         options={'HIDDEN'},
     )
@@ -1971,7 +1971,7 @@ class LoadDermImage(bpy.types.Operator, ImportHelper):
     bl_idname = "mbast.import_dermal"
     bl_label = "Load dermal map"
     filename_ext = ".png"
-    filter_glob = bpy.props.StringProperty(
+    filter_glob: bpy.props.StringProperty(
         default="*.png",
         options={'HIDDEN'},
     )
@@ -1988,7 +1988,7 @@ class LoadDispImage(bpy.types.Operator, ImportHelper):
     bl_idname = "mbast.import_displacement"
     bl_label = "Load displacement map"
     filename_ext = ".png"
-    filter_glob = bpy.props.StringProperty(
+    filter_glob: bpy.props.StringProperty(
         default="*.png",
         options={'HIDDEN'},
     )
@@ -2034,7 +2034,7 @@ class RemoveProxy(bpy.types.Operator):
         scn = bpy.context.scene
         mblab_proxy.remove_fitting()
         return {'FINISHED'}
-        
+
 
 class ApplyMeasures(bpy.types.Operator):
     """Fit the character to the measures"""
@@ -2086,7 +2086,7 @@ class SaveRestPose(bpy.types.Operator, ExportHelper):
     bl_idname = "mbast.restpose_save"
     bl_label = "Save custom rest pose"
     filename_ext = ".json"
-    filter_glob = bpy.props.StringProperty(
+    filter_glob: bpy.props.StringProperty(
         default="*.json",
         options={'HIDDEN'},
     )
@@ -2104,7 +2104,7 @@ class LoadRestPose(bpy.types.Operator, ImportHelper):
     bl_idname = "mbast.restpose_load"
     bl_label = "Load custom rest pose"
     filename_ext = ".json"
-    filter_glob = bpy.props.StringProperty(
+    filter_glob: bpy.props.StringProperty(
         default="*.json",
         options={'HIDDEN'},
     )
@@ -2122,7 +2122,7 @@ class SavePose(bpy.types.Operator, ExportHelper):
     bl_idname = "mbast.pose_save"
     bl_label = "Save pose"
     filename_ext = ".json"
-    filter_glob = bpy.props.StringProperty(
+    filter_glob: bpy.props.StringProperty(
         default="*.json",
         options={'HIDDEN'},
     )
@@ -2140,7 +2140,7 @@ class ButtonLoadBvhAdjusments(bpy.types.Operator, ImportHelper):
     bl_label = "Load BVH Bone Config"
     filename_ext = ".json"
     bl_description = 'Import the json file containing bvh animation adjustments'
-    filter_glob = bpy.props.StringProperty(
+    filter_glob: bpy.props.StringProperty(
         default="*.json",
         options={'HIDDEN'},
     )
@@ -2169,7 +2169,7 @@ class ButtonSaveBvhAdjustments(bpy.types.Operator, ExportHelper):
     bl_label = 'Save BVH Bone Config'
     bl_description = 'Save bone corrections into a local json file'
     filename_ext = ".json"
-    filter_glob = bpy.props.StringProperty(
+    filter_glob: bpy.props.StringProperty(
         default="*.json",
         options={'HIDDEN'},
     )
@@ -2208,7 +2208,7 @@ class LoadPose(bpy.types.Operator, ImportHelper):
     bl_idname = "mbast.pose_load"
     bl_label = "Load pose"
     filename_ext = ".json"
-    filter_glob = bpy.props.StringProperty(
+    filter_glob: bpy.props.StringProperty(
         default="*.json",
         options={'HIDDEN'},
     )
@@ -2240,7 +2240,7 @@ class LoadBvh(bpy.types.Operator, ImportHelper):
     bl_label = "Load animation (bvh)"
     filename_ext = ".bvh"
     bl_description = 'Import the animation from a bvh motion capture file'
-    filter_glob = bpy.props.StringProperty(
+    filter_glob: bpy.props.StringProperty(
         default="*.bvh",
         options={'HIDDEN'},
     )
@@ -2360,7 +2360,7 @@ class OBJECT_OT_particle_hair(bpy.types.Operator):
         # try:
         #     bpy.ops.object.mode_set(mode='POSE')
         # except:
-        #     pass       
+        #     pass
         return {'FINISHED'}
 
 class OBJECT_OT_manual_hair(bpy.types.Operator):
@@ -2392,7 +2392,7 @@ class OBJECT_OT_manual_hair(bpy.types.Operator):
         # try:
         #     bpy.ops.object.mode_set(mode='POSE')
         # except:
-        #     pass       
+        #     pass
         return {'FINISHED'}
 
 class OBJECT_OT_change_hair_color(bpy.types.Operator):
@@ -2551,7 +2551,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
             box_new_opt.prop(scn, 'mbcrea_root_data')
             box_new_opt.prop(scn, 'mblab_character_name')
             box_new_opt.separator(factor=0.5)
-            
+
             if mblab_humanoid.is_ik_rig_available(scn.mblab_character_name):
                 box_new_opt.prop(scn, 'mblab_use_ik', icon='BONE_DATA')
             if mblab_humanoid.is_muscle_rig_available(scn.mblab_character_name):
@@ -2561,7 +2561,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
             box_new_opt.prop(scn, 'mblab_use_eevee', icon='SHADING_RENDERED')
             if scn.mblab_use_cycles or scn.mblab_use_eevee:
                 box_new_opt.prop(scn, 'mblab_use_lamps', icon='LIGHT_DATA')
-            
+
             self.layout.separator(factor=0.5)
             self.layout.operator('mbast.init_character', icon='ARMATURE_DATA')
 
@@ -2576,7 +2576,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                 box_post_opt.operator('mbast.button_facerig_off', icon=icon_collapse)
 
             # Face Rig
-            
+
                 box_face_rig = self.layout.box()
                 box_face_rig_a = box_face_rig.column(align=True)
                 #box_face_rig.label(text="Face Rig")
@@ -2585,7 +2585,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                 box_face_rig_a.prop(scn, "mblab_facs_rig")
 
             # Expressions
-            
+
             if gui_active_panel_fin != "expressions":
                 box_post_opt.operator('mbast.button_expressions_on', icon=icon_expand)
             else:
@@ -2615,7 +2615,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                 else:
                     box_exp.enabled = False
                     box_exp.label(text="No express. shapekeys", icon='INFO')
-            
+
             # Assets, Fitting and Particle Hair
 
             if gui_active_panel_fin != "assets":
@@ -2789,9 +2789,9 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                         #self.layout.label(text="Tip: for slow PC, disable the subdivision in Display Options below", icon='INFO')
                 # Sub-panel for all tools below
                 box_act_tools_sub = self.layout.box()
-                
+
                 # Character library
-                
+
                 box_act_tools_sub.label(text="CHARACTER SET-UP", icon="RNA")
                 box_act_tools_a = box_act_tools_sub.column(align=True)
                 if gui_active_panel != "library":
@@ -2806,9 +2806,9 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                     if mblab_humanoid.exists_phenotype_database():
                         box_lib.prop(obj, "ethnic")
                     box_lib.prop(scn, 'mblab_mix_characters', icon='FORCE_CHARGE')
-                
+
                 # Randomize character
-                
+
                 if gui_active_panel != "random":
                     box_act_tools_a.operator('mbast.button_random_on', icon=icon_expand)
                 else:
@@ -2832,9 +2832,9 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                     box_rand.prop(scn, "mblab_preserve_fantasy")
 
                     box_rand.operator('mbast.character_generator', icon="FILE_REFRESH")
-                
+
                 # Automodelling tools
-                
+
                 if mblab_humanoid.exists_measure_database():
                     if gui_active_panel != "automodelling":
                         box_act_tools_a.operator('mbast.button_automodelling_on', icon=icon_expand)
@@ -2848,9 +2848,9 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                     box_auto = self.layout.box()
                     box_auto.enabled = False
                     box_auto.label(text="Automodelling not available for this character", icon='INFO')
-                
+
                 # Body measures
-                
+
                 box_act_tools_sub.label(text="CHARACTER DESIGN", icon="RNA")
                 box_act_tools_b = box_act_tools_sub.column(align=True)
                 if gui_active_panel_middle != "parameters":
@@ -2869,7 +2869,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                     col.label(text="PARAMETERS")
                     col.prop(scn, "morphingCategory")
                     col.separator(factor=0.2)
-                    
+
                     for prop in mblab_humanoid.get_properties_in_category(scn.morphingCategory):
                         if hasattr(obj, prop) and not prop.startswith("Expressions_ID"):
                             col.prop(obj, prop)
@@ -2901,9 +2901,9 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                     sub = box_param.column(align=True)
                     sub.label(text="RESET")
                     sub.operator("mbast.reset_categoryonly", icon="RECOVER_LAST")
-                
+
                 # Poses
-                
+
                 if mblab_humanoid.exists_rest_poses_database():
                     if gui_active_panel_middle != "rest_pose":
                         box_act_tools_b.operator('mbast.button_rest_pose_on', icon=icon_expand)
@@ -2921,9 +2921,9 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                             box_act_pose.separator(factor=0.2)
                             box_act_pose.operator("mbast.restpose_load", icon='IMPORT')
                             box_act_pose.operator("mbast.restpose_save", icon='EXPORT')
-                
+
                 # Skin editor
-                
+
                 if gui_active_panel_middle != "skin":
                     box_act_tools_b.operator('mbast.button_skin_on', icon=icon_expand)
                 else:
@@ -2938,11 +2938,11 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                     if mblab_humanoid.exists_displace_texture():
                         box_skin_b.operator("mbast.skindisplace_calculate", icon='MOD_DISPLACE')
                         box_skin_b.label(text="Enable Displacement Preview to view updates", icon='INFO')
-                    
+
                     box_skin = box_skin_b.column(align=True)
                     for material_data_prop in sorted(mblab_humanoid.character_material_properties.keys()):
                         box_skin.prop(obj, material_data_prop)
-                
+
                 # Finalize character
                 box_act_tools_sub.label(text="OTHERS", icon="RNA")
                 box_act_tools_c = box_act_tools_sub.column(align=True)
@@ -2958,9 +2958,9 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                         box_fin.operator("mbast.finalize_character_and_images", icon='FREEZE')
                     else:
                         box_fin.operator("mbast.finalize_character", icon='FREEZE')
-                
+
                 # File tools
-                
+
                 if gui_active_panel_display != "file":
                     box_act_tools_c.operator('mbast.button_file_on', icon=icon_expand)
                 else:
@@ -2991,9 +2991,9 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                     box_file.prop(scn, 'mblab_export_materials', icon='MATERIAL')
                     box_file.operator("mbast.export_character", icon='EXPORT')
                     box_file.operator("mbast.import_character", icon='IMPORT')
-                
+
                 # Display character
-                
+
                 if gui_active_panel_display != "display_opt":
                     box_act_tools_c.operator('mbast.button_display_on', icon=icon_expand)
                 else:
@@ -3047,7 +3047,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
         is_objet, name = algorithms.looking_for_humanoid_obj()
         icon_expand = "DISCLOSURE_TRI_RIGHT"
         icon_collapse = "DISCLOSURE_TRI_DOWN"
-        
+
         box_general = self.layout.box()
         box_general.label(text="https://www.mblab.dev")
         #box_general.operator('mbcrea.button_for_tests', icon='BLENDER')
@@ -3076,7 +3076,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     if len(scn.mblab_morph_name) > 0:
                         morph_label = "Morph name : " + morphcreator.get_body_parts(scn.mblab_body_part_name)
                         morph_label += "_" + scn.mblab_morph_name
-                        morph_label += "_" + morphcreator.get_min_max(scn.mblab_morph_min_max)                    
+                        morph_label += "_" + morphcreator.get_min_max(scn.mblab_morph_min_max)
                         box_morphcreator.label(text=morph_label, icon='INFO')
                     else:
                         box_morphcreator.label(text="Name needed !", icon='ERROR')
@@ -3440,7 +3440,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                 else:
                     box_combinexpression.label(text="!NO COMPATIBLE MODEL!", icon='ERROR')
                     box_combinexpression.enabled = False
-                
+
             # Copy / Move / Delete utilities.
             elif scn.mbcrea_before_edition_tools == "cmd_utilities":
                 box_cmd_morphs = self.layout.box()
@@ -3562,7 +3562,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                 else:
                     creation_tools_ops.init_config()
                     box_compat_tools_sub.label(text="Choose a project name !", icon='ERROR')
-            
+
             # Tools about Config file creation - Base models
             box_project_tools = self.layout.box()
             box_project_tools.label(text="TOOLS", icon="MODIFIER_ON")
@@ -4224,7 +4224,7 @@ def mbcrea_enum_morph_items_update(self, context):
     global mbcrea_combined_morph_list
     mbcrea_combined_morph_list = algorithms.create_enum_property_items(props)
     return mbcrea_combined_morph_list
-   
+
 bpy.types.Scene.mbcrea_morphs_items_1 = bpy.props.EnumProperty(
     items=mbcrea_enum_morph_items_update,
     name="",
@@ -4300,7 +4300,7 @@ bpy.types.Scene.mbcrea_preset_name_filter = bpy.props.StringProperty(
 bpy.types.Scene.mbcrea_integrate_material = bpy.props.BoolProperty(
     name="Integrate material",
     description="You can integrate the material or not.")
-    
+
 bpy.types.Scene.mbcrea_special_preset = bpy.props.BoolProperty(
     name="Special",
     description="If the preset is special or common")
@@ -4323,7 +4323,7 @@ def mbcrea_enum_transfor_category(self, context):
             name = "Tone"
         mbcrea_transfor_category_list.append((key, name, name))
     return mbcrea_transfor_category_list
-   
+
 
 bpy.types.Scene.mbcrea_transfor_category = bpy.props.EnumProperty(
     items=mbcrea_enum_transfor_category,
@@ -4362,7 +4362,7 @@ bpy.types.Scene.mbcrea_cmd_spectrum = bpy.props.EnumProperty(
     name="Spectrum",
     update=update_cmd_file,
     default="GE")
-    
+
 bpy.types.Scene.mbcrea_gender_files_in = bpy.props.EnumProperty(
     items=morphcreator.get_gender_type_files(mblab_humanoid, "Gender"),
     name="Gender",
@@ -4384,7 +4384,7 @@ def get_morph_file_categories(self, context):
 
 def update_cmd_categories(self, context):
     morphcreator.update_cmd_morphs()
-    
+
 bpy.types.Scene.mbcrea_file_categories_content = bpy.props.EnumProperty(
     items=get_morph_file_categories,
     name="Category",
@@ -4442,10 +4442,10 @@ bpy.types.Scene.mbcrea_creation_tools = bpy.props.EnumProperty(
     name="",
     default="None",
     )
-    
+
 def update_template_list(self, context):
     return creation_tools_ops.get_templates_list()
-    
+
 bpy.types.Scene.mbcrea_template_list = bpy.props.EnumProperty(
     items=update_template_list,
     name="",
@@ -4459,7 +4459,7 @@ def update_template_new_name(self, context):
         return
     txt += "_" + scn.mbcrea_gender_list + "_base"
     creation_tools_ops.add_content("templates_list", None, txt)
-    
+
 bpy.types.Scene.mbcrea_template_new_name = bpy.props.StringProperty(
     name="",
     description="The name for the template",
@@ -4509,7 +4509,7 @@ bpy.types.Scene.mbcrea_meshes_list = bpy.props.EnumProperty(
 
 def get_character_list(self, context):
     return creation_tools_ops.get_character_list()
-    
+
 def get_character_list_without(self, context):
     return creation_tools_ops.get_character_list(with_new=False)
 
@@ -4582,47 +4582,47 @@ bpy.types.Scene.mbcrea_chara_description = bpy.props.StringProperty(
 
 def update_texture_items(self, context):
     return creation_tools_ops.get_file_list("textures", file_type="png")
-    
+
 bpy.types.Scene.mbcrea_texture_albedo = bpy.props.EnumProperty(
     items=update_texture_items,
     name="Albedo",
     default=None)
-    
+
 bpy.types.Scene.mbcrea_texture_bump = bpy.props.EnumProperty(
     items=update_texture_items,
     name="Bump",
     default=None)
-    
+
 bpy.types.Scene.mbcrea_texture_displacement = bpy.props.EnumProperty(
     items=update_texture_items,
     name="Displacement",
     default=None)
-    
+
 bpy.types.Scene.mbcrea_texture_subdermal = bpy.props.EnumProperty(
     items=update_texture_items,
     name="Subdermal",
     default=None)
-    
+
 bpy.types.Scene.mbcrea_texture_thickness = bpy.props.EnumProperty(
     items=update_texture_items,
     name="Thickness",
     default=None)
-    
+
 bpy.types.Scene.mbcrea_texture_frecklemask = bpy.props.EnumProperty(
     items=update_texture_items,
     name="Freckle mask",
     default=None)
-    
+
 bpy.types.Scene.mbcrea_texture_blush = bpy.props.EnumProperty(
     items=update_texture_items,
     name="Blush",
     default=None)
-    
+
 bpy.types.Scene.mbcrea_texture_sebum = bpy.props.EnumProperty(
     items=update_texture_items,
     name="Sebum",
     default=None)
-    
+
 bpy.types.Scene.mbcrea_texture_eyes = bpy.props.EnumProperty(
     items=update_texture_items,
     name="Eyes",
@@ -4632,47 +4632,47 @@ bpy.types.Scene.mbcrea_texture_eyelash_albedo = bpy.props.EnumProperty(
     items=update_texture_items,
     name="Eyelash albedo",
     default=None)
-    
+
 bpy.types.Scene.mbcrea_texture_iris_color = bpy.props.EnumProperty(
     items=update_texture_items,
     name="Iris color",
     default=None)
-    
+
 bpy.types.Scene.mbcrea_texture_iris_bump = bpy.props.EnumProperty(
     items=update_texture_items,
     name="Iris bump",
     default=None)
-    
+
 bpy.types.Scene.mbcrea_texture_sclera_color = bpy.props.EnumProperty(
     items=update_texture_items,
     name="Sclera color",
     default=None)
-    
+
 bpy.types.Scene.mbcrea_texture_sclera_mask = bpy.props.EnumProperty(
     items=update_texture_items,
     name="Mask",
     default=None)
-    
+
 bpy.types.Scene.mbcrea_texture_translucent_mask = bpy.props.EnumProperty(
     items=update_texture_items,
     name="Transluscent",
     default=None)
-    
+
 bpy.types.Scene.mbcrea_texture_lipmap = bpy.props.EnumProperty(
     items=update_texture_items,
     name="Lip map",
     default=None)
-    
+
 bpy.types.Scene.mbcrea_texture_tongue_albedo = bpy.props.EnumProperty(
     items=update_texture_items,
     name="Tongue albedo",
     default=None)
-    
+
 bpy.types.Scene.mbcrea_texture_teeth_albedo = bpy.props.EnumProperty(
     items=update_texture_items,
     name="Teeth albedo",
     default=None)
-    
+
 bpy.types.Scene.mbcrea_texture_nails_albedo = bpy.props.EnumProperty(
     items=update_texture_items,
     name="Nails albedo",
@@ -4680,7 +4680,7 @@ bpy.types.Scene.mbcrea_texture_nails_albedo = bpy.props.EnumProperty(
 
 def update_morph_items(self, context):
     return creation_tools_ops.get_file_list("morphs", file_type="json")
-    
+
 bpy.types.Scene.mbcrea_shared_morphs_file = bpy.props.EnumProperty(
     items=update_morph_items,
     name="Main morphs",
@@ -4693,7 +4693,7 @@ bpy.types.Scene.mbcrea_shared_morphs_extra_file = bpy.props.EnumProperty(
 
 def update_bboxes_items(self, context):
     return creation_tools_ops.get_file_list("bboxes", file_type="json")
-    
+
 bpy.types.Scene.mbcrea_bboxes_file = bpy.props.EnumProperty(
     items=update_bboxes_items,
     name="BBoxes",
@@ -4701,7 +4701,7 @@ bpy.types.Scene.mbcrea_bboxes_file = bpy.props.EnumProperty(
 
 def update_joints_items(self, context):
     return creation_tools_ops.get_file_list("joints", file_type="json")
-    
+
 bpy.types.Scene.mbcrea_joints_base_file = bpy.props.EnumProperty(
     items=update_joints_items,
     name="Base joints",
@@ -4714,7 +4714,7 @@ bpy.types.Scene.mbcrea_joints_offset_file = bpy.props.EnumProperty(
 
 def update_measures_items(self, context):
     return creation_tools_ops.get_file_list("measures", file_type="json")
-    
+
 bpy.types.Scene.mbcrea_measures_file = bpy.props.EnumProperty(
     items=update_measures_items,
     name="Measures",
@@ -4722,7 +4722,7 @@ bpy.types.Scene.mbcrea_measures_file = bpy.props.EnumProperty(
 
 def update_vgroups_items(self, context):
     return creation_tools_ops.get_file_list("vgroups", file_type="json")
-    
+
 bpy.types.Scene.mbcrea_vgroups_base_file = bpy.props.EnumProperty(
     items=update_vgroups_items,
     name="VGroups base",
@@ -4735,7 +4735,7 @@ bpy.types.Scene.mbcrea_vgroups_muscles_file = bpy.props.EnumProperty(
 
 def update_transfor_items(self, context):
     return creation_tools_ops.get_file_list("transformations", file_type="json")
-    
+
 bpy.types.Scene.mbcrea_transfor_file = bpy.props.EnumProperty(
     items=update_transfor_items,
     name="Transformations",
@@ -4743,7 +4743,7 @@ bpy.types.Scene.mbcrea_transfor_file = bpy.props.EnumProperty(
 
 def update_presets_folder(self, context):
     return creation_tools_ops.get_presets_folder_list()
-    
+
 bpy.types.Scene.mbcrea_presets_folder = bpy.props.EnumProperty(
     items=update_presets_folder,
     name="Presets folder",
@@ -4783,7 +4783,7 @@ def toggle_edit_object(self, context):
             bpy.ops.object.mode_set(mode='WEIGHT_PAINT')
         else:
             bpy.ops.object.mode_set(mode='OBJECT')
-            
+
 bpy.types.Scene.mbcrea_toggle_edit_object = bpy.props.EnumProperty(
     items=[
         ('OBJECT', 'Object', 'Object mode'),
@@ -4796,7 +4796,7 @@ bpy.types.Scene.mbcrea_toggle_edit_object = bpy.props.EnumProperty(
 bpy.types.Scene.mbcrea_unselect_before = bpy.props.BoolProperty(
     name="Unselect all before",
     description="Unselect all before select\nnew vertices/edges/faces")
-    
+
 bpy.types.Scene.mbcrea_measures_file_name = bpy.props.StringProperty(
     name="Other",
     description="Another name if you want to create a new measures file",
@@ -5344,7 +5344,7 @@ def get_transfor_filepath():
     name = tmp[0] + "_" + tmp[1] + "_" + algorithms.split_name(scn.mbcrea_agemasstone_name.lower()) + "_transf.json"
     filepath = os.path.join(file_ops.get_data_path(), "transformations", name)
     return filepath
-    
+
 class ButtonTransforSave(bpy.types.Operator):
     bl_label = 'Save step / Finalize'
     bl_idname = 'mbcrea.button_transfor_save'
@@ -5388,7 +5388,7 @@ class ButtonCurrentModelTransforSave(bpy.types.Operator):
     bl_label = 'Export current model'
     bl_idname = 'mbcrea.button_transfor_save_current'
     filename_ext = ".json"
-    filter_glob = bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
+    filter_glob: bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
     bl_description = 'Export the data base of the current model.\ni.e its data base, not the changes from user.'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
@@ -5410,7 +5410,7 @@ class CheckTransformationFile(bpy.types.Operator, ImportHelper):
     bl_label = 'Check compatibility'
     bl_idname = 'mbcrea.button_check_transf'
     filename_ext = ".json"
-    filter_glob = bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
+    filter_glob: bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
     bl_description = 'Check the compatibility of a file to current model.\nThe result is stored under same directory, same name+.txt'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
@@ -5424,13 +5424,13 @@ class CheckTransformationFile(bpy.types.Operator, ImportHelper):
         #--------------------
         mbcrea_transfor.check_compatibility_with_current_model(self.filepath)
         return {'FINISHED'}
-    
+
     def ShowMessageBox(self, message = "", title = "Error !", icon = 'ERROR'):
 
         def draw(self, context):
             self.layout.label(text=message)
         bpy.context.window_manager.popup_menu(draw, title = title, icon = icon)
-    
+
 
 
 class LoadTransformationFile(bpy.types.Operator, ImportHelper):
@@ -5440,7 +5440,7 @@ class LoadTransformationFile(bpy.types.Operator, ImportHelper):
     bl_label = 'Import for current model'
     bl_idname = 'mbcrea.button_load_transf'
     filename_ext = ".json"
-    filter_glob = bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
+    filter_glob: bpy.props.StringProperty(default="*.json", options={'HIDDEN'},)
     bl_description = 'Load a transformation file for the current model.'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
@@ -5454,7 +5454,7 @@ class LoadTransformationFile(bpy.types.Operator, ImportHelper):
         #--------------------
         mbcrea_transfor.load_transformation_from_file(self.filepath)
         return {'FINISHED'}
-    
+
     def ShowMessageBox(self, message = "", title = "Error !", icon = 'ERROR'):
 
         def draw(self, context):
@@ -5512,7 +5512,7 @@ def get_cmd_input_file_name():
     if morphcreator.get_spectrum(scn.mbcrea_cmd_spectrum) == "Gender":
         return scn.mbcrea_gender_files_in
     return scn.mbcrea_body_type_files_in
-        
+
 class ButtonCopyMorphs(bpy.types.Operator):
     bl_label = 'Copy to output file'
     bl_idname = 'mbcrea.button_copy_morph'
@@ -5590,7 +5590,7 @@ class ButtonCompatToolsDir(bpy.types.Operator):
     @classmethod
     def poll(self, context):
         return not creation_tools_ops.is_directories_created()
-    
+
     def execute(self, context):
         pn = creation_tools_ops.get_data_directory()
         creation_tools_ops.create_needed_directories(pn)
@@ -5744,7 +5744,7 @@ class FinalizeCombMorph(bpy.types.Operator):
         scn = bpy.context.scene
         base = []
         sculpted = []
-        
+
         try:
             base = morphcreator.get_vertices_list(0)
         except:
@@ -5849,7 +5849,7 @@ class ImpExpression(bpy.types.Operator, ImportHelper):
     bl_idname = "mbcrea.import_expression"
     bl_label = "Import facial expression"
     filename_ext = ".json"
-    filter_glob = bpy.props.StringProperty(
+    filter_glob: bpy.props.StringProperty(
         default="*.json",
         options={'HIDDEN'},
         )
