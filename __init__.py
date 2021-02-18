@@ -2514,7 +2514,7 @@ class LoadTemplate(bpy.types.Operator):
 # MB-Lab Main GUI
 
 class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
-    bl_label = "MB-Lab {0}.{1}.{2}".format(bl_info["version"][0], bl_info["version"][1], bl_info["version"][2], bl_info["version"][3])
+    bl_label = "MB-Lab {0}.{1}.{2}".format(bl_info["version"][0], bl_info["version"][1], bl_info["version"][2])
     bl_idname = "OBJECT_PT_characters01"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -3685,14 +3685,6 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                             b_m_c_c.label(text="Displacement : " + creation_tools_ops.get_content(key, "texture_displacement"), icon='CHECKMARK')
                         else:
                             b_m_c_c.prop(scn, "mbcrea_texture_displacement")
-                        if creation_tools_ops.get_content(key, "texture_subdermal") != "":
-                            b_m_c_c.label(text="texture_subdermal : " + creation_tools_ops.get_content(key, "texture_subdermal"), icon='CHECKMARK')
-                        else:
-                            b_m_c_c.prop(scn, "mbcrea_texture_subdermal")
-                        if creation_tools_ops.get_content(key, "texture_thickness") != "":
-                            b_m_c_c.label(text="Thickness : " + creation_tools_ops.get_content(key, "texture_thickness"), icon='CHECKMARK')
-                        else:
-                            b_m_c_c.prop(scn, "mbcrea_texture_thickness")
                         if creation_tools_ops.get_content(key, "texture_frecklemask") != "":
                             b_m_c_c.label(text="Frekles : " + creation_tools_ops.get_content(key, "texture_frecklemask"), icon='CHECKMARK')
                         else:
@@ -3705,6 +3697,10 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                             b_m_c_c.label(text="Sebum : " + creation_tools_ops.get_content(key, "texture_sebum"), icon='CHECKMARK')
                         else:
                             b_m_c_c.prop(scn, "mbcrea_texture_sebum")
+                        if creation_tools_ops.get_content(key, "texture_roughness") != "":
+                            b_m_c_c.label(text="Sebum : " + creation_tools_ops.get_content(key, "texture_sebum"), icon='CHECKMARK')
+                        else:
+                            b_m_c_c.prop(scn, "mbcrea_texture_roughness")
                         if creation_tools_ops.get_content(key, "texture_eyes") != "":
                             b_m_c_c.label(text="Eyes : " + creation_tools_ops.get_content(key, "texture_eyes"), icon='CHECKMARK')
                         else:
@@ -4598,14 +4594,9 @@ bpy.types.Scene.mbcrea_texture_displacement = bpy.props.EnumProperty(
     name="Displacement",
     default=None)
 
-bpy.types.Scene.mbcrea_texture_subdermal = bpy.props.EnumProperty(
+bpy.types.Scene.mbcrea_texture_roughness = bpy.props.EnumProperty(
     items=update_texture_items,
-    name="Subdermal",
-    default=None)
-
-bpy.types.Scene.mbcrea_texture_thickness = bpy.props.EnumProperty(
-    items=update_texture_items,
-    name="Thickness",
+    name="Roughness",
     default=None)
 
 bpy.types.Scene.mbcrea_texture_frecklemask = bpy.props.EnumProperty(
@@ -5090,13 +5081,12 @@ class ButtonSaveCharacter(bpy.types.Operator):
         creation_tools_ops.add_content(key, "texture_blush", decide_which(key, "texture_blush", scn.mbcrea_texture_blush))
         creation_tools_ops.add_content(key, "texture_sebum", decide_which(key, "texture_sebum", scn.mbcrea_texture_sebum))
         creation_tools_ops.add_content(key, "texture_lipmap", decide_which(key, "texture_lipmap", scn.mbcrea_texture_lipmap))
-        creation_tools_ops.add_content(key, "texture_thickness", decide_which(key, "texture_thickness", scn.mbcrea_texture_thickness))
         creation_tools_ops.add_content(key, "texture_iris_color", decide_which(key, "texture_iris_color", scn.mbcrea_texture_iris_color))
         creation_tools_ops.add_content(key, "texture_iris_bump", decide_which(key, "texture_iris_bump", scn.mbcrea_texture_iris_bump))
         creation_tools_ops.add_content(key, "texture_sclera_color", decide_which(key, "texture_sclera_color", scn.mbcrea_texture_sclera_color))
         creation_tools_ops.add_content(key, "texture_translucent_mask", decide_which(key, "texture_translucent_mask", scn.mbcrea_texture_translucent_mask))
         creation_tools_ops.add_content(key, "texture_sclera_mask", decide_which(key, "texture_sclera_mask", scn.mbcrea_texture_sclera_mask))
-        creation_tools_ops.add_content(key, "texture_subdermal", decide_which(key, "texture_subdermal", scn.mbcrea_texture_subdermal))
+        creation_tools_ops.add_content(key, "texture_roughness", decide_which(key, "texture_roughness", scn.mbcrea_texture_roughness))
         # The rest
         creation_tools_ops.add_content(key, "bounding_boxes_file", decide_which(key, "bounding_boxes_file", scn.mbcrea_bboxes_file))
         creation_tools_ops.add_content(key, "joints_base_file", decide_which(key, "joints_base_file", scn.mbcrea_joints_base_file))

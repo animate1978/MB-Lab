@@ -63,6 +63,7 @@ class MaterialEngine:
             "freckle_mask": character_config["texture_frecklemask"],
             "blush": character_config["texture_blush"],
             "sebum": character_config["texture_sebum"],
+            "roughness": character_config["texture_roughness"],
             "lipmap": character_config["texture_lipmap"],
             "iris_color": character_config["texture_iris_color"],
             "iris_bump": character_config["texture_iris_bump"],
@@ -129,6 +130,9 @@ class MaterialEngine:
     @property
     def texture_sebum_exist(self):
         return os.path.isfile(self.image_file_paths["sebum"])
+    @property
+    def texture_roughness_exist(self):
+        return os.path.isfile(self.image_file_paths["roughness"])
     @property
     def texture_lipmap_exist(self):
         return os.path.isfile(self.image_file_paths["lipmap"])
@@ -240,6 +244,8 @@ class MaterialEngine:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["blush"])
                     if "_skn_sebum" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["sebum"])
+                    if "_skn_roughness" in node.name:
+                        self.assign_image_to_node(material.name, node.name, self.image_file_names["roughness"])
                     if "_skn_lipmap" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["lipmap"])
                     if "_iris_color" in node.name:
