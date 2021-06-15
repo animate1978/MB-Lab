@@ -302,6 +302,8 @@ class MorphingEngine:
 
 
     def correct_morphs(self, names):
+        if not self.bbox_data:
+            return
         morph_values_cache = {}
         for morph_name in self.morph_data.keys():
             for name in names:

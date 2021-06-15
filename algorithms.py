@@ -331,6 +331,30 @@ def correct_morph(base_form, current_form, morph_deltas, bboxes):
 #    Functions
 # ------------------------------------------------------------------------
 
+def check_mesh(obj):
+    config_data = file_ops.get_configuration()
+    model_config = config_data.get(obj.get("manuellab_id"))
+    if not model_config:
+        logger.debug("check_obj %s model %s is not found", obj.name, obj.obj.get("manuellab_id"))
+        return False
+
+    templates = {}
+    for template in config_data["templates_list"]:
+        tpl_conf = config_data.get(template)
+        if tpl_conf:
+            tpl_name = tpl_conf.get("template_model")
+            if tpl_name:
+                templates[tpl_name] = tpl_conf
+
+    tpl_config = templates.get(model_config.get("template_model"))
+    if not tpl_config:
+        logger.debug("check_obj %s template %s is not found", obj.name, model_config.get("template_model"))
+        return False
+    result = len(obj.data.vertices) == tpl_config.get("vertices") and len(obj.data.polygons) == tpl_config.get("faces")
+    if not result:
+        logger.debug("check_obj %s vertex/face count mismatch: %d %d %d %d", obj.name, len(obj.data.vertices), tpl_config.get("vertices"), len(obj.data.polygons), tpl_config.get("faces"))
+    return result
+
 def looking_for_humanoid_obj():
     """
     Looking for a mesh that is OK for the lab
@@ -345,8 +369,8 @@ def looking_for_humanoid_obj():
     name = ""
     for obj in bpy.data.objects:
         if obj.type == "MESH":
-            if "manuellab_vers" in get_object_keys(obj):
-                if utils.check_version(obj["manuellab_vers"]):
+            if "manuellab_vers" in obj and "manuellab_id" in obj:
+                if utils.check_version(obj["manuellab_vers"]) and check_mesh(obj):
                     human_obj = obj
                     name = human_obj.name
                     break
@@ -1090,19 +1114,19 @@ def swap_material(old_mat_name, new_mat_name, char_name):
     obj = bpy.data.objects[char_name]
     if obj == None:
         return None
-        
+
     #Try and get materials if either does not exist return None
-    
+
     try:
 
         mat_old = bpy.data.materials[old_mat_name]
         mat_new = bpy.data.materials[new_mat_name]
-    
+
     except:
         logger.debug("Material not found")
         return None
-    
-    
+
+
     #Assign new material to old material slot
     materialslen = len(obj.data.materials)
     for i in range(0,materialslen):
@@ -1160,7 +1184,7 @@ def create_enum_property_items(values=[], key_length=3, tip_length=4):
             values[i],
             str(values[i])[0:tip_length]))
     return return_list
-    
+
 def split_name(name, splitting_char=' -_²&=¨^$£%µ,?;!§+*/:[]\"\'{}', indexes=[]):
     if len(splitting_char) < 1:
         return name
@@ -1187,4 +1211,3 @@ def split(name, splitting_char=' -_²&=¨^$£%µ,?;!§+*/:[]\"\'{}'):
             if len(t) > 0:
                 return_list.append(t)
     return split(return_list, splitting_char[1:])
-        
