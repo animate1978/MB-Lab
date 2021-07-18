@@ -68,12 +68,13 @@ def get_root_directories():
     root_directories = []
     for dir in rd:
         if dir not in fd:
+            logger.debug("found root dir %s", dir)
             root_directories.append(
                 (dir,
                 "MB_Lab" if dir == "data" else dir,
                 dir))
     return root_directories
-    
+
 def set_data_path(path):
     global data_directory
     global configuration_done
@@ -100,15 +101,20 @@ def get_configuration():
     # what's why the variable below exists.
     if configuration_done != None:
         return configuration_done
-    data_path = get_data_path()
-    # Here something to change :
-    # Allow to load every file that ends with _config.json
-    if data_path:
-        configuration_done = {}
+
+    addon_directory = os.path.dirname(os.path.realpath(__file__))
+    configuration_done = {}
+    for tup in get_root_directories():
+        data_path = os.path.join(addon_directory, tup[0])
+        if not os.path.isdir(data_path):
+            logger.error("get_configuration: %s is not a directury!", data_path)
+            continue
         tmp = {}
+        logger.debug("Loading config dir %s", data_path)
         for list_dir in os.listdir(data_path):
             configuration_path = os.path.join(data_path, list_dir)
             if os.path.isfile(configuration_path) and configuration_path.endswith("_config.json"):
+                logger.debug("Loading config json %s", configuration_path)
                 tmp = load_json_data(configuration_path, "Characters definition")
                 for prop in tmp:
                     if prop == 'data_directory':
@@ -119,7 +125,10 @@ def get_configuration():
                         configuration_done[prop] += tmp[prop]
                     else:
                         configuration_done[prop] = tmp[prop]
+
+    if configuration_done:
         return configuration_done
+
     logger.critical("Configuration database not found. Please check your Blender addons directory.")
     return None
 
@@ -275,7 +284,7 @@ def append_object_from_library(lib_filepath, obj_names, suffix=None):
     except OSError:
         logger.critical("lib %s not found", lib_filepath)
         return
-        
+
     for obj in data_to.objects:
         link_to_collection(obj)
         obj_parent = utils.get_object_parent(obj)
