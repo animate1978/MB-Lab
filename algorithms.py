@@ -335,7 +335,7 @@ def check_mesh(obj):
     config_data = file_ops.get_configuration()
     model_config = config_data.get(obj.get("manuellab_id"))
     if not model_config:
-        logger.debug("check_obj %s model %s is not found", obj.name, obj.obj.get("manuellab_id"))
+        logger.debug("check_obj %s model %s is not found", obj.name, obj.get("manuellab_id"))
         return False
 
     templates = {}
