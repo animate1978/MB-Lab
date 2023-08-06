@@ -2633,7 +2633,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                 box_asts_t.label(text="use the proxy fitting tool", icon='BLANK1')
                 # Add Particle Hair
                 box_asts = self.layout.box()
-                box_asts.label(text="Hair", icon='HAIR')
+                box_asts.label(text="Hair")
                 box_asts.prop(scn, 'mblab_hair_color')
                 box_asts_a = box_asts.column(align=True)
                 box_asts_a.operator("mbast.particle_hair", icon='USER')
