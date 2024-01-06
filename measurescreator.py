@@ -393,7 +393,7 @@ def get_two_points(direction=0):
         two_points_index += 1
         if two_points_index >= len(measures_parts_points):
             two_points_index = 0
-    if two_points_index >= measures_parts_points: # It happens
+    if two_points_index >= len(measures_parts_points): # It happens
         two_points_index = len(measures_parts_points)-1
     measure_name = measures_parts_points[two_points_index]
     # Now we seek and keep the values in the MeshHandling.
@@ -428,7 +428,7 @@ def get_girth(direction=0):
         girth_index += 1
         if girth_index >= len(measures_parts_girths):
             girth_index = 0
-    if girth_index >= measures_parts_girths: # It happens
+    if girth_index >= len(measures_parts_girths): # It happens
         girth_index = len(measures_parts_girths)-1
     measure_name = measures_parts_girths[girth_index]
     # Now we seek and keep the values in the MeshHandling.

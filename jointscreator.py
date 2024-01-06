@@ -224,6 +224,18 @@ def save_joints_base_file():
 # --------------------------------------------------
 current_joint_central_point = None
 
+def create_current_joint_central_point():
+    global current_joint_central_point
+    mesh = bpy.data.meshes.new('Basic_Sphere')
+    current_joint_central_point = bpy.data.objects.new("Joint center", mesh)
+    bm = bmesh.new()
+    bmesh.ops.create_uvsphere(bm, u_segments=4, v_segments=4, diameter=0.004)
+    bm.to_mesh(mesh)
+    bm.free()
+    file_ops.link_to_collection(current_joint_central_point)
+    current_joint_central_point.hide_select = True
+    
+
 def show_central_point(hist):
     global current_joints_base_file
     global current_joint_central_point
@@ -240,14 +252,7 @@ def show_central_point(hist):
     # Now we have all vertices, we compute the average center
     central_point = algorithms.average_center(vertices)
     if current_joint_central_point == None:
-        mesh = bpy.data.meshes.new('Basic_Sphere')
-        current_joint_central_point = bpy.data.objects.new("Joint center", mesh)
-        bm = bmesh.new()
-        bmesh.ops.create_uvsphere(bm, u_segments=4, v_segments=4, diameter=0.004)
-        bm.to_mesh(mesh)
-        bm.free()
-        file_ops.link_to_collection(current_joint_central_point)
-        current_joint_central_point.hide_select = True
+        create_current_joint_central_point()
     current_joint_central_point.location = (central_point.x, central_point.y, central_point.z)
 
 # --------------------------------------------------
@@ -346,6 +351,8 @@ def show_offset_point(hist):
         if current_offset_point == None:
             create_offset_point()
         co = file[hist.name]
+        if current_joint_central_point == None: # It happens.
+            create_current_joint_central_point()
         vect = current_joint_central_point.location
         current_offset_point.location = (
             vect.x + co[0],
@@ -407,6 +414,8 @@ def set_offset_point():
     for key, item in current_joints_offset_file.items():
         file = item
     # Now we calculate de relative location of the offset
+    if current_joint_central_point == None: # Security.
+        create_current_joint_central_point()
     center_point = current_joint_central_point.location
     offset_point = current_offset_point.location
     file[hist.name] = [

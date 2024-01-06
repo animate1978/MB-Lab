@@ -63,6 +63,7 @@ class MaterialEngine:
             "freckle_mask": character_config["texture_frecklemask"],
             "blush": character_config["texture_blush"],
             "sebum": character_config["texture_sebum"],
+            "roughness": character_config["texture_roughness"],
             "lipmap": character_config["texture_lipmap"],
             "iris_color": character_config["texture_iris_color"],
             "iris_bump": character_config["texture_iris_bump"],
@@ -130,6 +131,9 @@ class MaterialEngine:
     def texture_sebum_exist(self):
         return os.path.isfile(self.image_file_paths["sebum"])
     @property
+    def texture_roughness_exist(self):
+        return os.path.isfile(self.image_file_paths["roughness"])
+    @property
     def texture_lipmap_exist(self):
         return os.path.isfile(self.image_file_paths["lipmap"])
     @property
@@ -155,24 +159,22 @@ class MaterialEngine:
         logger.info('start: calculate_disp_pixels %s', blender_image.name)
         tone_f = tone_factor if tone_factor > 0.0 else 0.0
 
-        ajustments = np.array([0.0, 0.5, 0.5, 0.5], dtype='float32')
-        factors = np.fmax(np.array([1, age_factor, tone_f, (1.0 - tone_f) * mass_factor], dtype='float32'), 0.0)
-        np_image = np.array(blender_image.pixels, dtype='float32').reshape(-1, 4)
+        adjustments = np.array([0.0, 0.5, 0.5, 0.5], dtype=np.float32)
+        factors = np.fmax(np.array([1, age_factor, tone_f, (1.0 - tone_f) * mass_factor], dtype=np.float32), 0.0)
+        np_image = np.empty(len(blender_image.pixels), dtype=np.float32)
+        blender_image.pixels.foreach_get(np_image)
+        np_image = np_image.reshape(-1, 4)
         # add_result = r + age_f * (g - 0.5) + tone_f * (b - 0.5) + mass_f * (a - 0.5)
-        add_result = np.sum((np_image - ajustments) * factors, axis=1)
-        result_image = np.insert(np.repeat(np.fmin(add_result, 1.0), 3).reshape(-1, 3), 3, 1.0, axis=1)
+        np_image -= adjustments
+        np_image *= factors
+        add_result = np.sum(np_image, axis=1)
+        np.fmin(add_result, 1.0, add_result)
+        np_image[:,0] = add_result
+        np_image[:,1] = add_result
+        np_image[:,2] = add_result
+        np_image[:,3] = 1
         logger.info('finish: calculate_disp_pixels %s', blender_image.name)
-        return result_image.flatten()
-
-    @staticmethod
-    def multiply_images(image1, image2, result_name, blending_factor=0.5):
-        logger.info('multiply_images %s', result_name)
-        if images_scale(image1, image2):
-            np_img1, np_img2 = np.array(image1.pixels, dtype='float32'), np.array(image2.pixels, dtype='float32')
-
-            result_img = new_image(result_name, image2.size)
-            result_img.pixels = np_img1 * np_img2 * blending_factor + (np_img1 * (1.0 - blending_factor))
-        logger.info('finish: multiply_images %s', result_name)
+        return np_image.reshape(-1)
 
 # Link Textures to Nodes
 
@@ -242,6 +244,8 @@ class MaterialEngine:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["blush"])
                     if "_skn_sebum" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["sebum"])
+                    if "_skn_roughness" in node.name:
+                        self.assign_image_to_node(material.name, node.name, self.image_file_names["roughness"])
                     if "_skn_lipmap" in node.name:
                         self.assign_image_to_node(material.name, node.name, self.image_file_names["lipmap"])
                     if "_iris_color" in node.name:
@@ -309,7 +313,8 @@ class MaterialEngine:
                     return
 
                 if images_scale(disp_data_image, disp_img):
-                    disp_img.pixels = self.calculate_disp_pixels(disp_data_image, age_factor, tone_factor, mass_factor)
+                    new_pixels = self.calculate_disp_pixels(disp_data_image, age_factor, tone_factor, mass_factor)
+                    disp_img.pixels.foreach_set(new_pixels)
                     disp_tex.image = disp_img
                     logger.info("Displacement calculated in %s seconds", time.time()-time1)
             else:
