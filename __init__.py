@@ -38,7 +38,7 @@ import bpy
 from bpy.app.handlers import persistent
 from bpy_extras.io_utils import ExportHelper, ImportHelper
 
-from . import addon_updater_ops
+#from . import addon_updater_ops
 from . import algorithms
 from . import animationengine
 from . import creation_tools_ops
@@ -68,17 +68,17 @@ from . import HE_scalp_mesh
 logger = logging.getLogger(__name__)
 
 # MB-Lab Blender Info
-# 3/22 added new version number to MB-Lab, internal dev purposes
+#
 
 bl_info = {
     "name": "MB-Lab",
     "author": "Manuel Bastioni, MB-Lab Community",
-    "version": (1, 7, 8, 50),
-    "blender": (2, 81, 16),
+    "version": (1, 8, 0),
+    "blender": (4, 0, 0),
     "location": "View3D > Tools > MB-Lab",
-    "description": "A complete lab for character creation",
+    "description": "Character creation tool based off of ManuelbastioniLAB",
     "warning": "",
-    'wiki_url': "https://mb-lab-docs.readthedocs.io/en/latest/index.html",
+    'doc_url': "https://mb-lab-docs.readthedocs.io/en/latest/index.html",
     'tracker_url': 'https://github.com/animate1978/MB-Lab/issues',
     "category": "Characters"
 }
@@ -2597,7 +2597,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
         icon_collapse = "DISCLOSURE_TRI_DOWN"
 
         box_info = self.layout.box()
-        box_info.label(text="https://www.mblab.dev")
+        #box_info.label(text="https://www.mblab.dev")
 
         if gui_status == "ERROR_SESSION":
             box_err = self.layout.box()
@@ -2692,7 +2692,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                 box_asts_t.label(text="use the proxy fitting tool", icon='BLANK1')
                 # Add Particle Hair
                 box_asts = self.layout.box()
-                box_asts.label(text="Hair")
+                box_asts.label(text="Hair", icon='OUTLINER_OB_CURVES')
                 box_asts.prop(scn, 'mblab_hair_color')
                 box_asts_a = box_asts.column(align=True)
                 box_asts_a.operator("mbast.particle_hair", icon='USER')
@@ -3110,7 +3110,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
         icon_collapse = "DISCLOSURE_TRI_DOWN"
 
         box_general = self.layout.box()
-        box_general.label(text="https://www.mblab.dev")
+        #box_general.label(text="https://www.mblab.dev")
         #box_general.operator('mbcrea.button_for_tests', icon='BLENDER')
 
         box_tools = self.layout.box()
@@ -3759,9 +3759,17 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                         else:
                             b_m_c_c.prop(scn, "mbcrea_texture_sebum")
                         if creation_tools_ops.get_content(key, "texture_roughness") != "":
-                            b_m_c_c.label(text="Sebum : " + creation_tools_ops.get_content(key, "texture_sebum"), icon='CHECKMARK')
+                            b_m_c_c.label(text="Roughness : " + creation_tools_ops.get_content(key, "texture_roughness"), icon='CHECKMARK')
                         else:
                             b_m_c_c.prop(scn, "mbcrea_texture_roughness")
+                        if creation_tools_ops.get_content(key, "texture_thickness") != "":
+                            b_m_c_c.label(text="Thickness : " + creation_tools_ops.get_content(key, "texture_thickness"), icon='CHECKMARK')
+                        else:
+                            b_m_c_c.prop(scn, "mbcrea_texture_thickness")
+                        if creation_tools_ops.get_content(key, "texture_melanin") != "":
+                            b_m_c_c.label(text="Melanin : " + creation_tools_ops.get_content(key, "texture_melanin"), icon='CHECKMARK')
+                        else:
+                            b_m_c_c.prop(scn, "mbcrea_texture_melanin")
                         if creation_tools_ops.get_content(key, "texture_eyes") != "":
                             b_m_c_c.label(text="Eyes : " + creation_tools_ops.get_content(key, "texture_eyes"), icon='CHECKMARK')
                         else:
@@ -3770,14 +3778,6 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                             b_m_c_c.label(text="Eyelash albedo : " + creation_tools_ops.get_content(key, "texture_eyelash_albedo"), icon='CHECKMARK')
                         else:
                             b_m_c_c.prop(scn, "mbcrea_texture_eyelash_albedo")
-                        if creation_tools_ops.get_content(key, "texture_iris_color") != "":
-                            b_m_c_c.label(text="Iris color : " + creation_tools_ops.get_content(key, "texture_iris_color"), icon='CHECKMARK')
-                        else:
-                            b_m_c_c.prop(scn, "mbcrea_texture_iris_color")
-                        if creation_tools_ops.get_content(key, "texture_iris_bump") != "":
-                            b_m_c_c.label(text="Iris bump : " + creation_tools_ops.get_content(key, "texture_iris_bump"), icon='CHECKMARK')
-                        else:
-                            b_m_c_c.prop(scn, "mbcrea_texture_iris_bump")
                         if creation_tools_ops.get_content(key, "texture_sclera_color") != "":
                             b_m_c_c.label(text="Sclera color : " + creation_tools_ops.get_content(key, "texture_sclera_color"), icon='CHECKMARK')
                         else:
@@ -4660,6 +4660,16 @@ bpy.types.Scene.mbcrea_texture_roughness = bpy.props.EnumProperty(
     name="Roughness",
     default=None)
 
+bpy.types.Scene.mbcrea_texture_thickness = bpy.props.EnumProperty(
+    items=update_texture_items,
+    name="Thickness",
+    default=None)
+
+bpy.types.Scene.mbcrea_texture_melanin = bpy.props.EnumProperty(
+    items=update_texture_items,
+    name="Melanin",
+    default=None)
+
 bpy.types.Scene.mbcrea_texture_frecklemask = bpy.props.EnumProperty(
     items=update_texture_items,
     name="Freckle mask",
@@ -5141,13 +5151,13 @@ class ButtonSaveCharacter(bpy.types.Operator):
         creation_tools_ops.add_content(key, "texture_frecklemask", decide_which(key, "texture_frecklemask", scn.mbcrea_texture_frecklemask))
         creation_tools_ops.add_content(key, "texture_blush", decide_which(key, "texture_blush", scn.mbcrea_texture_blush))
         creation_tools_ops.add_content(key, "texture_sebum", decide_which(key, "texture_sebum", scn.mbcrea_texture_sebum))
+        creation_tools_ops.add_content(key, "texture_roughness", decide_which(key, "texture_roughness", scn.mbcrea_texture_roughness))
+        creation_tools_ops.add_content(key, "texture_thickness", decide_which(key, "texture_thickness", scn.mbcrea_texture_thickness))
+        creation_tools_ops.add_content(key, "texture_melanin", decide_which(key, "texture_melanin", scn.mbcrea_texture_melanin))
         creation_tools_ops.add_content(key, "texture_lipmap", decide_which(key, "texture_lipmap", scn.mbcrea_texture_lipmap))
-        creation_tools_ops.add_content(key, "texture_iris_color", decide_which(key, "texture_iris_color", scn.mbcrea_texture_iris_color))
-        creation_tools_ops.add_content(key, "texture_iris_bump", decide_which(key, "texture_iris_bump", scn.mbcrea_texture_iris_bump))
         creation_tools_ops.add_content(key, "texture_sclera_color", decide_which(key, "texture_sclera_color", scn.mbcrea_texture_sclera_color))
         creation_tools_ops.add_content(key, "texture_translucent_mask", decide_which(key, "texture_translucent_mask", scn.mbcrea_texture_translucent_mask))
         creation_tools_ops.add_content(key, "texture_sclera_mask", decide_which(key, "texture_sclera_mask", scn.mbcrea_texture_sclera_mask))
-        creation_tools_ops.add_content(key, "texture_roughness", decide_which(key, "texture_roughness", scn.mbcrea_texture_roughness))
         # The rest
         creation_tools_ops.add_content(key, "bounding_boxes_file", decide_which(key, "bounding_boxes_file", scn.mbcrea_bboxes_file))
         creation_tools_ops.add_content(key, "joints_base_file", decide_which(key, "joints_base_file", scn.mbcrea_joints_base_file))

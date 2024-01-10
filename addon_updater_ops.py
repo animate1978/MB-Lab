@@ -1353,16 +1353,16 @@ def register(bl_info):
     updater.private_token = None  # "tokenstring"
 
     # Choose your own username, must match website (not needed for GitLab).
-    updater.user = "cgcookie"
+    updater.user = "animate1978"
 
     # Choose your own repository, must match git name for GitHUb and Bitbucket,
     # for GitLab use project ID (numbers only).
-    updater.repo = "blender-addon-updater"
+    updater.repo = "MB-Lab"
 
     # updater.addon = # define at top of module, MUST be done first
 
     # Website for manual addon download, optional but recommended to set.
-    updater.website = "https://github.com/CGCookie/blender-addon-updater/"
+    updater.website = "https://mb-lab-community.github.io/MB-Lab.github.io/"
 
     # Addon subfolder path.
     # "sample/path/to/addon"
@@ -1391,7 +1391,7 @@ def register(bl_info):
     updater.backup_current = True  # True by default
 
     # Sample ignore patterns for when creating backup of current during update.
-    updater.backup_ignore_patterns = ["__pycache__"]
+    updater.backup_ignore_patterns = [".git", "__pycache__", ".gitignore"]
     # Alternate example patterns:
     # updater.backup_ignore_patterns = [".git", "__pycache__", "*.bat", ".gitignore", "*.exe"]
 
@@ -1405,7 +1405,7 @@ def register(bl_info):
     # update. If a pattern file is not found in new update, no action is taken
     # NOTE: This does NOT delete anything proactively, rather only defines what
     # is allowed to be overwritten during an update execution.
-    updater.overwrite_patterns = ["*.png", "*.jpg", "README.md", "LICENSE.txt"]
+    updater.overwrite_patterns = ["*.png","*.jpg","*.blend","*.json","README.md","LICENSE.txt"]
     # updater.overwrite_patterns = []
     # other examples:
     # ["*"] means ALL files/folders will be overwritten by update, was the

@@ -335,7 +335,7 @@ def check_mesh(obj):
     config_data = file_ops.get_configuration()
     model_config = config_data.get(obj.get("manuellab_id"))
     if not model_config:
-        logger.debug("check_obj %s model %s is not found", obj.name, obj.get("manuellab_id"))
+        logger.debug("check_obj %s model %s is not found", obj.name, obj.obj.get("manuellab_id"))
         return False
 
     templates = {}
@@ -360,8 +360,8 @@ def looking_for_humanoid_obj():
     Looking for a mesh that is OK for the lab
     """
     logger.info("Looking for a humanoid object ...")
-    if bpy.app.version < (2, 81, 16):
-        msg = "Sorry, MB-Lab requires Blender 2.81.16 Minimum"
+    if bpy.app.version < (4, 0, 0):
+        msg = "Sorry, MB-Lab 1.8.0 requires Blender 4.0.0"
         logger.warning(msg)
         return("ERROR", msg)
 
@@ -1145,7 +1145,7 @@ def remove_censors():
             if char_name in("f_an01","f_an02","m_an01","m_an02"):
                 swap_material("MBlab_generic", "MBLab_anime_skin",char_name)
             else:
-                swap_material("MBlab_generic", "MBLab_skin2",char_name)
+                swap_material("MBlab_generic", "MBLab_skin3",char_name)
 
 
     return None

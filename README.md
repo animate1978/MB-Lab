@@ -2,9 +2,9 @@
 
 Character creation tool for Blender
 
-## Blender 2.8 Support
+## Blender 4.0 Support
 
-MB-Lab has been developed to work with Blender 2.80
+MB-Lab has been developed to work with Blender 4.0
 
 ## Contributors wanted!
 
@@ -12,51 +12,33 @@ We are a small bunch of developers and artists but we always need more! MB-Lab's
 
 ## About
 
-MB-Lab is a community developed and supported project based off ManuelBastioniLAB.
-
-If you're interested in helping this project Financially or to see behind the scenes information of this plugin's Development, Please support our [**Patreon**](https://www.patreon.com/mblab_development).
+MB-Lab is a community developed project based off ManuelBastioniLAB.
 
 This fork is an attempt to keep this addon going forward as the original author is no longer developing ManuelBastioniLAB
 
-# MB-Lab 1.7.8
+# MB-Lab 1.8.0
+
+## Requirements
+
+- MB-Lab now requires Blender 4.0.0 +
 
 ## Added
 
-- MB-Dev Character Development Framework introduced
-- Hair Engine now adds hair shaders to Cycles and EEVEE
+- 
 
 ## Changed
 
-- MBLabSkin2 uses Principled BSDF yet again
-- Removed SSS scale group, replaced with Vector Math node
-- Bump map added, Thickness map removed
-- Modified skin oil maps
-- Eyelash shader now has bump and gloss
-- ExpressionEngine class now in it's own file
-- Blush map converted to grayscale
-- Modified Albedo maps
-- Bump maps now 4k resolution
-- Modified Freckle masks
-- Modified Material Engine
-- Changed lighting code
-- MB-Lab has new version numbering scheme. Last number for dev purposes
-- Sliders are now highlighted
-- GUI update
-- MBLab Pupil use Diffuse Node instead of Emission
-- SSS Radius changed to more accurate values
-- Freckles now include two colors
+- 
 
 ## Bug Fixes
 
-- Poses don't show when user selects IK model
-- Preserve Phenotype random function code fix
-- Typo: Hands_Lenght, fixed in transformation and measurements JSON
-- Typo: Various names in transformation files fixed
-- Hair Dynamics bug fix for Nvidia GPU cards
+- 
 
 ## Known Issues
 
 - MB-Dev tools may contain bugs that are unknown at this time
+- Importing BVH animation files is buggy
+- Hair presets have the old PrincipledHairBSDF which will result in incorrect rendering
 
 ## ManuelBastioniLAB 1.6.1a
 

@@ -2,6 +2,31 @@
 
 All changes will be documented here
 
+# MB-Lab 1.8.0
+
+## Requirements
+
+- Requires Blender 4.0.0 +
+
+## Added
+
+## Changed
+
+- MBLabSkin3 is a now based off of the 1.7.6 shader
+- AutoUpdater is disabled
+
+## Bug Fixes
+
+- Fixed bugs in various files to make it work with Blender 4.0
+- 
+
+## Known Issues
+
+- MB-Dev tools may contain bugs that are unknown at this time
+- Importing BVH animation files is buggy
+- Hair presets have the old PrincipledHairBSDF which will result in incorrect rendering
+- Skin color and bump mapping change slightly when finalizing
+
 # MB-Lab 1.7.8
 
 ## Added
