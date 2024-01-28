@@ -24,14 +24,14 @@ This fork is an attempt to keep this addon going forward as the original author 
 
 ## Added
 
-- 
-
 ## Changed
 
-- 
+- MBLabSkin3 is a now based off of the 1.7.6 shader
+- AutoUpdater is disabled
 
 ## Bug Fixes
 
+- Fixed bugs in various files to make it work with Blender 4.0
 - 
 
 ## Known Issues
@@ -39,6 +39,7 @@ This fork is an attempt to keep this addon going forward as the original author 
 - MB-Dev tools may contain bugs that are unknown at this time
 - Importing BVH animation files is buggy
 - Hair presets have the old PrincipledHairBSDF which will result in incorrect rendering
+- Skin color and bump mapping change slightly when finalizing
 
 ## ManuelBastioniLAB 1.6.1a
 

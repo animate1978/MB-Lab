@@ -1847,7 +1847,7 @@ class CharacterGenerator(bpy.types.Operator):
 
 
 class ExpDisplacementImage(bpy.types.Operator, ExportHelper):
-    """Export texture maps for the character"""
+    """Export displacement texture map for the character"""
     bl_idname = "mbast.export_dispimage"
     bl_label = "Save displacement map"
     filename_ext = ".png"
@@ -1864,9 +1864,9 @@ class ExpDisplacementImage(bpy.types.Operator, ExportHelper):
 
 
 class ExpDermalImage(bpy.types.Operator, ExportHelper):
-    """Export texture maps for the character"""
+    """Export albedo texture maps for the character"""
     bl_idname = "mbast.export_dermimage"
-    bl_label = "Save dermal map"
+    bl_label = "Save albedo map"
     filename_ext = ".png"
     filter_glob: bpy.props.StringProperty(
         default="*.png",
@@ -1968,9 +1968,9 @@ class ImpMeasures(bpy.types.Operator, ImportHelper):
 
 
 class LoadDermImage(bpy.types.Operator, ImportHelper):
-    """Import texture maps for the character"""
+    """Import albedo texture maps for the character"""
     bl_idname = "mbast.import_dermal"
-    bl_label = "Load dermal map"
+    bl_label = "Load albedo map"
     filename_ext = ".png"
     filter_glob: bpy.props.StringProperty(
         default="*.png",
@@ -1985,7 +1985,7 @@ class LoadDermImage(bpy.types.Operator, ImportHelper):
 
 
 class LoadDispImage(bpy.types.Operator, ImportHelper):
-    """Import texture maps for the character"""
+    """Import displacement texture maps for the character"""
     bl_idname = "mbast.import_displacement"
     bl_label = "Load displacement map"
     filename_ext = ".png"
@@ -3004,21 +3004,34 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                     for material_data_prop in sorted(mblab_humanoid.character_material_properties.keys()):
                         box_skin.prop(obj, material_data_prop)
 
-                # Finalize character
+               
                 box_act_tools_sub.label(text="OTHERS", icon="RNA")
                 box_act_tools_c = box_act_tools_sub.column(align=True)
-                if gui_active_panel_display != "finalize":
-                    box_act_tools_c.operator('mbast.button_finalize_on', icon=icon_expand)
+                
+
+                # Display character
+
+                if gui_active_panel_display != "display_opt":
+                    box_act_tools_c.operator('mbast.button_display_on', icon=icon_expand)
                 else:
-                    box_act_tools_c.operator('mbast.button_finalize_off', icon=icon_collapse)
-                    box_fin = self.layout.box()
-                    box_fin.prop(scn, 'mblab_save_images_and_backup', icon='EXPORT')
-                    box_fin.prop(scn, 'mblab_remove_all_modifiers', icon='CANCEL')
-                    box_fin.prop(scn, 'mblab_final_prefix')
-                    if scn.mblab_save_images_and_backup:
-                        box_fin.operator("mbast.finalize_character_and_images", icon='FREEZE')
+                    box_act_tools_c.operator('mbast.button_display_off', icon=icon_collapse)
+                    box_disp = self.layout.box()
+
+                    if mblab_humanoid.exists_displace_texture():
+                        if mblab_humanoid.get_disp_visibility() is False:
+                            box_disp.operator("mbast.displacement_enable", icon='MOD_DISPLACE')
+                        else:
+                            box_disp.operator("mbast.displacement_disable", icon='X')
+                    if mblab_humanoid.get_subd_visibility() is False:
+                        box_disp.operator("mbast.subdivision_enable", icon='MOD_SUBSURF')
+                        box_disp.label(text="Subd. preview is very CPU intensive", icon='INFO')
                     else:
-                        box_fin.operator("mbast.finalize_character", icon='FREEZE')
+                        box_disp.operator("mbast.subdivision_disable", icon='X')
+                        box_disp.label(text="Disable subdivision to increase performance", icon='ERROR')
+                    if mblab_humanoid.get_smooth_visibility() is False:
+                        box_disp.operator("mbast.corrective_enable", icon='MOD_SMOOTH')
+                    else:
+                        box_disp.operator("mbast.corrective_disable", icon='X')
 
                 # File tools
 
@@ -3053,35 +3066,25 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                     box_file.operator("mbast.export_character", icon='EXPORT')
                     box_file.operator("mbast.import_character", icon='IMPORT')
 
-                # Display character
+                # Finalize character
 
-                if gui_active_panel_display != "display_opt":
-                    box_act_tools_c.operator('mbast.button_display_on', icon=icon_expand)
+                if gui_active_panel_display != "finalize":
+                    box_act_tools_c.operator('mbast.button_finalize_on', icon=icon_expand)
                 else:
-                    box_act_tools_c.operator('mbast.button_display_off', icon=icon_collapse)
-                    box_disp = self.layout.box()
-
-                    if mblab_humanoid.exists_displace_texture():
-                        if mblab_humanoid.get_disp_visibility() is False:
-                            box_disp.operator("mbast.displacement_enable", icon='MOD_DISPLACE')
-                        else:
-                            box_disp.operator("mbast.displacement_disable", icon='X')
-                    if mblab_humanoid.get_subd_visibility() is False:
-                        box_disp.operator("mbast.subdivision_enable", icon='MOD_SUBSURF')
-                        box_disp.label(text="Subd. preview is very CPU intensive", icon='INFO')
+                    box_act_tools_c.operator('mbast.button_finalize_off', icon=icon_collapse)
+                    box_fin = self.layout.box()
+                    box_fin.prop(scn, 'mblab_save_images_and_backup', icon='EXPORT')
+                    box_fin.prop(scn, 'mblab_remove_all_modifiers', icon='CANCEL')
+                    box_fin.prop(scn, 'mblab_final_prefix')
+                    if scn.mblab_save_images_and_backup:
+                        box_fin.operator("mbast.finalize_character_and_images", icon='FREEZE')
                     else:
-                        box_disp.operator("mbast.subdivision_disable", icon='X')
-                        box_disp.label(text="Disable subdivision to increase performance", icon='ERROR')
-                    if mblab_humanoid.get_smooth_visibility() is False:
-                        box_disp.operator("mbast.corrective_enable", icon='MOD_SMOOTH')
-                    else:
-                        box_disp.operator("mbast.corrective_disable", icon='X')
+                        box_fin.operator("mbast.finalize_character", icon='FREEZE')
 
                 self.layout.separator(factor=0.5)
                 self.layout.label(text="AFTER-CREATION TOOLS", icon="MODIFIER_ON")
                 layout_sub=self.layout.box()
                 layout_sub.label(text="FINALIZED characters ONLY", icon="INFO")
-
             else:
                 gui_status = "NEW_SESSION"
 

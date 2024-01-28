@@ -858,15 +858,15 @@ class Humanoid:
             self.sync_gui_according_measures()
         if update_armature:
             self.sk_engine.fit_joints()
-        #
-        # if update_normals:
-        #    obj.data.normal_update()
+        # BUG - causes error in console
+        #if update_normals:
+        #   obj.data.normal_update()
         if update_proxy:
             self.fit_proxy()
 
         self.set_subd_visibility(subdivision_value)
 
-        #logger.error("Character updated in {0} secs".format(time.time()-time1))
+        logger.error("Character updated in {0} secs".format(time.time()-time1))
 
     def generate_character(self, random_value, prv_face, prv_body, prv_mass, prv_tone, prv_height, prv_phenotype, set_tone_and_mass, body_mass, body_tone, prv_fantasy):
         logger.info("Generating character...")

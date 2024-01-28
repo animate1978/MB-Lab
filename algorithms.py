@@ -40,22 +40,7 @@ from .utils import get_object_parent
 
 logger = logging.getLogger(__name__)
 
-DEBUG_LEVEL = 3
-
-# ------------------------------------------------------------------------
-#    Print Log
-# ------------------------------------------------------------------------
-
-def print_log_report(level, text_to_write):
-    import warnings
-    warnings.warn("print_log_report deprecated, use python logging", DeprecationWarning)
-    l = 0
-    levels = {"INFO": 0, "DEBUG": 1, "WARNING": 2, "ERROR": 3, "CRITICAL": 4,}
-    if level in levels:
-        l = levels[level]
-    if l >= DEBUG_LEVEL:
-        print(level + ": " + text_to_write)
-
+# Had old debugger code here forever, it has been removed
 
 # ------------------------------------------------------------------------
 #    Algorithms
