@@ -2597,7 +2597,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
         icon_collapse = "DISCLOSURE_TRI_DOWN"
 
         box_info = self.layout.box()
-        #box_info.label(text="https://www.mblab.dev")
+        #box_info.label(text="")
 
         if gui_status == "ERROR_SESSION":
             box_err = self.layout.box()
@@ -2622,7 +2622,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                 box_new_opt.prop(scn, 'mblab_use_lamps', icon='LIGHT_DATA')
 
             self.layout.separator(factor=0.5)
-            self.layout.operator('mbast.init_character', icon='ARMATURE_DATA')
+            self.layout.operator('mbast.init_character', icon='OUTLINER_OB_ARMATURE')
 
         if gui_status != "ACTIVE_SESSION":
             self.layout.separator(factor=0.5)
@@ -2866,7 +2866,7 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
                         box_lib.prop(obj, "preset")
                     if mblab_humanoid.exists_phenotype_database():
                         box_lib.prop(obj, "ethnic")
-                    box_lib.prop(scn, 'mblab_mix_characters', icon='FORCE_CHARGE')
+                    box_lib.prop(scn, 'mblab_mix_characters', icon='RNA_ADD')
 
                 # Randomize character
 
@@ -3113,7 +3113,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
         icon_collapse = "DISCLOSURE_TRI_DOWN"
 
         box_general = self.layout.box()
-        #box_general.label(text="https://www.mblab.dev")
+        #box_general.label(text="")
         #box_general.operator('mbcrea.button_for_tests', icon='BLENDER')
 
         box_tools = self.layout.box()
@@ -3411,7 +3411,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                             box_fast_creators.label(text="File already exists !", icon='ERROR')
                         box_fast_creators.operator('mbcrea.button_save_preset', icon="FREEZE")
                 else:
-                    box_fast_creators.label(text="! NO COMPATIBLE MODEL !", icon='ERROR')
+                    box_fast_creators.label(text="!!!...NO COMPATIBLE MODEL!", icon='ERROR')
                     box_fast_creators.enabled = False
             #------------Expressions creator------------
             elif scn.mbcrea_before_edition_tools == "morphs_for_expressions":
@@ -3457,7 +3457,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                     box_morphexpression_b.operator('mbast.button_load_base_body', icon='IMPORT')
                     box_morphexpression_b.operator('mbast.button_load_sculpted_body', icon='IMPORT')
                 else:
-                    box_morphexpression.label(text="!NO COMPATIBLE MODEL!", icon='ERROR')
+                    box_morphexpression.label(text="!!!...NO COMPATIBLE MODEL!", icon='ERROR')
                     box_morphexpression.enabled = False
             #------------Combine expressions creator------------
             elif scn.mbcrea_before_edition_tools == "combine_expressions":
@@ -3502,7 +3502,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                         box_combinexpression.label(text="Save in : " + mblab_humanoid.get_root_model_name(), icon='INFO')
                         box_combinexpression.operator('mbcrea.button_save_final_comb_expression', icon="FREEZE") #Save the final expression.
                 else:
-                    box_combinexpression.label(text="!NO COMPATIBLE MODEL!", icon='ERROR')
+                    box_combinexpression.label(text="!!!...NO COMPATIBLE MODEL!", icon='ERROR')
                     box_combinexpression.enabled = False
 
             # Copy / Move / Delete utilities.
@@ -3578,7 +3578,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
                             box_cmd_rename.enabled = False
                         # Here
                 else:
-                    box_cmd_morphs.label(text="!NO COMPATIBLE MODEL!", icon='ERROR')
+                    box_cmd_morphs.label(text="!!!...NO COMPATIBLE MODEL!", icon='ERROR')
                     box_cmd_morphs.enabled = False
             #------------Rigify------------
             box_adaptation_tools.label(text="After finalization", icon='MODIFIER_ON')

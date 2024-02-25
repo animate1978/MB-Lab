@@ -54,7 +54,7 @@ def get_sel():
     fa = bpy.context.object.data.polygons
     bpy.ops.object.mode_set(mode='OBJECT')
     countv = len(vt)
-    selv = np.empty(countv, dtype=np.bool)
+    selv = np.empty(countv, dtype=bool) #removed np.bool
     vt.foreach_get('select', selv)
     co = np.empty(countv * 3, dtype=np.float32)
     vt.foreach_get('co', co)
@@ -62,7 +62,7 @@ def get_sel():
     vidx = np.empty(countv, dtype=np.int32)
     vt.foreach_get('index', vidx)
     countf = len(fa)
-    selfa = np.empty(countf, dtype=np.bool)
+    selfa = np.empty(countf, dtype=bool) #removed np.bool
     fa.foreach_get('select', selfa)
     fidx = np.empty(countf, dtype=np.int32)
     fa.foreach_get('index', fidx)
@@ -76,7 +76,7 @@ def get_sel():
     return dc([co[selv], new_f, nv_Dict])
 
 
-###############################################################################################################################
+##############################################################################
 # OBJECT CREATION
 
 #creates new mesh
@@ -144,7 +144,7 @@ def add_rd_capsule(Name, length, radius, cap_coord, faces, collection):
     except:
         pass
 
-###############################################################################################################################
+##############################################################################
 # MATH OPS
 
 #Rotation Matrix
@@ -175,7 +175,7 @@ def rot_obj(obj, rot_mat):
     for i, v in enumerate(List):
         vt[i].co = v
 
-###############################################################################################################################
+##############################################################################
 # VERTEX_GROUP OPS
 
 #Create Vertex Group
@@ -230,7 +230,7 @@ def copy_wt(Name, viw, vid):
     transfer_vt(Name, viw)
     add_wt(Name, vid)
 
-###############################################################################################################################
+##############################################################################
 # COLLECTION OPS
 
 #get a list of all objects in collection
@@ -242,7 +242,7 @@ def new_collection(Name):
     new_coll = bpy.data.collections.new(Name)
     bpy.context.scene.collection.children.link(new_coll)
 
-###############################################################################################################################
+##############################################################################
 # PARENTING OPS
 
 def adoption(parent, child, type, index):
@@ -264,7 +264,7 @@ def add_parent(parent, children):
 
 
 
-###############################################################################################################################
+##############################################################################
 # MODIFIER OPS
 
 #Add modifier
@@ -296,13 +296,13 @@ def new_modifier(obj, name, modifier_type, parameters):
     return _new_modifier
 
 
-###############################################################################################################################
+##############################################################################
 # ARMATURE OPS
 
-###############################################################################################################################
+##############################################################################
 # SHAPEKEY OPS
 
-###############################################################################################################################
+##############################################################################
 # OBJECT OPS
 
 
@@ -401,7 +401,7 @@ def bvhtree_from_obj_polygons(obj, indices_of_polygons_subset=None):
     return mathutils.bvhtree.BVHTree.FromPolygons(vertices, polygons)
 
 
-###############################################################################################################################
+##############################################################################
 # LIGHTING_OPS
 
 def add_lighting():

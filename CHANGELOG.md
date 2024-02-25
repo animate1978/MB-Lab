@@ -10,10 +10,14 @@ All changes will be documented here
 
 ## Added
 
+- Melanin map added that adds variance to the skin pigment
+
 ## Changed
 
-- MBLabSkin3 is a now based off of the 1.7.6 shader
+- MBLabSkin3 is a now based off of the 1.7.6 shader with major modifications
 - AutoUpdater is disabled
+- SubD levels have increased for better visuals
+- Some menus rearranged for better workflow
 
 ## Bug Fixes
 

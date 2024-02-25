@@ -305,7 +305,7 @@ class Humanoid:
 
     def add_subdivision_modifier(self):
         obj = self.get_object()
-        parameters = {"levels": 1, "render_levels": 2, "show_viewport": True, "show_in_editmode": False}
+        parameters = {"levels": 2, "render_levels": 3, "show_viewport": True, "show_in_editmode": False}
         object_ops.new_modifier(obj, self.mat_engine.subdivision_modifier_name, 'SUBSURF', parameters)
 
     def add_displacement_modifier(self):
