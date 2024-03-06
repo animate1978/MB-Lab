@@ -22,17 +22,21 @@ This fork is an attempt to keep this addon going forward as the original author 
 
 - MB-Lab now requires Blender 4.0.0 +
 
-## Added
+### Added
+
+- Melanin map added that adds variance to the skin pigment
 
 ## Changed
 
-- MBLabSkin3 is a now based off of the 1.7.6 shader
+- MBLabSkin3 is a now based off of the 1.7.6 shader with modifications
 - AutoUpdater is disabled
+- SubD levels have increased for better visuals
+- Some menus rearranged for better workflow
+- Added new license types in MB-Dev, also removed AFPL due to restrictive nature
 
 ## Bug Fixes
 
 - Fixed bugs in various files to make it work with Blender 4.0
-- 
 
 ## Known Issues
 

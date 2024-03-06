@@ -861,8 +861,8 @@ class Humanoid:
         # BUG - causes error in console
         #if update_normals:
         #   obj.data.normal_update()
-        if update_proxy:
-            self.fit_proxy()
+        #if update_proxy:
+        #    self.fit_proxy()
 
         self.set_subd_visibility(subdivision_value)
 

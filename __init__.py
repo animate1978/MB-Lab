@@ -2597,12 +2597,12 @@ class VIEW3D_PT_tools_MBLAB(bpy.types.Panel):
         icon_collapse = "DISCLOSURE_TRI_DOWN"
 
         box_info = self.layout.box()
-        #box_info.label(text="")
+        box_info.label(text="Open Source Humanoid Creator")
 
         if gui_status == "ERROR_SESSION":
             box_err = self.layout.box()
             box_err.label(text=gui_err_msg, icon="INFO")
-
+        
         if gui_status == "NEW_SESSION":
 
             self.layout.label(text="CREATION OPTIONS", icon='RNA_ADD')
@@ -3113,7 +3113,7 @@ class VIEW3D_PT_tools_MBCrea(bpy.types.Panel):
         icon_collapse = "DISCLOSURE_TRI_DOWN"
 
         box_general = self.layout.box()
-        #box_general.label(text="")
+        box_general.label(text="Open Source Humanoid Development Toolkit")
         #box_general.operator('mbcrea.button_for_tests', icon='BLENDER')
 
         box_tools = self.layout.box()
@@ -4627,8 +4627,9 @@ bpy.types.Scene.mbcrea_chara_license = bpy.props.EnumProperty(
     items=[
         ("CC0", "CC0 (Free)", "For commercial or personnal use"),
         ("CC-BY", "CC-BY (Free)", "For commercial or personnal use, attribution required"),
-        ("AGPL3", "AGPL3", "See documentation"),
-        ("AFPL9", "AFPL9 (Personnal use)", "You can't make money with")
+        ("CC-BY-SA", "CC-BY-SA (Free)", "For commercial or personnal use, attribution required"),
+        ("CC-BY-NC", "CC-BY-NC (Free)", "For non-commercial or personnal use, attribution required"),
+        ("AGPL3", "AGPL3", "See documentation")
         ],
     name="license",
     default=None)
