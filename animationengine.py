@@ -1023,9 +1023,8 @@ class RetargetEngine:
         if source_armat.animation_data:
             source_action = source_armat.animation_data.action
             f_range = source_action.frame_range
-
-        bpy.ops.nla.bake(frame_start=f_range[0], frame_end=f_range[1], only_selected=False,
-                         visual_keying=True, clear_constraints=False, use_current_action=True, bake_types={'POSE'})
+# Removed f_range, needs work
+        bpy.ops.nla.bake(only_selected=False, visual_keying=True, clear_constraints=False, use_current_action=True, bake_types={'POSE'})
         self.remove_armature_constraints(target_armat)
 
     @staticmethod

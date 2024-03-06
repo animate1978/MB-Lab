@@ -305,7 +305,7 @@ class Humanoid:
 
     def add_subdivision_modifier(self):
         obj = self.get_object()
-        parameters = {"levels": 1, "render_levels": 2, "show_viewport": True, "show_in_editmode": False}
+        parameters = {"levels": 2, "render_levels": 3, "show_viewport": True, "show_in_editmode": False}
         object_ops.new_modifier(obj, self.mat_engine.subdivision_modifier_name, 'SUBSURF', parameters)
 
     def add_displacement_modifier(self):
@@ -514,8 +514,6 @@ class Humanoid:
                 if "armature" not in modf.name:
                     obj.modifiers.remove(modf)
 
-#TODO Move to file_ops.py
-
     def save_body_displacement_texture(self, filepath):
         self.mat_engine.save_texture(filepath, "body_displ")
 
@@ -523,7 +521,7 @@ class Humanoid:
         self.mat_engine.save_texture(filepath, "body_derm")
 
     def save_all_textures(self, filepath):
-        targets = ["body_derm", "body_displ", "teeth_albedo", "eyes_albedo", "tongue_albedo", "freckle_mask", "blush", "sebum", "roughness", "lipmap", "iris_color", "iris_bump", "sclera_color", "translucent_mask", "sclera_mask", "body_bump"]
+        targets = ["body_derm", "body_displ", "teeth_albedo", "eyes_albedo", "tongue_albedo", "freckle_mask", "blush", "sebum", "roughness", "thickness","melanin", "lipmap", "iris_color", "iris_bump", "sclera_color", "translucent_mask", "sclera_mask", "body_bump"]
         for target in targets:
             dir_path = os.path.dirname(filepath)
             filename = os.path.basename(filepath)
@@ -860,14 +858,15 @@ class Humanoid:
             self.sync_gui_according_measures()
         if update_armature:
             self.sk_engine.fit_joints()
-        if update_normals:
-            obj.data.calc_normals()
-        if update_proxy:
-            self.fit_proxy()
+        # BUG - causes error in console
+        #if update_normals:
+        #   obj.data.normal_update()
+        #if update_proxy:
+        #    self.fit_proxy()
 
         self.set_subd_visibility(subdivision_value)
 
-        #logger.error("Character updated in {0} secs".format(time.time()-time1))
+        logger.error("Character updated in {0} secs".format(time.time()-time1))
 
     def generate_character(self, random_value, prv_face, prv_body, prv_mass, prv_tone, prv_height, prv_phenotype, set_tone_and_mass, body_mass, body_tone, prv_fantasy):
         logger.info("Generating character...")
@@ -1230,10 +1229,11 @@ class Humanoid:
         values = []
         for prop in modifier.properties:
             val = self.character_data[prop]
-            if val > 1.0:
-                val = 1.0
-            if val < 0:
-                val = 0
+            
+            #if val > 1.0:
+            #    val = 1.0
+            #if val < 0:
+            #    val = 0
             val1 = algorithms.function_modifier_a(val)
             val2 = algorithms.function_modifier_b(val)
             values.append([val1, val2])

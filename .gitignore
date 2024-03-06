@@ -12,3 +12,6 @@ Runblender.bat.lnk
 /.vscode/settings.json
 /.vscode/launch.json
 /.vscode
+notes.txt
+mb-lab_updater/MB-Lab_updater_status.json
+data/humanoid_library.blend1

@@ -94,7 +94,7 @@ def add_hair(hair_object, mat_name, style):
     p_sys.settings.root_radius = 0.03
     p_sys.settings.count = 1000
     p_sys.settings.hair_step = 5
-    p_sys.settings.child_nbr = 20
+    #p_sys.settings.child_nbr = 20
     p_sys.settings.rendered_child_count = 20
     p_sys.settings.child_length = 0.895
     bpy.context.object.show_instancer_for_viewport = False
@@ -216,7 +216,7 @@ def add_pHair(hair_object):
     p_sys.settings.root_radius = 0.03
     p_sys.settings.count = 1000
     p_sys.settings.hair_step = 5
-    p_sys.settings.child_nbr = 20
+    #p_sys.settings.child_nbr = 20
     p_sys.settings.rendered_child_count = 20
     p_sys.settings.child_length = 0.895
     bpy.context.scene.render.hair_type = 'STRIP'
