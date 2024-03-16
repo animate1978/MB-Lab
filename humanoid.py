@@ -521,7 +521,7 @@ class Humanoid:
         self.mat_engine.save_texture(filepath, "body_derm")
 
     def save_all_textures(self, filepath):
-        targets = ["body_derm", "body_displ", "teeth_albedo", "eyes_albedo", "tongue_albedo", "freckle_mask", "blush", "sebum", "roughness", "thickness","melanin", "lipmap", "iris_color", "iris_bump", "sclera_color", "translucent_mask", "sclera_mask", "body_bump"]
+        targets = ["body_derm", "body_displ", "teeth_albedo", "eyes_albedo", "tongue_albedo", "freckle_mask", "blush", "sebum", "thickness","melanin", "lipmap", "iris_color", "iris_bump", "sclera_color", "translucent_mask", "sclera_mask", "body_bump"]
         for target in targets:
             dir_path = os.path.dirname(filepath)
             filename = os.path.basename(filepath)
