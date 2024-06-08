@@ -26,7 +26,7 @@ Final version of MB-Lab as development has moved onto Charmorph
 
 ### Added
 
-- USCC CEL Shader added to Anime models
+- UCSS CEL Shader added to Anime models
 
 ## Known Issues
 
