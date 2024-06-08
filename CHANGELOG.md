@@ -2,6 +2,29 @@
 
 All changes will be documented here
 
+# MB-Lab 1.8.1
+
+Final version of MB-Lab as development has moved onto Charmorph
+
+## Requirements
+
+- Requires Blender 4.0.0 +
+
+## Added
+
+- USCC CEL Shader added to Anime models
+
+## Changed
+
+## Bug Fixes
+
+## Known Issues
+
+- MB-Dev tools may contain bugs that are unknown at this time
+- Importing BVH animation files is buggy
+- Hair presets have the old PrincipledHairBSDF which will result in incorrect rendering
+- Skin color and bump mapping change slightly when finalizing
+
 # MB-Lab 1.8.0
 
 ## Requirements

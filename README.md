@@ -16,7 +16,9 @@ MB-Lab is a community developed project based off ManuelBastioniLAB.
 
 This fork is an attempt to keep this addon going forward as the original author is no longer developing ManuelBastioniLAB
 
-# MB-Lab 1.8.0
+# MB-Lab 1.8.1
+
+Final version of MB-Lab as development has moved onto Charmorph
 
 ## Requirements
 
@@ -24,19 +26,7 @@ This fork is an attempt to keep this addon going forward as the original author 
 
 ### Added
 
-- Melanin map added that adds variance to the skin pigment
-
-## Changed
-
-- MBLabSkin3 is a now based off of the 1.7.6 shader with modifications
-- AutoUpdater is disabled
-- SubD levels have increased for better visuals
-- Some menus rearranged for better workflow
-- Added new license types in MB-Dev, also removed AFPL due to restrictive nature
-
-## Bug Fixes
-
-- Fixed bugs in various files to make it work with Blender 4.0
+- USCC CEL Shader added to Anime models
 
 ## Known Issues
 
