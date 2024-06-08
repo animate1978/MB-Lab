@@ -73,7 +73,7 @@ logger = logging.getLogger(__name__)
 bl_info = {
     "name": "MB-Lab",
     "author": "Manuel Bastioni, MB-Lab Community",
-    "version": (1, 8, 0),
+    "version": (1, 8, 1),
     "blender": (4, 0, 0),
     "location": "View3D > Tools > MB-Lab",
     "description": "Character creation tool based off of ManuelbastioniLAB",
